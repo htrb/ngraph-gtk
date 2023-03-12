@@ -57,14 +57,9 @@ enum AXIS_COMBO_BOX_FLAGS {
 #define N_RESPONSE_ALL 1
 
 void initdialog(void);
-#if GTK_CHECK_VERSION(4, 0, 0)
 void CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	       char *(*callback) (struct objlist *, int),
                response_cb response_cb, gpointer user_data);
-#else
-int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
-	      char *(*callback) (struct objlist *, int));
-#endif
 int SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
@@ -471,11 +466,7 @@ struct SaveDialog
   /****** local member *******/
   GtkWidget *path, *include_data, *include_merge;
   int Path;
-#if GTK_CHECK_VERSION(4, 0, 0)
   int SaveData, SaveMerge;
-#else
-  int *SaveData, *SaveMerge;
-#endif
 };
 void SaveDialog(struct SaveDialog *data);
 
@@ -540,9 +531,7 @@ struct MiscDialog
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
     *browser, *use_opacity, *select_data, *use_custom_palette, *use_dark_theme, *source_style,
     *decimalsign, *icon_size;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget **palette;
-#endif
   GtkWidget *directory;
   struct objlist *Obj;
   struct narray tmp_palette;
