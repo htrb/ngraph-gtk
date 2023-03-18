@@ -414,32 +414,6 @@ message_beep(GtkWidget * parent)
   //  reset_event();
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static void
-set_dialog_position(GtkWidget *w, const int *x, const int *y)
-{
-  if (x == NULL || y == NULL || *x < 0 || *y < 0)
-    return;
-
-  gtk_window_move(GTK_WINDOW(w), *x, *y);
-}
-
-static void
-get_dialog_position(GtkWidget *w, int *x, int *y)
-{
-  if (x == NULL || y == NULL)
-    return;
-
-  gtk_window_get_position(GTK_WINDOW(w), x, y);
-
-  if (*x < 0)
-    *x = 0;
-
-  if (*y < 0)
-    *y = 0;
-}
-#endif
-
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct response_message_box_data {
   gpointer data;
