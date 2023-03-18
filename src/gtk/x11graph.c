@@ -1464,11 +1464,9 @@ CmHelpAbout(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *web, *copyright;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct objlist *system;
   GdkTexture *logo;
   char *lib_version, *compiler, *str;
-#endif
 
   if (Menulock || Globallock)
     return;
