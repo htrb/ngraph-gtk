@@ -749,7 +749,6 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct radio_dialog_data {
   response_cb cb;
   int anum;
@@ -779,10 +778,11 @@ radio_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
     *data->res_btn = res_id;
   }
 
-  g_free(data->btn_ary);
-
   gtk_window_destroy(GTK_WINDOW(dlg));
   data->cb(selected, data->data);
+
+  g_free(data->btn_ary);
+  g_free(data);
 }
 
 void
@@ -862,86 +862,6 @@ radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   g_signal_connect(dlg, "response", G_CALLBACK(radio_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#else
-int
-DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y)
-{
-  GtkWidget *dlg, *btn, **btn_ary;
-  GtkBox *vbox;
-  int data;
-  gint res_id;
-  char **d;
-  int i, anum;
-
-  d = arraydata(array);
-  anum = arraynum(array);
-
-  btn_ary = g_malloc(anum * sizeof(*btn_ary));
-  if (btn_ary == NULL)
-    return IDCANCEL;
-
-  dlg = gtk_dialog_new_with_buttons(title,
-				    GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				    GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    NULL, NULL);
-  if (add_buttons(dlg, buttons)) {
-    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
-			   _("_Cancel"), GTK_RESPONSE_CANCEL,
-			   _("_OK"), GTK_RESPONSE_OK,
-			   NULL);
-  }
-
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-
-  if (caption) {
-    GtkWidget *label;
-    label = gtk_label_new(caption);
-    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-  }
-
-  btn = NULL;
-  for (i = 0; i < anum; i++) {
-    btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
-    gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
-    btn_ary[i] = btn;
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
-  }
-
-  set_dialog_position(dlg, x, y);
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-
-  if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
-    *r = -1;
-    for (i = 0; i < anum; i++) {
-      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]))) {
-	*r = i;
-	break;
-      }
-    }
-    data = IDOK;
-  } else {
-    data = IDCANCEL;
-  }
-
-  if (buttons && res_btn) {
-    *res_btn = res_id;
-  }
-
-   g_free(btn_ary);
-
-  get_dialog_position(dlg, x, y);
-  gtk_widget_destroy(dlg);
-  reset_event();
-
-  return data;
-}
-#endif
 
 static int
 add_buttons(GtkWidget *dlg, struct narray *array)
