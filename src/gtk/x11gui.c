@@ -887,7 +887,6 @@ add_buttons(GtkWidget *dlg, struct narray *array)
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct button_dialog_data {
   response_cb cb;
   gpointer data;
@@ -911,6 +910,9 @@ button_dialog(GtkWidget *parent, const char *title, const char *caption, struct 
 
   dlg = gtk_dialog_new();
   if (add_buttons(dlg, buttons)) {
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
     return;
   }
 
@@ -938,45 +940,6 @@ button_dialog(GtkWidget *parent, const char *title, const char *caption, struct 
   g_signal_connect(dlg, "response", G_CALLBACK(button_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#else
-int
-DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *buttons, int *x, int *y)
-{
-  GtkWidget *dlg;
-  gint res_id;
-
-  dlg = gtk_dialog_new();
-  if (add_buttons(dlg, buttons)) {
-    return 1;
-  }
-
-  if (title && g_utf8_validate(title, -1, NULL)) {
-    gtk_window_set_title(GTK_WINDOW(dlg), title);
-  }
-
-  if (caption && g_utf8_validate(caption, -1, NULL)) {
-    GtkWidget *box, *label;
-    box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
-    label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
-  }
-
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  if (parent) {
-    gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
-    gtk_window_set_modal(GTK_WINDOW(parent), TRUE);
-  }
-
-  set_dialog_position(dlg, x, y);
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-  get_dialog_position(dlg, x, y);
-  gtk_widget_destroy(dlg);
-  reset_event();
-
-  return res_id;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct combo_dialog_data {
