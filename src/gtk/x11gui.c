@@ -1118,7 +1118,6 @@ combo_entry_dialog(GtkWidget *parent, const char *title, const char *caption, st
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct spin_dialog_data {
   GtkWidget *spin;
   response_cb cb;
@@ -1217,78 +1216,6 @@ spin_dialog(GtkWidget *parent, const char *title, const char *caption, double mi
   g_signal_connect(dlg, "response", G_CALLBACK(spin_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#else
-int
-DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y)
-{
-  GtkWidget *dlg, *spin;
-  GtkBox *vbox;
-  int data, n;
-  gint res_id;
-  double prec;
-
-  dlg = gtk_dialog_new_with_buttons(title,
-				    GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				    GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    NULL, NULL);
-  if (add_buttons(dlg, buttons)) {
-    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
-			   _("_Cancel"), GTK_RESPONSE_CANCEL,
-			   _("_OK"), GTK_RESPONSE_OK,
-			   NULL);
-  }
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-
-  if (caption) {
-    GtkWidget *label;
-    label = gtk_label_new(caption);
-    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-  }
-
-  if (inc == 0)
-    inc = 1;
-
-  spin = gtk_spin_button_new_with_range(min, max, inc);
-  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
-  gtk_box_pack_start(vbox, spin, FALSE, FALSE, 2);
-  gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
-
-  prec = log10(fabs(inc));
-  if (prec < 0) {
-    n = ceil(- prec);
-  } else {
-    n = 0;
-  }
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
-
-  set_dialog_position(dlg, x, y);
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-
-  if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
-    *r = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
-    data = IDOK;
-  } else {
-    data = IDCANCEL;
-  }
-
-  if (buttons && res_btn) {
-    *res_btn = res_id;
-  }
-
-  get_dialog_position(dlg, x, y);
-  gtk_widget_destroy(dlg);
-  reset_event();
-
-  return data;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct check_dialog_data {
