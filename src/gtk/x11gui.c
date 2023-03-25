@@ -941,7 +941,6 @@ button_dialog(GtkWidget *parent, const char *title, const char *caption, struct 
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct combo_dialog_data {
   GtkWidget *combo;
   string_response_cb cb;
@@ -1035,103 +1034,6 @@ combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   g_signal_connect(dlg, "response", G_CALLBACK(combo_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#else
-int
-DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y)
-{
-  GtkWidget *dlg, *combo;
-  GtkBox *vbox;
-  int data;
-  gint res_id;
-  char **d;
-  int i, anum;
-
-  d = arraydata(array);
-  anum = arraynum(array);
-
-  *r = NULL;
-
-  dlg = gtk_dialog_new_with_buttons(title,
-				    GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				    GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    NULL, NULL);
-  if (add_buttons(dlg, buttons)) {
-    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
-			   _("_Cancel"), GTK_RESPONSE_CANCEL,
-			   _("_OK"), GTK_RESPONSE_OK,
-			   NULL);
-  }
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
-#endif
-
-  if (caption) {
-    GtkWidget *label;
-    label = gtk_label_new(caption);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(vbox, label);
-#else
-    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-#endif
-  }
-
-  combo = combo_box_create();
-  for (i = 0; i < anum; i++) {
-    combo_box_append_text(combo, d[i]);
-  }
-
-  if (sel < 0 || sel >= anum) {
-    sel = 0;
-  }
-  combo_box_set_active(combo, sel);
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(vbox, combo);
-#else
-  gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(dlg);
-  res_id = IDLOOP;
-  ndialog_run(dlg, NULL, &res_id);
-#else
-  set_dialog_position(dlg, x, y);
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-#endif
-
-  if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
-    i = combo_box_get_active(combo);
-    if (i >= 0) {
-      *r = g_strdup(d[i]);
-    }
-    data = IDOK;
-  } else {
-    data = IDCANCEL;
-  }
-
-  if (buttons && res_btn) {
-    *res_btn = res_id;
-  }
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
-  get_dialog_position(dlg, x, y);
-  gtk_widget_destroy(dlg);
-  reset_event();
-#endif
-
-  return data;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
