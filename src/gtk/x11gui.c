@@ -1217,7 +1217,6 @@ spin_dialog(GtkWidget *parent, const char *title, const char *caption, double mi
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct check_dialog_data {
   GtkWidget **btn_ary;
   response_cb cb;
@@ -1314,97 +1313,6 @@ check_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   g_signal_connect(dlg, "response", G_CALLBACK(check_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#else
-int
-DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y)
-{
-  GtkWidget *dlg, *btn, **btn_ary;
-  GtkBox *vbox;
-  int data;
-  gint res_id;
-  char **d;
-  int i, anum;
-
-  d = arraydata(array);
-  anum = arraynum(array);
-
-  btn_ary = g_malloc(anum * sizeof(*btn_ary));
-  if (btn_ary == NULL)
-    return IDCANCEL;
-
-  dlg = gtk_dialog_new_with_buttons(title,
-				    GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				    GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    NULL, NULL);
-  if (add_buttons(dlg, buttons)) {
-    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
-			   _("_Cancel"), GTK_RESPONSE_CANCEL,
-			   _("_OK"), GTK_RESPONSE_OK,
-			   NULL);
-  }
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-
-  if (caption) {
-    GtkWidget *label;
-    label = gtk_label_new(caption);
-    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-  }
-
-
-  btn = NULL;
-  for (i = 0; i < anum; i++) {
-    btn = gtk_check_button_new_with_mnemonic(d[i]);
-    gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
-    btn_ary[i] = btn;
-  }
-
-  for (i = 0; i < anum; i++) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn_ary[i]), r[i]);
-  }
-
-  set_dialog_position(dlg, x, y);
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-
-  if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
-    for (i = 0; i < anum; i++) {
-      r[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
-    }
-    data = IDOK;
-  } else {
-    data = IDCANCEL;
-  }
-
-  if (buttons && res_btn) {
-    *res_btn = res_id;
-  }
-
-  g_free(btn_ary);
-
-  get_dialog_position(dlg, x, y);
-  gtk_widget_destroy(dlg);
-  reset_event();
-
-  return data;
-}
-static void
-free_str_list(GSList *top)
-{
-  int i, n;
-  GSList *list;
-
-  n = g_slist_length(top);
-  for (i = 0, list = top; i < n; i++, list = list->next) {
-    g_free(list->data);
-  }
-  g_slist_free(top);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 #define FILE_CHOOSER_OPTION_CHDIR "chdir"
