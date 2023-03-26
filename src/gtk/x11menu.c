@@ -1130,7 +1130,6 @@ CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void save_tab_position(void);
 static void get_pane_position(void);
 static void save_entry_history(void);
@@ -1162,15 +1161,6 @@ QuitGUI(void)
 {
   CheckSave(QuitGUI_response, NULL);
 }
-#else
-void
-QuitGUI(void)
-{
-  if (TopLevel) {
-    Hide_window = TRUE;
-  }
-}
-#endif
 
 int
 find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
