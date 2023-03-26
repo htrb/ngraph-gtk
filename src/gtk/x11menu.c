@@ -1623,19 +1623,11 @@ save_tab_position(void)
 
   for (i = 0; i < n; i++) {
     GtkWidget *tab;
-#if GTK_CHECK_VERSION(4, 0, 0)
     tab = gtk_paned_get_start_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 0);
 
     tab = gtk_paned_get_end_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 100);
-#else
-    tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
-    save_tab_position_sub(tab, tab_info + i, 0);
-
-    tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
-    save_tab_position_sub(tab, tab_info + i, 100);
-#endif
   }
 }
 
