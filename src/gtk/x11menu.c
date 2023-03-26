@@ -2380,16 +2380,11 @@ create_save_menu(void)
   if (gmenu == NULL) {
     return NULL;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
 #if USE_NESTED_SUBMENUS
   menu = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(gmenu), POPOVERMEU_FLAG);
 #else  /* USE_NESTED_SUBMENUS */
   menu = gtk_popover_menu_new_from_model(G_MENU_MODEL(gmenu));
 #endif	/* USE_NESTED_SUBMENUS */
-#else
-  menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
-  gtk_widget_show_all(menu);
-#endif
   return menu;
 }
 
