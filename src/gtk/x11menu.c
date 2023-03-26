@@ -1720,8 +1720,8 @@ setup_toolbar(GtkWidget *window)
   hbar = gtk_header_bar_new();
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_header_bar_set_title(GTK_HEADER_BAR(hbar), AppName);
-#endif
   gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
+#endif
   gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
 #endif
   w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), GTK_ORIENTATION_VERTICAL, G_CALLBACK(CmViewerButtonPressed));
@@ -1747,13 +1747,8 @@ setupwindow(GtkApplication *app)
   SettingPanel = presetting_create_panel(app);
   gtk_stack_add_named(GTK_STACK(ToolBox), CToolbar, "CommandToolbar");
   gtk_stack_add_named(GTK_STACK(ToolBox), SettingPanel, "SettingPanel");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox2), ToolBox);
   gtk_box_append(GTK_BOX(hbox), PToolbar);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
-#endif
 
   if (NgraphApp.Viewer.popup) {
     g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
@@ -1791,73 +1786,38 @@ setupwindow(GtkApplication *app)
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_paned_set_start_child(GTK_PANED(vpane2), w);
-#else
-  gtk_paned_add1(GTK_PANED(vpane2), w);
-#endif
 
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_paned_set_end_child(GTK_PANED(vpane2), w);
-#else
-  gtk_paned_add2(GTK_PANED(vpane2), w);
-#endif
 
   hpane2 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   NgraphApp.Viewer.side_pane3 = hpane2;
 
   vpane1 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_paned_set_start_child(GTK_PANED(vpane1), vpane2);
   gtk_paned_set_end_child(GTK_PANED(vpane1), hpane2);
-#else
-  gtk_paned_pack1(GTK_PANED(vpane1), vpane2, TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpane1), hpane2, FALSE, TRUE);
-#endif
   NgraphApp.Viewer.side_pane1 = vpane1;
 
   hpane1 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
-#if GTK_CHECK_VERSION(4, 0, 0)
 #if USE_APP_HEADER_BAR
   gtk_paned_set_start_child(GTK_PANED(hpane1), hbox);
 #else
   gtk_paned_set_start_child(GTK_PANED(hpane1), vbox);
 #endif
   gtk_paned_set_end_child(GTK_PANED(hpane1), vpane1);
-#else
-#if USE_APP_HEADER_BAR
-  gtk_paned_add1(GTK_PANED(hpane1), hbox);
-#else
-  gtk_paned_add1(GTK_PANED(hpane1), vbox);
-#endif
-  gtk_paned_add2(GTK_PANED(hpane1), vpane1);
-#endif
   NgraphApp.Viewer.main_pane = hpane1;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), table);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
-#endif
 #if ! USE_APP_HEADER_BAR
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 #endif
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox2), hpane1);
   gtk_box_append(GTK_BOX(vbox2), hbox2);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox2), hpane1, TRUE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox2, TRUE, TRUE, 0);
-#endif
 
   NgraphApp.Message = gtk_statusbar_new();
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -1877,11 +1837,7 @@ setupwindow(GtkApplication *app)
 
   set_axis_undo_button_sensitivity(FALSE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_child(GTK_WINDOW(TopLevel), vbox2);
-#else
-  gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
-#endif
 
   create_object_tabs();
 }
