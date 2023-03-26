@@ -1713,17 +1713,8 @@ setup_toolbar(GtkWidget *window)
 #if USE_APP_HEADER_BAR
   GtkWidget *hbar;
 #endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), GTK_ORIENTATION_HORIZONTAL, NULL);
-#else
-  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
-#endif
   CToolbar = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
-#endif
 
 #if USE_APP_HEADER_BAR
   hbar = gtk_header_bar_new();
@@ -1733,17 +1724,8 @@ setup_toolbar(GtkWidget *window)
   gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
   gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
 #endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), GTK_ORIENTATION_VERTICAL, G_CALLBACK(CmViewerButtonPressed));
-#else
-  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
-#endif
   PToolbar = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
-#endif
 }
 
 static void
