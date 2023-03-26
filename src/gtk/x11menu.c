@@ -1652,33 +1652,19 @@ create_object_tabs(void)
   init_tab_info(tab_info, tab_n);
 
   for (j = 0; j < tab_n; j++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     if (tab_info[j].tab > 0) {
       tab = gtk_paned_get_end_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
     } else {
       tab = gtk_paned_get_start_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
-#else
-    if (tab_info[j].tab > 0) {
-      tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
-    } else {
-      tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
-    }
-#endif
     tab_info[j].init_func(tab_info[j].d);
     setup_object_tab(tab_info[j].d, tab, tab_info[j].icon, _(tab_info[j].obj_name));
   }
 
   CoordWinCreate(&NgraphApp.CoordWin);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_paned_set_start_child(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win);
   InfoWinCreate(&NgraphApp.InfoWin);
   gtk_paned_set_end_child(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win);
-#else
-  gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win, FALSE, TRUE);
-  InfoWinCreate(&NgraphApp.InfoWin);
-  gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win, TRUE, TRUE);
-#endif
 
   set_pane_position();
   if (Menulocal.sidebar) {
