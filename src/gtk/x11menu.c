@@ -1513,12 +1513,8 @@ setup_object_tab(struct SubWin *win, GtkWidget *tab, const char *icon_name, cons
   obj_id = chkobjectid(win->data.data->obj);
   g_object_set_data(G_OBJECT(win->Win), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   icon = gtk_image_new_from_icon_name(icon_name);
   gtk_image_set_icon_size(GTK_IMAGE(icon), Menulocal.icon_size);
-#else
-  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-#endif
   gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), win->Win, icon);
