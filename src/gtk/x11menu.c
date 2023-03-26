@@ -882,11 +882,7 @@ add_accelerator(GtkApplication *application, struct Accelerator *accel, int n)
 void
 set_pointer_mode(int id)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget *button;
-#else
-  GtkToolItem *button;
-#endif
 
   button = NULL;
   switch (id) {
@@ -929,11 +925,7 @@ set_pointer_mode(int id)
   }
 
   if (button) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-#else
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(button), TRUE);
-#endif
   }
 }
 
