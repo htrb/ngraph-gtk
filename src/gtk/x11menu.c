@@ -1089,14 +1089,6 @@ set_axis_undo_button_sensitivity(int state)
   set_action_widget_sensitivity(AxisScaleUndoAction, state);
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-void
-set_draw_lock(int lock)
-{
-  DrawLock = lock;
-}
-#endif
-
 #if ! WINDOWS
 static void
 kill_signal_handler(int sig)
