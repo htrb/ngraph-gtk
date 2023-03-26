@@ -2240,7 +2240,6 @@ create_recent_filter(GtkWidget *w, int type)
 }
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
 {
@@ -2370,30 +2369,6 @@ setup_recent_manager(void)
   manager = gtk_recent_manager_get_default();
   g_signal_connect(manager, "changed", G_CALLBACK(recent_manger_changed), NULL);
 }
-
-#else
-GtkWidget *
-create_recent_menu(int type)
-{
-  GtkWidget *submenu;
-
-  submenu = gtk_recent_chooser_menu_new_for_manager(NgraphApp.recent_manager);
-  create_recent_filter(submenu, type);
-  gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(submenu), TRUE);
-  gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), RECENT_CHOOSER_LIMIT);
-
-  switch (type) {
-  case RECENT_TYPE_GRAPH:
-    g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
-    break;
-  case RECENT_TYPE_DATA:
-    g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmFileHistory), NULL);
-    break;
-  }
-
-  return submenu;
-}
-#endif
 
 static GtkWidget*
 create_save_menu(void)
