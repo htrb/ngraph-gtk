@@ -1096,11 +1096,7 @@ kill_signal_handler(int sig)
   if (Menulock || check_paint_lock()) {
     set_interrupt();		/* accept SIGINT */
   } else {
-#if GTK_CHECK_VERSION(4, 0, 0)
     QuitGUI();
-#else
-    Hide_window = APP_QUIT;
-#endif
   }
 }
 
@@ -1122,41 +1118,9 @@ main_loop_quit(void)
 static void
 term_signal_handler(int sig)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   main_loop_quit();
-#else
-  Hide_window = APP_QUIT_FORCE;
-#endif
 }
 #endif	/* WINDOWS */
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static int
-AppMainLoop(void)
-{
-  Hide_window = APP_CONTINUE;
-  while (TRUE) {
-    gtk_main_iteration();
-    if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
-      int state = Hide_window;
-
-      Hide_window = APP_CONTINUE;
-      switch (state) {
-      case APP_QUIT:
-	if (CheckSave()) {
-	  menu_clear_undo();
-	  return 0;
-	}
-	break;
-      case APP_QUIT_FORCE:
-	menu_clear_undo();
-	return 1;
-      }
-    }
-  }
-  return 0;
-}
-#endif
 
 #if ! GTK_CHECK_VERSION(4, 0, 0)
 void
