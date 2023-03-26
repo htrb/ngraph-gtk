@@ -2402,13 +2402,9 @@ draw_notify(int notify)
     return;
   }
   icon_name = (state) ? "ngraph_draw-attention-symbolic" : "ngraph_draw-symbolic";
-#if GTK_CHECK_VERSION(4, 0, 0)
   img = gtk_image_new_from_icon_name(icon_name);
   gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
   gtk_button_set_child(GTK_BUTTON(DrawButton), img);
-#else
-  gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(DrawButton), icon_name);
-#endif
   gtk_widget_queue_draw(DrawButton);
 }
 
