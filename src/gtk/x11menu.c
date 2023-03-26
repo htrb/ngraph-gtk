@@ -1426,11 +1426,7 @@ create_cursor(void)
     return 1;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     NgraphApp.cursor[i] = gdk_cursor_new_from_name(Cursor[i], NULL);
-#else
-    NgraphApp.cursor[i] = gdk_cursor_new_for_display(gdk_display_get_default(), Cursor[i]);
-#endif
   }
 
   return 0;
