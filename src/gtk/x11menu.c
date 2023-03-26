@@ -1122,16 +1122,6 @@ term_signal_handler(int sig)
 }
 #endif	/* WINDOWS */
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-void
-reset_event(void)
-{
-  while (gtk_events_pending()) {
-    gtk_main_iteration();
-  }
-}
-#endif
-
 static gboolean
 CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
