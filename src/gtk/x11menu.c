@@ -1483,38 +1483,21 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
   GtkWidget *frame, *w, *hbox;
 
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
   w = gtk_label_new(NULL);
   gtk_widget_set_halign(w, GTK_ALIGN_END);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
   *label1 = w;
 
   w = gtk_label_new(NULL);
   gtk_widget_set_halign(w, GTK_ALIGN_START);
   gtk_label_set_width_chars(GTK_LABEL(w), 16);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
   *label2 = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), hbox);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), hbox);
-#endif
 
   return frame;
 }
