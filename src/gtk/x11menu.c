@@ -1064,12 +1064,7 @@ menu_lock(int lock)
 #if 0
   gtk_widget_set_sensitive(NgraphApp.Viewer.menu, ! Menulock);
 #endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  w = gtk_paned_get_start_child
-    (GTK_PANED(NgraphApp.Viewer.main_pane));
-#else
-  w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.main_pane));
-#endif
+  w = gtk_paned_get_start_child(GTK_PANED(NgraphApp.Viewer.main_pane));
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
   }
