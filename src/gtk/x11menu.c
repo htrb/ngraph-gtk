@@ -2409,98 +2409,47 @@ draw_notify(int notify)
 }
 
 static GtkWidget *
-#if GTK_CHECK_VERSION(4, 0, 0)
 create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb)
-#else
-create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
-#endif
 {
   int i;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget *toolbar,  *widget, *group = NULL, *menu;
-#else
-  GSList *list = NULL;
-  GtkToolItem *widget;
-  GtkWidget *toolbar, *menu;
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   toolbar = gtk_box_new(orientation, 3);
   set_widget_margin_all(toolbar, 4);
-#else
-  toolbar = gtk_toolbar_new();
-#endif
   for (i = 0; i < n; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     menu = NULL;
-#endif
     switch (item[i].type) {
     case TOOL_TYPE_SEPARATOR:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = gtk_separator_new(orientation);
-#else
-      widget = gtk_separator_tool_item_new();
-      gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(widget), TRUE);
-#endif
       break;
     case TOOL_TYPE_NORMAL:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, FALSE);
-#else
-      widget = gtk_tool_button_new(NULL, _(item[i].label));
-#endif
       break;
     case TOOL_TYPE_DRAW:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, FALSE);
-#else
-      widget = gtk_tool_button_new(NULL, _(item[i].label));
-#endif
       DrawButton = GTK_WIDGET(widget);
       break;
     case TOOL_TYPE_SAVE:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_menu_button_set_popover(GTK_MENU_BUTTON(menu), create_save_menu());
       gtk_widget_set_tooltip_text(menu, _("Save menu"));
-#else
-      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
-      menu = create_save_menu();
-      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
-      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Save menu"));
-#endif
       break;
     case TOOL_TYPE_RECENT_GRAPH:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Graphs"));
       create_recent_menu(menu, RECENT_TYPE_GRAPH);
       RecentGraphMenu = menu;
-#else
-      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
-      menu = create_recent_menu(RECENT_TYPE_GRAPH);
-      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
-      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Graphs"));
-#endif
       break;
     case TOOL_TYPE_RECENT_DATA:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
       create_recent_menu(menu, RECENT_TYPE_DATA);
       RecentDataMenu = menu;
-#else
-      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
-      menu = create_recent_menu(RECENT_TYPE_DATA);
-      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
-      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Data Files"));
-#endif
       break;
     case TOOL_TYPE_RADIO:
-#if GTK_CHECK_VERSION(4, 0, 0)
       widget = button_new_with_icon(item[i].icon, TRUE);
       if (group) {
         gtk_toggle_button_set_group(GTK_TOGGLE_BUTTON(widget), GTK_TOGGLE_BUTTON(group));
@@ -2510,13 +2459,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       if (i == 0) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
       }
-#else
-      widget = gtk_radio_tool_button_new(list);
-      list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
-      gtk_tool_button_set_label(GTK_TOOL_BUTTON(widget), _(item[i].label));
-#endif
       if (btn_press_cb) {
-#if GTK_CHECK_VERSION(4, 0, 0)
 	GtkGesture *gesture;
 
 	gesture = gtk_gesture_click_new();
@@ -2525,9 +2468,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 	gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
 	gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(gesture), GTK_PHASE_CAPTURE);
 	g_signal_connect(gesture, "pressed", btn_press_cb, NULL);
-#else
-	g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)), "button-press-event", btn_press_cb, NULL);
-#endif
       }
       break;
     default:
@@ -2538,12 +2478,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       continue;
     }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    if (item[i].icon) {
-      gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(widget), item[i].icon);
-    }
-#endif
-
     if (item[i].action_name) {
       gtk_actionable_set_action_name(GTK_ACTIONABLE(widget), item[i].action_name);
     } else if (item[i].callback) {
@@ -2553,17 +2487,10 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 		       GINT_TO_POINTER(item[i].user_data));
     }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     if (item[i].tip) {
       gtk_widget_set_tooltip_text(widget, _(item[i].tip));
     }
-#else
-    if (item[i].tip) {
-      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), _(item[i].tip));
-    }
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     if (item[i].caption) {
       GtkEventController *ev;
       ev = gtk_event_controller_motion_new();
@@ -2577,18 +2504,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 		       G_CALLBACK(tool_button_leave_cb), NULL);
       gtk_widget_add_controller(widget, ev);
     }
-#else
-    if (item[i].caption) {
-      g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
-		       "enter-notify-event",
-		       G_CALLBACK(tool_button_enter_leave_cb),
-		       (gpointer) _(item[i].caption));
-
-      g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
-		       "leave-notify-event",
-		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
-    }
-#endif
 
     if (item[i].button >= PointerModeOffset) {
       int id;
@@ -2596,7 +2511,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       PointerModeButtons[id]= widget;
     }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_can_focus(widget, FALSE);
     if (menu) {
       GtkWidget *box;
@@ -2610,11 +2524,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     } else {
       gtk_box_append(GTK_BOX(toolbar), widget);
     }
-#else
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(widget), -1);
-#endif
   }
-
   return toolbar;
 }
 
