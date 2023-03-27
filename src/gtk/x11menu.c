@@ -1445,7 +1445,6 @@ free_cursor(void)
   NgraphApp.cursor = NULL;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 tool_button_enter_cb(GtkEventControllerMotion *self, gdouble x, gdouble y, gpointer user_data)
 {
@@ -1459,23 +1458,6 @@ tool_button_leave_cb(GtkEventControllerMotion *self, gpointer data)
 {
   ResetStatusBar();
 }
-#else
-static gboolean
-tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
-{
-  char *str;
-
-  str = (char *) data;
-
-  if (e->type == GDK_ENTER_NOTIFY) {
-    SetStatusBar(str);
-  } else {
-    ResetStatusBar();
-  }
-
-  return FALSE;
-}
-#endif
 
 static GtkWidget *
 create_message_box(GtkWidget **label1, GtkWidget **label2)
