@@ -2692,12 +2692,11 @@ souce_view_set_search_path(void)
   g_free(new_dirs);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 initial_draw(gpointer user_data)
 {
   char *file = (char *) user_data;
-  if (file != NULL) {
+  if (file) {
     char *ext;
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
@@ -2705,16 +2704,17 @@ initial_draw(gpointer user_data)
     } else {
       CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     }
+    g_free(file);
   } else {
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   }
 }
-#endif
 
 int
 application(char *file)
 {
   int terminated;
+  char *file2;
 
   if (TopLevel) {
     if (gtk_widget_is_visible(TopLevel)) {
@@ -2725,14 +2725,9 @@ application(char *file)
     OpenGRA();
   } else {
     GtkIconTheme *theme;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
     GdkDisplay* display;
     display = gdk_display_get_default();
     theme = gtk_icon_theme_get_for_display(display);
-#else
-    theme = gtk_icon_theme_get_default();
-#endif
     gtk_icon_theme_add_resource_path(theme, NGRAPH_ICON_PATH);
     if (create_toplevel_window()) {
       return 1;
@@ -2746,40 +2741,16 @@ application(char *file)
   set_signal(SIGTERM, 0, term_signal_handler, NULL);
 #endif	/* WINDOWS */
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  g_idle_add_once(initial_draw, file);
-#else
-  if (file != NULL) {
-    char *ext;
-    ext = getextention(file);
-    if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
-      LoadNgpFile(file, FALSE, NULL);
-    } else {
-      CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-    }
-  } else {
-    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  }
-#endif
+  file2 = g_strdup(file);
+  g_idle_add_once(initial_draw, file2);
 
   system_set_draw_notify_func(draw_notify);
-#if GTK_CHECK_VERSION(4, 0, 0)
   set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
-#else
-  reset_event();                /* to set pane position correctly */
-  set_pane_position();          /* to set pane position correctly */
-#endif
   n_application_ready();
-#if GTK_CHECK_VERSION(4, 0, 0)
   setup_recent_manager();
   g_main_loop_run(main_loop());
   terminated = FALSE;
-#else
-  terminated = AppMainLoop();
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   finalize_recent_manager();
-#endif
   system_set_draw_notify_func(NULL);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -2804,11 +2775,6 @@ application(char *file)
   set_signal(SIGINT, 0, SIG_DFL, NULL);
 #endif	/* WINDOWS */
 
-#if !  GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_hide(TopLevel);
-  reset_event();
-#endif
-
   CloseGC();
   CloseGRA();
 
@@ -2820,19 +2786,12 @@ application(char *file)
     g_free(NgraphApp.FileName);
     NgraphApp.FileName = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_window_destroy(GTK_WINDOW(TopLevel));
-#else
-    gtk_widget_destroy(TopLevel);
-#endif
     NgraphApp.Viewer.Win = NULL;
     CurrentWindow = TopLevel = PToolbar = CToolbar = ToolBox = NULL;
 
     free_cursor();
 
-#if !  GTK_CHECK_VERSION(4, 0, 0)
-    reset_event();
-#endif
     delobj(getobject("system"), 0);
   }
 
