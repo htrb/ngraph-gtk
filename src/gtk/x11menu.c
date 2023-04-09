@@ -2542,18 +2542,10 @@ create_toplevel_window(void)
 {
   int i;
   struct objlist *aobj;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  int x, y;
-#endif
   int width, height, w, h;
   GdkDisplay *disp;
   GtkWidget *popup;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   GdkClipboard *clip;
-#else
-  GtkClipboard *clip;
-#endif
 
   NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
@@ -2565,15 +2557,10 @@ create_toplevel_window(void)
   disp = gdk_display_get_default();
   if (disp) {
     GdkMonitor *monitor;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
     GdkSurface *surface;
     surface = gdk_surface_new_toplevel(disp);
     monitor = gdk_display_get_monitor_at_surface(disp, surface);
     /* g_object_unref(surface); */
-#else
-    monitor = gdk_display_get_primary_monitor(disp);
-#endif
     if (monitor) {
       GdkRectangle rect;
 
@@ -2595,10 +2582,6 @@ create_toplevel_window(void)
   if (Menulocal.menuheight == DEFAULT_GEOMETRY)
     Menulocal.menuheight = h / 1.2;
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  x = Menulocal.menux;
-  y = Menulocal.menuy;
-#endif
   width = Menulocal.menuwidth;
   height = Menulocal.menuheight;
 
@@ -2610,55 +2593,27 @@ create_toplevel_window(void)
   if (popup) {
     NgraphApp.Viewer.popup = popup;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   clip = gtk_widget_get_clipboard(TopLevel);
   g_signal_connect(clip, "changed", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
-#else
-  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
-#endif
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  gtk_window_move(GTK_WINDOW(TopLevel), x, y);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   g_signal_connect(TopLevel, "close_request", G_CALLBACK(CloseCallback), NULL);
-#else
-  g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
-  g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
-#endif
 
   create_icon();
   initdialog();
 
   setup_toolbar(TopLevel);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(GTK_WIDGET(TopLevel));
-#else
-  gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  reset_event();
-#endif
   setupwindow(GtkApp);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_accelerator(GtkApp, accelerator, G_N_ELEMENTS(accelerator));
-#endif
   create_addin_menu();
 
   NgraphApp.FileName = NULL;
   NgraphApp.Viewer.Mode = PointB;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(GTK_WIDGET(TopLevel));
-#else
-  gtk_widget_show_all(GTK_WIDGET(TopLevel));
-#endif
   ViewerWinSetup();
 
   if (create_cursor())
@@ -2689,9 +2644,6 @@ create_toplevel_window(void)
     }
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show_all(GTK_WIDGET(TopLevel));
-#endif
   set_widget_visibility();
 
   set_focus_sensitivity(&NgraphApp.Viewer);
