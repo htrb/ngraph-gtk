@@ -2660,11 +2660,7 @@ static void
 souce_view_set_search_path(void)
 {
   const gchar * const *dirs;
-#if GTK_CHECK_VERSION(4, 0, 0)
   const char **new_dirs;
-#else
-  gchar **new_dirs;
-#endif
   gchar *dir;
   int n;
   GtkSourceLanguageManager *lm;
