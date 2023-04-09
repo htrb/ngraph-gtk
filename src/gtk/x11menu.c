@@ -2919,20 +2919,10 @@ NGetCursor(void)
 void
 NSetCursor(unsigned int type)
 {
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *win;
-#endif
   GdkCursor *cursor;
 
   if (NgraphApp.Viewer.Win == NULL || NgraphApp.cursor == NULL || CursorType == type)
     return;
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_widget_get_window(NgraphApp.Viewer.Win);
-  if (win == NULL) {
-    return;
-  }
-#endif
 
   CursorType = type;
   cursor = NULL;
@@ -2982,11 +2972,7 @@ NSetCursor(unsigned int type)
     break;
   }
   if (cursor) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_cursor(NgraphApp.Viewer.Win, cursor);
-#else
-    gdk_window_set_cursor(win, cursor);
-#endif
   }
 }
 
