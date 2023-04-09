@@ -2528,16 +2528,12 @@ create_popup_menu(GtkApplication *app)
   GtkWidget *popup;
   GMenu *menu;
   menu = gtk_application_get_menu_by_id(app, "popup-menu");
-#if GTK_CHECK_VERSION(4, 0, 0)
 #if USE_NESTED_SUBMENUS
   popup = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(menu), POPOVERMEU_FLAG);
 #else  /* USE_NESTED_SUBMENUS */
   popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
 #endif	/* USE_NESTED_SUBMENUS */
   gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
-#else
-  popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
-#endif
   return popup;
 }
 
