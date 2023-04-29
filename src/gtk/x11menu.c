@@ -1259,13 +1259,8 @@ static void
 set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 {
   int i, num, type, state, up_state, down_state;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   GdkContentFormats *format;
   GdkClipboard *clip;
-#else
-  GtkClipboard *clip;
-#endif
 
   num = check_focused_obj_type(d, &type);
 
@@ -1307,15 +1302,9 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 	switch (d->Mode) {
 	case PointB:
 	case LegendB:
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 	  clip = gtk_widget_get_clipboard(TopLevel);
 	  format = gdk_clipboard_get_formats(clip);
 	  state = gdk_content_formats_contain_mime_type(format, "text/plain");
-#else
-	  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	  state = gtk_clipboard_wait_is_text_available(clip);
-#endif
 	  break;
 	default:
 	  state = FALSE;
