@@ -325,8 +325,6 @@ CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
                    CmMergeOpen_response, NULL);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 merge_close_response(struct response_callback *cb)
 {
@@ -372,36 +370,6 @@ CmMergeClose(void *w, gpointer client_data)
   response_callback_add(&DlgSelect, merge_close_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-void
-CmMergeClose(void *w, gpointer client_data)
-{
-  struct narray farray;
-  struct objlist *obj;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("merge")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, num, *array;
-    num = arraynum(&farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
-    }
-    array = arraydata(&farray);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, array[i]);
-      set_graph_modified();
-    }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
-  }
-  arraydel(&farray);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
