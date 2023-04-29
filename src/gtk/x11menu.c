@@ -3355,9 +3355,6 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
     break;
   }
   gtk_stack_set_visible_child(GTK_STACK(ToolBox), widget);
-#if ! GTK_CHECK_VERSION(3, 99, 0)
-  gtk_window_set_modal(GTK_WINDOW(TopLevel), widget == SettingPanel); /* for the GtkColorButton (modal GtkColorChooserDialog) */
-#endif
 }
 
 enum TOOLBOX_MODE
