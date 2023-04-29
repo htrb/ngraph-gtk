@@ -86,20 +86,11 @@ struct MenuItem;
 struct ToolItem;
 
 static void create_menu(struct MenuItem *item);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb);
-#else
-static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
-#else
-static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
-#endif
 static void check_exist_instances(struct objlist *parent);
 static void check_instance(struct objlist *obj);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static char *Cursor[] = {
   "default",
   "text",
@@ -116,24 +107,6 @@ static char *Cursor[] = {
   "crosshair",
   "cell",
 };
-#else
-static GdkCursorType Cursor[] = {
-  GDK_LEFT_PTR,
-  GDK_XTERM,
-  GDK_CROSSHAIR,
-  GDK_TOP_LEFT_CORNER,
-  GDK_TOP_RIGHT_CORNER,
-  GDK_BOTTOM_RIGHT_CORNER,
-  GDK_BOTTOM_LEFT_CORNER,
-  GDK_TARGET,
-  GDK_SIZING,
-  GDK_SIZING,
-  GDK_WATCH,
-  GDK_FLEUR,
-  GDK_PENCIL,
-  GDK_TCROSS,
-};
-#endif
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
@@ -237,11 +210,7 @@ enum ActionWidgetIndex {
 };
 
 struct ActionWidget ActionWidget[ActionWidgetNum];
-#if GTK_CHECK_VERSION(4, 0, 0)
 static GtkWidget *PointerModeButtons[PointerModeNum];
-#else
-static GtkToolItem *PointerModeButtons[PointerModeNum];
-#endif
 static int DefaultMode = PointerModeBoth;
 
 struct ToolItem {
@@ -777,7 +746,6 @@ static struct MenuItem MenuAction[] = {
   },
 };
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct Accelerator {
   const char *action;
   const char *accel;
@@ -877,7 +845,6 @@ add_accelerator(GtkApplication *application, struct Accelerator *accel, int n)
     gtk_application_set_accels_for_action(application, accel[i].action, vaccels);
   }
 }
-#endif
 
 void
 set_pointer_mode(int id)
