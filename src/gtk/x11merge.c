@@ -371,8 +371,6 @@ CmMergeClose(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct merge_update_data
 {
   int i, num, modified;
@@ -469,44 +467,6 @@ CmMergeUpdate(void *w, gpointer client_data)
   response_callback_add(&DlgSelect, merge_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-void
-CmMergeUpdate(void *w, gpointer client_data)
-{
-  struct narray farray;
-  struct objlist *obj;
-  int modified;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("merge")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
-  modified = FALSE;
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, *array, num;
-    num = arraynum(&farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-    }
-    array = arraydata(&farray);
-    for (i = 0; i < num; i++) {
-      int ret;
-      MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
-      ret = DialogExecute(TopLevel, &DlgMerge);
-      if (ret != IDCANCEL) {
-        modified = TRUE;
-      }
-    }
-    if (modified) {
-      MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
-    }
-  }
-  arraydel(&farray);
-}
-#endif
 
 void
 MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
