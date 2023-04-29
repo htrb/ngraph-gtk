@@ -65,7 +65,6 @@ static n_list_store Mlist[] = {
 
 static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] = {
   {"mergeFocusAllAction",     list_sub_window_focus_all, NULL, NULL, NULL},
   {"mergeOrderTopAction",     list_sub_window_move_top, NULL, NULL, NULL},
