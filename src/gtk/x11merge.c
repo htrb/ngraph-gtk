@@ -87,32 +87,6 @@ static GActionEntry Popup_list[] = {
 #define POPUP_ITEM_DOWN      3
 #define POPUP_ITEM_BOTTOM    4
 #define POPUP_ITEM_ADD       5
-#else
-static struct subwin_popup_list Popup_list[] = {
-  {N_("_Add"),         G_CALLBACK(CmMergeOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Delete"),       G_CALLBACK(list_sub_window_delete), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {"_Focus",           G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("focus _All"),   G_CALLBACK(list_sub_window_focus_all), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Preferences"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Top"),    G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Up"),     G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Down"),   G_CALLBACK(list_sub_window_move_down), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Bottom"), G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
-};
-
-#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_FOCUS_ALL 5
-#define POPUP_ITEM_TOP       9
-#define POPUP_ITEM_UP       10
-#define POPUP_ITEM_DOWN     11
-#define POPUP_ITEM_BOTTOM   12
-#endif
-
 
 static void
 MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
