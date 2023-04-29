@@ -575,43 +575,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-static void
-drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
-{
-  gchar **filenames;
-
-  switch (info) {
-  case DROP_TYPE_FILE:
-    filenames = gtk_selection_data_get_uris(data);
-    if (filenames) {
-      int num;
-      num = g_strv_length(filenames);
-      data_dropped(filenames, num, FILE_TYPE_MERGE);
-      g_strfreev(filenames);
-    }
-    gtk_drag_finish(context, TRUE, FALSE, time);
-    break;
-  }
-}
-
-static void
-init_dnd(struct SubWin *d)
-{
-  GtkWidget *widget;
-  GtkTargetEntry target[] = {
-    {"text/uri-list", 0, DROP_TYPE_FILE},
-  };
-
-  widget = d->data.data->text;
-
-  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
-  g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
-}
-#endif
-
 GtkWidget *
 create_merge_list(struct SubWin *d)
 {
@@ -628,11 +591,7 @@ create_merge_list(struct SubWin *d)
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   init_dnd_file(d, FILE_TYPE_MERGE);
-#else
-  init_dnd(d);
-#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
