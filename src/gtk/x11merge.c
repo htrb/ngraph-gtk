@@ -540,7 +540,6 @@ merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -575,38 +574,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     }
   }
 }
-#else
-static void
-popup_show_cb(GtkWidget *widget, gpointer user_data)
-{
-  unsigned int i;
-  int sel, num, last_id;
-  struct obj_list_data *d;
-
-  d = (struct obj_list_data *) user_data;
-
-  sel = d->select;
-  num = chkobjlastinst(d->obj);
-  for (i = 1; i < POPUP_ITEM_NUM; i++) {
-    switch (i) {
-    case POPUP_ITEM_FOCUS_ALL:
-      last_id = chkobjlastinst(d->obj);
-      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
-      break;
-    case POPUP_ITEM_TOP:
-    case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
-      break;
-    case POPUP_ITEM_DOWN:
-    case POPUP_ITEM_BOTTOM:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
-      break;
-    default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
-    }
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
