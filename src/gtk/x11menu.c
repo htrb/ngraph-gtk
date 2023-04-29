@@ -2995,7 +2995,6 @@ PutStdout(const char *s)
   return len + 1;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 put_stderr_main(gpointer user_data)
 {
@@ -3004,7 +3003,6 @@ put_stderr_main(gpointer user_data)
   message_box(get_current_window(), ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
 }
-#endif
 
 int
 PutStderr(const char *s)
@@ -3020,12 +3018,7 @@ PutStderr(const char *s)
     return 0;
   }
   len = strlen(ustr);
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_idle_add_once(put_stderr_main, ustr);
-#else
-  message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
-  g_free(ustr);
-#endif
   return len + 1;
 }
 
