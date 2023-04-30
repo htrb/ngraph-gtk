@@ -476,16 +476,14 @@ dlgcombo_entry_main(gpointer user_data)
 static int
 dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int locksave, sel, ret, x, y;
+  int locksave, sel, ret;
   char *r, *title, *caption;
   struct narray *iarray, *sarray;
   struct narray *buttons;
   int btn = -1;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
@@ -509,19 +507,8 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (_getobj(obj, "x", inst, &x)) {
-    x = -1;
-  }
-
-  if (_getobj(obj, "y", inst, &y)) {
-    y = -1;
-  }
-#endif
-
   sel = arraylast_int(iarray);
   buttons = dlg_get_buttons(obj, inst);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = buttons;
   data.button = &btn;
   data.selected = sel;
@@ -532,16 +519,6 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     ret = dialog_run(title ? title : _("Select"), caption, dlgcombo_entry_main, &data);
   }
   r = data.response_text;
-#else
-  if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
-  } else {
-    ret = DialogComboEntry(get_toplevel_window(), (title) ? title : _("Input"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
-  }
-
-  _putobj(obj, "x", inst, &x);
-  _putobj(obj, "y", inst, &y);
-#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
