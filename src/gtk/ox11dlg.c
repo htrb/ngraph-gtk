@@ -742,11 +742,9 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int locksave;
   int ret;
   char *file;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -768,16 +766,10 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.initial_text = initfile;
   data.defext = filter;
   ret = dialog_run(_("Open file"), NULL, dlggetopenfile_main, &data);
   file = data.response_text;
-#else
-  file = nGetOpenFileName(get_toplevel_window(), _("Open file"),
-			 filter, NULL, initfile, TRUE, FALSE);
-  ret = (file) ? IDOK : IDCANCEL;
-#endif
   if (file) {
     changefilename(file);
     rval->str = file;
