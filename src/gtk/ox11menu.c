@@ -1418,7 +1418,6 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects)
   main_window_redraw();
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct mxredraw_data
 {
   struct objlist *obj;
@@ -1433,28 +1432,21 @@ mxredraw_main(gpointer user_data)
   mx_redraw(data->obj, data->inst, NULL);
   g_free(data);
 }
-#endif
 
 static int
 mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct mxredraw_data *data;
-#endif
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   data->obj = obj;
   data->inst = inst;
   g_idle_add_once(mxredraw_main, data);
-#else
-  mx_redraw(obj, inst, NULL);
-#endif
   return 0;
 }
 
