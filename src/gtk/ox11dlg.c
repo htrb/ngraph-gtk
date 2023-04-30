@@ -350,13 +350,11 @@ static int
 dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *title, *caption;
-  int rcode, x, y;
+  int rcode;
   struct narray *sarray;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0) {
@@ -371,28 +369,12 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     caption = NULL;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (_getobj(obj, "x", inst, &x)) {
-    x = -1;
-  }
-
-  if (_getobj(obj, "y", inst, &y)) {
-    y = -1;
-  }
-#endif
 
   g_free(rval->str);
   rval->str = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = sarray;
   rcode = dialog_run(title ? title : _("Select"), caption, dlgbutton_main, &data);
-#else
-  rcode = DialogButton(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, &x, &y);
-
-  _putobj(obj, "x", inst, &x);
-  _putobj(obj, "y", inst, &y);
-#endif
 
   if (rcode > 0) {
     const char *str;
