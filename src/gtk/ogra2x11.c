@@ -154,7 +154,7 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-void
+static void
 size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
   struct gtklocal *local;
@@ -395,8 +395,6 @@ static int
 gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
-  int idn;
-  struct objlist *robj;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv))
     return 1;
@@ -409,32 +407,13 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   if (gtklocal->mainwin != NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    GMainContext *context;
     gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
     gtklocal->mainwin = NULL;
-    context = g_main_context_default();
-    while (g_main_context_pending(context)) {
-      g_main_context_iteration(context, TRUE);
-    }
-#else
-    gtk_widget_destroy(gtklocal->mainwin);
-    gtklocal->mainwin = NULL;
-    while (gtk_events_pending()) {
-      gtk_main_iteration();
-    }
-#endif
   }
 
   if (gtklocal->surface) {
     cairo_surface_destroy(gtklocal->surface);
   }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  idn = getobjtblpos(obj, "_evloop", &robj);
-  if (idn != -1)
-    unregisterevloop(robj, idn, inst);
-#endif
 
   g_free(gtklocal->title);
 
