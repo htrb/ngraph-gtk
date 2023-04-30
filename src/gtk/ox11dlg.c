@@ -222,15 +222,13 @@ dlg_get_buttons(struct objlist *obj, N_VALUE *inst)
   return sarray;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlginput_response(int response, const char *str, gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  data->response = response;
+  dlg_response(response, data);
   data->response_text = g_strdup(str);
-  data->wait = FALSE;
 }
 
 static void
@@ -240,7 +238,6 @@ dlginput_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   input_dialog(get_toplevel_window(), data->title, data->msg, data->initial_text, _("_OK"), data->buttons, data->button, dlginput_response, data);
 }
-#endif
 
 static int
 dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
