@@ -387,7 +387,6 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlgradio_main(gpointer user_data)
 {
@@ -395,22 +394,19 @@ dlgradio_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   radio_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, _("_OK"), data->buttons, data->button, data->selected, dlg_response, data);
 }
-#endif
 
 
 static int
 dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *title, *caption;
-  int locksave, r, x, y, ret;
+  int locksave, r, ret;
   struct narray *iarray, *sarray;
   struct narray *buttons;
   int btn = -1;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
@@ -431,31 +427,15 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (_getobj(obj, "x", inst, &x)) {
-    x = -1;
-  }
-
-  if (_getobj(obj, "y", inst, &y)) {
-    y = -1;
-  }
-#endif
-
   r = arraylast_int(iarray);
 
   buttons = dlg_get_buttons(obj, inst);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = buttons;
   data.button = &btn;
   data.selected = r;
   data.sarray = sarray;
   r = dialog_run(title ? title : _("Select"), caption, dlgradio_main, &data);
   ret = (r < 0) ? IDCANCEL : IDOK;
-#else
-  ret = DialogRadio(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, &r, &x, &y);
-  _putobj(obj, "x", inst, &x);
-  _putobj(obj, "y", inst, &y);
-#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
