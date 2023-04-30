@@ -108,9 +108,4 @@ char *nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
 #endif
 void get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h);
 void set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data);
-#if GTK_CHECK_VERSION(4, 0, 0)
-void ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data);
-#else
-int ndialog_run(GtkWidget *dlg);
-#endif
 #endif
