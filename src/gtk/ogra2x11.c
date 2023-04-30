@@ -210,8 +210,7 @@ cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointe
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-void
+static void
 resized(GtkWidget *widget, int w, int h, gpointer user_data)
 {
   struct gtklocal *local;
@@ -255,19 +254,14 @@ draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, 
 {
   gtkevpaint(GTK_WIDGET(drawing_area), cr, user_data);
 }
-#endif
 
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
   struct gra2cairo_local *local;
-  struct objlist *robj;
-  int idn, oid, width, height;
+  int oid, width, height;
   GtkWidget *scrolled_window = NULL;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GtkEventController *ev;
-#endif
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
@@ -344,11 +338,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtklocal->title = mkobjlist(obj, NULL, oid, NULL, TRUE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtklocal->mainwin = gtk_window_new();
-#else
-  gtklocal->mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif
   if (TopLevel) {
     gtk_window_set_modal(GTK_WINDOW(gtklocal->mainwin), TRUE);
     gtk_window_set_transient_for(GTK_WINDOW(gtklocal->mainwin), GTK_WINDOW(TopLevel));
@@ -358,95 +348,35 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   g_signal_connect_swapped(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal->mainwin);
-#else
-  g_signal_connect_swapped(gtklocal->mainwin,
-			   "delete-event",
-			   G_CALLBACK(gtkclose), gtklocal->mainwin);
-#endif
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrolled_window = gtk_scrolled_window_new();
-#else
-  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_child(GTK_WINDOW(gtklocal->mainwin), scrolled_window);
-#else
-  gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), scrolled_window);
-#endif
 
   gtklocal->View = gtk_drawing_area_new();
   gtk_widget_set_halign(gtklocal->View, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(gtklocal->View, GTK_ALIGN_CENTER);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(gtklocal->View), draw_function, gtklocal, NULL);
   gtk_widget_set_can_focus(gtklocal->View, TRUE);
   g_signal_connect(gtklocal->View, "resize", G_CALLBACK(resized), gtklocal);
-/* must be implemented */
-#else
-  g_signal_connect(gtklocal->View, "draw",
-		   G_CALLBACK(gtkevpaint), gtklocal);
 
-  g_signal_connect(gtklocal->mainwin, "size-allocate",
-		   G_CALLBACK(size_allocate), gtklocal);
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), gtklocal->View);
-#else
-  gtk_container_add(GTK_CONTAINER(scrolled_window), gtklocal->View);
-#endif
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show_all(gtklocal->mainwin);
-#endif
 
   gtklocal->surface= NULL;
   gtklocal->redraw = TRUE;
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  ev = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
-  gtk_widget_add_controller(gtklocal->mainwin, GTK_EVENT_CONTROLLER(ev));
-#else
-  g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
-
-  if (chkobjfield(obj, "_evloop")) {
-    goto errexit;
-  }
-
-  idn = getobjtblpos(obj, "_evloop", &robj);
-  if (idn == -1) {
-    goto errexit;
-  }
-
-  registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, gtklocal);
-#endif
-
   gtkchangedpi(gtklocal);
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_evloop(obj, inst, NULL, argc, argv);
-#endif
   return 0;
 
 errexit:
   if (gtklocal) {
     if (gtklocal->mainwin) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
-#else
-      gtk_widget_destroy(gtklocal->mainwin);
-#endif
     }
 
     if (gtklocal->mainwin) {
