@@ -338,24 +338,13 @@ get_sarray_argument(struct narray *sarray)
   return sarray;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-static void
-dlgbutton_response(int response, gpointer user_data)
-{
-  struct dialog_data *data;
-  data = (struct dialog_data *) user_data;
-  data->response = response;
-  data->wait = FALSE;
-}
-
 static void
 dlgbutton_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  button_dialog(get_toplevel_window(), data->title, data->msg, data->buttons, dlgbutton_response, data);
+  button_dialog(get_toplevel_window(), data->title, data->msg, data->buttons, dlg_response, data);
 }
-#endif
 
 static int
 dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
