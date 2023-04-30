@@ -852,7 +852,6 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   return (ret == IDOK)? 0 : 1;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlggetsavefile_main(gpointer user_data)
 {
@@ -860,7 +859,6 @@ dlggetsavefile_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   nGetSaveFileName(get_toplevel_window(), data->title, data->defext, NULL, data->initial_text, FALSE, dlggetopenfile_response, data);
 }
-#endif
 
 static int
 dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
@@ -873,11 +871,9 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int locksave;
   int ret;
   char *file;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -899,16 +895,10 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.initial_text = initfile;
   data.defext = filter;
   ret = dialog_run(_("Save file"), NULL, dlggetsavefile_main, &data);
   file = data.response_text;
-#else
-  file = nGetSaveFileName(get_toplevel_window(), _("Save file"),
-			 filter, NULL, initfile, FALSE, TRUE);
-  ret = (file) ? IDOK : IDCANCEL;
-#endif
   if (file) {
     changefilename(file);
     rval->str = file;
