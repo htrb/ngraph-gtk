@@ -531,7 +531,6 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlgspin_main(gpointer user_data)
 {
@@ -539,21 +538,18 @@ dlgspin_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   spin_dialog(get_toplevel_window(), data->title, data->msg, data->min, data->max, data->inc, data->buttons, data->button, data->val, dlg_response, data);
 }
-#endif
 
 static int
 dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int locksave, ret, type, x, y;
+  int locksave, ret, type;
   char *title, *caption;
   double min, max, inc, r;
   struct narray *buttons;
   int btn = -1;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -565,16 +561,6 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (_getobj(obj, "caption", inst, &caption)) {
     caption = NULL;
   }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (_getobj(obj, "x", inst, &x)) {
-    x = -1;
-  }
-
-  if (_getobj(obj, "y", inst, &y)) {
-    y = -1;
-  }
-#endif
 
   type = argv[1][0];
   switch (type) {
@@ -596,7 +582,6 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   buttons = dlg_get_buttons(obj, inst);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = buttons;
   data.button = &btn;
   data.val = &r;
@@ -604,12 +589,6 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   data.max = max;
   data.inc = inc;
   ret = dialog_run(title ? title : _("Input"), caption, dlgspin_main, &data);
-#else
-  ret = DialogSpinEntry(get_toplevel_window(), (title) ? title : _("Input"), caption, min, max, inc, buttons, &btn, &r, &x, &y);
-
-  _putobj(obj, "x", inst, &x);
-  _putobj(obj, "y", inst, &y);
-#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
