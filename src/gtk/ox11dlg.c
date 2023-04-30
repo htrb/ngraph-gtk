@@ -448,15 +448,13 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlgcombo_response(int response, const char *str, gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  data->response = response;
+  dlg_response(response, data);
   data->response_text = g_strdup(str);
-  data->wait = FALSE;
 }
 
 static void
@@ -474,7 +472,6 @@ dlgcombo_entry_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   combo_entry_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, data->buttons, data->button, data->selected, dlgcombo_response, data);
 }
-#endif
 
 static int
 dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
