@@ -75,9 +75,6 @@ struct gtklocal
   N_VALUE *inst;
   GtkWidget *mainwin, *View;
   cairo_surface_t *surface;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *window;
-#endif
   char *title;
   int redraw, fit, frame;
   unsigned int windpi;
@@ -90,10 +87,6 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
-		      char **argv);
-#endif
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
@@ -588,17 +581,6 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   redraw_window(gtklocal);
   return 0;
 }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static int
-gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  while (gtk_events_pending()) {
-    gtk_main_iteration();
-  }
-  return 0;
-}
-#endif
 
 static int
 dot2pixel(struct gtklocal *gtklocal, int r)
