@@ -2029,7 +2029,6 @@ mx_show_source_view_search_path(struct objlist *obj, N_VALUE *inst, N_VALUE *rva
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_finalise(gpointer user_data)
 {
@@ -2043,26 +2042,19 @@ draw_main(gpointer user_data)
 {
   Draw(FALSE, draw_finalise, user_data);
 }
-#endif
 
 static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   int drawing;
-#endif
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   drawing = TRUE;
   g_idle_add_once(draw_main, &drawing);
   dialog_wait(&drawing);
-#else
-  Draw(FALSE);
-#endif
   return 0;
 }
 
