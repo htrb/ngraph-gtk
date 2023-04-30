@@ -102,6 +102,7 @@ static int gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
 static int dot2pixel(struct gtklocal *gtklocal, int r);
 static int gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
+static void resized(GtkWidget *widget, int w, int h, gpointer user_data);
 
 static gboolean
 gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
@@ -150,57 +151,10 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 static void
 size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
-  struct gtklocal *local;
-  double w, h, rh, rw, ratio;
-  int pw, ph, dpi;
-
-  local = (struct gtklocal *) user_data;
-  if (local == NULL) {
-    return;
-  }
-
-  if (! local->fit) {
-    return;
-  }
-
+  double w, h;
   w = allocation->width;
   h = allocation->height;
-
-  pw = local->PaperWidth;
-  ph = local->PaperHeight;
-
-  if (pw < 1 || ph < 1) {
-    return;
-  }
-
-  rw = w / pw;
-  rh = h / ph;
-
-  ratio = (rh > rw) ? rw : rh;
-  dpi = ratio * DPI_MAX;
-
-  local->windpi = dpi;
-  local->local->pixel_dot_x =
-    local->local->pixel_dot_y = ratio;
-
-  _putobj(local->obj, "dpi", local->inst, &dpi);
-
-  gtkchangedpi(local);
-
-}
-
-static void
-cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer user_data)
-{
-  struct gtklocal *gtklocal;
-
-  gtklocal = (struct gtklocal *) user_data;
-
-  if (gtklocal->blank_cursor) {
-    gtk_widget_set_cursor(gtklocal->mainwin, NULL);
-    g_object_unref(gtklocal->blank_cursor);
-    gtklocal->blank_cursor = NULL;
-  }
+  resized(widget, w, h, user_data);
 }
 
 static void
@@ -226,8 +180,8 @@ resized(GtkWidget *widget, int w, int h, gpointer user_data)
     return;
   }
 
-  rw = w / pw;
-  rh = h / ph;
+  rw = 1.0 * w / pw;
+  rh = 1.0 * h / ph;
 
   ratio = (rh > rw) ? rw : rh;
   dpi = ratio * DPI_MAX;
