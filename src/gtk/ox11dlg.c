@@ -170,7 +170,6 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return (rcode == IDYES)? 0 : 1;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlgmessage_main(gpointer user_data)
 {
@@ -178,18 +177,15 @@ dlgmessage_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   markup_message_box_full(get_toplevel_window(), CHK_STR(data->msg), (data->title) ? data->title : _("Message"), RESPONS_OK, FALSE, dlg_response, data);
 }
-#endif
 
 static int
 dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
   int locksave;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -198,12 +194,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = (char *)argv[2];
   locksave = Globallock;
   Globallock = TRUE;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   dialog_run(title ? title : _("Message"), mes, dlgmessage_main, &data);
-#else
-  message_box(get_toplevel_window(), CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
-#endif
   Globallock = locksave;
 
   return 0;
