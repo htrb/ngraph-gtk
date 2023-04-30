@@ -237,11 +237,7 @@ cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointe
   gtklocal = (struct gtklocal *) user_data;
 
   if (gtklocal->blank_cursor) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_cursor(gtklocal->mainwin, NULL);
-#else
-    gdk_window_set_cursor(gtk_widget_get_window(gtklocal->mainwin), NULL);
-#endif
     g_object_unref(gtklocal->blank_cursor);
     gtklocal->blank_cursor = NULL;
   }
