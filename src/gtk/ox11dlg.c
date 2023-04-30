@@ -611,7 +611,6 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dlgcheck_main(gpointer user_data)
 {
@@ -619,21 +618,18 @@ dlgcheck_main(gpointer user_data)
   data = (struct dialog_data *) user_data;
   check_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, data->buttons, data->button, data->ival, dlg_response, data);
 }
-#endif
 
 static int
 dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int locksave, *r, i, n, inum, x, y, ret;
+  int locksave, *r, i, n, inum, ret;
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
   struct narray *buttons;
   int btn = -1;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
 
   memset(&data, 0, sizeof(data));
-#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   n = arraynum(sarray);
@@ -660,16 +656,6 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (_getobj(obj, "x", inst, &x)) {
-    x = -1;
-  }
-
-  if (_getobj(obj, "y", inst, &y)) {
-    y = -1;
-  }
-#endif
-
   r = g_malloc(n * sizeof(int));
   if (r == NULL) {
     arrayfree(array);
@@ -689,17 +675,11 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   }
 
   buttons = dlg_get_buttons(obj, inst);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = buttons;
   data.button = &btn;
   data.sarray = sarray;
   data.ival = r;
   ret = dialog_run(title ? title : _("Select"), caption, dlgcheck_main, &data);
-#else
-  ret = DialogCheck(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
-  _putobj(obj, "x", inst, &x);
-  _putobj(obj, "y", inst, &y);
-#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     arrayfree(array);
