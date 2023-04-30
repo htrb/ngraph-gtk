@@ -151,7 +151,7 @@ char *Documenter[] = {
 
 
 static int OpenDisplay = FALSE;
-static GMainLoop *MainLoop;
+static GMainLoop *MainLoop = NULL;
 
 static void * ( * obj_add_func_ary[]) (void) = {
   addshell,
