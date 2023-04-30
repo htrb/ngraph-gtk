@@ -103,8 +103,6 @@ get_toplevel_window(void)
 static int
 dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int pos = -1;
-
  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
   }
@@ -113,11 +111,6 @@ dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     error(obj, ERRDISPLAY);
     return 1;
   }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  _putobj(obj, "x", inst, &pos);
-  _putobj(obj, "y", inst, &pos);
-#endif
 
   return 0;
 }
