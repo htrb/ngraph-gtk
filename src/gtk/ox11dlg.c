@@ -56,11 +56,10 @@ static char *dlgerrorlist[] = {
 
 static GtkWidget *DLGTopLevel = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct dialog_data {
   char *title, *msg, *initial_text, *response_text, *defext, **files;
   struct narray *buttons, *sarray;
-  int response, wait, *button, selected, *ival;
+  int response, wait, *button, selected, *ival, quit_main_loop;
   double min, max, inc, *val;
 };
 
@@ -71,11 +70,17 @@ dialog_run(char *title, char *mes, GSourceOnceFunc func, struct dialog_data *dat
   data->msg = mes;
   data->title = title;
   data->response_text = NULL;
-  g_idle_add_once(func, data);
-  dialog_wait(&data->wait);
+  if (g_main_loop_is_running(main_loop())) {
+    data->quit_main_loop = FALSE;
+    g_idle_add_once(func, data);
+    dialog_wait(&data->wait);
+  } else {
+    data->quit_main_loop = TRUE;
+    func(data);
+    g_main_loop_run(main_loop());
+  }
   return data->response;
 }
-#endif
 
 static GtkWidget *
 get_toplevel_window(void)
@@ -133,6 +138,9 @@ dlg_response(int response, gpointer user_data)
   data = (struct dialog_data *) user_data;
   data->response = response;
   data->wait = FALSE;
+  if (data->quit_main_loop) {
+    g_idle_add_once((GSourceOnceFunc) g_main_loop_quit, main_loop());
+  }
 }
 
 static void
