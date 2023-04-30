@@ -735,9 +735,6 @@ static struct objtable gra2gtk[] = {
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  {"_evloop", NVFUNC, 0, gtk_evloop, NULL, 0},
-#endif
 };
 
 #define TBLNUM (sizeof(gra2gtk) / sizeof(*gra2gtk))
