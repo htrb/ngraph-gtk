@@ -1760,7 +1760,7 @@ print_dialog_run(gpointer user_data)
 static int
 mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int show_dialog, select_file, create_window = FALSE, lock, flag;
+  int show_dialog, select_file, flag;
 
   select_file = * (int *) argv[2];
   show_dialog = * (int *) argv[3];
