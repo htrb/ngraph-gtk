@@ -908,10 +908,6 @@ static struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  {"x", NINT, NREAD | NWRITE, NULL, NULL, 0},
-  {"y", NINT, NREAD | NWRITE, NULL, NULL, 0},
-#endif
   {"title", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"caption", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"select", NIARRAY, NREAD | NWRITE, NULL, NULL, 0},
