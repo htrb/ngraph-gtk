@@ -1013,73 +1013,6 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return 0;
 }
 
-static int
-gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  struct gtklocal *local;
-  const char *name;
-
-  _getobj(obj, "_gtklocal", inst, &local);
-
-  g_free(rval->str);
-  rval->str = NULL;
-
-  if (local->mainwin == NULL) {
-    return 1;
-  }
-
-  if (local->blank_cursor == NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    local->blank_cursor = gdk_cursor_new_from_name("none", NULL);
-    gtk_widget_set_cursor(local->mainwin, local->blank_cursor);
-#else
-    local->blank_cursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_BLANK_CURSOR);
-    gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
-#endif
-  }
-
-  local->action.type = ACTION_TYPE_NONE;
-  local->action.val = 0;
-  while (local->action.type == ACTION_TYPE_NONE) {
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_evloop(NULL, NULL, NULL, 0, NULL);
-#endif
-    msleep(100);
-  }
-
-  switch (local->action.type) {
-  case ACTION_TYPE_NONE:
-    break;
-  case ACTION_TYPE_KEY:
-    name = gdk_keyval_name(local->action.val);
-    if (name) {
-      rval->str = g_strdup(name);
-    }
-    break;
-  case ACTION_TYPE_BUTTON:
-    rval->str = g_strdup_printf("button%d", local->action.val);
-    break;
-  case ACTION_TYPE_SCROLL:
-    switch (local->action.val) {
-    case GDK_SCROLL_UP:
-      rval->str = g_strdup("scroll_up");
-      break;
-    case GDK_SCROLL_DOWN:
-      rval->str = g_strdup("scroll_down");
-      break;
-    case GDK_SCROLL_LEFT:
-      rval->str = g_strdup("scroll_left");
-      break;
-    case GDK_SCROLL_RIGHT:
-      rval->str = g_strdup("scroll_right");
-      break;
-    }
-    break;
-  }
-
-  return 0;
-}
-
 static struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
@@ -1099,7 +1032,6 @@ static struct objtable gra2gtk[] = {
   {"BR", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
-  {"wait_action",NSFUNC, NREAD | NEXEC, gtkwait_action, "", 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gtk_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
