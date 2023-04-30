@@ -108,7 +108,7 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-void
+static void
 ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
 {
   if (cb) {
@@ -118,7 +118,7 @@ ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
   gtk_widget_show(dlg);
 }
 #else
-int
+static int
 ndialog_run(GtkWidget *dlg)
 {
   int lock_state, r;
