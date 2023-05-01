@@ -727,6 +727,9 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 1;
   }
 
+  if (local->mainwin == NULL)
+    return 1;
+
   switch (argv[1][0]) {
   case 'h':
     height = size;
