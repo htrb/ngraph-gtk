@@ -439,8 +439,18 @@ gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   if (_getobj(obj, "_gtklocal", inst, &local))
     return 1;
 
+  if (local->mainwin == NULL)
+    return 1;
+
   gtk_widget_show(local->mainwin);
   gtk_window_present(GTK_WINDOW(local->mainwin));
+
+  if (g_main_loop_is_running(main_loop())) {
+    local->quit_main_loop = FALSE;
+  } else {
+    local->quit_main_loop = TRUE;
+    g_main_loop_run(main_loop());
+  }
 
   return 0;
 }
