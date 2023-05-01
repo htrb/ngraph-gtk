@@ -81,6 +81,7 @@ struct gtklocal
   int PaperWidth, PaperHeight;
   double bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
+  int quit_main_loop;
 #if OSX
   int menulock;
 #endif
@@ -218,7 +219,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 {
   struct gtklocal *gtklocal;
   struct gra2cairo_local *local;
-  int oid, width, height;
+  int oid, width, height, delete_gra;
   GtkWidget *scrolled_window = NULL;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
@@ -235,6 +236,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->fit = FALSE;
   gtklocal->frame = TRUE;
   gtklocal->blank_cursor = NULL;
+  gtklocal->quit_main_loop = FALSE;
 
   if (_putobj(obj, "_gtklocal", inst, gtklocal))
     goto errexit;
@@ -277,6 +279,10 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (_putobj(obj, "dpiy", inst, &(gtklocal->windpi)))
     goto errexit;
 
+  delete_gra = TRUE;
+  if (_putobj(obj, "delete_gra", inst, &delete_gra))
+    goto errexit;
+
   local->pixel_dot_x =
   local->pixel_dot_y = gtklocal->windpi / (DPI_MAX * 1.0);
 
@@ -306,7 +312,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
-  g_signal_connect_swapped(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal->mainwin);
+  g_signal_connect(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal);
   g_signal_connect(gtklocal->mainwin, "destroy", G_CALLBACK(destroyed), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
