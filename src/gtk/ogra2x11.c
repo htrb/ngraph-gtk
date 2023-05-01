@@ -468,6 +468,9 @@ gtkfullscreen(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
   if (_getobj(obj, "_gtklocal", inst, &local))
     return 1;
 
+  if (local->mainwin == NULL)
+    return 1;
+
   state = *(int *) argv[2];
 
   if (state) {
