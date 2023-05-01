@@ -127,6 +127,17 @@ gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
   return FALSE;
 }
 
+static void
+destroyed(GtkWidget *win, gpointer user_data)
+{
+  struct gtklocal *local;
+  local = (struct gtklocal *) user_data;
+  if (local->quit_main_loop) {
+    g_idle_add_once((GSourceOnceFunc) g_main_loop_quit, main_loop());
+  }
+  local->mainwin = NULL;
+}
+
 static int
 gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
@@ -296,6 +307,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
   g_signal_connect_swapped(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal->mainwin);
+  g_signal_connect(gtklocal->mainwin, "destroy", G_CALLBACK(destroyed), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
