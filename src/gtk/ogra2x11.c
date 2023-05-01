@@ -693,7 +693,7 @@ gtk_set_fit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 
   local->fit = fit;
 
-  if (fit) {
+  if (fit && local->mainwin) {
     GtkAllocation allocation;
     gtk_widget_get_allocation(local->mainwin, &allocation);
     size_allocate(local->mainwin, &allocation, local);
