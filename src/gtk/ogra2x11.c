@@ -342,6 +342,7 @@ errexit:
   if (gtklocal) {
     if (gtklocal->mainwin) {
       gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
+      gtklocal->mainwin = NULL;
     }
 
     if (gtklocal->mainwin) {
