@@ -87,7 +87,7 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
-static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
+static int gtkclose(GtkWidget *widget, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
 			   gpointer user_data);
@@ -139,7 +139,7 @@ destroyed(GtkWidget *win, gpointer user_data)
 }
 
 static int
-gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+gtkclose(GtkWidget *widget, gpointer user_data)
 {
   struct gtklocal *local;
   int i, id;
@@ -156,7 +156,7 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
       break;
     }
   }
-  return TRUE;
+  return FALSE;
 }
 
 static void
