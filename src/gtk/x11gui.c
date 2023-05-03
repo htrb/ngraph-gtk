@@ -1431,7 +1431,6 @@ nGetOpenFileName(GtkWidget *parent,
   FileSelectionDialog(parent, data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 nGetSaveFileName_response(struct nGetOpenFileData *data)
 {
@@ -1483,42 +1482,6 @@ nGetSaveFileName(GtkWidget * parent,
   data->data = user_data;
   FileSelectionDialog(parent, data);
 }
-#else
-char *
-nGetSaveFileName(GtkWidget * parent,
-		 char *title, char *defext, char **init_dir, const char *init_file, int overwrite, int chd)
-{
-  struct nGetOpenFileData *data;
-  int ret;
-  char *file;
-
-  data->title = title;
-  data->init_dir = init_dir;
-  data->init_file = init_file;
-  data->file = NULL;
-  data->chdir = chd;
-  data->ext = defext;
-  data->mustexist = FALSE;
-  data->overwrite = overwrite;
-  data->multi = FALSE;
-  data->changedir = TRUE;
-  data->type = GTK_FILE_CHOOSER_ACTION_SAVE,
-  data->button = _("_Save");
-  ret = FileSelectionDialog(parent, data);
-  if (ret == IDOK) {
-    file = data->file[0];
-    g_free(data->file);
-    if (data->chdir && init_dir && nchdir(*init_dir)) {
-      ErrorMessage();
-    }
-  } else {
-    *file = NULL;
-  }
-
-  g_free(data);
-  return ret;
-}
-#endif
 
 void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
