@@ -281,7 +281,6 @@ message_beep(GtkWidget * parent)
   //  reset_event();
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct response_message_box_data {
   gpointer data;
   response_cb cb;
@@ -432,101 +431,6 @@ markup_message_box(GtkWidget *parent, const char *message, const char *title, in
 {
   markup_message_box_full(parent, message, title, mode, markup, NULL, NULL);
 }
-#else
-int
-message_box(GtkWidget * parent, const char *message, const char *title, int mode)
-{
-  return markup_message_box(parent, message, title, mode, FALSE);
-}
-
-int
-markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup)
-{
-  GtkWidget *dlg;
-  int data;
-  GtkMessageType dlg_type;
-  GtkButtonsType dlg_button;
-  gint res_id;
-
-  if (title == NULL) {
-    title = _("Error");
-  }
-
-  switch (mode) {
-  case RESPONS_YESNOCANCEL:
-    dlg_button = GTK_BUTTONS_CANCEL;
-    dlg_type = GTK_MESSAGE_QUESTION;
-    break;
-  case RESPONS_YESNO:
-    dlg_button = GTK_BUTTONS_YES_NO;
-    dlg_type = GTK_MESSAGE_QUESTION;
-    break;
-  case RESPONS_ERROR:
-    dlg_button = GTK_BUTTONS_OK;
-    dlg_type = GTK_MESSAGE_ERROR;
-    break;
-  default:
-    dlg_button = GTK_BUTTONS_OK;
-    dlg_type = GTK_MESSAGE_INFO;
-  }
-
-  if (parent == NULL)
-    parent = get_current_window();
-
-  dlg = gtk_message_dialog_new(GTK_WINDOW(parent),
-			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-			       dlg_type,
-			       dlg_button,
-			       "%.512s", message);
-  if (markup) {
-    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dlg), message);
-  }
-
-  switch (mode) {
-  case RESPONS_YESNOCANCEL:
-    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_No"), GTK_RESPONSE_NO);
-    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Yes"), GTK_RESPONSE_YES);
-    /* fall through */
-  case RESPONS_YESNO:
-    gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
-    break;
-  }
-
-  gtk_window_set_title(GTK_WINDOW(dlg), title);
-  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-
-  gtk_widget_show_all(dlg);
-  res_id = ndialog_run(dlg);
-
-  switch (res_id) {
-  case GTK_RESPONSE_OK:
-    data = IDYES;
-    break;
-  case GTK_RESPONSE_YES:
-    data = IDYES;
-    break;
-  case GTK_RESPONSE_NO:
-    data = IDNO;
-    break;
-  case GTK_RESPONSE_CANCEL:
-    data = IDCANCEL;
-    break;
-  default:
-    if ((mode == RESPONS_OK) || (mode == RESPONS_ERROR)) {
-      data = IDOK;
-    } else if (mode == RESPONS_YESNO) {
-      data = IDNO;
-    } else {
-      data = IDCANCEL;
-    }
-  }
-
-  gtk_widget_destroy(dlg);
-  reset_event();
-
-  return data;
-}
-#endif
 
 struct input_dialog_data {
   GtkWidget *text;
