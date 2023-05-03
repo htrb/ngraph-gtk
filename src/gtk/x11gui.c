@@ -107,7 +107,6 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
   ((struct DialogType *) user_data)->widget = NULL;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
 {
@@ -117,23 +116,6 @@ ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
   gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
   gtk_widget_show(dlg);
 }
-#else
-static int
-ndialog_run(GtkWidget *dlg)
-{
-  int lock_state, r;
-
-  if (dlg == NULL) {
-    return GTK_RESPONSE_CANCEL;
-  }
-
-  lock_state = DnDLock;
-  r = gtk_dialog_run(GTK_DIALOG(dlg));
-  DnDLock = lock_state;
-
-  return r;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
