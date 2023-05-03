@@ -1486,7 +1486,6 @@ nGetSaveFileName(GtkWidget * parent,
 void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GdkSurface *surface;
   /* must be implemented */
   surface = gtk_native_get_surface(GTK_NATIVE(win));
@@ -1494,8 +1493,4 @@ get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
   *h = gdk_surface_get_height(surface);
   *x = 0;
   *y = 0;
-#else
-  gtk_window_get_size(GTK_WINDOW(win), w, h);
-  gtk_window_get_position(GTK_WINDOW(win), x, y);
-#endif
 }
