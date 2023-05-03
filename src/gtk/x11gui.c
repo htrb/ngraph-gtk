@@ -1225,7 +1225,6 @@ get_filename_with_ext(const char *basename, const char *ext)
   return filename;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 FileSelectionDialog_response(GtkWidget* dlg, gint response_id, gpointer user_data)
 {
@@ -1327,109 +1326,6 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 
   gtk_widget_show(dlg);
 }
-#else
-static int
-FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
-{
-  GtkWidget *dlg, *rc;
-  GtkFileFilter *filter;
-  char *fname;
-
-  dlg = gtk_file_chooser_dialog_new(data->title,
-				    GTK_WINDOW((parent) ? parent : TopLevel),
-				    data->type,
-				    _("_Cancel"), GTK_RESPONSE_CANCEL,
-				    data->button, GTK_RESPONSE_ACCEPT,
-				    NULL);
-  gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
-  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
-  rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
-  gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(dlg), rc);
-  data->chdir_cb = rc;
-  gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);
-  data->widget = dlg;
-
-  if (data->ext) {
-    char *filter_str, *filter_name, *ext_name;
-
-    filter_str = g_strdup_printf("*.%s", data->ext);
-    ext_name = g_ascii_strup(data->ext, -1);
-    filter_name = g_strdup_printf(_("%s file (*.%s)"), ext_name, data->ext);
-    g_free(ext_name);
-
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, filter_str);
-    gtk_file_filter_set_name(filter, filter_name);
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-    g_free(filter_str);
-    g_free(filter_name);
-
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*");
-    gtk_file_filter_set_name(filter, _("All"));
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-  } else {
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*");
-    gtk_file_filter_set_name(filter, _("All"));
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*.txt");
-    gtk_file_filter_set_name(filter, "Text file (*.txt)");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*.dat");
-    gtk_file_filter_set_name(filter, "Data file (*.dat)");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-  }
-
-  if (data->init_dir && *(data->init_dir)) {
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
-  }
-  gtk_widget_show_all(dlg);
-
-  if (data->changedir && data->init_dir) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
-  } else {
-    gtk_widget_hide(data->chdir_cb);
-  }
-
-  fname = get_filename_with_ext(data->init_file, data->ext);
-  if (fname) {
-    if (data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-      file_dialog_set_current_neme(dlg, fname);
-    } else {
-      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), fname);
-    }
-    g_free(fname);
-  }
-
-  data->ret = IDCANCEL;
-
-  while (1) {
-    if (ndialog_run(dlg) != GTK_RESPONSE_ACCEPT)
-      break;
-
-    fsok(dlg, data);
-    if (data->ret == IDOK && data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-      file_dialog_set_current_neme(dlg, data->file[0]);
-      if (! data->overwrite && check_overwrite(dlg, data->file[0])) {
-	data->ret = IDCANCEL;
-	continue;
-      }
-    }
-    break;
-  }
-
-  gtk_widget_destroy(dlg);
-  reset_event();
-  data->widget = NULL;
-
-  return data->ret;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
