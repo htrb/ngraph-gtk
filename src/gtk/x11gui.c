@@ -117,7 +117,6 @@ ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 call_response_cb(struct response_callback *cb)
 {
@@ -264,120 +263,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->win_ptr = get_current_window();
   set_current_window(dlg);
 }
-#else
-int
-DialogExecute(GtkWidget *parent, void *dialog)
-{
-  GtkWidget *dlg, *win_ptr;
-  struct DialogType *data;
-  gint res_id, lockstate;
-#if OSX
-  int menulock;
-#endif
-
-  lockstate = DnDLock;
-  DnDLock = TRUE;
-
-  data = (struct DialogType *) dialog;
-
-  if (data->widget && (data->parent != parent)) {
-#if 1
-    gtk_window_set_transient_for(GTK_WINDOW(data->widget), GTK_WINDOW(parent));
-    data->parent = parent;
-#else
-    gtk_widget_destroy(data->widget);
-    reset_event();
-    data->widget = NULL;
-#endif
-  }
-
-  if (data->widget == NULL) {
-    dlg = gtk_dialog_new_with_buttons(_(data->resource),
-				      GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				      GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				      _("_Cancel"), GTK_RESPONSE_CANCEL,
-				      NULL);
-
-    gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
-
-    g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
-    g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
-
-    data->parent = parent;
-    data->widget = dlg;
-    data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(data->vbox), GTK_ORIENTATION_VERTICAL);
-    data->show_cancel = TRUE;
-    data->ok_button = _("_OK");
-
-    data->SetupWindow(dlg, data, TRUE);
-    gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
-
-    if (! data->show_cancel) {
-      GtkWidget *btn;
-      btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_CANCEL);
-      gtk_widget_hide(btn);
-    }
-
-    gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  } else {
-    dlg = data->widget;
-    data->SetupWindow(dlg, data, FALSE);
-  }
-
-  gtk_widget_hide(dlg);
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
-  data->widget = dlg;
-  data->ret = IDLOOP;
-
-#if OSX
-  menulock = Menulock;
-  Menulock = TRUE;
-#endif
-  gtk_widget_show(dlg);
-  win_ptr = get_current_window();
-  set_current_window(dlg);
-  if (data->focus)
-    gtk_widget_grab_focus(data->focus);
-
-  while (data->ret == IDLOOP) {
-    res_id = ndialog_run(dlg);
-
-    if (res_id < 0) {
-      switch (res_id) {
-      case GTK_RESPONSE_OK:
-	data->ret = IDOK;
-	break;
-      default:
-	data->ret = IDCANCEL;
-	break;
-      }
-    } else {
-      data->ret = res_id;
-    }
-
-    if (data->CloseWindow) {
-      data->CloseWindow(dlg, data);
-    }
-  }
-#if OSX
-  Menulock = menulock;
-#endif
-
-  //  gtk_widget_destroy(dlg);
-  //  data->widget = NULL;
-  set_current_window(win_ptr);
-  gtk_widget_hide(dlg);
-  reset_event();
-
-  DnDLock = lockstate;
-
-  return data->ret;
-}
-#endif
 
 void
 message_beep(GtkWidget * parent)
