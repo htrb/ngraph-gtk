@@ -1196,25 +1196,6 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
   }
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static int
-check_overwrite(GtkWidget *parent, const char *filename)
-{
-  int r;
-  char *buf;
-
-  if (filename == NULL || naccess(filename, W_OK))
-    return 0;
-
-  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), CHK_STR(filename));
-
-  r = message_box(parent, buf, "Driver", RESPONS_YESNO);
-  g_free(buf);
-
-  return r != IDYES;
-}
-#endif
-
 static char *
 get_filename_with_ext(const char *basename, const char *ext)
 {
