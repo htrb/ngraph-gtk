@@ -1085,7 +1085,6 @@ check_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 #define FILE_CHOOSER_OPTION_CHDIR "chdir"
 
 static void
@@ -1327,7 +1326,6 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   gtk_widget_show(dlg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 nGetOpenFileNameMulti_response(struct nGetOpenFileData *data)
 {
@@ -1380,58 +1378,6 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   data->data = user_data;
   FileSelectionDialog(parent, data);
 }
-#else
-char **
-nGetOpenFileNameMulti(GtkWidget * parent,
-		      char *title, char *defext, char **init_dir,
-		      const char *init_file, int chd, gpointer user_data)
-{
-  int ret;
-  struct nGetOpenFileData *data;
-  char **file;
-
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    return NULL;
-  }
-
-  data->title = title;
-  data->init_dir = init_dir;
-  data->init_file = init_file;
-  data->file = NULL;
-  data->chdir = chd;
-  data->ext = defext;
-  data->mustexist = TRUE;
-  data->overwrite = FALSE;
-  data->multi = TRUE;
-  data->changedir = TRUE;
-  data->type = GTK_FILE_CHOOSER_ACTION_OPEN;
-  data->button = _("_Open");
-#if GTK_CHECK_VERSION(4, 0, 0)
-  data->response = NULL;
-#endif
-  ret = FileSelectionDialog(parent, data);
-  if (ret == IDOK) {
-    file = data->file;
-#if GTK_CHECK_VERSION(4, 0, 0)
-    if (chd && init_dir && nchdir(*init_dir)) {
-      ErrorMessage();
-    }
-#else
-    if (data->chdir && init_dir && nchdir(*init_dir)) {
-      ErrorMessage();
-    }
-#endif
-  } else {
-    file = NULL;
-  }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  g_free(data);
-#endif
-  return file;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
