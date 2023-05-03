@@ -1137,25 +1137,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
       continue;
     }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     file2 = get_utf8_filename(tmp);
-#else
-    file = get_utf8_filename(tmp);
-
-    for (i = strlen(file) - 1; (i > 0) && (file[i] != '/') && (file[i] != '.'); i--);
-    if ((file[i] != '.') && data->ext) {
-      len = strlen(data->ext) + 1;
-    } else {
-      len = 0;
-    }
-
-    if (len) {
-      file2 = g_strdup_printf("%s.%s", file, data->ext);
-      g_free(file);
-    } else {
-      file2 = file;
-    }
-#endif
     if (file2) {
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
@@ -1198,103 +1180,6 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
   g_object_unref(top);
   data->ret = IDOK;
 }
-#else
-static void
-fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
-{
-  char *file, *file2, **farray;
-  const char *filter_name;
-  int i, k, len, n;
-  GStatBuf buf;
-  GSList *top, *list;
-  GtkFileFilter *filter;
-
-  top = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dlg));
-  filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dlg));
-
-  if (filter) {
-    filter_name = gtk_file_filter_get_name(filter);
-  } else {
-    filter_name = NULL;
-  }
-
-  if (filter_name == NULL || strcmp(filter_name, _("All")) == 0) {
-    data->ext = NULL;
-  }
-
-  n = g_slist_length(top);
-  farray = g_malloc(sizeof(*farray) * (n + 1));
-  if (farray == NULL) {
-    free_str_list(top);
-    return;
-  }
-  data->file = farray;
-
-  k = 0;
-  for (list = top; list; list = list->next) {
-    char *tmp;
-
-    tmp = (char *) list->data;
-    if (tmp == NULL || strlen(tmp) < 1) {
-      message_beep(TopLevel);
-      continue;
-    }
-
-    file = get_utf8_filename(tmp);
-
-    for (i = strlen(file) - 1; (i > 0) && (file[i] != '/') && (file[i] != '.'); i--);
-    if ((file[i] != '.') && data->ext) {
-      len = strlen(data->ext) + 1;
-    } else {
-      len = 0;
-    }
-
-    if (len) {
-      file2 = g_strdup_printf("%s.%s", file, data->ext);
-      g_free(file);
-    } else {
-      file2 = file;
-    }
-    if (file2) {
-      if (data->mustexist) {
-	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
-	    || (naccess(file2, R_OK) != 0)) {
-	  message_beep(TopLevel);
-	  error22(NULL, 0, "I/O error", file2);
-	  g_free(file2);
-	  continue;
-	}
-      } else {
-	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
-	  message_beep(TopLevel);
-	  error22(NULL, 0, "I/O error", file2);
-	  g_free(file2);
-	  continue;
-	}
-      }
-      farray[k] = file2;
-      k++;
-    }
-  }
-
-  if (k == 0)
-    return;
-
-  if (data->changedir && k > 0) {
-    data->chdir = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->chdir_cb));
-    if (data->chdir && data->init_dir) {
-      char *dir;
-
-      g_free(*(data->init_dir));
-      dir = g_path_get_dirname(farray[0]);
-      *(data->init_dir) = dir;
-    }
-  }
-  farray[k] = NULL;
-  free_str_list(top);
-  data->ret = IDOK;
-}
-#endif
 
 static void
 file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
