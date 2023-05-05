@@ -1235,7 +1235,7 @@ get_save_opt_response(struct response_callback *cb)
   save_data->cb(cb->return_value, save_data);
 }
 
-static int
+static void
 get_save_opt(struct graph_save_data *save_data)
 {
   int fnum, mnum, i, src;
@@ -1249,7 +1249,8 @@ get_save_opt(struct graph_save_data *save_data)
 
   /* there are no instances of data and merge objects */
   if (fnum < 1 && mnum < 1) {
-    return IDOK;
+    save_data->cb(IDOK, save_data);
+    return;
   }
 
   /* check source field of data objects */
@@ -1260,14 +1261,14 @@ get_save_opt(struct graph_save_data *save_data)
     }
   }
   if (fnum > 0 && mnum < 1 && i == fnum) {
-    return IDOK;
+    save_data->cb(IDOK, save_data);
+    return;
   }
 
   SaveDialog(&DlgSave);
   /* must be implemented */
   response_callback_add(&DlgSave, get_save_opt_response, NULL, save_data);
   DialogExecute(TopLevel, &DlgSave);
-  return IDOK;
 }
 
 static void
