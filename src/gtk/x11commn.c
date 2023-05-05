@@ -1321,8 +1321,10 @@ GraphSave_response(int ret, gpointer user_data)
 static void
 GraphSaveSub(const char *file, const char *prev_wd, const char *current_wd)
 {
-  if (file) {
     struct graph_save_data *save_data;
+  if (file == NULL) {
+    return;
+  }
     if (prev_wd && nchdir(prev_wd)) {
       ErrorMessage();
     }
@@ -1335,7 +1337,6 @@ GraphSaveSub(const char *file, const char *prev_wd, const char *current_wd)
     save_data->current_wd = g_strdup(current_wd);
     save_data->cb = GraphSave_response;
     get_save_opt(save_data);
-  }
 }
 
 static void
