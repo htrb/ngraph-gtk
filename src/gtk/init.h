@@ -25,8 +25,7 @@ void n_application_ready(void);
 GtkApplication *n_get_gtk_application(void);
 int is_main_thread(void);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 GMainLoop *main_loop(void);
-#endif
+int main_loop_is_running(void);
 
 #endif

@@ -201,13 +201,18 @@ OpenApplication(void)
   return OpenDisplay;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 GMainLoop *
 main_loop(void)
 {
   return MainLoop;
 }
-#endif
+
+int
+main_loop_is_running(void)
+{
+  return g_main_loop_is_running(MainLoop);
+}
+
 
 int
 putconsole(const char *s)
