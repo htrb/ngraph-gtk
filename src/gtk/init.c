@@ -213,6 +213,11 @@ main_loop_is_running(void)
   return g_main_loop_is_running(MainLoop);
 }
 
+void
+main_loop_run(void)
+{
+  g_main_loop_run(main_loop());
+}
 
 int
 putconsole(const char *s)

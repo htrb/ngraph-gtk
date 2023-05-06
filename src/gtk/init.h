@@ -27,5 +27,6 @@ int is_main_thread(void);
 
 GMainLoop *main_loop(void);
 int main_loop_is_running(void);
+void main_loop_run(void);
 
 #endif
