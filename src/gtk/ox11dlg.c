@@ -70,14 +70,14 @@ dialog_run(char *title, char *mes, GSourceOnceFunc func, struct dialog_data *dat
   data->msg = mes;
   data->title = title;
   data->response_text = NULL;
-  if (g_main_loop_is_running(main_loop())) {
+  if (main_loop_is_running()) {
     data->quit_main_loop = FALSE;
     g_idle_add_once(func, data);
     dialog_wait(&data->wait);
   } else {
     data->quit_main_loop = TRUE;
     func(data);
-    g_main_loop_run(main_loop());
+    main_loop_run();
   }
   return data->response;
 }
