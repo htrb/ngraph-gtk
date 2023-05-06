@@ -446,11 +446,11 @@ gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   gtk_widget_show(local->mainwin);
   gtk_window_present(GTK_WINDOW(local->mainwin));
 
-  if (g_main_loop_is_running(main_loop())) {
+  if (main_loop_is_running()) {
     local->quit_main_loop = FALSE;
   } else {
     local->quit_main_loop = TRUE;
-    g_main_loop_run(main_loop());
+    main_loop_run();
   }
 
   return 0;
