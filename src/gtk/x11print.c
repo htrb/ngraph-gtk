@@ -1167,6 +1167,7 @@ CmOutputEMF(int type)
   draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
 }
 #endif
+#endif
 
 void
 CmOutputPrinterB(void *wi, gpointer client_data)
