@@ -1023,7 +1023,7 @@ outpu_emf_response_response(int res, gpointer user_data)
   struct objlist *graobj, *g2wobj;
   struct gra_out_data *data;
 
-  file = (const char *) user_data;
+  file = (char *) user_data;
   if (res) {
     g_free(file);
     return;
