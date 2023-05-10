@@ -1018,6 +1018,7 @@ CmOutputImage(int type)
 static void
 outpu_emf_response_response(int res, gpointer user_data)
 {
+  N_VALUE *g2winst;
   char *file;
   int id, g2wid, g2woid;
   struct objlist *graobj, *g2wobj;
@@ -1063,7 +1064,6 @@ outpu_emf_response_response(int res, gpointer user_data)
 static void
 outpu_emf_response(char *file, gpointer user_data)
 {
-  N_VALUE *g2winst;
   int type;
 
   type = GPOINTER_TO_INT(user_data);
