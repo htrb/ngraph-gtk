@@ -1014,6 +1014,96 @@ CmOutputImage(int type)
 }
 
 #if WINDOWS
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+outpu_emf_response_response(int res, gpointer user_data)
+{
+  const char *file;
+
+  file = (const char *) user_data;
+  if (res) {
+    g_free(file);
+    return;
+  }
+
+  FileAutoScale();
+  AdjustAxis();
+
+  graobj = chkobject("gra");
+  if (graobj == NULL) {
+    g_free(file);
+    return;
+  }
+
+  g2wobj = chkobject("gra2emf");
+  if (g2wobj == NULL) {
+    g_free(file);
+    return;
+  }
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0) {
+    g_free(file);
+    return;
+  }
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  id = newobj(graobj);
+  putobj(g2wobj, "file", g2wid, file);
+  init_graobj(graobj, id, "gra2emf", g2woid);
+  data = create_gra_out_data(graobj, id, g2wobj, g2wid);
+  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
+
+}
+
+static void
+outpu_emf_response(char *file, gpointer user_data)
+{
+  N_VALUE *g2winst;
+  int id, g2wid, g2woid;
+  struct objlist *graobj, *g2wobj;
+  struct gra_out_data *data;
+  int type;
+
+  type = GPOINTER_TO_INT(user_data);
+  if (type == MenuIdOutputEMFFile && file == NULL) {
+    g_free(file);
+    return;
+  }
+
+  if (Menulocal.select_data) {
+    SetFileHidden(outpu_emf_response_response, file);
+    return;
+  }
+  outpu_emf_response_response(0, file);
+}
+
+static void
+CmOutputEMF(int type)
+{
+  char *title, *file;
+
+  if (Menulock || Globallock)
+    return;
+
+  title = "Save as Windows Enhanced Metafile (EMF)";
+
+  file = NULL;
+  if (type == MenuIdOutputEMFFile) {
+    int ret;
+    char *ext_str, *tmp;
+    ext_str = "emf";
+    tmp = get_base_ngp_name();
+    nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, Menulocal.changedirectory, outpu_emf_response, GINT_TO_POINTER(type));
+    if (tmp) {
+      g_free(tmp);
+    }
+    return;
+  }
+  outpu_emf_response(NULL, GINT_TO_POINTER(type));
+}
+#else
 static void
 CmOutputEMF(int type)
 {
