@@ -1095,7 +1095,7 @@ CmOutputEMF(int type)
     char *ext_str, *tmp;
     ext_str = "emf";
     tmp = get_base_ngp_name();
-    nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, Menulocal.changedirectory, outpu_emf_response, GINT_TO_POINTER(type));
+    nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, Menulocal.changedirectory, outpu_emf_response, GINT_TO_POINTER(type));
     if (tmp) {
       g_free(tmp);
     }
