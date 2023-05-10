@@ -1056,6 +1056,19 @@ set_axis_undo_button_sensitivity(int state)
   set_action_widget_sensitivity(AxisScaleUndoAction, state);
 }
 
+static void
+main_loop_quit_cb(gpointer client_data)
+{
+  g_main_loop_quit(main_loop());
+}
+
+static void
+main_loop_quit(void)
+{
+  gtk_widget_hide(TopLevel);
+  g_idle_add_once(main_loop_quit_cb, NULL);
+}
+
 #if ! WINDOWS
 static void
 kill_signal_handler(int sig)
@@ -1065,21 +1078,6 @@ kill_signal_handler(int sig)
   } else {
     QuitGUI();
   }
-}
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-static void
-main_loop_quit_cb(gpointer client_data)
-{
-  g_main_loop_quit(main_loop());
-}
-#endif
-
-static void
-main_loop_quit(void)
-{
-  gtk_widget_hide(TopLevel);
-  g_idle_add_once(main_loop_quit_cb, NULL);
 }
 
 static void
