@@ -1018,7 +1018,7 @@ CmOutputImage(int type)
 static void
 outpu_emf_response_response(int res, gpointer user_data)
 {
-  const char *file;
+  char *file;
   int id, g2wid, g2woid;
   struct objlist *graobj, *g2wobj;
   struct gra_out_data *data;
