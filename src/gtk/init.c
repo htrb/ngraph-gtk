@@ -128,7 +128,7 @@ void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
-#if ! OSX
+#if ! OSX && ! WINDOWS
 static const char *Snap = NULL;
 #endif
 
