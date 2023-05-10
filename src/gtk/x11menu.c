@@ -2223,7 +2223,7 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
   if (label) {
     GMenuItem *item;
     g_string_replace(label, "_", "__", 0);
-    changefilename(action);
+    changefilename(action);     /* fix-me: should escape '\' character? */
     item = g_menu_item_new(label->str, action);
     g_menu_append_item(menu, item);
     g_object_unref(item);
