@@ -1019,6 +1019,9 @@ static void
 outpu_emf_response_response(int res, gpointer user_data)
 {
   const char *file;
+  int id, g2wid, g2woid;
+  struct objlist *graobj, *g2wobj;
+  struct gra_out_data *data;
 
   file = (const char *) user_data;
   if (res) {
@@ -1061,9 +1064,6 @@ static void
 outpu_emf_response(char *file, gpointer user_data)
 {
   N_VALUE *g2winst;
-  int id, g2wid, g2woid;
-  struct objlist *graobj, *g2wobj;
-  struct gra_out_data *data;
   int type;
 
   type = GPOINTER_TO_INT(user_data);
