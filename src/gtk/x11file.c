@@ -320,6 +320,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
+#if USE_ENTRY_COMPLETIONf
   switch (d->Mode) {
   case TYPE_MATH_X:
     entry_completion_set_entry(NgraphApp.x_math_list, d->list);
@@ -333,6 +334,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     entry_completion_set_entry(NgraphApp.func_list, d->list);
     break;
   }
+#endif
 
   set_source_style(d->text);
   gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
@@ -2736,7 +2738,9 @@ func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
 
   compl = GTK_ENTRY_COMPLETION(user_data);
   w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(ev));
+#if USE_ENTRY_COMPLETIONf
   entry_completion_set_entry(compl, w);
+#endif
 }
 
 static GtkWidget *
