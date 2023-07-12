@@ -2942,6 +2942,29 @@ ChkInterrupt(void)
 #endif
 }
 
+struct yn_response_data {
+  int wait;
+  int response;
+  const char *msg;
+};
+
+static void
+input_yn_cb(int response, gpointer user_data)
+{
+  struct yn_response_data *data;
+  data = (struct yn_response_data *) user_data;
+  data->response = response;
+  data->wait = FALSE;
+}
+
+static void
+input_yn_main(gpointer user_data)
+{
+  struct yn_response_data *data;
+  data = (struct yn_response_data *) user_data;
+  response_message_box(get_current_window(), data->msg, _("Question"), RESPONS_YESNO, input_yn_cb, data);
+}
+
 int
 InputYN(const char *mes)
 {
