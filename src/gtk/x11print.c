@@ -1014,7 +1014,6 @@ CmOutputImage(int type)
 }
 
 #if WINDOWS
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 outpu_emf_response_response(int res, gpointer user_data)
 {
@@ -1068,7 +1067,6 @@ outpu_emf_response(char *file, gpointer user_data)
 
   type = GPOINTER_TO_INT(user_data);
   if (type == MenuIdOutputEMFFile && file == NULL) {
-    g_free(file);
     return;
   }
 
@@ -1103,70 +1101,6 @@ CmOutputEMF(int type)
   }
   outpu_emf_response(NULL, GINT_TO_POINTER(type));
 }
-#else
-static void
-CmOutputEMF(int type)
-{
-  struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  N_VALUE *g2winst;
-  char *title, *file;
-  struct gra_out_data *data;
-
-  if (Menulock || Globallock)
-    return;
-
-  title = "Save as Windows Enhanced Metafile (EMF)";
-
-  file = NULL;
-  if (type == MenuIdOutputEMFFile) {
-    int ret;
-    char *ext_str, *tmp;
-    ext_str = "emf";
-    tmp = get_base_ngp_name();
-    file = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, Menulocal.changedirectory);
-    if (tmp) {
-      g_free(tmp);
-    }
-
-    if (file == NULL) {
-      return;
-    }
-  }
-
-  if (Menulocal.select_data && ! SetFileHidden())
-    return;
-
-  FileAutoScale();
-  AdjustAxis();
-
-  graobj = chkobject("gra");
-  if (graobj == NULL) {
-    g_free(file);
-    return;
-  }
-
-  g2wobj = chkobject("gra2emf");
-  if (g2wobj == NULL) {
-    g_free(file);
-    return;
-  }
-
-  g2wid = newobj(g2wobj);
-  if (g2wid < 0) {
-    g_free(file);
-    return;
-  }
-
-  g2winst = chkobjinst(g2wobj, g2wid);
-  _getobj(g2wobj, "oid", g2winst, &g2woid);
-  id = newobj(graobj);
-  putobj(g2wobj, "file", g2wid, file);
-  init_graobj(graobj, id, "gra2emf", g2woid);
-  data = create_gra_out_data(graobj, id, g2wobj, g2wid);
-  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
-}
-#endif
 #endif
 
 void
