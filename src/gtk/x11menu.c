@@ -2968,15 +2968,16 @@ input_yn_main(gpointer user_data)
 int
 InputYN(const char *mes)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  response_message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO, NULL, NULL);
-  return TRUE;
-#else
-  int ret;
-
-  ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
-  return (ret == IDYES) ? TRUE : FALSE;
-#endif
+  struct yn_response_data response;
+  response.wait = TRUE;
+  response.response = TRUE;
+  response.msg = mes;
+  if (is_main_thread()) {
+    return TRUE;
+  }
+  g_idle_add_once(input_yn_main, &response);
+  dialog_wait(&response.wait);
+  return response.response;
 }
 
 #if ! USE_EVENT_LOOP
