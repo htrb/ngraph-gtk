@@ -936,7 +936,6 @@ n_get_gtk_application(void)
   return GtkApp;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 set_prgname(int argc, char **argv)
 {
@@ -947,7 +946,6 @@ set_prgname(int argc, char **argv)
     g_free (prgname);
   }
 }
-#endif
 
 int
 is_main_thread(void)
@@ -1003,9 +1001,7 @@ n_initialize(int *argc, char ***argv)
     g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
     setup_actions(GtkApp);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   set_prgname(*argc, *argv);  /* this is necessary to use GtkRecentManager */
-#endif
   g_set_application_name(AppName);
 #if OSX
 #if ! GTK_CHECK_VERSION(4, 0, 0)
