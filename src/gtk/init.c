@@ -990,12 +990,8 @@ n_initialize(int *argc, char ***argv)
   textdomain(PACKAGE);
 #endif	/* HAVE_GETTEXT */
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   MainLoop = g_main_loop_new (NULL, FALSE);
   OpenDisplay = gtk_init_check();
-#else
-  OpenDisplay = gtk_init_check(argc, argv);
-#endif
   if (OpenDisplay) {
     GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
     g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
