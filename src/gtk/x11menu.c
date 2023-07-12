@@ -72,10 +72,8 @@ struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
-#endif
 static unsigned int CursorType;
 
 #if USE_EXT_DRIVER
@@ -1618,8 +1616,6 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
   set_focus_sensitivity(d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 clipboard_changed(GdkClipboard* self,  gpointer user_data)
 {
@@ -1629,17 +1625,6 @@ clipboard_changed(GdkClipboard* self,  gpointer user_data)
 
   set_focus_sensitivity(d);
 }
-#else
-static void
-clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
-{
-  struct Viewer *d;
-
-  d = (struct Viewer *) user_data;
-
-  set_focus_sensitivity(d);
-}
-#endif
 
 #define USE_APP_HEADER_BAR 0
 static void
