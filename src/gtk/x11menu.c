@@ -2616,20 +2616,6 @@ application(char *file)
   finalize_recent_manager();
   system_set_draw_notify_func(NULL);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-  // CheckIniFile();
-#else
-  if (CheckIniFile()) {
-    save_tab_position();
-    get_pane_position();
-    menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
-    save_entry_history();
-    menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
-		     SAVE_CONFIG_TYPE_OTHERS);
-  }
-#endif
-
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
 
