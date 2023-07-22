@@ -73,7 +73,6 @@ GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
-static int DrawLock = FALSE;
 static unsigned int CursorType;
 
 #if USE_EXT_DRIVER
@@ -2892,40 +2891,7 @@ PutStderr(const char *s)
 int
 ChkInterrupt(void)
 {
-#if 0
-  GdkEvent *e;
-  GtkWidget *w;
-
-  e = gtk_get_current_event();
-
-  if(e == NULL)
-    return FALSE;
-
-  w = gtk_get_event_widget(e);
-  if (w &&
-      (e->type == GDK_BUTTON_PRESS || e->type == GDK_BUTTON_RELEASE)) {
-    //  if (w && e->type != GDK_EXPOSE) {
-    gtk_propagate_event(w, e);
-  }
-  gdk_event_free(e);
-  if (check_interrupt()) {
-    return TRUE;
-  }
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   return check_interrupt();
-#else
-  if (DrawLock != DrawLockDraw) {
-    return check_interrupt();
-  }
-  while (gtk_events_pending()) {
-    gtk_main_iteration_do(FALSE);
-    if (check_interrupt()) {
-      return TRUE;
-    }
-  }
-  return FALSE;
-#endif
 }
 
 struct yn_response_data {
