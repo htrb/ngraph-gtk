@@ -1088,7 +1088,6 @@ CmOutputEMF(int type)
   title = "Save as Windows Enhanced Metafile (EMF)";
 
   if (type == MenuIdOutputEMFFile) {
-    int ret;
     char *ext_str, *tmp;
     ext_str = "emf";
     tmp = get_base_ngp_name();
