@@ -2733,12 +2733,12 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
 static void
 func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
 {
+#if USE_ENTRY_COMPLETIONf
   GtkEntryCompletion *compl;
   GtkWidget *w;
 
   compl = GTK_ENTRY_COMPLETION(user_data);
   w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(ev));
-#if USE_ENTRY_COMPLETIONf
   entry_completion_set_entry(compl, w);
 #endif
 }
