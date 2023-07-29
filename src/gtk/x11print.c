@@ -1080,14 +1080,13 @@ outpu_emf_response(char *file, gpointer user_data)
 static void
 CmOutputEMF(int type)
 {
-  char *title, *file;
+  char *title;
 
   if (Menulock || Globallock)
     return;
 
   title = "Save as Windows Enhanced Metafile (EMF)";
 
-  file = NULL;
   if (type == MenuIdOutputEMFFile) {
     int ret;
     char *ext_str, *tmp;
