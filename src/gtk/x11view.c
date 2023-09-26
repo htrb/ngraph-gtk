@@ -1074,7 +1074,6 @@ get_dropped_files(const GValue* value)
 static int
 file_dropped(const GValue* value)
 {
-  char *fname;
   int r, n;
   struct narray *files;
 
@@ -1086,6 +1085,7 @@ file_dropped(const GValue* value)
   n = arraynum(files);
   r = TRUE;
   if (n == 1) {
+    char *fname;
     fname = arraynget_str(files, 0);
     r = graph_dropped(fname);
   }
