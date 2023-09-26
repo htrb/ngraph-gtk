@@ -261,7 +261,7 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
 }
 
 static void
-enum_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+enum_cb(GtkCellRenderer *cell_renderer, gchar *path, const gchar *str, gpointer user_data)
 {
   struct obj_list_data *d;
 
