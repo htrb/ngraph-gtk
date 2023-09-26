@@ -1973,7 +1973,7 @@ LegendMarkDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int instance)
 {
-  GtkWidget *w, *btn_box;
+  GtkWidget *w;
 
   if (instance) {
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
@@ -1993,6 +1993,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   d->script_size = w;
 
   if (instance) {
+    GtkWidget *btn_box;
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
     d->font = w;
