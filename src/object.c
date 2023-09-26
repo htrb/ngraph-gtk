@@ -1947,6 +1947,7 @@ undo_delete(struct objlist *obj)
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 int
 undo_check_undo(struct objlist *obj)
 {
@@ -1960,6 +1961,7 @@ undo_check_redo(struct objlist *obj)
   return (obj->redo) ? 1 : 0;
 
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 int
 undo_redo(struct objlist *obj)
@@ -2226,6 +2228,7 @@ chkobjinst(struct objlist *obj,int id)
   return instcur;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 N_VALUE *
 chkobjlast(struct objlist *obj)
 /* chkobjlast() returns NULL if instance is not found */
@@ -2245,6 +2248,7 @@ chkobjlast(struct objlist *obj)
   }
   return instcur;
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 static N_VALUE *
 chkobjprev(struct objlist *obj,int id,N_VALUE **inst,N_VALUE **prev)
