@@ -505,9 +505,7 @@ get_color(struct gtklocal *gtklocal, int argc, char **argv)
 
   c = abs(*(int *) argv[2]);
 
-  if (c < 0) {
-    c = 0;
-  } else if (c > 255) {
+  if (c > 255) {                /* c >= 0 */
     c = 255;
   }
 
