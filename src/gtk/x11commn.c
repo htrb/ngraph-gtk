@@ -1206,12 +1206,12 @@ get_save_opt_response(struct response_callback *cb)
   struct objlist *fobj, *mobj;
   int fnum, mnum, path;
   int i;
-  struct graph_save_data *save_data;;
+  struct graph_save_data *save_data_data;
 
-  save_data = (struct graph_save_data *) cb->data;
+  save_data_data = (struct graph_save_data *) cb->data;
 
   if (cb->return_value != IDOK) {
-    save_data->cb(cb->return_value, save_data);
+    save_data_data->cb(cb->return_value, save_data_data);
     return;
   }
 
@@ -1229,10 +1229,10 @@ get_save_opt_response(struct response_callback *cb)
   for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, &path);
   }
-  save_data->path = path;
-  save_data->storedata = DlgSave.SaveData;
-  save_data->storemerge = DlgSave.SaveMerge;
-  save_data->cb(cb->return_value, save_data);
+  save_data_data->path = path;
+  save_data_data->storedata = DlgSave.SaveData;
+  save_data_data->storemerge = DlgSave.SaveMerge;
+  save_data_data->cb(cb->return_value, save_data_data);
 }
 
 static void
