@@ -1416,7 +1416,7 @@ draw_polygon(struct gra2emf_local *local, int n, const int *points, int fill)
 }
 
 static void
-draw_polyline(struct gra2emf_local *local, int n, int *points)
+draw_polyline(struct gra2emf_local *local, int n, const int *points)
 {
   int i;
 #if USE_LINE_TO
