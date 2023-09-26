@@ -401,7 +401,6 @@ merge_update_response(struct response_callback *cb)
   if (num > 0) {
     menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   }
-  array = arraydata(farray);
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
