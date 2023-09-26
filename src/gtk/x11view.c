@@ -3271,7 +3271,7 @@ draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const str
 }
 
 static void
-draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
+draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, const int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
   int j, ofsx, ofsy, intp, type, r, fill_rule;
   int *data;
