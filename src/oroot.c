@@ -237,6 +237,7 @@ oputge1(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 int
 oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -244,6 +245,7 @@ oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   else if (*(int *)(argv[2])>36000) *(int *)(argv[2])=36000;
   return 0;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 int
 oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
