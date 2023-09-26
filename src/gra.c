@@ -376,7 +376,7 @@ GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
 }
 
 static int
-add_draw_obj(struct objlist *parent, char const **objects, int index)
+add_draw_obj(const struct objlist *parent, char const **objects, int index)
 {
   struct objlist *ocur;
   const char *objname;
