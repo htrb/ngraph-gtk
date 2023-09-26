@@ -1330,7 +1330,7 @@ draw_rectangle(struct gra2emf_local *local, int x1, int y1, int x2, int y2, int 
 }
 
 static void
-draw_polygon(struct gra2emf_local *local, int n, int *points, int fill)
+draw_polygon(struct gra2emf_local *local, int n, const int *points, int fill)
 {
   int i;
 #if USE_LINE_TO
