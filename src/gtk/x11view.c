@@ -5304,7 +5304,7 @@ create_single_axis(struct Viewer *d)
 static void
 create_axis(struct Viewer *d)
 {
-  int idx, idy, idu, idr, idg, oidx, oidy, type,
+  int idx, idy, idu, idr, oidx, oidy, type,
     num, x1, y1, lenx, leny;
   struct objlist *obj = NULL, *obj2;
   struct Point **pdata;
@@ -5319,7 +5319,7 @@ create_axis(struct Viewer *d)
     obj2 = chkobject("axisgrid");
 
     if (obj && obj2) {
-      int undo, x2, y2;
+      int undo, x2, y2, idg;
       char *argv[3];
       argv[0] = obj->name;
       argv[1] = obj2->name;
