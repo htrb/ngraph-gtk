@@ -1141,7 +1141,7 @@ GRAdrawpoly(int GC,int num,const int *point,enum GRA_FILL_MODE fil)
 }
 
 void
-GRAlines(int GC,int num,int *point)
+GRAlines(int GC,int num,const int *point)
 {
   char code;
   int i,*cpar;
