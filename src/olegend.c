@@ -68,6 +68,7 @@ legendgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 int
 legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -180,6 +181,7 @@ legendbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->array=array;
   return 0;
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 int
 legendmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
