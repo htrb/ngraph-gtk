@@ -871,7 +871,7 @@ GRAview(int GC,int x1,int y1,int x2,int y2,int clip)
 }
 
 void
-GRAlinestyle(int GC,int num,int *type,int width,enum GRA_LINE_CAP cap,enum GRA_LINE_JOIN join,
+GRAlinestyle(int GC,int num,const int *type,int width,enum GRA_LINE_CAP cap,enum GRA_LINE_JOIN join,
                   int miter)
 {
   char code;
