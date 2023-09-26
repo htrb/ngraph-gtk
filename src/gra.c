@@ -1156,7 +1156,7 @@ GRAlines(int GC,int num,int *point)
 }
 
 void
-GRArotate(int x0, int y0, int *pos, int *rpos, int n, double dx, double dy)
+GRArotate(int x0, int y0, const int *pos, int *rpos, int n, double dx, double dy)
 {
   int i;
   for (i = 0; i < n; i++) {
