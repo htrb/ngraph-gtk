@@ -3013,7 +3013,7 @@ GRAtextextentraw(char *s,char *font, int style,
 
 
 static int
-getintpar(char *s,int num,int cpar[])
+getintpar(const char *s,int num,int cpar[])
 {
   int i,pos1;
   char s2[256];
