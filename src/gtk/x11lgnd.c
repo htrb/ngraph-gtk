@@ -302,7 +302,7 @@ legend_menu_update_object_response2(struct response_callback *cb)
   struct objlist *obj;
   LEGEND_DIALOG_SETUP setup;
   struct LegendDialog *dialog;
-  int i, num, j, *data;
+  int i, num, *data;
 
   ldata = (struct legend_menu_update_data *) cb->data;
   obj = ldata->obj;
@@ -323,6 +323,7 @@ legend_menu_update_object_response2(struct response_callback *cb)
   data = arraydata(array);
   setup(dialog, obj, data[i]);
   if (cb->return_value == IDDELETE) {
+    int j;
     delobj(obj, data[i]);
     set_graph_modified();
     for (j = i + 1; j < num; j++) {
