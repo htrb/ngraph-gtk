@@ -158,7 +158,7 @@ int mgtkputstdout(const char *s);
 int mgtkprintfstdout(const char *fmt, ...);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
-void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
+void menuadddrawrable(const struct objlist *parent, struct narray *drawrable);
 int menu_save_config(int type);
 void menu_use_dark_theme_set(int state);
 void main_window_redraw(void);
