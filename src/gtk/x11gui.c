@@ -527,10 +527,11 @@ static void
 radio_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
 {
   struct radio_dialog_data *data;
-  int i, selected;
+  int selected;
   data = (struct radio_dialog_data *) user_data;
   selected = -1;
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
+    int i;
     for (i = 0; i < data->anum; i++) {
       if (gtk_check_button_get_active(GTK_CHECK_BUTTON(data->btn_ary[i]))) {
 	selected = i;
