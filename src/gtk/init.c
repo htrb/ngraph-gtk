@@ -1648,12 +1648,12 @@ get_file_list(const char *path, int type, int mode)
   const char *ent;
   GStatBuf statbuf;
   struct mylist *list = NULL, *list_next = list;
-  char *full_path_name;
 
   if ((dir = g_dir_open(path, 0, NULL)) == NULL) {
     return NULL;
   }
   while ((ent = g_dir_read_name(dir)) != NULL) {
+    char *full_path_name;
     full_path_name = g_strdup_printf("%s/%s", path, ent);
     if (full_path_name == NULL) {
       if (list != NULL) {
