@@ -303,10 +303,10 @@ static void
 GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
 {
   struct GridDialog *d;
-  char title[TITLE_BUF_SIZE];
 
   d = (struct GridDialog *) data;
   if (instance) {
+    char title[TITLE_BUF_SIZE];
     snprintf(title, sizeof(title), _("Grid %d"), d->Id);
     gtk_window_set_title(GTK_WINDOW(wi), title);
   }
