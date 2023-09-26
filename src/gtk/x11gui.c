@@ -995,12 +995,13 @@ struct check_dialog_data {
 static void
 check_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
 {
-  int i, res;
+  int res;
   struct check_dialog_data *data;
   data = (struct check_dialog_data *) user_data;
 
   res = IDCANCEL;
   if (response > 0 || response == GTK_RESPONSE_OK) {
+    int i;
     for (i = 0; i < data->anum; i++) {
       data->r[i] = gtk_check_button_get_active(GTK_CHECK_BUTTON(data->btn_ary[i]));
     }
