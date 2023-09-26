@@ -1118,7 +1118,7 @@ GRAputpixel(int GC,int x,int y)
 }
 
 void
-GRAdrawpoly(int GC,int num,int *point,enum GRA_FILL_MODE fil)
+GRAdrawpoly(int GC,int num,const int *point,enum GRA_FILL_MODE fil)
 {
   char code;
   int i,*cpar,num2;
