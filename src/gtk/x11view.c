@@ -854,7 +854,7 @@ new_file_obj(char *name, struct objlist *obj, int multi, struct data_dropped_dat
 static void
 data_dropped_sub(struct data_dropped_data *data)
 {
-  char *name, *ext;
+  char *name;
   int type, ret, i;
 
   i = data->i;
@@ -876,6 +876,7 @@ data_dropped_sub(struct data_dropped_data *data)
 
   type = data->file_type;
   if (type == FILE_TYPE_AUTO) {
+    char *ext;
     ext = getextention(name);
     if (ext && strcmp0(ext, "gra") == 0) {
       type = FILE_TYPE_MERGE;
