@@ -7512,7 +7512,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	dobj = chkobject("axisgrid");
 	if ((idg2 = newobj(dobj)) >= 0) {
 	  ncopyobj(dobj, idg2, idg);
-	  inst2 = chkobjinst(dobj, idg2);
 	  if (idx2 >= 0 && idu2 >= 0) {
 	    axisx = g_strdup_printf("axis:^%d", oidx);
 	    if (axisx) {
