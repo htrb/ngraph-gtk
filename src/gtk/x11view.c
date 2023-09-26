@@ -134,7 +134,7 @@ static gboolean ViewerEvScroll(GtkEventControllerScroll *w, double x, double y, 
 static void ViewUpdate(void);
 static void ViewCopy(void);
 static void do_popup(gdouble x, gdouble y, struct Viewer *d);
-static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
+static int check_focused_obj(struct narray *focusobj, const struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
 static void SetHRuler(const struct Viewer *d);
@@ -6518,7 +6518,7 @@ SetVRuler(const struct Viewer *d)
 #define CHECK_FOCUSED_OBJ_NOT_FOUND -2
 
 static int
-check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
+check_focused_obj(struct narray *focusobj, const struct objlist *fobj, int oid)
 {
   int i, num;
 
