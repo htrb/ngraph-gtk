@@ -1484,10 +1484,10 @@ my_completion_function(const char *text, int state, char **func(const char *))
 {
   static char **list = (char **) NULL;
   static int list_index = 0;
-  static int first_char_loc;
 
   /* If we don't have any state, make some. */
   if (!state) {
+    static int first_char_loc;
     if (list)
       g_free(list);
 
