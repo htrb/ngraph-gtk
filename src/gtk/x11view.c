@@ -1877,7 +1877,6 @@ fileupdate_func(gpointer user_data)
   struct objlist *fileobj;
   int snum, hidden;
   int i, did;
-  N_VALUE *dinst;
   struct fileupdate_data *data;
   struct narray *eval, *dfile;
   int evalnum;
@@ -1888,6 +1887,7 @@ fileupdate_func(gpointer user_data)
   fileobj = data->fileobj;
   snum = chkobjlastinst(fileobj) + 1;
   for (i = 0; i < snum; i++) {
+    N_VALUE *dinst;
     dinst = chkobjinst(fileobj, i);
     if (dinst == NULL) {
       continue;
