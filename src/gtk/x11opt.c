@@ -1805,7 +1805,6 @@ void
 CmOptionSaveNgp(void *w, gpointer client_data)
 {
   char *ngpfile;
-  char mes[MESSAGE_BUF_SIZE];
   int i, path;
   struct objlist *obj;
 
@@ -1833,6 +1832,7 @@ CmOptionSaveNgp(void *w, gpointer client_data)
   }
 
   if (naccess(ngpfile, 04) == 0) {
+    char mes[MESSAGE_BUF_SIZE];
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
     response_message_box(NULL, mes, _("Save as Ngraph.ngp"), RESPONS_YESNO, CmOptionSaveNgp_response, ngpfile);
     return;
