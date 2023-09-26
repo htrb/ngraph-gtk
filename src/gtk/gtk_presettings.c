@@ -54,7 +54,7 @@ struct presetting_widgets
   enum JOIN_TYPE join;
   enum MARKER_TYPE marker_begin, marker_end;
   struct MarkDialog mark, mark_begin, mark_end;
-  int lw, fill, stroke, close_path;
+  int fill, stroke, close_path;
 };
 
 static struct presetting_widgets Widgets = {{NULL}};
