@@ -259,6 +259,7 @@ splinedif(double d,double c[],
   *ddy=6*c[5];
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 void
 splinedifxy(double d,double c[],
                  double *dx,double *dy,double *ddx,double *ddy,void *local)
@@ -268,6 +269,7 @@ splinedifxy(double d,double c[],
   *ddx=0;
   *ddy=6*c[3]*c[3]*c[3]*c[2];
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 void
 bsplinedif(double d,double c[],
@@ -287,6 +289,7 @@ splineint(double d,double c[],double x0,double y0,double *x,double *y,
   *y=y0+d*(c[3]+d*(c[4]+d*c[5]));
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 void
 splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
                  void *local)
@@ -297,6 +300,7 @@ splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
   *x=x0+dd;
   *y=y0+dd*(c[0]+dd*(c[1]+dd*c[2]));
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 void
 bsplineint(double d,double c[],double x0,double y0,double *x,double *y,

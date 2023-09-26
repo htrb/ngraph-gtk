@@ -31,13 +31,9 @@ int spline(double x[],double y[],double c1[],double c2[],double c3[],
 void bspline(int edge,double x[],double c[]);
 void splinedif(double d,double c[],
                double *dx,double *dy,double *ddx,double *ddy,void *local);
-void splinedifxy(double d,double c[],
-                 double *dx,double *dy,double *ddx,double *ddy,void *local);
 void bsplinedif(double d,double c[],
                 double *dx,double *dy,double *ddx,double *ddy,void *local);
 void splineint(double d,double c[],double x0,double y0,double *x,double *y,
-               void *local);
-void splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
                void *local);
 void bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
                void *local);
