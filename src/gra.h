@@ -140,7 +140,7 @@ void GRAregion(int GC,int *width,int *height,int *zoom);
 int GRAend(int GC);
 void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);
-void GRAlinestyle(int GC,int num,int *type,
+void GRAlinestyle(int GC,int num,const int *type,
                   int width,enum GRA_LINE_CAP cap,enum GRA_LINE_JOIN join,int miter);
 void GRAcolor(int GC, int fr, int fg, int fb, int fa);
 void GRAmoveto(int GC,int x,int y);
@@ -148,9 +148,9 @@ void GRAline(int GC,int x0,int y0,int x1,int y1);
 void GRAlineto(int GC,int x,int y);
 void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil);
 void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil);
-void GRAdrawpoly(int GC,int num,int *point,enum GRA_FILL_MODE fil);
-void GRAlines(int GC,int num,int *point);
-void GRArotate(int x0, int y0, int *pos, int *rpos, int n, double dx, double dy);
+void GRAdrawpoly(int GC,int num,const int *point,enum GRA_FILL_MODE fil);
+void GRAlines(int GC,int num,const int *point);
+void GRArotate(int x0, int y0, const int *pos, int *rpos, int n, double dx, double dy);
 void GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
 	     int fr,int fg,int fb, int fa, int br,int bg,int bb, int ba);
 void GRAmark(int GC,int type,int x0,int y0,int size,
