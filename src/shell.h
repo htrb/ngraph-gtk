@@ -127,7 +127,6 @@ void shellrestorestdio(struct nshell *nshell);
 int setshelloption(struct nshell *nshell,char *opt);
 int getshelloption(struct nshell *nshell,char opt);
 int set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char **argv);
-void setshellargument(struct nshell *nshell,int argc,char **argv);
 int printfconsole(const char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);

@@ -4447,6 +4447,7 @@ set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char *
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 void
 setshellargument(struct nshell *nshell,int argc,char **argv)
 {
@@ -4454,6 +4455,7 @@ setshellargument(struct nshell *nshell,int argc,char **argv)
   nshell->argc=argc;
   nshell->argv=argv;
 }
+#endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 void
 ngraphenvironment(struct nshell *nshell)
