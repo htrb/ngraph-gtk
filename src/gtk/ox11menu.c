@@ -723,7 +723,7 @@ mgtkloadconfig(void)
 }
 
 void
-menuadddrawrable(struct objlist *parent, struct narray *drawrable)
+menuadddrawrable(const struct objlist *parent, struct narray *drawrable)
 {
   struct objlist *ocur;
   const char *name;
