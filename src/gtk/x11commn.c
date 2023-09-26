@@ -1290,9 +1290,7 @@ GraphSave_response(int ret, gpointer user_data)
     char mes[256];
     snprintf(mes, sizeof(mes), _("Saving `%.128s'."), d->file);
     SetStatusBar(mes);
-    if(SaveDrawrable(d->file, d->storedata, d->storemerge, TRUE)) {
-      ret = IDCANCEL;
-    } else {
+    if(! SaveDrawrable(d->file, d->storedata, d->storemerge, TRUE)) {
       switch (d->path) {
       case SAVE_PATH_BASE:
 	  ToBasename();
