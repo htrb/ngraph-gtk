@@ -894,7 +894,7 @@ init_custom_palette(void)
 {
   struct narray *palette;
   int i, j, k;
-  unsigned int c[] = {0xff, 0xcc, 0x99};
+  const unsigned int c[] = {0xff, 0xcc, 0x99};
   GdkRGBA color;
 
   palette = &(Menulocal.custom_palette);
