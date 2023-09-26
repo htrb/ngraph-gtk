@@ -2582,7 +2582,7 @@ GetFocusFrame(int *minx, int *miny, int *maxx, int *maxy, int ofsx, int ofsy, co
 }
 
 static void
-show_focus_elements(cairo_t *cr, const struct Viewer *d, double zoom, int *data, int num)
+show_focus_elements(cairo_t *cr, const struct Viewer *d, double zoom, const int *data, int num)
 {
   int j;
   for (j = 0; j < num; j += 2) {
