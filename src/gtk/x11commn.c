@@ -1361,7 +1361,6 @@ int
 GraphSave(int overwrite)
 {
   char *initfil;
-  int chd;
 
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
@@ -1371,6 +1370,7 @@ GraphSave(int overwrite)
   }
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     char *prev_wd;
+    int chd;
     initfil = (initfil) ? initfil : "untitled.ngp";
     prev_wd = ngetcwd();
     chd = Menulocal.changedirectory;
