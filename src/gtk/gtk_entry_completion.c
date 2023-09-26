@@ -27,6 +27,7 @@ entry_completion_create(void)
   gtk_entry_completion_set_popup_completion(comp, TRUE);
   gtk_entry_completion_set_popup_set_width(comp, TRUE);
   gtk_entry_completion_set_text_column(comp, 0);
+  g_object_ref(comp);
 
   return comp;
 }
