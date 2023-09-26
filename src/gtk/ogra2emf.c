@@ -80,7 +80,7 @@ static int
 #if USE_EnumFontFamiliesExW
 enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, LPARAM lParam)
 #else
-enum_font_cb(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, DWORD FontType, LPARAM lParam)
+enum_font_cb(const ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, DWORD FontType, LPARAM lParam)
 #endif
 {
   int char_set, i;
