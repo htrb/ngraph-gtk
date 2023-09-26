@@ -1622,7 +1622,7 @@ mxfullpathngp(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 static int
-check_object_name(struct objlist *obj, struct narray *array)
+check_object_name(const struct objlist *obj, struct narray *array)
 {
   int i, n;
   char **adata;
