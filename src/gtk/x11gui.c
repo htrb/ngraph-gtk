@@ -719,13 +719,14 @@ static void
 combo_dialog_response(GtkWidget *dlg, int response, gpointer user_data)
 {
   struct combo_dialog_data *data;
-  int i, r;
+  int r;
   const char *selected;
 
   data = (struct combo_dialog_data *) user_data;
   selected = NULL;
   r = IDCANCEL;
   if (response > 0 || response == GTK_RESPONSE_OK) {
+    int i;
     i = combo_box_get_active(data->combo);
     if (i >= 0) {
       selected = data->label[i];
