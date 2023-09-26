@@ -1087,7 +1087,7 @@ save_inst(int hFile, struct objlist *ocur)
 }
 
 static void
-SaveParent(int hFile, struct objlist *parent, int storedata,
+SaveParent(int hFile, const struct objlist *parent, int storedata,
 	   int storemerge)
 {
   struct objlist *ocur, *odata, *omerge;
