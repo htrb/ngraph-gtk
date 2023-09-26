@@ -2027,14 +2027,14 @@ set_file_hidden_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
   struct narray *farray, *ifarray;
-  int i, a, r;
+  int a, r;
 
   d = (struct SelectDialog *) cb->dialog;
   farray = d->sel;
   ifarray = d->isel;
   r = 0;
   if (cb->return_value == IDOK) {
-    int num, inum, *array, lastinst, undo, modified = FALSE;
+    int num, inum, *array, lastinst, undo, modified = FALSE, i;
     struct objlist *fobj;
     undo = menu_save_undo_single(UNDO_TYPE_EDIT, "data");
     fobj = chkobject("data");
