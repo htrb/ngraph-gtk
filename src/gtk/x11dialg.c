@@ -807,6 +807,8 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     } else {
       r = SetObjFieldFromList(w, Obj, Id, field);
     }
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_DROP_DOWN)) {
+    r = SetObjFieldFromList(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     r = SetObjFieldFromToggle(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
@@ -837,6 +839,8 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     } else {
       SetListFromObjField(w, Obj, Id, field);
     }
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_DROP_DOWN)) {
+    SetListFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
