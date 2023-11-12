@@ -827,11 +827,17 @@ static void
 FitLoadDialogClose(GtkWidget *w, void *data)
 {
   struct FitLoadDialog *d;
+  int sel;
 
   d = (struct FitLoadDialog *) data;
   if (d->ret == IDCANCEL)
     return;
-  d->sel = combo_box_get_active(d->list);
+
+  sel = combo_box_get_active(d->list);
+  if (sel < 0) {
+    return;
+  }
+  d->sel = sel;
 }
 
 void
@@ -1119,6 +1125,9 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
   }
 
   num = combo_box_get_active(d->dim);
+  if (num < 0) {
+    return;
+  }
   num++;
   if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1) {
     cb(TRUE, ud);
@@ -1633,6 +1642,9 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     return FALSE;
 
   num = combo_box_get_active(d->dim);
+  if (num < 0) {
+    return FALSE;
+  }
   num++;
   if (num > 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
     return FALSE;
@@ -1748,10 +1760,9 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   switch (type) {
   case FIT_TYPE_POLY:
     dim = combo_box_get_active(d->dim);
-
     if (dim == 0) {
       gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>a·</i>X<i>+b</i>");
-    } else {
+    } else if (dim > 0) {
       char buf[1024];
       snprintf(buf, sizeof(buf), "Equation: Y=<i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
       gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
@@ -1853,6 +1864,12 @@ create_user_fit_frame(struct FitDialog *d)
   gtk_frame_set_child(GTK_FRAME(w), vbox);
 
   return w;
+}
+
+static void
+fit_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
+{
+  FitDialogSetSensitivity(w, user_data);
 }
 
 static void
@@ -1981,8 +1998,8 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
 
 
-    g_signal_connect(d->dim, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
-    g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
+    g_signal_connect(d->dim, "notify::selected", G_CALLBACK(fit_type_notify), d);
+    g_signal_connect(d->type, "notify::selected", G_CALLBACK(fit_type_notify), d);
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
   }
@@ -3464,6 +3481,9 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   d = (struct FileDialog *) client_data;
 
   type = combo_box_get_active(w);
+  if (type < 0) {
+    return;
+  }
 
   set_widget_sensitivity_with_label(d->curve, TRUE);
   set_widget_sensitivity_with_label(d->fit, TRUE);
@@ -3511,6 +3531,9 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   d = (struct FileDialog *) client_data;
 
   type = combo_box_get_active(w);
+  if (type < 0) {
+    return;
+  }
 
   set_widget_sensitivity_with_label(d->mark_btn, TRUE);
   set_widget_sensitivity_with_label(d->curve, TRUE);
@@ -3656,6 +3679,13 @@ file_settings_copy(GtkButton *btn, gpointer user_data)
   CopyClick(d->widget, d->Obj, d->Id, FileCB, file_settings_copy_response, d);
 }
 
+static void
+selct_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
+{
+  struct FileDialog *d = (struct FileDialog *) user_data;
+  FileDialogType(d->type, d);
+}
+
 static GtkWidget *
 plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 {
@@ -3670,7 +3700,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
   d->type = w;
-  g_signal_connect(w, "changed", G_CALLBACK(FileDialogType), d);
+  g_signal_connect(w, "notify::selected", G_CALLBACK(selct_type_notify), d);
 
   w = gtk_button_new();
   add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
@@ -3857,6 +3887,9 @@ set_headline_table_header(struct FileDialog *d)
   GString *str;
 
   type = combo_box_get_active(d->type);
+  if (type < 0) {
+    return;
+  }
   x = spin_entry_get_val(d->xcol);
   y = spin_entry_get_val(d->ycol);
 
@@ -4255,6 +4288,12 @@ update_table_header(GtkEditable *editable, gpointer user_data)
 }
 
 static void
+select_type_notify(GObject* self, GParamSpec* pspec, gpointer user_data)
+{
+  update_table_header(GTK_EDITABLE (self), user_data);
+}
+
+static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FileDialog *d;
@@ -4325,7 +4364,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     g_signal_connect(d->xcol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
+    g_signal_connect(d->type, "notify::selected", G_CALLBACK(select_type_notify), d);
 
     gtk_grid_attach(GTK_GRID(d->comment_box), w, 1, 0, 1, 1);
     w = gtk_button_new_with_label(_("Create"));
@@ -4391,7 +4430,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     g_signal_connect(d->xcol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
+    g_signal_connect(d->type, "notify::selected", G_CALLBACK(select_type_notify), d);
 
     gtk_widget_set_hexpand(swin, TRUE);
     gtk_widget_set_vexpand(swin, TRUE);

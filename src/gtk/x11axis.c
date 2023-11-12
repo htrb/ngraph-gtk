@@ -1911,7 +1911,7 @@ numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 }
 
 static void
-num_direction_changed(GtkWidget *w, gpointer client_data)
+num_direction_changed(GtkWidget *w, GParamSpec *pspec, gpointer client_data)
 {
   int dir, state;
   struct AxisDialog *d;
@@ -1919,6 +1919,9 @@ num_direction_changed(GtkWidget *w, gpointer client_data)
   d = (struct AxisDialog *) client_data;
 
   dir = combo_box_get_active(w);
+  if (dir < 0) {
+    return;
+  }
   state = (dir != AXIS_NUM_POS_OBLIQUE1 && dir != AXIS_NUM_POS_OBLIQUE2);
   set_widget_sensitivity_with_label(d->numbering.align, state);
 }
@@ -1969,7 +1972,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
-  g_signal_connect(w, "changed", G_CALLBACK(num_direction_changed), dd);
+  g_signal_connect(w, "notify::selected", G_CALLBACK(num_direction_changed), dd);
   d->direction = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);

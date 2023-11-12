@@ -260,13 +260,13 @@ add_page_combo(struct ParameterDialog *d)
 }
 
 static void
-parameter_type_changed(GtkComboBox *combo, gpointer user_data)
+parameter_type_changed(GtkWidget *combo, GParamSpec *spec, gpointer user_data)
 {
   struct ParameterDialog *d;
   int type;
 
   d = user_data;
-  type = gtk_combo_box_get_active(combo);
+  type = combo_box_get_active(combo);
   if (type < 0) {
     return;
   }
@@ -315,7 +315,7 @@ ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Type:"), TRUE, i++);
-    g_signal_connect(w, "changed", G_CALLBACK(parameter_type_changed), d);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(parameter_type_changed), d);
     d->type = w;
 
     w = gtk_stack_new();
@@ -388,7 +388,7 @@ ParameterDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->transition, d->Obj, d->Id, "transition"))
     return;
 
-  type = gtk_combo_box_get_active(GTK_COMBO_BOX(d->type));
+  type = combo_box_get_active(d->type);
   if (type == PARAMETER_TYPE_TRANSITION) {
     if (SetObjFieldFromWidget(d->transition_step, d->Obj, d->Id, "step")) {
       return;
@@ -994,13 +994,13 @@ switch_set(GtkSwitch *sw, gboolean state, gpointer user_data)
 }
 
 static void
-combo_changed(GtkComboBox *combo_box, gpointer user_data)
+combo_changed(GtkWidget *combo_box, GParamSpec *spec, gpointer user_data)
 {
   int selected;
   if (Menulock || Globallock)
     return;
 
-  selected = gtk_combo_box_get_active(combo_box);
+  selected = combo_box_get_active(combo_box);
   set_parameter(selected, user_data);
 }
 
@@ -1156,7 +1156,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     w = create_combo_box(items, selected);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_hexpand(w, FALSE);
-    g_signal_connect(w, "changed", G_CALLBACK(combo_changed), data);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(combo_changed), data);
     break;
   case PARAMETER_TYPE_SWITCH:
     w = gtk_switch_new();

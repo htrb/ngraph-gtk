@@ -168,7 +168,7 @@ DefaultDialog(struct DefaultDialog *data)
 }
 
 static void
-active_script_changed(GtkComboBox *widget, gpointer user_data)
+active_script_changed(GtkComboBox *widget, GParamSpec *spec,  gpointer user_data)
 {
   struct SetScriptDialog *d;
   struct script *addin;
@@ -177,7 +177,9 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
   d = (struct SetScriptDialog *) user_data;
 
   n = gtk_combo_box_get_active(widget);
-  if (n < 1) {
+  if (n < 0) {
+    return;
+  } else if (n < 1) {
     editable_set_init_text(d->name, "");
     editable_set_init_text(d->script, "");
     editable_set_init_text(d->option, "");
@@ -242,7 +244,7 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 	g_free(title);
       }
     }
-    active_script_changed(GTK_COMBO_BOX(d->addins), d);
+    active_script_changed(GTK_COMBO_BOX(d->addins), NULL, d);
   }
 
   if (d->Script->name) {
@@ -289,7 +291,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Add-in:"), TRUE, i++);
-    g_signal_connect(w, "changed", G_CALLBACK(active_script_changed), d);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(active_script_changed), d);
     d->addins = w;
 
     w = create_text_entry(FALSE, TRUE);
@@ -1424,7 +1426,10 @@ MiscDialogClose(GtkWidget *w, void *data)
     }
   }
 
-  Menulocal.loadpath = combo_box_get_active(d->loadpath);
+  a = combo_box_get_active(d->loadpath);
+  if (a >= 0) {
+    Menulocal.loadpath = a;
+  }
 
   a = spin_entry_get_val(d->hist_size);
   if (a <= HIST_SIZE_MAX && a > 0)
@@ -1470,7 +1475,10 @@ MiscDialogClose(GtkWidget *w, void *data)
     }
     Menulocal.source_style_id = g_strdup(source_style_id);
   }
-  Menulocal.default_decimalsign = combo_box_get_active(d->decimalsign);
+  a = combo_box_get_active(d->decimalsign);
+  if (a >= 0) {
+    Menulocal.default_decimalsign = a;
+  }
   gra_set_default_decimalsign(get_gra_decimalsign_type(Menulocal.default_decimalsign));
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_MISC);
@@ -1700,6 +1708,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
   }
 
   a = combo_box_get_active(d->antialias);
+  if (a < 0) {
+    return;
+  }
   if (putobj(d->Obj, "antialias", d->Id, &a) == -1)
     return;
   Menulocal.antialias = a;
@@ -1725,7 +1736,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.grid = spin_entry_get_val(d->grid);
 
   a = combo_box_get_active(d->fftype);
-  Menulocal.focus_frame_type = ((a == 0) ? N_LINE_TYPE_SOLID : N_LINE_TYPE_DOT);
+  if (a > 0) {
+    Menulocal.focus_frame_type = ((a == 0) ? N_LINE_TYPE_SOLID : N_LINE_TYPE_DOT);
+  }
 
   d->ret = ret;
 

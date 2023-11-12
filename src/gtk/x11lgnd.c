@@ -1544,6 +1544,12 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 }
 
 static void
+legend_combo_selected_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
+{
+  legend_dialog_set_sensitive(w, user_data);
+}
+
+static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct LegendDialog *d;
@@ -1577,13 +1583,13 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
-    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(legend_combo_selected_notify), d);
     d->path_type = w;
 
     w = combo_box_create();
     d->interpolation = w;
     add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
-    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(legend_combo_selected_notify), d);
 
     gtk_box_append(GTK_BOX(vbox2), table);
 

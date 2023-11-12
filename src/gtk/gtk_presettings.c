@@ -306,6 +306,9 @@ set_path_type(struct objlist *obj, int id)
 {
   int type, interpolation;
   type = combo_box_get_active(Widgets.path_type.widget);
+  if (type < 0) {
+    return;
+  }
   if (type == 0) {
     putobj(obj, "type", id, &type);
   } else {
@@ -319,7 +322,12 @@ set_path_type(struct objlist *obj, int id)
 static int
 get_line_width_setting(void)
 {
-  return (2 << combo_box_get_active(Widgets.line_width.widget)) * 10;
+  int width;
+  width = combo_box_get_active(Widgets.line_width.widget);
+  if (width < 0) {
+    return 40;
+  }
+  return (2 << width) * 10;
 }
 
 void
@@ -363,8 +371,10 @@ presetting_set_obj_field(struct objlist *obj, int id)
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
     putobj(obj, "num_pt", id, &ival);
     ival = combo_box_get_active(Widgets.line_style.widget);
-    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
-    sputobjfield(obj, id, "gauge_style", FwLineStyle[ival].list);
+    if (ival >= 0) {
+      sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+      sputobjfield(obj, id, "gauge_style", FwLineStyle[ival].list);
+    }
   } else if (strcmp(name, "axisgrid") == 0) {
     ival = width / 2;
     putobj(obj, "width3", id, &ival);
@@ -387,7 +397,9 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style.widget);
-    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    if (ival >= 0) {
+      sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    }
     set_path_type(obj, id);
   } else if (strcmp(name, "rectangle") == 0) {
     putobj(obj, "stroke", id, &(Widgets.stroke));
@@ -395,7 +407,9 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style.widget);
-    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    if (ival >= 0) {
+      sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    }
   } else if (strcmp(name, "arc") == 0) {
     putobj(obj, "stroke", id, &(Widgets.stroke));
     putobj(obj, "fill", id, &(Widgets.fill));
@@ -405,7 +419,9 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style.widget);
-    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    if (ival >= 0) {
+      sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    }
     ival = Widgets.marker_begin;
     putobj(obj, "marker_begin", id, &ival);
     ival = Widgets.marker_end;
@@ -426,7 +442,9 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "size", id, &ival);
     putobj(obj, "type", id, &(Widgets.mark.Type));
     ival = combo_box_get_active(Widgets.line_style.widget);
-    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    if (ival >= 0) {
+      sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    }
   } else if (strcmp(name, "text") == 0) {
     set_text_obj(obj, id);
   }
@@ -580,7 +598,7 @@ widget_set_line_style(struct objlist *obj, N_VALUE *inst, char *field)
   if (style < 0) {
     style = 0;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_style.widget), style);
+  combo_box_set_active(Widgets.line_style.widget, style);
 }
 
 static void
@@ -593,7 +611,7 @@ widget_set_path_type(struct objlist *obj, N_VALUE *inst)
     _getobj(obj, "interpolation", inst, &interpolation);
     type = interpolation + 1;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.path_type.widget), type);
+  combo_box_set_active(Widgets.path_type.widget, type);
 }
 
 static void
@@ -645,7 +663,7 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
     return;
   }
   index = check_font_index(font);
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font.widget), index);
+  combo_box_set_active(Widgets.font.widget, index);
 }
 
 static int
@@ -1226,6 +1244,9 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
   axis_obj = chkobject("axis");
   text_obj = chkobject("text");
   style = combo_box_get_active(widget);
+  if (style < 0) {
+    return modified;
+  }
   style_str = FwLineStyle[style].list;
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
@@ -1736,12 +1757,12 @@ create_line_style_combo_box(void)
   GtkWidget *cbox;
   int j;
 
-  cbox = gtk_combo_box_text_new();
+  cbox = combo_box_create();
   for (j = 0; j < LINE_STYLE_ICON_NUM; j++) {
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _(FwLineStyle[j].name));
+    combo_box_append_text(cbox, _(FwLineStyle[j].name));
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
-  g_signal_connect(cbox, "changed", G_CALLBACK(update_focused_obj), NULL);
+  combo_box_set_active(cbox, 0);
+  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
   return cbox;
 }
 
@@ -1750,13 +1771,13 @@ create_path_type_combo_box(void)
 {
   GtkWidget *cbox;
   int j;
-  cbox = gtk_combo_box_text_new();
-  gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _("line"));
+  cbox = combo_box_create();
+  combo_box_append_text(cbox, _("line"));
   for (j = 0; intpchar[j]; j++) {
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _(intpchar[j]));
+    combo_box_append_text(cbox, _(intpchar[j]));
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
-  g_signal_connect(cbox, "changed", G_CALLBACK(update_focused_obj), NULL);
+  combo_box_set_active(cbox, 0);
+  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
   return cbox;
 }
 
@@ -1804,32 +1825,26 @@ setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
 void
 presetting_set_fonts(void)
 {
-  int lock;
-  GtkTreeIter iter;
+  int lock, index;
   char *font;
-  GtkComboBox *cbox;
+  GtkWidget *cbox;
 
-  cbox = GTK_COMBO_BOX(Widgets.font.widget);
+  cbox = Widgets.font.widget;
   if (cbox == NULL) {
     return;
   }
 
-  font = NULL;
-  if (gtk_combo_box_get_active_iter(cbox, &iter)) {
-    GtkTreeModel *model;
-    model = gtk_combo_box_get_model(cbox);
-    gtk_tree_model_get(model, &iter, 0, &font, -1);
+  font = combo_box_get_active_text(cbox);
+  if (font == NULL) {
+    return;
   }
 
   lock = UpdateFieldsLock;
   UpdateFieldsLock = TRUE;
   set_font_family(GTK_WIDGET(cbox));
-  if (font) {
-    int index;
-    index = check_font_index(font);
-    gtk_combo_box_set_active(cbox, index);
-    g_free(font);
-  }
+  index = check_font_index(font);
+  combo_box_set_active(cbox, index);
+  g_free(font);
   UpdateFieldsLock = lock;
 }
 
@@ -1855,7 +1870,7 @@ presetting_create_panel(GtkApplication *app)
   set_font_family(w);
   gtk_widget_set_tooltip_text(w, _("Font name"));
   gtk_box_append(GTK_BOX(box), w);
-  g_signal_connect(w, "changed", G_CALLBACK(update_focused_obj), NULL);
+  g_signal_connect(w, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
   Widgets.font.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
@@ -1975,9 +1990,16 @@ presetting_create_panel(GtkApplication *app)
 void
 presetting_get(struct presettings *setting)
 {
-  setting->line_width = get_line_width_setting();;
-  setting->line_style = combo_box_get_active(Widgets.line_style.widget);;
-  setting->type = combo_box_get_active(Widgets.path_type.widget);
+  int active;
+  setting->line_width = get_line_width_setting();
+  active = combo_box_get_active(Widgets.line_style.widget);
+  if (active >= 0) {
+    setting->line_style = active;
+  }
+  active = combo_box_get_active(Widgets.path_type.widget);
+  if (active >= 0) {
+    setting->type = active;
+  }
   setting->interpolation = setting->type - 1;
   if (setting->type) {
     setting->type = 1;

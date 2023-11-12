@@ -75,6 +75,16 @@ void
 combo_box_append_text(GtkWidget *cbox, char *str)
 {
   GtkStringList *list;
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
+    GtkListStore  *list;
+    GtkTreeIter iter;
+
+    list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter, 0, str, -1);
+    return;
+  }
 
   list = GTK_STRING_LIST(gtk_drop_down_get_model(GTK_DROP_DOWN (cbox)));
   gtk_string_list_append (list, str);
@@ -83,7 +93,16 @@ combo_box_append_text(GtkWidget *cbox, char *str)
 int
 combo_box_get_active(GtkWidget *cbox)
 {
-  return gtk_drop_down_get_selected (GTK_DROP_DOWN (cbox));
+  guint active;
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
+    return gtk_combo_box_get_active(GTK_COMBO_BOX(cbox));
+  }
+
+  active = gtk_drop_down_get_selected (GTK_DROP_DOWN (cbox));
+  if (active == GTK_INVALID_LIST_POSITION) {
+    return -1;
+  }
+  return active;
 }
 
 char *
@@ -94,6 +113,9 @@ combo_box_get_active_text(GtkWidget *cbox)
   const char *str;
 
   i = combo_box_get_active(cbox);
+  if (i < 0) {
+    return NULL;
+  }
   list = GTK_STRING_LIST (gtk_drop_down_get_model(GTK_DROP_DOWN (cbox)));
   str = gtk_string_list_get_string (list, i);
   return g_strdup (str);
@@ -102,7 +124,11 @@ combo_box_get_active_text(GtkWidget *cbox)
 void
 combo_box_set_active(GtkWidget *cbox, int i)
 {
-  gtk_drop_down_set_selected (GTK_DROP_DOWN (cbox), i);
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
+    gtk_combo_box_set_active(GTK_COMBO_BOX (cbox), i);
+  } else {
+    gtk_drop_down_set_selected (GTK_DROP_DOWN (cbox), i);
+  }
 }
 
 void
@@ -110,6 +136,14 @@ combo_box_clear(GtkWidget *cbox)
 {
   GtkStringList *list;
   int n;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
+    GtkListStore *list;
+
+    list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+    gtk_list_store_clear(list);
+    return;
+  }
 
   list = GTK_STRING_LIST (gtk_drop_down_get_model(GTK_DROP_DOWN (cbox)));
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
@@ -120,6 +154,13 @@ int
 combo_box_get_num(GtkWidget *cbox)
 {
   GListModel *model;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
+    GtkTreeModel *model;
+
+    model = gtk_combo_box_get_model(GTK_COMBO_BOX(cbox));
+    return gtk_tree_model_iter_n_children(model, NULL);
+  }
 
   model = gtk_drop_down_get_model(GTK_DROP_DOWN(cbox));
   return g_list_model_get_n_items(model);

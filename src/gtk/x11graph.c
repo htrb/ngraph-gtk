@@ -155,7 +155,7 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
 }
 
 static void
-PageDialogPage(GtkWidget *w, gpointer client_data)
+PageDialogPage(GtkWidget *w, GParamSpec *spec, gpointer client_data)
 {
   struct PageDialog *d;
   int paper, landscape;
@@ -225,7 +225,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Paper:"), FALSE, i++);
     d->paper = w;
-    g_signal_connect(w, "changed", G_CALLBACK(PageDialogPage), d);
+    g_signal_connect(w, "notify::selected", G_CALLBACK(PageDialogPage), d);
 
     for (j = 0; j < PAGELISTNUM; j++) {
       combo_box_append_text(d->paper, _(pagelist[j].paper));
@@ -276,7 +276,7 @@ static void
 PageDialogClose(GtkWidget *wi, void *data)
 {
   struct PageDialog *d;
-  int w, h;
+  int w, h, sign;
 
   d = (struct PageDialog *) data;
   if (d->ret != IDOK)
@@ -296,7 +296,10 @@ PageDialogClose(GtkWidget *wi, void *data)
   Menulocal.TopMargin = spin_entry_get_val(d->topmargin);
 
   Menulocal.PaperZoom = spin_entry_get_val(d->paperzoom);
-  Menulocal.Decimalsign = combo_box_get_active(d->decimalsign);
+  sign = combo_box_get_active(d->decimalsign);
+  if (sign >= 0) {
+    Menulocal.Decimalsign = sign;
+  }
 }
 
 void
@@ -1100,6 +1103,7 @@ static void
 LoadDialogClose(GtkWidget *w, void *data)
 {
   struct LoadDialog *d;
+  int loadpath;
 
   d = (struct LoadDialog *) data;
   if (d->ret == IDCANCEL)
@@ -1109,7 +1113,10 @@ LoadDialogClose(GtkWidget *w, void *data)
     g_free(d->exdir);
   }
   d->exdir = g_strdup(folder_chooser_button_get_folder(d->dir));
-  d->loadpath = combo_box_get_active(d->load_path);
+  loadpath = combo_box_get_active(d->load_path);
+  if (loadpath >= 0) {
+    d->loadpath = loadpath;
+  }
 }
 
 void
