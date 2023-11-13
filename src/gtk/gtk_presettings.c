@@ -536,7 +536,7 @@ widget_set_line_width(struct objlist *obj, N_VALUE *inst)
   } else if (index < 0) {
     index = 0;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_width.widget), index);
+  combo_box_set_active(Widgets.line_width.widget, index);
 }
 
 static void
@@ -1718,37 +1718,124 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   UpdateAll(objs);
 }
 
+static void
+factory_method_setup(GtkSignalListItemFactory *self, GtkListItem *list_item, gpointer user_data)
+{
+  GtkWidget *box, *label, *icon;
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+
+  label = gtk_label_new(NULL);
+  gtk_box_append(GTK_BOX(box), label);
+
+  icon = gtk_image_new();
+  gtk_box_append(GTK_BOX(box), icon);
+
+  icon = gtk_image_new();
+  gtk_box_append(GTK_BOX(box), icon);
+
+  gtk_list_item_set_child(list_item, box);
+}
+
+static void
+selected_item_changed (GtkDropDown *self, GParamSpec *pspec, GtkListItem *list_item)
+{
+  GtkWidget *box;
+  GtkWidget *check;
+
+  box = gtk_list_item_get_child (list_item);
+  check = gtk_widget_get_last_child (box);
+
+  if (gtk_drop_down_get_selected_item (self) == gtk_list_item_get_item (list_item)) {
+    gtk_widget_set_opacity (check, 1.0);
+  } else {
+    gtk_widget_set_opacity (check, 0.0);
+  }
+}
+
+static void
+factory_method_bind(GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkWidget *box, *label, *icon, *check, *combo;
+  gpointer item;
+  const char *string;
+  char buf[64], img_file[256];
+  int i, width;
+
+  combo = GTK_WIDGET(user_data);
+  item = gtk_list_item_get_item (list_item);
+  box = gtk_list_item_get_child(list_item);
+  label = gtk_widget_get_first_child (box);
+  icon = gtk_widget_get_next_sibling (label);
+  check = gtk_widget_get_next_sibling (icon);
+
+  string = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
+  i = atoi(string);
+  width = 2 << i;
+
+  snprintf(img_file, sizeof(img_file), "linewidth_%03d-symbolic", width);
+  gtk_image_set_from_icon_name(GTK_IMAGE (icon), img_file);
+
+  gtk_image_set_from_icon_name(GTK_IMAGE (check), "object-select-symbolic");
+
+  snprintf(buf, sizeof(buf), "%4.1f", width / 10.0);
+  gtk_label_set_label (GTK_LABEL (label), buf);
+
+  if (gtk_widget_get_ancestor (box, GTK_TYPE_POPOVER)) {
+    g_signal_connect (combo, "notify::selected-item", G_CALLBACK (selected_item_changed), list_item);
+    selected_item_changed (GTK_DROP_DOWN(combo), NULL, list_item);
+    gtk_widget_set_visible (check, TRUE);
+  } else {
+    gtk_widget_set_visible (check, FALSE);
+  }
+}
+
+static void
+line_width_changed(GtkWidget *cbox, GParamSpec *pspec, GtkListItem *list_item)
+{
+  int selected;
+
+  selected = combo_box_get_active(cbox);
+  if (selected < 0) {
+    return;
+  }
+  update_focused_obj(cbox, NULL);
+}
+
+static void
+factory_method_unbind(GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkDropDown *self = user_data;
+
+  g_signal_handlers_disconnect_by_func (self, selected_item_changed, list_item);
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
-  GtkWidget *cbox;
-  GtkListStore *list;
-  GtkTreeIter iter;
-  int j;
-  GtkCellRenderer *rend;
+  GtkStringList *list;
+  GtkWidget *combo;
+  GtkListItemFactory* factory;
+  int i;
 
-  list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
-  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
-  rend = gtk_cell_renderer_text_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
-  rend = gtk_cell_renderer_pixbuf_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 1);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-size", 2);
-  for (j = 0; j < LINE_WIDTH_ICON_NUM; j++) {
-    char buf[64], img_file[256];
-    snprintf(img_file, sizeof(img_file), "linewidth_%03d-symbolic", 2 << j);
-    gtk_list_store_append(list, &iter);
-    snprintf(buf, sizeof(buf), "%4.1f", (2 << j) / 10.0);
-    gtk_list_store_set(list, &iter,
-		       0, buf,
-		       1, img_file,
-		       -1);
+  list = gtk_string_list_new(NULL);
+
+  combo = gtk_drop_down_new(G_LIST_MODEL(list), NULL);
+
+  factory = gtk_signal_list_item_factory_new();
+  g_signal_connect(factory, "setup", G_CALLBACK(factory_method_setup), combo);
+  g_signal_connect(factory, "bind", G_CALLBACK(factory_method_bind), combo);
+  g_signal_connect (factory, "unbind", G_CALLBACK (factory_method_unbind), combo);
+
+  gtk_drop_down_set_factory(GTK_DROP_DOWN(combo), factory);
+  for (i = 0; i < LINE_WIDTH_ICON_NUM; i++) {
+    char buf[64];
+    snprintf(buf, sizeof(buf), "%d", i);
+    combo_box_append_text(combo, buf);
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
-  g_signal_connect(cbox, "changed", G_CALLBACK(update_focused_obj), NULL);
-  return cbox;
+
+  combo_box_set_active(combo, 1);
+  g_signal_connect(combo, "notify::selected", G_CALLBACK(line_width_changed), NULL);
+  return combo;
 }
 
 static GtkWidget *
