@@ -802,55 +802,6 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
 }
 
 static void
-FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  char *s;
-  struct FitLoadDialog *d;
-  int i;
-  GtkWidget *w;
-
-  d = (struct FitLoadDialog *) data;
-  if (makewidget) {
-    w = combo_box_create();
-    d->list = w;
-    gtk_box_append(GTK_BOX(d->vbox), w);
-  }
-  combo_box_clear(d->list);
-  for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
-    getobj(d->Obj, "profile", i, 0, NULL, &s);
-    combo_box_append_text(d->list, CHK_STR(s));
-  }
-  combo_box_set_active(d->list, 0);
-}
-
-static void
-FitLoadDialogClose(GtkWidget *w, void *data)
-{
-  struct FitLoadDialog *d;
-  int sel;
-
-  d = (struct FitLoadDialog *) data;
-  if (d->ret == IDCANCEL)
-    return;
-
-  sel = combo_box_get_active(d->list);
-  if (sel < 0) {
-    return;
-  }
-  d->sel = sel;
-}
-
-void
-FitLoadDialog(struct FitLoadDialog *data, struct objlist *obj, int sid)
-{
-  data->SetupWindow = FitLoadDialogSetup;
-  data->CloseWindow = FitLoadDialogClose;
-  data->Obj = obj;
-  data->Sid = sid;
-  data->sel = -1;
-}
-
-static void
 FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FitSaveDialog *d;
@@ -1040,40 +991,6 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
     delobj(shell, newid);
   }
   return TRUE;
-}
-
-static void
-file_dialog_load_response(struct response_callback *cb)
-{
-  struct FitDialog *d;
-  d = (struct FitDialog *) cb->data;
-  if ((cb->return_value == IDOK) && (DlgFitLoad.sel >= 0)) {
-    int id;
-    id = DlgFitLoad.sel + d->Lastid + 1;
-    FitDialogSetupItem(d->widget, d, id);
-  }
-}
-
-static void
-FitDialogLoad(GtkButton *btn, gpointer user_data)
-{
-  struct FitDialog *d;
-  int lastid;
-
-  d = (struct FitDialog *) user_data;
-
-  if (!FitDialogLoadConfig(d, TRUE))
-    return;
-
-  lastid = chkobjlastinst(d->Obj);
-  if ((d->Lastid < 0) || (lastid == d->Lastid)) {
-    message_box(d->widget, _("No settings."), FITSAVE, RESPONS_OK);
-    return;
-  }
-
-  FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
-  response_callback_add(&DlgFitLoad, file_dialog_load_response, NULL, d);
-  DialogExecute(d->widget, &DlgFitLoad);
 }
 
 struct copy_settings_to_fitobj_data {
@@ -1873,6 +1790,88 @@ fit_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
 }
 
 static void
+bind_fit_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+  gpointer item;
+  const char *name;
+
+  label = gtk_list_item_get_child (list_item);
+  item = gtk_list_item_get_item (list_item);
+  name = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
+  gtk_label_set_text(GTK_LABEL(label), name);
+}
+
+static void
+select_fit_item_cb(GtkWidget *list_view, guint position, gpointer user_data)
+{
+  struct FitDialog *d;
+  int id;
+
+  d = (struct FitDialog *) user_data;
+
+  id = position + d->Lastid + 1;
+  FitDialogSetupItem(d->widget, d, id);
+}
+
+static void
+fit_load_menu_show_cb(GtkWidget *popover, gpointer user_data)
+{
+  struct FitDialog *d;
+  GtkSingleSelection *model;
+  GtkWidget *list_view;
+  GtkStringList *list;
+  int sid, i, lastid, n;
+  char *s;
+
+  d = (struct FitDialog *) user_data;
+
+  list_view = gtk_popover_get_child (GTK_POPOVER (popover));
+  model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(GTK_LIST_VIEW (list_view)));
+  list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  gtk_string_list_splice (list, 0, n, NULL);
+
+  if (!FitDialogLoadConfig(d, TRUE)) {
+    return;
+  }
+
+  lastid = chkobjlastinst(d->Obj);
+  if ((d->Lastid < 0) || (lastid == d->Lastid)) {
+    return;
+  }
+
+  sid =  d->Lastid + 1;
+  for (i = sid; i <= chkobjlastinst(d->Obj); i++) {
+    getobj(d->Obj, "profile", i, 0, NULL, &s);
+    gtk_string_list_append(list, CHK_STR(s));
+  }
+}
+
+static void
+fit_load_button_setup(GtkWidget *menu_button, struct FitDialog *d)
+{
+  GtkWidget *popover, *menu;
+  GtkStringList *list;
+  GtkListItemFactory *factory;
+
+  list = gtk_string_list_new (NULL);
+
+  factory = gtk_signal_list_item_factory_new();
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_popup_menu_cb), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_fit_item_cb), NULL);
+
+  menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
+  gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
+  g_signal_connect(menu, "activate", G_CALLBACK(select_fit_item_cb), d);
+
+  popover = gtk_popover_new();
+  gtk_popover_set_child(GTK_POPOVER (popover), menu);
+  g_signal_connect(popover, "show", G_CALLBACK(fit_load_menu_show_cb), d);
+
+  gtk_menu_button_set_popover (GTK_MENU_BUTTON (menu_button), popover);
+}
+static void
 FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FitDialog *d;
@@ -1979,8 +1978,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(FitDialogCopy), d, "fit");
 
-    w = gtk_button_new_with_mnemonic(_("_Load"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogLoad), d);
+    w = gtk_menu_button_new();
+    gtk_menu_button_set_use_underline (GTK_MENU_BUTTON (w), TRUE);
+    gtk_menu_button_set_label(GTK_MENU_BUTTON(w), _("_Load"));
+    fit_load_button_setup(w, d);
     gtk_box_append(GTK_BOX(hbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Save"));
