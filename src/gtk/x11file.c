@@ -1807,8 +1807,14 @@ select_fit_item_cb(GtkWidget *list_view, guint position, gpointer user_data)
 {
   struct FitDialog *d;
   int id;
+  GtkWidget *popover;
 
   d = (struct FitDialog *) user_data;
+
+  popover = widget_get_grandparent(list_view);
+  if (G_TYPE_CHECK_INSTANCE_TYPE(popover, GTK_TYPE_POPOVER)) {
+    gtk_popover_popdown(GTK_POPOVER(popover));
+  }
 
   id = position + d->Lastid + 1;
   FitDialogSetupItem(d->widget, d, id);
