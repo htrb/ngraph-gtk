@@ -2158,16 +2158,6 @@ setup_recent_data(GtkWidget *menu_button, int type)
 }
 
 static void
-setup_recent_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
-{
-  GtkWidget *label;
-
-  label = gtk_label_new (NULL);
-  gtk_widget_set_halign (label, GTK_ALIGN_START);
-  gtk_list_item_set_child (list_item, label);
-}
-
-static void
 bind_recent_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;
@@ -2223,7 +2213,7 @@ create_recent_menu(GtkWidget *menu_button, int type)
   list = gtk_string_list_new (NULL);
 
   factory = gtk_signal_list_item_factory_new();
-  g_signal_connect (factory, "setup", G_CALLBACK (setup_recent_item_cb), NULL);
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_popup_menu_cb), NULL);
   g_signal_connect (factory, "bind", G_CALLBACK (bind_recent_item_cb), NULL);
 
   menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
