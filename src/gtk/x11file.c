@@ -1821,7 +1821,7 @@ fit_load_menu_show_cb(GtkWidget *popover, gpointer user_data)
   GtkSingleSelection *model;
   GtkWidget *list_view;
   GtkStringList *list;
-  int sid, i, lastid, n;
+  int i, lastid, n;
   char *s;
 
   d = (struct FitDialog *) user_data;
@@ -1829,6 +1829,7 @@ fit_load_menu_show_cb(GtkWidget *popover, gpointer user_data)
   list_view = gtk_popover_get_child (GTK_POPOVER (popover));
   model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(GTK_LIST_VIEW (list_view)));
   list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
+
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
   gtk_string_list_splice (list, 0, n, NULL);
 
@@ -1841,8 +1842,8 @@ fit_load_menu_show_cb(GtkWidget *popover, gpointer user_data)
     return;
   }
 
-  sid =  d->Lastid + 1;
-  for (i = sid; i <= chkobjlastinst(d->Obj); i++) {
+  n = chkobjlastinst(d->Obj);
+  for (i = d->Lastid + 1; i <= n; i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     gtk_string_list_append(list, CHK_STR(s));
   }
