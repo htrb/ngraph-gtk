@@ -2175,8 +2175,6 @@ bind_recent_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
   g_free(basename);
 }
 
-#define RECENT_MENU_TYPE "recent_menu_type"
-
 static void
 select_recent_item_cb(GtkListView *self, guint position, gpointer user_data)
 {
@@ -2186,12 +2184,15 @@ select_recent_item_cb(GtkListView *self, guint position, gpointer user_data)
   const char *filename;
   int type;
 
-  popover = GTK_WIDGET (user_data);
-  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT (popover), RECENT_MENU_TYPE));
+  type = GPOINTER_TO_INT(user_data);
   model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(self));
   list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
   filename = gtk_string_list_get_string (list, position);
-  gtk_popover_popdown(GTK_POPOVER (popover));
+
+  popover = widget_get_grandparent(GTK_WIDGET(self));
+  if (G_TYPE_CHECK_INSTANCE_TYPE(popover, GTK_TYPE_POPOVER)) {
+    gtk_popover_popdown(GTK_POPOVER(popover));
+  }
 
   switch (type) {
   case RECENT_TYPE_GRAPH:
@@ -2220,10 +2221,9 @@ create_recent_menu(GtkWidget *menu_button, int type)
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
 
   popover = gtk_popover_new();
-  g_object_set_data(G_OBJECT(popover), RECENT_MENU_TYPE, GINT_TO_POINTER(type));
   gtk_popover_set_child(GTK_POPOVER (popover), menu);
   gtk_menu_button_set_popover (GTK_MENU_BUTTON (menu_button), popover);
-  g_signal_connect(menu, "activate", G_CALLBACK(select_recent_item_cb), popover);
+  g_signal_connect(menu, "activate", G_CALLBACK(select_recent_item_cb), GINT_TO_POINTER(type));
 
   setup_recent_data(menu_button, type);
 }
