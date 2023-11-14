@@ -194,31 +194,6 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
 }
 
 static void
-RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  char *fname;
-  if (Menulock || Globallock) {
-    return;
-  }
-  fname = g_strdup(g_variant_get_string(parameter, NULL));
-  if (fname) {
-    graph_dropped(fname);
-  }
-}
-static void
-RecentDataAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  const char *fname;
-  if (Menulock || Globallock) {
-    return;
-  }
-  fname = g_variant_get_string(parameter, NULL);
-  if (fname) {
-    load_data(fname);
-  }
-}
-
-static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRedo));
@@ -818,8 +793,6 @@ static GActionEntry AppEntries[] =
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceGridDefaultAction", PreferenceGridDefaultAction_activated, NULL, NULL, NULL },
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
-  { "RecentGraphAction", RecentGraphAction_activated, "s", NULL, NULL },
-  { "RecentDataAction", RecentDataAction_activated, "s", NULL, NULL },
 };
 
 static int Initialized = FALSE;
