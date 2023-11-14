@@ -2083,12 +2083,11 @@ check_exist_instances(struct objlist *parent)
 }
 
 static void
-add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
+add_recent_menu_item(GtkRecentInfo *info, GtkStringList *string_list, int type)
 {
   int local, n;
-  const char *uri, *name, *mime, *target_mime;
-  char *filename, *action;
-  GString *label;
+  const char *uri, *mime, *target_mime;
+  char *filename;
   struct stat sb;
 
   if (! gtk_recent_info_has_application (info, AppName)) {
@@ -2100,13 +2099,12 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
     return;
   }
 
-  n = g_menu_model_get_n_items(G_MENU_MODEL(menu));
+  n = g_list_model_get_n_items(G_LIST_MODEL (string_list));
   if (n >= RECENT_CHOOSER_LIMIT) {
     return;
   }
 
   uri = gtk_recent_info_get_uri(info);
-  name = gtk_recent_info_get_display_name(info);
   mime = gtk_recent_info_get_mime_type(info);
   target_mime = (type == RECENT_TYPE_GRAPH) ? NGRAPH_GRAPH_MIME : NGRAPH_DATA_MIME;
   if (g_ascii_strcasecmp(mime, target_mime)) {
@@ -2124,63 +2122,127 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
     g_free(filename);
     return;
   }
-  action = g_strdup_printf("app.Recent%sAction(\"%s\")",
-			   (type == RECENT_TYPE_GRAPH) ? "Graph" : "Data",
-			   filename);
-  g_free(filename);
-  if (action == NULL) {
-    return;
-  }
+  gtk_string_list_append (string_list, filename);
 
-  label = g_string_new(name);
-  if (label) {
-    GMenuItem *item;
-    g_string_replace(label, "_", "__", 0);
-    changefilename(action);     /* fix-me: should escape '\' character? */
-    item = g_menu_item_new(label->str, action);
-    g_menu_append_item(menu, item);
-    g_object_unref(item);
-    g_string_free(label, TRUE);
+  g_free(filename);
+}
+
+static void
+setup_recent_data(GtkWidget *menu_button, int type)
+{
+  GtkRecentManager *manager;
+  GList *list, *ptr;
+  int n;
+  GtkPopover *popover;
+  GtkWidget *list_view;
+  GtkStringList *string_list;
+  GtkSingleSelection *model;
+
+  popover = gtk_menu_button_get_popover (GTK_MENU_BUTTON (menu_button));
+  list_view = gtk_popover_get_child (GTK_POPOVER (popover));
+  model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(GTK_LIST_VIEW (list_view)));
+  string_list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
+
+  n = g_list_model_get_n_items (G_LIST_MODEL (string_list));
+  gtk_string_list_splice (string_list, 0, n, NULL);
+
+  manager = gtk_recent_manager_get_default();
+  list = gtk_recent_manager_get_items(manager);
+  for (ptr = list; ptr; ptr = ptr->next) {
+    GtkRecentInfo *info;
+    info = ptr->data;
+    add_recent_menu_item(info, string_list, type);
+    gtk_recent_info_unref(info);
   }
-  g_free(action);
+  g_list_free(list);
+}
+
+static void
+setup_recent_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+
+  label = gtk_label_new (NULL);
+  gtk_widget_set_halign (label, GTK_ALIGN_START);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+bind_recent_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+  gpointer item;
+  const char *filename;
+  char *basename;
+
+  label = gtk_list_item_get_child (list_item);
+  item = gtk_list_item_get_item (list_item);
+  filename = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
+  gtk_widget_set_tooltip_text (label, filename);
+
+  basename = getbasename(filename);
+  gtk_label_set_text(GTK_LABEL(label), basename);
+  g_free(basename);
+}
+
+#define RECENT_MENU_TYPE "recent_menu_type"
+
+static void
+select_recent_item_cb(GtkListView *self, guint position, gpointer user_data)
+{
+  GtkWidget *popover;
+  GtkStringList *list;
+  GtkSingleSelection *model;
+  const char *filename;
+  int type;
+
+  popover = GTK_WIDGET (user_data);
+  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT (popover), RECENT_MENU_TYPE));
+  model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(self));
+  list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
+  filename = gtk_string_list_get_string (list, position);
+  gtk_popover_popdown(GTK_POPOVER (popover));
+
+  switch (type) {
+  case RECENT_TYPE_GRAPH:
+    graph_dropped(filename);
+    break;
+  case RECENT_TYPE_DATA:
+    load_data(filename);
+    break;
+  }
 }
 
 static void
 create_recent_menu(GtkWidget *menu_button, int type)
 {
-  GtkRecentManager *manager;
-  GList *list, *ptr;
-  GMenu *menu;
-  GMenuModel *old_menu;
-  int n;
+  GtkWidget *popover, *menu;
+  GtkStringList *list;
+  GtkListItemFactory *factory;
 
-  manager = gtk_recent_manager_get_default();
-  list = gtk_recent_manager_get_items(manager);
-  menu = g_menu_new();
-  for (ptr = list; ptr; ptr = ptr->next) {
-    GtkRecentInfo *info;
-    info = ptr->data;
-    add_recent_menu_item(info, menu, type);
-    gtk_recent_info_unref(info);
-  }
-  g_list_free(list);
-  n = g_menu_model_get_n_items(G_MENU_MODEL(menu));
-  if (n < 1) {
-    g_object_unref(menu);
-    menu = NULL;
-  }
-  old_menu = gtk_menu_button_get_menu_model(GTK_MENU_BUTTON(menu_button));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu_button), G_MENU_MODEL(menu));
-  if (old_menu) {
-    g_object_unref(old_menu);
-  }
+  list = gtk_string_list_new (NULL);
+
+  factory = gtk_signal_list_item_factory_new();
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_recent_item_cb), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_recent_item_cb), NULL);
+
+  menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
+  gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
+
+  popover = gtk_popover_new();
+  g_object_set_data(G_OBJECT(popover), RECENT_MENU_TYPE, GINT_TO_POINTER(type));
+  gtk_popover_set_child(GTK_POPOVER (popover), menu);
+  gtk_menu_button_set_popover (GTK_MENU_BUTTON (menu_button), popover);
+  g_signal_connect(menu, "activate", G_CALLBACK(select_recent_item_cb), popover);
+
+  setup_recent_data(menu_button, type);
 }
 
 static void
 recent_manger_changed(GtkRecentManager* self, gpointer user_data)
 {
-  create_recent_menu(RecentGraphMenu, RECENT_TYPE_GRAPH);
-  create_recent_menu(RecentDataMenu, RECENT_TYPE_DATA);
+  setup_recent_data(RecentGraphMenu, RECENT_TYPE_GRAPH);
+  setup_recent_data(RecentDataMenu, RECENT_TYPE_DATA);
 }
 
 static void
