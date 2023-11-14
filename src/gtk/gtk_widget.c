@@ -12,6 +12,18 @@
 #include "x11gui.h"
 #include "dir_defs.h"
 
+GtkWidget *
+widget_get_grandparent(GtkWidget *w)
+{
+  GtkWidget *parent;
+  parent = gtk_widget_get_parent(w);
+  if (parent == NULL) {
+    return NULL;
+  }
+
+  return gtk_widget_get_parent(parent);
+}
+
 void
 setup_popup_menu_cb (GtkListItemFactory *factory, GtkListItem *list_item)
 {
