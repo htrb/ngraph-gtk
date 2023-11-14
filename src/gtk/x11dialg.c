@@ -72,7 +72,6 @@ struct EvalDialog DlgEval;
 struct MathDialog DlgMath;
 struct MathTextDialog DlgMathText;
 struct FitDialog DlgFit;
-struct FitLoadDialog DlgFitLoad;
 struct FitSaveDialog DlgFitSave;
 struct SectionDialog DlgSection;
 struct CrossDialog DlgCross;
@@ -167,10 +166,6 @@ initdialog(void)
   DlgFit.response_cb = NULL;
   DlgFit.focus = NULL;
   DlgFit.resource = N_("fit");
-  DlgFitLoad.widget = NULL;
-  DlgFitLoad.response_cb = NULL;
-  DlgFitLoad.focus = NULL;
-  DlgFitLoad.resource = N_("fit load");
   DlgFitSave.widget = NULL;
   DlgFitSave.response_cb = NULL;
   DlgFitSave.focus = NULL;

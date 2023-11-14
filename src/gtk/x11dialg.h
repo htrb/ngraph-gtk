@@ -221,17 +221,6 @@ struct FitDialog
 };
 void FitDialog(struct FitDialog *data, struct objlist *obj, int id);
 
-struct FitLoadDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *list;
-  struct objlist *Obj;
-  int Sid;
-  int sel;
-};
-void FitLoadDialog(struct FitLoadDialog *data, struct objlist *obj, int sid);
-
 struct FitSaveDialog
 {
   DIALOG_PROTOTYPE;
