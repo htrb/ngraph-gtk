@@ -3220,7 +3220,7 @@ CmViewerButtonArm(GtkWidget *action, gpointer client_data)
     set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
     break;
   case ZoomB:
-    NSetCursor(GDK_SIZING);
+    NSetCursor(GDK_PLUS);
     set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   default:
