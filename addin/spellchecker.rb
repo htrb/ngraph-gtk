@@ -37,8 +37,6 @@ class NgraphSpellchecker
     @apply = {}
 
     @modified = false
-    @x = nil
-    @y = nil
   end
 
   def focused
@@ -60,12 +58,8 @@ class NgraphSpellchecker
       dialog.title = "spell check (text:#{id})"
       dialog.buttons = ["_Abort", "_Ignore all", "_Ignore", "_Apply all", "_Apply"]
       dialog.caption = "#{original_string}\nPossible correction for '#{word}':"
-      dialog.x = @x if (@x)
-      dialog.y = @y if (@y)
       str = dialog.combo_entry(@speller.suggest(word))
       response = dialog.response_button
-      @x = dialog.x
-      @y = dialog.y
       case response
       when IGNORE
         word
