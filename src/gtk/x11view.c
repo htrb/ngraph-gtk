@@ -6265,14 +6265,14 @@ ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, 
   case GDK_KEY_Shift_L:
   case GDK_KEY_Shift_R:
     if (d->Mode == ZoomB) {
-      NSetCursor(GDK_PLUS);
+      NSetCursor(GDK_TARGET);
       return TRUE;
     }
     break;
   case GDK_KEY_Control_L:
   case GDK_KEY_Control_R:
     if (d->Mode == ZoomB) {
-      NSetCursor(GDK_TARGET);
+      NSetCursor(GDK_SIZING);
       return TRUE;
     }
     break;
@@ -6307,7 +6307,7 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
   case GDK_KEY_Control_L:
   case GDK_KEY_Control_R:
     if (d->Mode == ZoomB) {
-      NSetCursor(GDK_TARGET);
+      NSetCursor(GDK_PLUS);
       return;
     }
     break;
