@@ -114,6 +114,7 @@ combo_box_entry_create(void)
   popover = create_popver(entry);
 
   g_signal_connect_swapped(entry, "icon-release", G_CALLBACK(gtk_popover_popup), popover);
+  g_signal_connect_swapped(entry, "destroy", G_CALLBACK(gtk_widget_unparent), popover);
   g_object_set_data(G_OBJECT(entry), ENTRY_COMBO_MENU, popover);
 
   return GTK_WIDGET(entry);
