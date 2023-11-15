@@ -2155,6 +2155,9 @@ setup_recent_data(GtkWidget *menu_button, int type)
     gtk_recent_info_unref(info);
   }
   g_list_free(list);
+
+  n = g_list_model_get_n_items (G_LIST_MODEL (string_list));
+  gtk_widget_set_sensitive(menu_button, n > 0);
 }
 
 static void
