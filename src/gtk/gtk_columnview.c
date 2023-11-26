@@ -34,6 +34,7 @@ ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
   nobj->name = g_strdup (name);
   nobj->obj = obj;
   nobj->id = id;
+  nobj->x = nobj->y = 0.0;
 
   return nobj;
 }

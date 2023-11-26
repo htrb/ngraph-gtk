@@ -13,6 +13,7 @@ struct _NgraphInst {
   gchar *name;
   struct objlist *obj;
   int id;
+  double x, y;
 };
 
 NgraphInst *ngraph_inst_new (const gchar *name, int id, struct objlist *obj);
