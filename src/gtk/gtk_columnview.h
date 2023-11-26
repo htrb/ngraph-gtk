@@ -29,5 +29,6 @@ NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *na
 void columnview_select_all(GtkWidget *columnview);
 void columnview_unselect_all(GtkWidget *columnview);
 void columnview_select(GtkWidget *columnview, int i);
+void columnview_remove_selected(GtkWidget *columnview);
 
 #endif

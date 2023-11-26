@@ -187,3 +187,25 @@ columnview_select(GtkWidget *columnview, int i)
   gtk_selection_model_unselect_all (selection);
   gtk_selection_model_select_item (selection, i, FALSE);
 }
+
+void
+columnview_remove_selected(GtkWidget *columnview)
+{
+  GtkSelectionModel *selection;
+  GListStore *list;
+  int i, n;
+
+  selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
+  list = columnview_get_list (columnview);
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  for (i = n - 1; i >= 0; i--) {
+    NgraphInst *ni;
+    guint idx;
+    if (! gtk_selection_model_is_selected (selection, i)) {
+      continue;
+    }
+    ni = g_list_model_get_item (G_LIST_MODEL (selection), i);
+    g_list_store_find (list, ni, &idx);
+    g_list_store_remove (list, idx);
+  }
+}
