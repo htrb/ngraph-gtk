@@ -467,12 +467,12 @@ static void
 SelectDialogClose(GtkWidget *w, void *data)
 {
   struct SelectDialog *d;
-  GListStore *list;
+  GListModel *list;
   NgraphInst *ni;
   int n, i;
 
   d = (struct SelectDialog *) data;
-  list = columnview_get_list(d->list);
+  list = G_LIST_MODEL(gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list)));
   if (list == NULL) {
     d->ret = IDOK;
     return;
@@ -480,12 +480,10 @@ SelectDialogClose(GtkWidget *w, void *data)
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
 
   if (d->ret == IDOK) {
-    GtkSelectionModel *selection;
 
-    selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list));
     for (i = 0; i < n; i++) {
-      if (gtk_selection_model_is_selected (selection, i)) {
-	ni = g_list_model_get_item (G_LIST_MODEL (list), i);
+      if (gtk_selection_model_is_selected (GTK_SELECTION_MODEL (list), i)) {
+	ni = g_list_model_get_item (list, i);
 	arrayadd(d->sel, &ni->id);
       }
     }
