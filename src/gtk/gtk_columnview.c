@@ -63,8 +63,8 @@ columnview_create(gboolean multi)
   return columnview;
 }
 
-void
-columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data)
+GtkColumnViewColumn *
+columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand)
 {
   GtkColumnViewColumn *column;
   GtkListItemFactory *factory;
@@ -74,6 +74,7 @@ columnview_create_column(GtkWidget *columnview, const char *header, GCallback se
   g_signal_connect (factory, "bind", G_CALLBACK (bind), user_data);
 
   column = gtk_column_view_column_new (header, factory);
+  gtk_column_view_column_set_expand(column, expand);
   gtk_column_view_append_column (GTK_COLUMN_VIEW (columnview), column);
 
   if (sort) {
@@ -83,6 +84,7 @@ columnview_create_column(GtkWidget *columnview, const char *header, GCallback se
     sorter = GTK_SORTER(gtk_string_sorter_new(expression));
     gtk_column_view_column_set_sorter (column, sorter);
   }
+  return column;
 }
 
 GListStore *
