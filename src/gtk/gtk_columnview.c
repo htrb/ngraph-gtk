@@ -131,23 +131,25 @@ columnview_get_active_item(GtkWidget *columnview)
   return gtk_single_selection_get_selected_item (GTK_SINGLE_SELECTION (selection));
 }
 
-void
+NgraphInst *
 list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj)
 {
   NgraphInst *item;
   item = ngraph_inst_new(name, id, obj);
   g_list_store_append (store, item);
   g_object_unref(item);
+  return item;
 }
 
-void
+NgraphInst *
 columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj)
 {
   GListStore *store;
   store = columnview_get_list(columnview);
   if (store) {
-    list_store_append_ngraph_inst(store, name, id, obj);
+    return list_store_append_ngraph_inst(store, name, id, obj);
   }
+  return NULL;
 }
 
 void
