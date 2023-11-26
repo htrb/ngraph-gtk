@@ -18,7 +18,7 @@ struct _NgraphInst {
 NgraphInst *ngraph_inst_new (const gchar *name, int id, struct objlist *obj);
 GtkWidget *columnview_create(gboolean multi);
 void columnview_clear(GtkWidget *columnview);
-void columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort);
+void columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data);
 void columnview_set_active(GtkWidget *columnview, int active);
 int columnview_get_active(GtkWidget *columnview);
 NgraphInst *columnview_get_active_item(GtkWidget *columnview);

@@ -62,14 +62,14 @@ columnview_create(gboolean multi)
 }
 
 void
-columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort)
+columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data)
 {
   GtkColumnViewColumn *column;
   GtkListItemFactory *factory;
 
   factory = gtk_signal_list_item_factory_new ();
-  g_signal_connect (factory, "setup", G_CALLBACK (setup), NULL);
-  g_signal_connect (factory, "bind", G_CALLBACK (bind), NULL);
+  g_signal_connect (factory, "setup", G_CALLBACK (setup), user_data);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind), user_data);
 
   column = gtk_column_view_column_new (header, factory);
   gtk_column_view_append_column (GTK_COLUMN_VIEW (columnview), column);
@@ -77,7 +77,7 @@ columnview_create_column(GtkWidget *columnview, const char *header, GCallback se
   if (sort) {
     GtkExpression *expression;
     GtkSorter *sorter;
-    expression = gtk_cclosure_expression_new (G_TYPE_STRING, NULL, 0, NULL, G_CALLBACK (sort), NULL, NULL);
+    expression = gtk_cclosure_expression_new (G_TYPE_STRING, NULL, 0, NULL, G_CALLBACK (sort), user_data, NULL);
     sorter = GTK_SORTER(gtk_string_sorter_new(expression));
     gtk_column_view_column_set_sorter (column, sorter);
   }
