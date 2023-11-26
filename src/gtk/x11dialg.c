@@ -43,6 +43,7 @@
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
+#include "gtk_columnview.h"
 
 #define LINE_ELEMENT_2(e1, e2)			#e1 " " #e2, {e1, e2}, 2
 #define LINE_ELEMENT_4(e1, e2, e3, e4)		#e1 " " #e2 " " #e3 " " #e4, {e1, e2, e3, e4}, 4
@@ -328,55 +329,65 @@ response_callback_add(void *dialog, response_callback_func cb, response_callback
 }
 
 static void
-multi_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+multi_list_default_cb(GtkWidget *view, guint pos, gpointer user_data)
 {
   struct SelectDialog *d;
-  GtkTreeSelection *sel;
-  int n;
-
   d = (struct SelectDialog *) user_data;
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  n = gtk_tree_selection_count_selected_rows(sel);
-  if (n < 1)
-    return;
-
   gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 }
 
-static gboolean
-key_pressed_cb(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
-{
-  struct SelectDialog *d;
-
-  d = (struct SelectDialog *) user_data;
-  if (keyval == GDK_KEY_Return) {
-    multi_list_default_cb(GTK_TREE_VIEW(d->list), NULL, NULL, user_data);
-    return TRUE;
-  }
-  return FALSE;
-}
-
 static int
-search_id(GtkWidget *list, int id)
+search_id(GtkWidget *columnview, int id)
 {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  int r, a, i;
+  GListStore *list;
+  int n, i;
+  NgraphInst *ni;
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
-  r = gtk_tree_model_get_iter_first(model, &iter);
+  list = columnview_get_list(columnview);
+  if (list == NULL) {
+    return -1;
+  }
 
-  i = 0;
-  while (r) {
-    gtk_tree_model_get(model, &iter, 0, &a, -1);
-    if (a == id)
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  for (i = 0; i < n; i++) {
+    ni = g_list_model_get_item (G_LIST_MODEL (list), i);
+    if (ni->id == id) {
       return i;
-
-    r = gtk_tree_model_iter_next(model, &iter);
-    i++;
+    }
   }
 
   return -1;
+}
+
+static void
+setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_label_new (NULL);
+  gtk_label_set_xalign (GTK_LABEL (label), GPOINTER_TO_INT (user_data) ? 0.0 : 1.0);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  NgraphInst *item = NGRAPH_INST(gtk_list_item_get_item (list_item));
+
+  if (GPOINTER_TO_INT (user_data)) {
+    gtk_label_set_text(GTK_LABEL(label), item->name);
+  } else {
+    char text[20];
+
+    snprintf(text, sizeof(text), "%d", item->id);
+    gtk_label_set_text(GTK_LABEL(label), text);
+  }
+}
+
+static char *
+sort_column (NgraphInst *item, gpointer user_data)
+{
+  if (GPOINTER_TO_INT (user_data)) {
+    return g_strdup (item->name);
+  }
+  return g_strdup_printf ("%06d", item->id);
 }
 
 static void
@@ -384,21 +395,16 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SelectDialog *d;
   int i, *seldata, selnum, a;
-  GtkTreeIter iter;
-  n_list_store list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
-  };
 
   d = (struct SelectDialog *) data;
 
   if (makewidget) {
     GtkWidget *swin, *w, *hbox;
-    d->list = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_sort_all(d->list);
-    list_store_set_selection_mode(d->list, GTK_SELECTION_MULTIPLE);
-    add_event_key(d->list, G_CALLBACK(key_pressed_cb), NULL,  d);
-    g_signal_connect(d->list, "row-activated", G_CALLBACK(multi_list_default_cb), d);
+    d->list = columnview_create(TRUE);
+    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0));
+    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1));
+
+    g_signal_connect(d->list, "activate", G_CALLBACK(multi_list_default_cb), d);
 
     swin = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -414,22 +420,20 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->list);
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
-  list_store_clear(d->list);
+  columnview_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     char *s;
     s = d->cb(d->Obj, i);
     if (s) {
-      list_store_append(d->list, &iter);
-      list_store_set_int(d->list, &iter, 0, i);
-      list_store_set_string(d->list, &iter, 1, CHK_STR(s));
+      columnview_append_ngraph_inst(d->list, CHK_STR(s), i, d->Obj);
       g_free(s);
     }
   }
@@ -443,52 +447,51 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   */
 
   if (chkobjlastinst(d->Obj) == 0) {
-    list_store_select_nth(d->list, 0);
+    columnview_set_active (d->list, 0);
   } else if (d->isel) {
     seldata = arraydata(d->isel);
     selnum = arraynum(d->isel);
 
+    columnview_unselect_all(d->list);
     for (i = 0; i < selnum; i++) {
       a = search_id(d->list, seldata[i]);
       if (a >= 0) {
-	list_store_multi_select_nth(d->list, a, a);
+	columnview_select(d->list, a);
       }
     }
   }
 }
 
 static void
-select_tree_selection_foreach_cb(GtkTreeModel *model, GtkTreePath *path,
-				 GtkTreeIter *iter, gpointer data)
-{
-  int a;
-  struct SelectDialog *d;
-
-  d = (struct SelectDialog *) data;
-  a = list_store_get_int(d->list, iter, 0);
-  arrayadd(d->sel, &a);
-}
-
-static void
 SelectDialogClose(GtkWidget *w, void *data)
 {
   struct SelectDialog *d;
+  GListStore *list;
+  NgraphInst *ni;
+  int n, i;
 
   d = (struct SelectDialog *) data;
+  list = columnview_get_list(d->list);
+  if (list == NULL) {
+    d->ret = IDOK;
+    return;
+  }
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+
   if (d->ret == IDOK) {
-    GtkTreeSelection *gsel;
+    GtkSelectionModel *selection;
 
-    gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-    gtk_tree_selection_selected_foreach(gsel, select_tree_selection_foreach_cb, data);
+    selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list));
+    for (i = 0; i < n; i++) {
+      if (gtk_selection_model_is_selected (selection, i)) {
+	ni = g_list_model_get_item (G_LIST_MODEL (list), i);
+	arrayadd(d->sel, &ni->id);
+      }
+    }
   } else if (d->ret == IDSALL) {
-    int r, id;
-    GtkTreeIter iter;
-
-    r = list_store_get_iter_first(d->list, &iter);
-    while (r) {
-      id = list_store_get_int(d->list, &iter, 0);
-      arrayadd(d->sel, &id);
-      r = list_store_iter_next(d->list, &iter);
+    for (i = 0; i < n; i++) {
+      ni = g_list_model_get_item (G_LIST_MODEL (list), i);
+      arrayadd(d->sel, &ni->id);
     }
     d->ret = IDOK;
   }
@@ -512,18 +515,11 @@ SelectDialog(struct SelectDialog *data,
 }
 
 static void
-single_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+single_list_default_cb(GtkColumnView *view, guint pos, gpointer user_data)
 {
   struct CopyDialog *d;
-  int i;
 
   d = (struct CopyDialog *) user_data;
-
-  i = list_store_get_selected_index(d->list);
-  if (i < 0) {
-    return;
-  }
-
   gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 }
 
@@ -532,25 +528,20 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct CopyDialog *d;
   int i, a;
-  GtkTreeIter iter;
-  n_list_store copy_list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
-  };
 
   d = (struct CopyDialog *) data;
   if (makewidget) {
     GtkWidget *swin, *w;
-    d->list = list_store_create(sizeof(copy_list) / sizeof(*copy_list), copy_list);
-    list_store_set_sort_all(d->list);
-    list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
+    d->list = columnview_create(FALSE);
+    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0));
+    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1));
 
     swin = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
 
-    g_signal_connect(d->list, "row-activated", G_CALLBACK(single_list_default_cb), d);
+    g_signal_connect(d->list, "activate", G_CALLBACK(single_list_default_cb), d);
 
     w = gtk_frame_new(NULL);
     gtk_frame_set_child(GTK_FRAME(w), swin);
@@ -558,25 +549,23 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
-  list_store_clear(d->list);
+  columnview_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     char *s;
     s = d->cb(d->Obj, i);
     if (s) {
-      list_store_append(d->list, &iter);
-      list_store_set_int(d->list, &iter, 0, i);
-      list_store_set_string(d->list, &iter, 1, CHK_STR(s));
+      columnview_append_ngraph_inst(d->list, CHK_STR(s), i, d->Obj);
       g_free(s);
     }
   }
 
   if (chkobjlastinst(d->Obj) == 0) {
-    list_store_select_nth(d->list, 0);
+    columnview_set_active (d->list, 0);
   } else if (d->Id >= 0) {
     a = search_id(d->list, d->Id);
     if (a >= 0) {
-      list_store_select_nth(d->list, a);
+      columnview_set_active (d->list, a);
     }
   }
   /*
@@ -592,6 +581,7 @@ static void
 CopyDialogClose(GtkWidget *w, void *data)
 {
   struct CopyDialog *d;
+  NgraphInst *inst;
 
 
   d = (struct CopyDialog *) data;
@@ -600,7 +590,8 @@ CopyDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  d->sel = list_store_get_selected_int(d->list, 0);
+  inst =columnview_get_active_item(d->list);
+  d->sel = inst->id;
 }
 
 void
