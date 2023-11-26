@@ -184,7 +184,7 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
 	completion_info.c completion_info.h completion_info_data.c	\
 	gtk_presettings.c gtk_presettings.h x11parameter.c		\
-	x11parameter.h
+	x11parameter.h gtk_columnview.c gtk_columnview.h
 
 libngraph_cflags =
 
