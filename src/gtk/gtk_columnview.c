@@ -48,6 +48,7 @@ columnview_create(gboolean multi)
   GListModel *model;
 
   columnview = gtk_column_view_new (NULL);
+  gtk_column_view_set_show_column_separators (GTK_COLUMN_VIEW (columnview), TRUE);
 
   model = G_LIST_MODEL(g_list_store_new (NGRAPH_TYPE_INST));
   sorter = g_object_ref (gtk_column_view_get_sorter (GTK_COLUMN_VIEW(columnview)));
