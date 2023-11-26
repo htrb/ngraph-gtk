@@ -402,8 +402,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *swin, *w, *hbox;
     d->list = columnview_create(TRUE);
-    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0));
-    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1));
+    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
+    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
     g_signal_connect(d->list, "activate", G_CALLBACK(multi_list_default_cb), d);
 
@@ -532,8 +532,8 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *swin, *w;
     d->list = columnview_create(FALSE);
-    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0));
-    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1));
+    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
+    columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
     swin = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
