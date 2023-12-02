@@ -9,7 +9,7 @@ ngraph_inst_finalize (GObject *object)
 {
   NgraphInst *self = NGRAPH_INST (object);
 
-  g_free (self->name);
+  g_clear_pointer (&self->name, g_free);
   G_OBJECT_CLASS (ngraph_inst_parent_class)->finalize (object);
 }
 
