@@ -125,7 +125,7 @@ columnview_get_active(GtkWidget *columnview)
   return gtk_single_selection_get_selected (GTK_SINGLE_SELECTION (selection));
 }
 
-NgraphInst *
+GObject *
 columnview_get_active_item(GtkWidget *columnview)
 {
   GtkSelectionModel *selection;

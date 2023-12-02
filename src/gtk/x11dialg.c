@@ -589,7 +589,7 @@ CopyDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  inst =columnview_get_active_item(d->list);
+  inst = NGRAPH_INST (columnview_get_active_item(d->list));
   d->sel = inst->id;
 }
 

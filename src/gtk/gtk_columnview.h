@@ -22,7 +22,7 @@ void columnview_clear(GtkWidget *columnview);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand);
 void columnview_set_active(GtkWidget *columnview, int active);
 int columnview_get_active(GtkWidget *columnview);
-NgraphInst *columnview_get_active_item(GtkWidget *columnview);
+GObject *columnview_get_active_item(GtkWidget *columnview);
 GListStore *columnview_get_list(GtkWidget *columnview);
 NgraphInst *list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
 NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
