@@ -36,7 +36,40 @@ ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
   nobj->name = g_strdup (name);
   nobj->obj = obj;
   nobj->id = id;
-  nobj->x = nobj->y = 0.0;
+
+  return nobj;
+}
+
+/* NgraphData Object */
+G_DEFINE_TYPE(NgraphData, ngraph_data, G_TYPE_OBJECT)
+
+static void
+ngraph_data_finalize (GObject *object)
+{
+  G_OBJECT_CLASS (ngraph_data_parent_class)->finalize (object);
+}
+
+static void
+ngraph_data_class_init (NgraphDataClass * klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = ngraph_data_finalize;
+}
+
+static void
+ngraph_data_init (NgraphData * noop)
+{
+}
+
+NgraphData*
+ngraph_data_new (int line, double x, double y)
+{
+  NgraphData *nobj;
+
+  nobj = g_object_new (NGRAPH_TYPE_DATA, NULL);
+  nobj->line = line;
+  nobj->x = x;
+  nobj->y = y;
 
   return nobj;
 }
@@ -70,7 +103,7 @@ ngraph_array_new (int line)
 {
   NgraphArray *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_INST, NULL);
+  nobj = g_object_new (NGRAPH_TYPE_ARRAY, NULL);
   nobj->array = arraynew(sizeof(char *));
   nobj->line = line;
 
@@ -194,6 +227,16 @@ columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, 
     return list_store_append_ngraph_inst(store, name, id, obj);
   }
   return NULL;
+}
+
+NgraphData *
+list_store_append_ngraph_data(GListStore *store, int line, double x, double y)
+{
+  NgraphData *item;
+  item = ngraph_data_new(line, x, y);
+  g_list_store_append (store, item);
+  g_object_unref(item);
+  return item;
 }
 
 void

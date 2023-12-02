@@ -15,10 +15,25 @@ struct _NgraphInst {
   gchar *name;
   struct objlist *obj;
   int id;
-  double x, y;
 };
 
 NgraphInst *ngraph_inst_new (const gchar *name, int id, struct objlist *obj);
+
+
+/* NgraphData Object */
+#define NGRAPH_TYPE_DATA (ngraph_data_get_type())
+G_DECLARE_FINAL_TYPE (NgraphData, ngraph_data, NGRAPH, DATA, GObject)
+
+typedef struct _NgraphData NgraphData;
+
+struct _NgraphData {
+  GObject parent_instance;
+  int line;
+  double x, y;
+};
+
+NgraphData *ngraph_data_new (int line, double x, double y);
+
 
 /* NgraphArray Object */
 #define NGRAPH_TYPE_ARRAY (ngraph_array_get_type())
