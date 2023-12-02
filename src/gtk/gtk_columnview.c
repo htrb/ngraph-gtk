@@ -2,6 +2,8 @@
 #include "object.h"
 #include "gtk_columnview.h"
 
+
+/* NgraphInst Object */
 G_DEFINE_TYPE(NgraphInst, ngraph_inst, G_TYPE_OBJECT)
 
 static void
@@ -38,6 +40,45 @@ ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
 
   return nobj;
 }
+
+/* NgraphArray Object */
+G_DEFINE_TYPE(NgraphArray, ngraph_array, G_TYPE_OBJECT)
+
+static void
+ngraph_array_finalize (GObject *object)
+{
+  NgraphArray *self = NGRAPH_ARRAY (object);
+
+  g_clear_pointer (&self->array, arrayfree2);
+  G_OBJECT_CLASS (ngraph_array_parent_class)->finalize (object);
+}
+
+static void
+ngraph_array_class_init (NgraphArrayClass * klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = ngraph_array_finalize;
+}
+
+static void
+ngraph_array_init (NgraphArray * noop)
+{
+}
+
+NgraphArray*
+ngraph_array_new (int line)
+{
+  NgraphArray *nobj;
+
+  nobj = g_object_new (NGRAPH_TYPE_INST, NULL);
+  nobj->array = arraynew(sizeof(char *));
+  nobj->line = line;
+
+  return nobj;
+}
+
+
+/* GtkColumnView */
 
 GtkWidget *
 columnview_create(GType item_type, gboolean multi)
