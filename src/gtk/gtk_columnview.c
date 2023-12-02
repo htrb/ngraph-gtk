@@ -286,7 +286,7 @@ columnview_remove_selected(GtkWidget *columnview)
   list = columnview_get_list (columnview);
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
   for (i = n - 1; i >= 0; i--) {
-    NgraphInst *ni;
+    GObject *ni;
     guint idx;
     if (! gtk_selection_model_is_selected (selection, i)) {
       continue;
