@@ -40,7 +40,7 @@ ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
 }
 
 GtkWidget *
-columnview_create(gboolean multi)
+columnview_create(GType item_type, gboolean multi)
 {
   GtkWidget *columnview;
   GtkSorter *sorter;
@@ -50,7 +50,7 @@ columnview_create(gboolean multi)
   columnview = gtk_column_view_new (NULL);
   gtk_column_view_set_show_column_separators (GTK_COLUMN_VIEW (columnview), TRUE);
 
-  model = G_LIST_MODEL(g_list_store_new (NGRAPH_TYPE_INST));
+  model = G_LIST_MODEL(g_list_store_new (item_type));
   sorter = g_object_ref (gtk_column_view_get_sorter (GTK_COLUMN_VIEW(columnview)));
   model = G_LIST_MODEL(gtk_sort_list_model_new (model, sorter));
   gtk_column_view_set_enable_rubberband (GTK_COLUMN_VIEW (columnview), multi);

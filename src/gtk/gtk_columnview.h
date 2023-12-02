@@ -17,7 +17,7 @@ struct _NgraphInst {
 };
 
 NgraphInst *ngraph_inst_new (const gchar *name, int id, struct objlist *obj);
-GtkWidget *columnview_create(gboolean multi);
+GtkWidget *columnview_create(GType item_type, gboolean multi);
 void columnview_clear(GtkWidget *columnview);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand);
 void columnview_set_active(GtkWidget *columnview, int active);
