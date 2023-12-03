@@ -99,6 +99,5 @@ GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon
 
 void add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
 void set_widget_margin_all(GtkWidget *w, int margin);
-void setup_popup_menu_cb (GtkListItemFactory *factory, GtkListItem *list_item);
 GtkWidget *widget_get_grandparent(GtkWidget *w);
 #endif

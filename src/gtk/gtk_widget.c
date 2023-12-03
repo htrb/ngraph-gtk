@@ -24,16 +24,6 @@ widget_get_grandparent(GtkWidget *w)
   return gtk_widget_get_parent(parent);
 }
 
-void
-setup_popup_menu_cb (GtkListItemFactory *factory, GtkListItem *list_item)
-{
-  GtkWidget *label;
-
-  label = gtk_label_new (NULL);
-  gtk_widget_set_halign (label, GTK_ALIGN_START);
-  gtk_list_item_set_child (list_item, label);
-}
-
 GtkWidget *
 button_new_with_icon(const char *icon_name, int toggle)
 {
