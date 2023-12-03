@@ -34,11 +34,11 @@ typedef struct _NgraphData NgraphData;
 
 struct _NgraphData {
   GObject parent_instance;
-  int line;
+  int id, line;
   double x, y;
 };
 
-NgraphData *ngraph_data_new (int line, double x, double y);
+NgraphData *ngraph_data_new (int id, int line, double x, double y);
 
 
 /* NgraphArray Object */
@@ -65,7 +65,7 @@ GObject *columnview_get_active_item(GtkWidget *columnview);
 GListStore *columnview_get_list(GtkWidget *columnview);
 NgraphInst *list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
 NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
-NgraphData *list_store_append_ngraph_data(GListStore *store, int line, double x, double y);
+NgraphData *list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y);
 void columnview_select_all(GtkWidget *columnview);
 void columnview_unselect_all(GtkWidget *columnview);
 void columnview_select(GtkWidget *columnview, int i);

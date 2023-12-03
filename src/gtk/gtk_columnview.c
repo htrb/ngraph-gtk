@@ -80,7 +80,7 @@ ngraph_data_init (NgraphData * noop)
 }
 
 NgraphData*
-ngraph_data_new (int line, double x, double y)
+ngraph_data_new (int id, int line, double x, double y)
 {
   NgraphData *nobj;
 
@@ -255,10 +255,10 @@ columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, 
 }
 
 NgraphData *
-list_store_append_ngraph_data(GListStore *store, int line, double x, double y)
+list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y)
 {
   NgraphData *item;
-  item = ngraph_data_new(line, x, y);
+  item = ngraph_data_new(id, line, x, y);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
