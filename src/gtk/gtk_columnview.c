@@ -309,4 +309,7 @@ columnview_remove_selected(GtkWidget *columnview)
     g_list_store_find (list, ni, &idx);
     g_list_store_remove (list, idx);
   }
+  /* to set sensitivity of the delete button */
+  gtk_selection_model_select_all (selection);
+  gtk_selection_model_unselect_all (selection);
 }
