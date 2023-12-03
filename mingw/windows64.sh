@@ -22,13 +22,14 @@ libgtk-3-0.dll libharfbuzz-0.dll libiconv-2.dll libintl-8.dll
 libpango-1.0-0.dll libfribidi-0.dll libgtksourceview-4-0.dll
 libpangocairo-1.0-0.dll libbrotlidec.dll libbrotlicommon.dll
 libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre2-8-0.dll
-libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll libtermcap-0.dll
+libpixman-1-0.dll libpng16-16.dll libtermcap-0.dll
 libwinpthread-1.dll zlib1.dll liblzma-5.dll libthai-0.dll
 libdatrie-1.dll libreadline8.dll libpdcurses.dll librsvg-2-2.dll
 libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
 
-BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
-BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe"
+BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe libstdc++-6.dll"
+BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe libstdc++-6.dll"
+BINFILESARM="libclang.dll gspawn-win64-helper-console.exe libbrotlicommon.dll libbrotlidec.dll libc++.dll libunwind.dll"
 
 make_zip() {
     echo create $1 archive.
@@ -52,6 +53,12 @@ make_zip() {
 		if [ $1 = "ucrt64" ]
 		then
 		    for i in $BINFILES64
+		    do
+			cp $win_path/$subdir/$i $PKG_DIR/$subdir/
+		    done
+		elif [ $1 = "clangarm64" ]
+		then
+		    for i in $BINFILESARM
 		    do
 			cp $win_path/$subdir/$i $PKG_DIR/$subdir/
 		    done
@@ -111,7 +118,12 @@ make_zip() {
 start "" "%~dp0bin\ngraph.exe" %*
 [EOF]
 
-    arc=`echo $1|sed 's/[a-z]//g'`
+    if [ $1 = "clangarm64" ]
+    then
+        arc="arm64"
+    else
+        arc=`echo $1|sed 's/[a-z]//g'`
+    fi
     archive=ngraph-gtk-${VERSION}-win$arc.zip
     if [ -f $archive ]
     then
@@ -121,7 +133,7 @@ start "" "%~dp0bin\ngraph.exe" %*
     zip -qr9 $archive $PKG_DIR
 }
 
-for arch in mingw32 ucrt64
+for arch in mingw32 ucrt64 clangarm64
 do
     make_zip $arch
 done
