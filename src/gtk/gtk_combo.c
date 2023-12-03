@@ -8,6 +8,7 @@
 
 #include "gtk_widget.h"
 #include "gtk_combo.h"
+#include "gtk_listview.h"
 
 GtkWidget *
 combo_box_create(void)
@@ -19,29 +20,6 @@ combo_box_create(void)
 }
 
 #define ENTRY_COMBO_MENU "entry_popover"
-
-static void
-setup_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
-{
-  GtkWidget *label;
-
-  label = gtk_label_new (NULL);
-  gtk_widget_set_halign (label, GTK_ALIGN_START);
-  gtk_list_item_set_child (list_item, label);
-}
-
-static void
-bind_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
-{
-  GtkWidget *label;
-  gpointer item;
-  const char *string;
-
-  label = gtk_list_item_get_child (list_item);
-  item = gtk_list_item_get_item (list_item);
-  string = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
-  gtk_label_set_text(GTK_LABEL(label), string);
-}
 
 static void
 select_item_cb(GtkListView *self, guint position, gpointer user_data)
@@ -64,16 +42,8 @@ static GtkWidget *
 create_popver(GtkEntry *entry)
 {
   GtkWidget *popover, *menu;
-  GtkStringList *list;
-  GtkListItemFactory *factory;
 
-  list = gtk_string_list_new (NULL);
-
-  factory = gtk_signal_list_item_factory_new();
-  g_signal_connect (factory, "setup", G_CALLBACK (setup_listitem_cb), NULL);
-  g_signal_connect (factory, "bind", G_CALLBACK (bind_listitem_cb), NULL);
-
-  menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
+  menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
 
   popover = gtk_popover_new();
