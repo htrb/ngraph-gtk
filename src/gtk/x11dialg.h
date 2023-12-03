@@ -198,12 +198,11 @@ struct MathTextDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *text, *tree, *input_tab;
-  GList *id_list;
   struct objlist *Obj;
   char *Text;
   int Mode, page;
 };
-void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
+void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GtkWidget *tree);
 
 #define FIT_PARM_NUM FIT_DIMENSION_MAX
 

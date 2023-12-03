@@ -51,6 +51,8 @@
 
 #include "math_equation.h"
 
+#include "gtk_columnview.h"
+#include "gtk_listview.h"
 #include "x11bitmp.h"
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -368,8 +370,8 @@ MathTextDialogClose(GtkWidget *w, void *data)
   struct MathTextDialog *d;
   const char *p;
   char *obuf, *ptr;
-  int id;
-  GList *id_ptr;
+  int n, i;
+  GtkSelectionModel *gsel;
 
   d = (struct MathTextDialog *) data;
 
@@ -399,12 +401,16 @@ MathTextDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  for (id_ptr = d->id_list; id_ptr; id_ptr = id_ptr->next) {
-    int r;
-    r = list_store_path_get_int(d->tree, id_ptr->data, 0, &id);
-    if (r) {
+  gsel = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->tree));
+  n = g_list_model_get_n_items (G_LIST_MODEL (gsel));
+  for (i = 0; i < n; i++) {
+    NgraphInst *ni;
+    int id;
+    if (! gtk_selection_model_is_selected (gsel, i)) {
       continue;
     }
+    ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
+    id = ni->id;
 
     sgetobjfield(d->Obj, id, FieldStr[d->Mode], NULL, &obuf, FALSE, FALSE, FALSE);
     if (obuf == NULL || strcmp(obuf, ptr)) {
@@ -446,7 +452,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree)
+MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GtkWidget *tree)
 {
   if (mode < 0 || mode >= MATH_FNC_NUM)
     mode = 0;
@@ -458,7 +464,6 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
   data->Mode = mode;
   data->modified = FALSE;
   data->Obj = obj;
-  data->id_list = list;
 }
 
 static void
@@ -483,9 +488,8 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
 {
   int i;
   char *math, *field = NULL;
-  GtkTreeIter iter;
 
-  list_store_clear(d->list);
+  columnview_clear(d->list);
 
   if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
     d->Mode = 0;
@@ -495,9 +499,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     math = NULL;
     getobj(d->Obj, field, i, 0, NULL, &math);
-    list_store_append(d->list, &iter);
-    list_store_set_int(d->list, &iter, 0, i);
-    set_escaped_str(d->list, &iter, 1, math);
+    columnview_append_ngraph_inst(d->list, math, i, d->Obj);
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM) {
@@ -524,42 +526,52 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
 }
 
 struct math_dialog_list_data {
-  GList *list;
   char *buf;
   struct MathDialog *d;
-  GtkTreeSelection *gsel;
 };
+
+static void
+update_selected_item(struct MathDialog *d)
+{
+  GtkSelectionModel *gsel;
+  struct narray array;
+  int n, i;
+
+  arrayinit(&array, sizeof(int));
+  gsel = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->list));
+  n = g_list_model_get_n_items (G_LIST_MODEL (gsel));
+  for (i = 0; i < n; i++) {
+    if (gtk_selection_model_is_selected (gsel, i)) {
+      NgraphInst *ni;
+      ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
+      arrayadd(&array, &ni->id);
+    }
+  }
+  MathDialogSetupItem(d->widget, d);
+  for (i = 0; i < n; i++) {
+    NgraphInst *ni;
+    ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
+    if (array_find_int(&array, ni->id) < 0) {
+      continue;
+    }
+    gtk_selection_model_select_item (gsel, i, FALSE);
+  }
+  arraydel(&array);
+}
 
 static void
 math_dialog_list_respone(struct response_callback *cb)
 {
   struct MathDialog *d;
-  GList *list, *data;
   struct math_dialog_list_data *res_data;
-  GtkTreeSelection *gsel;
-  int *ary;
 
   res_data = (struct math_dialog_list_data *) cb->data;
   d = res_data->d;
-  list = res_data->list;
-  gsel = res_data->gsel;
   if (DlgMathText.modified) {
     d->modified = DlgMathText.modified;
+    update_selected_item(d);
   }
   g_free(res_data->buf);
-
-  MathDialogSetupItem(d->widget, d);
-
-  for (data = list; data; data = data->next) {
-    ary = gtk_tree_path_get_indices(data->data);
-    if (ary == NULL) {
-      continue;
-    }
-
-    gtk_tree_selection_select_path(gsel, data->data);
-  }
-
-  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   g_free(res_data);
 }
 
@@ -567,35 +579,27 @@ static void
 MathDialogList(GtkButton *w, gpointer client_data)
 {
   struct MathDialog *d;
-  int a, r;
+  int a, i;
+  guint64 n;
   char *field = NULL, *buf;
-  GtkTreeSelection *gsel;
-  GtkTreePath *path;
-  GList *list, *data;
+  GtkSelectionModel *gsel;
   struct math_dialog_list_data *res_data;
+  GtkBitset *selected;
+  NgraphInst *ni;
 
   d = (struct MathDialog *) client_data;
 
-  gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  list = gtk_tree_selection_get_selected_rows(gsel, NULL);
-
-  if (list == NULL)
-    return;
-
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(d->list), &path, NULL);
-
-  if (path) {
-    r = list_store_path_get_int(d->list, path, 0, &a);
-    gtk_tree_path_free(path);
-  } else {
-    data = g_list_last(list);
-    r = list_store_path_get_int(d->list, data->data, 0, &a);
-  }
-
-  if (r) {
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  gsel = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->list));
+  selected = gtk_selection_model_get_selection (gsel);
+  n = gtk_bitset_get_size(selected);
+  if (n < 1) {
+    gtk_bitset_unref (selected);
     return;
   }
+  i = gtk_bitset_get_nth (selected, n - 1);
+  gtk_bitset_unref (selected);
+  ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
+  a = ni->id;
 
   if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
     d->Mode = 0;
@@ -604,104 +608,101 @@ MathDialogList(GtkButton *w, gpointer client_data)
 
   sgetobjfield(d->Obj, a, field, NULL, &buf, FALSE, FALSE, FALSE);
   if (buf == NULL) {
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
     return;
   }
 
   res_data = g_malloc0(sizeof(*res_data));
   if (res_data == NULL) {
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
     return;
   }
   res_data->d = d;
-  res_data->list = list;
   res_data->buf = buf;
-  res_data->gsel = gsel;
 
-  MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
+  MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, d->list);
   response_callback_add(&DlgMathText, math_dialog_list_respone, NULL, res_data);
   DialogExecute(d->widget, &DlgMathText);
 }
 
 static void
-math_dialog_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+math_dialog_activated_cb(GtkColumnView *view, guint pos, gpointer user_data)
 {
   struct MathDialog *d;
-  GtkTreeSelection *gsel;
-  int n;
 
   d = (struct MathDialog *) user_data;
-
-  gsel = gtk_tree_view_get_selection(view);
-  n = gtk_tree_selection_count_selected_rows(gsel);
-  if (n < 1)
-    return;
-
   MathDialogList(NULL, d);
 }
 
-static gboolean
-key_pressed_cb(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+static void
+set_btn_sensitivity_selected_cb (GtkSelectionModel* self, guint position, guint n_items, gpointer user_data)
 {
-  struct MathDialog *d;
+  int n;
+  GtkWidget *w;
+  GtkBitset *sel;
 
-  d = (struct MathDialog *) user_data;
-  if (keyval == GDK_KEY_Return) {
-    math_dialog_activated_cb(GTK_TREE_VIEW(d->list), NULL, NULL, user_data);
-    return TRUE;
+  w = GTK_WIDGET(user_data);
+  sel = gtk_selection_model_get_selection (self);
+  n = gtk_bitset_get_size (sel);
+  gtk_widget_set_sensitive(w, n > 0);
+  gtk_bitset_unref (sel);
+}
+
+static void
+set_sensitivity_by_selected(GtkWidget *tree, GtkWidget *btn)
+{
+  GtkSelectionModel *sel;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(tree, GTK_TYPE_COLUMN_VIEW)) {
+    sel = gtk_column_view_get_model(GTK_COLUMN_VIEW(tree));
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(tree, GTK_TYPE_LIST_VIEW)) {
+    sel = gtk_list_view_get_model(GTK_LIST_VIEW(tree));
+  } else {
+    return;
   }
-  return FALSE;
-}
-
-static void
-set_btn_sensitivity_delete_cb(GtkTreeModel *tree_model, GtkTreePath *path, gpointer user_data)
-{
-  int n;
-  GtkWidget *w;
-
-  w = GTK_WIDGET(user_data);
-  n = gtk_tree_model_iter_n_children(tree_model, NULL);
-  gtk_widget_set_sensitive(w, n > 0);
-}
-
-static void
-set_btn_sensitivity_insert_cb(GtkTreeModel *tree_model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
-{
-  set_btn_sensitivity_delete_cb(tree_model, path, user_data);
-}
-
-static void
-set_sensitivity_by_row_num(GtkWidget *tree, GtkWidget *btn)
-{
-  GtkTreeModel *model;
-
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree));
-  g_signal_connect(model, "row-deleted", G_CALLBACK(set_btn_sensitivity_delete_cb), btn);
-  g_signal_connect(model, "row-inserted", G_CALLBACK(set_btn_sensitivity_insert_cb), btn);
+  g_signal_connect(sel, "selection-changed", G_CALLBACK(set_btn_sensitivity_selected_cb), btn);
   gtk_widget_set_sensitive(btn, FALSE);
 }
 
-static gboolean
-set_btn_sensitivity_selection_cb(GtkTreeSelection *sel, gpointer user_data)
-{
-  int n;
-  GtkWidget *w;
-
-  w = GTK_WIDGET(user_data);
-  n = gtk_tree_selection_count_selected_rows(sel);
-  gtk_widget_set_sensitive(w, n > 0);
-
-  return FALSE;
+static void
+setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_label_new (NULL);
+  gtk_label_set_xalign (GTK_LABEL (label), GPOINTER_TO_INT (user_data) ? 0.0 : 1.0);
+  gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+  gtk_list_item_set_child (list_item, label);
 }
 
 static void
-set_sensitivity_by_selection(GtkWidget *tree, GtkWidget *btn)
-{
-  GtkTreeSelection *sel;
+bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  NgraphInst *item = NGRAPH_INST(gtk_list_item_get_item (list_item));
 
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
-  g_signal_connect(sel, "changed", G_CALLBACK(set_btn_sensitivity_selection_cb), btn);
-  gtk_widget_set_sensitive(btn, FALSE);
+  if (GPOINTER_TO_INT (user_data)) {
+    const char *str;
+    char *tmpstr = NULL;
+    str = item->name ? item->name : "";
+    if (strchr(str, '\n')) {
+      tmpstr = g_strescape(str, "\\");
+      str = tmpstr;
+    }
+    gtk_label_set_text(GTK_LABEL(label), str);
+    g_free(tmpstr);
+  } else {
+    char text[20];
+
+    snprintf(text, sizeof(text), "%d", item->id);
+    gtk_label_set_text(GTK_LABEL(label), text);
+  }
+}
+
+static char *
+sort_column (NgraphInst *item, gpointer user_data)
+{
+  return g_strdup (item->name);
+}
+
+static int
+sort_by_id (NgraphInst *item, gpointer user_data)
+{
+  return item->id;
 }
 
 static void
@@ -714,10 +715,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     int i;
     GtkWidget *w, *swin, *vbox, *hbox;
-    static n_list_store list[] = {
-      {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
-      {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-    };
+    GtkColumnViewColumn *col;
     char *button_str[] = {
       N_("_X math"),
       N_("_Y math"),
@@ -731,11 +729,12 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     gtk_box_append(GTK_BOX(vbox), hbox);
 
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_sort_all(w);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
-    add_event_key(w, G_CALLBACK(key_pressed_cb), NULL,  d);
-    g_signal_connect(w, "row-activated", G_CALLBACK(math_dialog_activated_cb), d);
+    w = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_MULTI);
+    col = columnview_create_column(w, _("id"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, GINT_TO_POINTER (0), FALSE);
+    columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
+    columnview_create_column(w, _("math"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
+
+    g_signal_connect(w, "activate", G_CALLBACK(math_dialog_activated_cb), d);
     d->list = w;
 
     swin = gtk_scrolled_window_new();
@@ -764,15 +763,14 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->list);
     gtk_box_append(GTK_BOX(hbox), w);
-    set_sensitivity_by_row_num(d->list, w);
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
     g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(vbox), hbox);
-    set_sensitivity_by_selection(d->list, w);
+    set_sensitivity_by_selected(d->list, w);
 
     gtk_box_append(GTK_BOX(d->vbox), vbox);
 
@@ -1790,19 +1788,6 @@ fit_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
 }
 
 static void
-bind_fit_item_cb (GtkListItemFactory *factory, GtkListItem *list_item)
-{
-  GtkWidget *label;
-  gpointer item;
-  const char *name;
-
-  label = gtk_list_item_get_child (list_item);
-  item = gtk_list_item_get_item (list_item);
-  name = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
-  gtk_label_set_text(GTK_LABEL(label), name);
-}
-
-static void
 select_fit_item_cb(GtkWidget *list_view, guint position, gpointer user_data)
 {
   struct FitDialog *d;
@@ -1859,16 +1844,8 @@ static void
 fit_load_button_setup(GtkWidget *menu_button, struct FitDialog *d)
 {
   GtkWidget *popover, *menu;
-  GtkStringList *list;
-  GtkListItemFactory *factory;
 
-  list = gtk_string_list_new (NULL);
-
-  factory = gtk_signal_list_item_factory_new();
-  g_signal_connect (factory, "setup", G_CALLBACK (setup_popup_menu_cb), NULL);
-  g_signal_connect (factory, "bind", G_CALLBACK (bind_fit_item_cb), NULL);
-
-  menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
+  menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
   g_signal_connect(menu, "activate", G_CALLBACK(select_fit_item_cb), d);
 
@@ -2062,9 +2039,9 @@ move_tab_setup_item(struct FileDialog *d, int id)
 {
   unsigned int j, movenum;
   struct narray *move, *movex, *movey;
-  GtkTreeIter iter;
+  GListStore *list;
 
-  list_store_clear(d->move.list);
+  columnview_clear(d->move.list);
 
   exeobj(d->Obj, "move_data_adjust", id, 0, NULL);
   getobj(d->Obj, "move_data", id, 0, NULL, &move);
@@ -2084,22 +2061,15 @@ move_tab_setup_item(struct FileDialog *d, int id)
   if (movenum < 1) {
     return;
   }
+  list = columnview_get_list(d->move.list);
   for (j = 0; j < movenum; j++) {
     int line;
     double x, y;
-    char buf[64];
     line = arraynget_int(move, j);
     x = arraynget_double(movex, j);
     y = arraynget_double(movey, j);
 
-    list_store_append(d->move.list, &iter);
-    list_store_set_int(d->move.list, &iter, 0, line);
-
-    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, x);
-    list_store_set_string(d->move.list, &iter, 1, buf);
-
-    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, y);
-    list_store_set_string(d->move.list, &iter, 2, buf);
+    list_store_append_ngraph_data(list, d->Id, line, x, y);
   }
 }
 
@@ -2110,8 +2080,8 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   int a;
   double x, y;
   const char *buf;
-  char *endptr, buf2[64];
-  GtkTreeIter iter;
+  char *endptr;
+  GListStore *list;
 
   d = (struct FileDialog *) client_data;
 
@@ -2131,14 +2101,8 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   if (y != y || y == HUGE_VAL || y == - HUGE_VAL || endptr[0] != '\0')
     return;
 
-  list_store_append(d->move.list, &iter);
-  list_store_set_int(d->move.list, &iter, 0, a);
-
-  snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, x);
-  list_store_set_string(d->move.list, &iter, 1, buf2);
-
-  snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, y);
-  list_store_set_string(d->move.list, &iter, 2, buf2);
+  list = columnview_get_list (d->move.list);
+  list_store_append_ngraph_data(list, d->Id, a, x, y);
 
   editable_set_init_text(d->move.x, "");
   editable_set_init_text(d->move.y, "");
@@ -2151,7 +2115,7 @@ FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
   struct FileDialog *d;
   d = (struct FileDialog *) client_data;
 
-  list_store_remove_selected_cb(w, d->move.list);
+  columnview_remove_selected(d->move.list);
   d->move.changed = TRUE;
 }
 
@@ -2182,15 +2146,59 @@ spin_button_set_activates_signal(GtkWidget *w, GCallback cb, gpointer user_data)
   g_signal_connect(editable, "activate", cb, user_data);
 }
 
+static void
+move_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_label_new (NULL);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  NgraphData *item = NGRAPH_DATA(gtk_list_item_get_item (list_item));
+  char buf[64];
+
+  switch (GPOINTER_TO_INT (user_data)) {
+  case 'L':
+    snprintf(buf, sizeof(buf), "%d", item->line);
+    break;
+  case 'X':
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, item->x);
+    break;
+  case 'Y':
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, item->y);
+    break;
+  }
+  gtk_label_set_text(GTK_LABEL(label), buf);
+}
+
+static int
+sort_by_line (NgraphData *item, gpointer user_data)
+{
+  return item->line;
+}
+
+static double
+sort_by_data (NgraphData *item, gpointer user_data)
+{
+  int col = GPOINTER_TO_INT (user_data);
+  switch (col) {
+  case 'X':
+    return item->x;
+    break;
+  case 'Y':
+    return item->y;
+    break;
+  }
+  return 0.0;
+}
+
 static GtkWidget *
 move_tab_create(struct FileDialog *d)
 {
   GtkWidget *w, *hbox, *swin, *table, *vbox;
-  n_list_store list[] = {
-    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
-    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL},
-    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL},
-  };
+  GtkColumnViewColumn *col;
   int i;
 
   swin = gtk_scrolled_window_new();
@@ -2198,9 +2206,15 @@ move_tab_create(struct FileDialog *d)
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  w = list_store_create(sizeof(list) / sizeof(*list), list);
-  list_store_set_sort_column(w, 0);
-  list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+
+  w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+  col = columnview_create_column(w, _("Line No."), G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('L'), FALSE);
+  columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_line), NULL);
+  col = columnview_create_column(w, "X", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('X'), FALSE);
+  columnview_set_numeric_sorter(col, G_TYPE_DOUBLE, G_CALLBACK(sort_by_data), GINT_TO_POINTER('X'));
+  col = columnview_create_column(w, "Y", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('Y'), TRUE);
+  columnview_set_numeric_sorter(col, G_TYPE_DOUBLE, G_CALLBACK(sort_by_data), GINT_TO_POINTER('Y'));
+
   d->move.list = w;
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
@@ -2232,13 +2246,12 @@ move_tab_create(struct FileDialog *d)
   set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
-  set_sensitivity_by_selection(d->move.list, w);
+  set_sensitivity_by_selected(d->move.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
   set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->move.list);
-  set_sensitivity_by_row_num(d->move.list, w);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->move.list);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_box_append(GTK_BOX(hbox), table);
@@ -2259,11 +2272,9 @@ move_tab_create(struct FileDialog *d)
 static int
 move_tab_set_value(struct FileDialog *d)
 {
-  int line, a;
-  double x, y;
+  int line, a, i, n;
   struct narray *move, *movex, *movey;
-  GtkTreeIter iter;
-  gboolean state;
+  GListStore *list;
 
   if (d->move.changed == FALSE) {
     return 0;
@@ -2287,19 +2298,13 @@ move_tab_set_value(struct FileDialog *d)
     movey = NULL;
   }
 
-  state = list_store_get_iter_first(d->move.list, &iter);
-  while (state) {
-    unsigned int j, movenum;
-    char *ptr, *endptr;
-    a = list_store_get_int(d->move.list, &iter, 0);
-
-    ptr = list_store_get_string(d->move.list, &iter, 1);
-    x = strtod(ptr, &endptr);
-    g_free(ptr);
-
-    ptr = list_store_get_string(d->move.list, &iter, 2);
-    y = strtod(ptr, &endptr);
-    g_free(ptr);
+  list = columnview_get_list(d->move.list);
+  n = g_list_model_get_n_items(G_LIST_MODEL (list));
+  for (i = 0; i < n; i++) {
+    unsigned int movenum, j;
+    NgraphData *ndata;
+    ndata = g_list_model_get_item (G_LIST_MODEL (list), i);
+    a = ndata->line;
 
     if (move == NULL)
       move = arraynew(sizeof(int));
@@ -2323,14 +2328,11 @@ move_tab_set_value(struct FileDialog *d)
       if (line == a)
 	break;
     }
-
     if (j == movenum) {
       arrayadd(move, &a);
-      arrayadd(movex, &x);
-      arrayadd(movey, &y);
+      arrayadd(movex, &ndata->x);
+      arrayadd(movey, &ndata->y);
     }
-
-    state = list_store_iter_next(d->move.list, &iter);
   }
 
   putobj(d->Obj, "move_data", d->Id, move);
@@ -2345,17 +2347,17 @@ mask_tab_setup_item(struct FileDialog *d, int id)
 {
   int masknum;
   struct narray *mask;
-  GtkTreeIter iter;
+  GListStore *list;
 
-  list_store_clear(d->mask.list);
+  list = columnview_get_list(d->mask.list);
+  g_list_store_remove_all (list);
   getobj(d->Obj, "mask", id, 0, NULL, &mask);
   if ((masknum = arraynum(mask)) > 0) {
     int j;
     for (j = 0; j < masknum; j++) {
       int line;
       line = arraynget_int(mask, j);
-      list_store_append(d->mask.list, &iter);
-      list_store_set_int(d->mask.list, &iter, 0, line);
+      list_store_append_ngraph_data(list, d->Id, line, 0, 0);
     }
   }
 }
@@ -2365,13 +2367,13 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
   int a;
-  GtkTreeIter iter;
+  GListStore *list;
 
   d = (struct FileDialog *) client_data;
 
+  list = columnview_get_list(d->mask.list);
   a = spin_entry_get_val(d->mask.line);
-  list_store_append(d->mask.list, &iter);
-  list_store_set_int(d->mask.list, &iter, 0, a);
+  list_store_append_ngraph_data(list, d->Id, a, 0, 0);
   d->mask.changed = TRUE;
 }
 
@@ -2394,23 +2396,38 @@ mask_tab_copy(GtkButton *btn, gpointer user_data)
   CopyClick(d->widget, d->Obj, d->Id, FileCB, mask_tab_copy_response, d);
 }
 
+
 static void
 FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
   d = (struct FileDialog *) client_data;
 
-  list_store_remove_selected_cb(w, d->mask.list);
+  columnview_remove_selected(d->mask.list);
   d->mask.changed = TRUE;
+}
+
+static void
+mask_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_label_new (NULL);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+mask_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  char buf[64];
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  NgraphData *item = NGRAPH_DATA(gtk_list_item_get_item (list_item));
+  snprintf(buf, sizeof(buf), "%d", item->line);
+  gtk_label_set_text(GTK_LABEL(label), buf);
 }
 
 static GtkWidget *
 mask_tab_create(struct FileDialog *d)
 {
   GtkWidget *w, *swin, *hbox, *table, *vbox, *frame;
-  n_list_store list[] = {
-    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL},
-  };
+  GtkColumnViewColumn *col;
   int i;
 
   table = gtk_grid_new();
@@ -2426,9 +2443,10 @@ mask_tab_create(struct FileDialog *d)
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  w = list_store_create(sizeof(list) / sizeof(*list), list);
-  list_store_set_sort_column(w, 0);
-  list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+  w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+  col = columnview_create_column(w, _("Line No."), G_CALLBACK(mask_setup_column), G_CALLBACK(mask_bind_column), NULL, NULL, TRUE);
+  columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_line), NULL);
+
   d->mask.list = w;
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
@@ -2442,13 +2460,12 @@ mask_tab_create(struct FileDialog *d)
   set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
-  set_sensitivity_by_selection(d->mask.list, w);
+  set_sensitivity_by_selected(d->mask.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
   set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
-  set_sensitivity_by_row_num(d->mask.list, w);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->mask.list);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_box_append(GTK_BOX(hbox), table);
@@ -2469,10 +2486,9 @@ mask_tab_create(struct FileDialog *d)
 static int
 mask_tab_set_value(struct FileDialog *d)
 {
-  int a;
+  int n, i;
   struct narray *mask;
-  GtkTreeIter iter;
-  gboolean state;
+  GListModel *list;
 
   if (d->mask.changed == FALSE) {
     return 0;
@@ -2484,14 +2500,19 @@ mask_tab_set_value(struct FileDialog *d)
     mask = NULL;
   }
 
-  state = list_store_get_iter_first(d->mask.list, &iter);
-  while (state) {
-    a = list_store_get_int(d->mask.list, &iter, 0);
+  list = G_LIST_MODEL (gtk_list_view_get_model (GTK_LIST_VIEW (d->mask.list)));
+  n = g_list_model_get_n_items (list);
+  for (i = 0; i < n; i++) {
+    GObject *item;
+    const char *str;
+    int a;
+    item = g_list_model_get_object (list, i);
+    str = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
     if (mask == NULL)
       mask = arraynew(sizeof(int));
 
+    a = atoi (str);
     arrayadd(mask, &a);
-    state = list_store_iter_next(d->mask.list, &iter);
   }
   putobj(d->Obj, "mask", d->Id, mask);
   set_graph_modified();
