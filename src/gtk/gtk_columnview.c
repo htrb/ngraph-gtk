@@ -175,6 +175,17 @@ columnview_create_column(GtkWidget *columnview, const char *header, GCallback se
   return column;
 }
 
+void
+columnview_set_numeric_sorter(GtkColumnViewColumn *column, GType type, GCallback sort, gpointer user_data)
+{
+  GtkExpression *expression;
+  GtkSorter *sorter;
+  expression = gtk_cclosure_expression_new (type, NULL, 0, NULL, G_CALLBACK (sort), user_data, NULL);
+  sorter = GTK_SORTER(gtk_numeric_sorter_new(expression));
+  gtk_column_view_column_set_sorter (column, sorter);
+}
+
+
 GListStore *
 columnview_get_list(GtkWidget *columnview)
 {
