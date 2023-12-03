@@ -32,6 +32,7 @@
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
 #include "gtk_presettings.h"
+#include "gtk_listview.h"
 
 #include "init.h"
 #include "osystem.h"
@@ -2211,16 +2212,8 @@ static void
 create_recent_menu(GtkWidget *menu_button, int type)
 {
   GtkWidget *popover, *menu;
-  GtkStringList *list;
-  GtkListItemFactory *factory;
 
-  list = gtk_string_list_new (NULL);
-
-  factory = gtk_signal_list_item_factory_new();
-  g_signal_connect (factory, "setup", G_CALLBACK (setup_popup_menu_cb), NULL);
-  g_signal_connect (factory, "bind", G_CALLBACK (bind_recent_item_cb), NULL);
-
-  menu = gtk_list_view_new (GTK_SELECTION_MODEL (gtk_single_selection_new (G_LIST_MODEL(list))), factory);
+  menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, G_CALLBACK (bind_recent_item_cb), NULL);
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
 
   popover = gtk_popover_new();
