@@ -2,6 +2,24 @@
 #include "object.h"
 #include "gtk_columnview.h"
 
+GtkSelectionModel *
+selection_model_create(enum N_SELECTION_TYPE selection_type, GListModel *model)
+{
+  GtkSelectionModel *selection;
+  switch (selection_type) {
+  case N_SELECTION_TYPE_MULTI:
+    selection = GTK_SELECTION_MODEL(gtk_multi_selection_new (model));
+    break;
+  case N_SELECTION_TYPE_SINGLE:
+    selection = GTK_SELECTION_MODEL(gtk_single_selection_new (model));
+    break;
+  case N_SELECTION_TYPE_NONE:
+    selection = GTK_SELECTION_MODEL(gtk_no_selection_new (model));
+    break;
+  }
+  return selection;
+}
+
 
 /* NgraphInst Object */
 G_DEFINE_TYPE(NgraphInst, ngraph_inst, G_TYPE_OBJECT)
