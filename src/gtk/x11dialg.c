@@ -385,10 +385,13 @@ bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer
 static char *
 sort_column (NgraphInst *item, gpointer user_data)
 {
-  if (GPOINTER_TO_INT (user_data)) {
-    return g_strdup (item->name);
-  }
-  return g_strdup_printf ("%06d", item->id);
+  return g_strdup (item->name);
+}
+
+static int
+sort_by_id (NgraphInst *item, gpointer user_data)
+{
+  return item->id;
 }
 
 static void
@@ -401,8 +404,10 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *swin, *w, *hbox;
+    GtkColumnViewColumn *col;
     d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_MULTI);
-    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
+    col = columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, GINT_TO_POINTER (0), FALSE);
+    columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
     g_signal_connect(d->list, "activate", G_CALLBACK(multi_list_default_cb), d);
@@ -531,8 +536,10 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct CopyDialog *) data;
   if (makewidget) {
     GtkWidget *swin, *w;
+    GtkColumnViewColumn *col;
     d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_SINGLE);
-    columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
+    col = columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
+    columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
     swin = gtk_scrolled_window_new();
