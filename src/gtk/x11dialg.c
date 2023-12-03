@@ -401,7 +401,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *swin, *w, *hbox;
-    d->list = columnview_create(NGRAPH_TYPE_INST, TRUE);
+    d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_MULTI);
     columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
@@ -531,7 +531,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct CopyDialog *) data;
   if (makewidget) {
     GtkWidget *swin, *w;
-    d->list = columnview_create(NGRAPH_TYPE_INST, FALSE);
+    d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_SINGLE);
     columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 

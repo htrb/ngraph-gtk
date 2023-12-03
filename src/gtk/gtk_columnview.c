@@ -132,7 +132,7 @@ ngraph_array_new (int line)
 /* GtkColumnView */
 
 GtkWidget *
-columnview_create(GType item_type, gboolean multi)
+columnview_create(GType item_type, enum N_SELECTION_TYPE selection_type)
 {
   GtkWidget *columnview;
   GtkSorter *sorter;
@@ -145,12 +145,8 @@ columnview_create(GType item_type, gboolean multi)
   model = G_LIST_MODEL(g_list_store_new (item_type));
   sorter = g_object_ref (gtk_column_view_get_sorter (GTK_COLUMN_VIEW(columnview)));
   model = G_LIST_MODEL(gtk_sort_list_model_new (model, sorter));
-  gtk_column_view_set_enable_rubberband (GTK_COLUMN_VIEW (columnview), multi);
-  if (multi) {
-    selection = GTK_SELECTION_MODEL(gtk_multi_selection_new (G_LIST_MODEL (model)));
-  } else {
-    selection = GTK_SELECTION_MODEL(gtk_single_selection_new (G_LIST_MODEL (model)));
-  }
+  gtk_column_view_set_enable_rubberband (GTK_COLUMN_VIEW (columnview), selection_type == N_SELECTION_TYPE_MULTI);
+  selection = selection_model_create(selection_type, model);
   gtk_column_view_set_model (GTK_COLUMN_VIEW (columnview), selection);
   return columnview;
 }

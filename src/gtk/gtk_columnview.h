@@ -4,6 +4,12 @@
 #include "gtk_common.h"
 #include "object.h"
 
+enum N_SELECTION_TYPE {
+  N_SELECTION_TYPE_SINGLE,
+  N_SELECTION_TYPE_MULTI,
+  N_SELECTION_TYPE_NONE,
+};
+
 /* NgraphInst Object */
 #define NGRAPH_TYPE_INST (ngraph_inst_get_type())
 G_DECLARE_FINAL_TYPE (NgraphInst, ngraph_inst, NGRAPH, INST, GObject)
@@ -50,7 +56,7 @@ struct _NgraphArray {
 NgraphArray *ngraph_array_new (int line);
 
 
-GtkWidget *columnview_create(GType item_type, gboolean multi);
+GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);
 void columnview_clear(GtkWidget *columnview);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand);
 void columnview_set_active(GtkWidget *columnview, int active);
