@@ -94,3 +94,14 @@ listview_select_all(GtkWidget *listview)
   selection = gtk_list_view_get_model (GTK_LIST_VIEW (listview));
   gtk_selection_model_select_all (selection);
 }
+
+void
+listview_clear(GtkWidget *listview)
+{
+  GtkStringList *list;
+  int n;
+
+  list = listview_get_string_list (listview);
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  gtk_string_list_splice (list, 0, n, NULL);
+}
