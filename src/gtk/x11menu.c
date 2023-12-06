@@ -2137,15 +2137,12 @@ setup_recent_data(GtkWidget *menu_button, int type)
   GtkPopover *popover;
   GtkWidget *list_view;
   GtkStringList *string_list;
-  GtkSingleSelection *model;
 
   popover = gtk_menu_button_get_popover (GTK_MENU_BUTTON (menu_button));
   list_view = gtk_popover_get_child (GTK_POPOVER (popover));
-  model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(GTK_LIST_VIEW (list_view)));
-  string_list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
 
-  n = g_list_model_get_n_items (G_LIST_MODEL (string_list));
-  gtk_string_list_splice (string_list, 0, n, NULL);
+  listview_clear (list_view);
+  string_list = listview_get_string_list (list_view);
 
   manager = gtk_recent_manager_get_default();
   list = gtk_recent_manager_get_items(manager);
