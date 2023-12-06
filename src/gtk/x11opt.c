@@ -168,7 +168,7 @@ DefaultDialog(struct DefaultDialog *data)
 }
 
 static void
-active_script_changed(GtkComboBox *widget, GParamSpec *spec,  gpointer user_data)
+active_script_changed(GtkWidget *widget, GParamSpec *spec,  gpointer user_data)
 {
   struct SetScriptDialog *d;
   struct script *addin;
@@ -176,7 +176,7 @@ active_script_changed(GtkComboBox *widget, GParamSpec *spec,  gpointer user_data
 
   d = (struct SetScriptDialog *) user_data;
 
-  n = gtk_combo_box_get_active(widget);
+  n = combo_box_get_active(widget);
   if (n < 0) {
     return;
   } else if (n < 1) {
@@ -244,7 +244,7 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 	g_free(title);
       }
     }
-    active_script_changed(GTK_COMBO_BOX(d->addins), NULL, d);
+    active_script_changed(d->addins, NULL, d);
   }
 
   if (d->Script->name) {
