@@ -51,6 +51,7 @@
 #include "x11bitmp.h"
 
 #include "gtk_liststore.h"
+#include "gtk_listview.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 
@@ -331,18 +332,18 @@ static void
 SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
 {
   int j, num;
-  GtkTreeIter iter;
+  GtkStringList *list;
 
   d->btn_lock = TRUE;
 
-  list_store_clear(d->drawlist);
+  listview_clear(d->drawlist);
+  list = listview_get_string_list (d->drawlist);
   num = arraynum(&(d->idrawrable));
   for (j = 0; j < num; j++) {
     char **buf;
     buf = (char **) arraynget(&(d->drawrable),
 			      arraynget_int(&(d->idrawrable), j));
-    list_store_append(d->drawlist, &iter);
-    list_store_set_string(d->drawlist, &iter, 0, _(*buf));
+    gtk_string_list_append(list, _(*buf));
   }
 
   d->btn_lock = FALSE;
@@ -352,37 +353,32 @@ static void
 SwitchDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct SwitchDialog *d;
-  GtkTreeSelection *selected;
-  GList *list, *ptr;
-  int num, *data, i;
+  GtkSelectionModel *selected;
+  int num, *data, i, j, n;
 
   d = (struct SwitchDialog *) client_data;
 
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->objlist));
 
   data = arraydata(&(d->idrawrable));
   num = arraynum(&(d->idrawrable));
 
-  for (ptr = list; ptr; ptr = ptr->next) {
-    int *ary, a, duplicate;
-
+  n = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (j = 0; j < n; j++) {
+    int duplicate;
+    if (! gtk_selection_model_is_selected (selected, j)) {
+      continue;
+    }
     duplicate = FALSE;
-    ary = gtk_tree_path_get_indices((GtkTreePath *)(ptr->data));
-    a = ary[0];
     for (i = 0; i < num; i++) {
-      if (data[i] == a) {
+      if (data[i] == j) {
 	duplicate = TRUE;
 	break;
       }
     }
     if (!duplicate) {
-      arrayadd(&(d->idrawrable), &a);
+      arrayadd(&(d->idrawrable), &j);
     }
-  }
-
-  if (list) {
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   }
 
   SwitchDialogSetupItem(d->widget, d);
@@ -393,48 +389,40 @@ static void
 SwitchDialogInsert(GtkWidget *w, gpointer client_data)
 {
   struct SwitchDialog *d;
-  int i, a, pos, num2;
+  int i, j, n, pos, num2;
   int *data;
-  GtkTreeSelection *selected;
-  GList *list, *last;
+  GtkSelectionModel *selected;
 
   d = (struct SwitchDialog *) client_data;
 
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
+  n = g_list_model_get_n_items (G_LIST_MODEL (selected));
   pos = 0;
-  if (list) {
-    last = g_list_last(list);
-    if (last) {
-      int *ptr;
-      ptr = gtk_tree_path_get_indices((GtkTreePath *)(last->data));
-      pos = ptr[0];
+  for (i = n -1; i >= 0; i--) {
+    if (gtk_selection_model_is_selected (selected, i)) {
+      pos = i;
+      break;
     }
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   }
 
   data = arraydata(&(d->idrawrable));
-
   num2 = arraynum(&(d->idrawrable));
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
 
-  for (last = list; last; last = last->next) {
-    int *ptr;
-    ptr = gtk_tree_path_get_indices((GtkTreePath *)(last->data));
-    a = ptr[0];
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->objlist));
+  n = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (j = 0; j < n; j++) {
+    if (! gtk_selection_model_is_selected (selected, j)) {
+      continue;
+    }
     for (i = 0; i < num2; i++) {
-      if (data[i] == a) {
+      if (data[i] == j) {
 	break;
       }
     }
-    if (i == num2) {
-      arrayins(&(d->idrawrable), &a, pos);
-    }
-  }
 
-  if (list) {
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+    if (i == num2) {
+      arrayins(&(d->idrawrable), &j, pos);
+    }
   }
 
   SwitchDialogSetupItem(d->widget, d);
@@ -442,180 +430,113 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
 }
 
 static void
-switch_dialog_top_cb(gpointer data, gpointer user_data)
-{
-  GtkTreePath *path;
-  int *ary, i, k;
-  struct SwitchDialog *d;
-
-  path = (GtkTreePath *) data;
-  d = (struct SwitchDialog *) user_data;
-
-  ary = gtk_tree_path_get_indices(path);
-
-  if (! ary)
-    return;
-
-  i = ary[0];
-  k = arraynget_int(&(d->idrawrable), i);
-  arrayndel(&(d->idrawrable), i);
-  arrayins(&(d->idrawrable), &k, 0);
-}
-
-static void
-switch_dialog_last_cb(gpointer data, gpointer user_data)
-{
-  GtkTreePath *path;
-  int *ary, i, k;
-  struct SwitchDialog *d;
-
-  path = (GtkTreePath *) data;
-  d = (struct SwitchDialog *) user_data;
-
-  ary = gtk_tree_path_get_indices(path);
-
-  if (! ary)
-    return;
-
-  i = ary[0];
-  k = arraynget_int(&(d->idrawrable), i);
-  arrayndel(&(d->idrawrable), i);
-  arrayadd(&(d->idrawrable), &k);
-}
-
-static void
 SwitchDialogUp(GtkWidget *w, gpointer client_data)
 {
-  GtkTreeSelection *selected;
-  GList *list, *ptr;
+  GtkSelectionModel *selected;
   struct SwitchDialog *d;
-  int k, modified, *ary;
-  GtkTreePath *path;
+  int k, modified;
+  int i, n;
+  struct narray objary;
 
   d = (struct SwitchDialog *) client_data;
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
-
-  if (list == NULL) {
-    return;
-  }
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
+  arrayinit (&objary, sizeof (int));
 
   modified = FALSE;
-  for (ptr = list; ptr; ptr = g_list_next(ptr)) {
-    int i;
-    path = (GtkTreePath *) ptr->data;
-    ary = gtk_tree_path_get_indices(path);
-
-    if (ary == NULL) {
-      break;
+  n = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (i = 1; i < n; i++) {
+    if (! gtk_selection_model_is_selected (selected, i)) {
+      continue;
     }
-
-    i = ary[0];
-    if (i <= 0) {
-      break;
-    }
-
     k = arraynget_int(&(d->idrawrable), i);
     arrayndel(&(d->idrawrable), i);
-    i--;
-    arrayins(&(d->idrawrable), &k, i);
+    arrayins(&(d->idrawrable), &k, i - 1);
+    arrayadd (&objary, &i);
     modified = TRUE;
   }
 
   if (modified) {
+    int row;
     SwitchDialogSetupItem(d->widget, d);
-
-    for (ptr = list; ptr; ptr = g_list_next(ptr)) {
-      path = (GtkTreePath *) ptr->data;
-      ary = gtk_tree_path_get_indices(path);
-
-      if (ary == NULL)
-	break;
-
-      list_store_select_nth(d->drawlist, ary[0] - 1);
+    n = arraynum (&objary);
+    for (i = 0; i < n; i++) {
+      row = arraynget_int (&objary, i);
+      if (row > 0) {
+        row--;
+      }
+      gtk_selection_model_select_item (selected, row, FALSE);
     }
   }
-
-  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  arraydel (&objary);
 }
 
 static void
 SwitchDialogDown(GtkWidget *w, gpointer client_data)
 {
-  GtkTreeSelection *selected;
-  GList *list, *ptr;
+  GtkSelectionModel *selected;
+  struct narray objary;
   struct SwitchDialog *d;
-  int k, num, modified, *ary;
-  GtkTreePath *path;
+  int modified;
+  int i, size;
 
   d = (struct SwitchDialog *) client_data;
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
-
-  if (list == NULL) {
-    return;
-  }
-
-  num = list_store_get_num(d->drawlist);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
+  arrayinit (&objary, sizeof (int));
 
   modified = FALSE;
-  for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
-    int i;
-    path = (GtkTreePath *) ptr->data;
-    ary = gtk_tree_path_get_indices(path);
-
-    if (ary == NULL)
-      break;
-
-    i = ary[0];
-    if (i >= num - 1) {
-      break;
+  size = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (i = size - 2; i >= 0; i--) {
+    int k;
+    if (! gtk_selection_model_is_selected (selected, i)) {
+      continue;
     }
-
     k = arraynget_int(&(d->idrawrable), i);
     arrayndel(&(d->idrawrable), i);
-    i++;
-    arrayins(&(d->idrawrable), &k, i);
+    arrayins(&(d->idrawrable), &k, i + 1);
+    arrayadd (&objary, &i);
     modified = TRUE;
   }
 
   if (modified) {
+    int n;
     SwitchDialogSetupItem(d->widget, d);
-
-    for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
-      path = (GtkTreePath *) ptr->data;
-      ary = gtk_tree_path_get_indices(path);
-
-      if (ary == NULL)
-	break;
-
-      list_store_select_nth(d->drawlist, ary[0] + 1);
+    n = arraynum (&objary);
+    for (i = 0; i < n; i++) {
+      int row;
+      row = arraynget_int (&objary, i);
+      if (row < size - 1) {
+        row++;
+      }
+      gtk_selection_model_select_item (selected, row, FALSE);
     }
   }
-
-  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  arraydel (&objary);
 }
 
 static void
 SwitchDialogTop(GtkWidget *w, gpointer client_data)
 {
-  GtkTreeSelection *selected;
-  GList *list;
+  GtkSelectionModel *selected;
   struct SwitchDialog *d;
-  int i, num = 0;
+  int i, size, num = 0;
 
   d = (struct SwitchDialog *) client_data;
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
 
-  if (list) {
-    num = g_list_length(list);
-    g_list_foreach(list, switch_dialog_top_cb, d);
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  size = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (i = 0; i < size; i++) {
+    int k;
+    if (! gtk_selection_model_is_selected (selected, i)) {
+      continue;
+    }
+    k = arraynget_int(&(d->idrawrable), i);
+    arrayndel(&(d->idrawrable), i);
+    arrayins(&(d->idrawrable), &k, 0);
+    num++;
   }
   SwitchDialogSetupItem(d->widget, d);
   for (i = 0; i < num; i++) {
-    list_store_select_nth(d->drawlist, i);
+    gtk_selection_model_select_item(selected, i, FALSE);
   }
 }
 
@@ -623,90 +544,79 @@ static void
 SwitchDialogLast(GtkWidget *w, gpointer client_data)
 {
   struct SwitchDialog *d;
-  GtkTreeSelection *selected;
-  GList *list;
-  int n, i, num = 0;
+  GtkSelectionModel *selected;
+  int i, num = 0, size;
 
   d = (struct SwitchDialog *) client_data;
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
 
-  if (list) {
-    num = g_list_length(list);
-    list = g_list_reverse(list);
-    g_list_foreach(list, switch_dialog_last_cb, d);
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  size = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (i = size - 1; i >= 0; i--) {
+    int k;
+    if (! gtk_selection_model_is_selected (selected, i)) {
+      continue;
+    }
+    k = arraynget_int(&(d->idrawrable), i);
+    arrayndel(&(d->idrawrable), i);
+    arrayadd(&(d->idrawrable), &k);
+    num++;
   }
   SwitchDialogSetupItem(d->widget, d);
-  n = list_store_get_num(d->drawlist);
-  for (i = 0; i < num; i++) {
-    list_store_select_nth(d->drawlist, n - i - 1);
+  for (i = size - num; i < size; i++) {
+    gtk_selection_model_select_item(selected, i, FALSE);
   }
-}
-
-static void
-switch_dialog_remove_cb(gpointer data, gpointer user_data)
-{
-  GtkTreePath *path;
-  int *ary;
-  struct SwitchDialog *d;
-
-  path = (GtkTreePath *) data;
-  d = (struct SwitchDialog *) user_data;
-
-  ary = gtk_tree_path_get_indices(path);
-
-  if (! ary)
-    return;
-
-  arrayndel(&(d->idrawrable), ary[0]);
 }
 
 static void
 SwitchDialogRemove(GtkWidget *w, gpointer client_data)
 {
+  GtkSelectionModel *selected;
   struct SwitchDialog *d;
-  GtkTreeSelection *selected;
-  GList *list;
+  int i, size;
 
   d = (struct SwitchDialog *) client_data;
-  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
-  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
 
-  if (list) {
-    list = g_list_reverse(list);
-    g_list_foreach(list, switch_dialog_remove_cb, d);
-    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  size = g_list_model_get_n_items (G_LIST_MODEL (selected));
+  for (i = size - 1; i >= 0; i--) {
+    if (! gtk_selection_model_is_selected (selected, i)) {
+      continue;
+    }
+    arrayndel(&(d->idrawrable), i);
   }
   SwitchDialogSetupItem(d->widget, d);
   set_drawlist_btn_state(d, FALSE);
 }
 
 static gboolean
-drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+drawlist_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   struct SwitchDialog *d;
 
   d = (struct SwitchDialog *) user_data;
 
   if (! d->btn_lock) {
+    GtkBitset *list;
     int n;
-    n = gtk_tree_selection_count_selected_rows(sel);
+    list = gtk_selection_model_get_selection(sel);
+    n = gtk_bitset_get_size (list);
     set_drawlist_btn_state(d, n);
   }
   return FALSE;
 }
 
 static gboolean
-objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+objlist_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   struct SwitchDialog *d;
 
   d = (struct SwitchDialog *) user_data;
 
   if (! d->btn_lock) {
+    GtkBitset *list;
     int n;
-    n = gtk_tree_selection_count_selected_rows(sel);
+    list = gtk_selection_model_get_selection(sel);
+    n = gtk_bitset_get_size (list);
     set_objlist_btn_state(d, n);
   }
   return FALSE;
@@ -715,19 +625,16 @@ objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 static void
 SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkTreeIter iter;
+  GtkStringList *list;
   struct SwitchDialog *d;
   int num2, num1, j, k, *obj_check;
   char **buf;
-  static n_list_store list[] = {
-    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL},
-  };
 
   d = (struct SwitchDialog *) data;
 
   if (makewidget) {
     GtkWidget *w, *hbox, *vbox, *vbox2, *label, *frame;
-    GtkTreeSelection *sel;
+    GtkSelectionModel *sel;
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -736,13 +643,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Draw order"));
     gtk_box_append(GTK_BOX(vbox), label);
 
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    w = listview_create(N_SELECTION_TYPE_MULTI, NULL, NULL, NULL);
     d->drawlist = w;
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
-    g_signal_connect(sel, "changed", G_CALLBACK(drawlist_sel_cb), d);
+    sel = gtk_list_view_get_model(GTK_LIST_VIEW(w));
+    g_signal_connect(sel, "selection-changed", G_CALLBACK(drawlist_sel_cb), d);
 
 
     frame = gtk_frame_new(NULL);
@@ -808,13 +714,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Objects"));
     gtk_box_append(GTK_BOX(vbox), label);
 
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    w = listview_create(N_SELECTION_TYPE_MULTI, NULL, NULL, NULL);
     d->objlist = w;
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
-    g_signal_connect(sel, "changed", G_CALLBACK(objlist_sel_cb), d);
+    sel = gtk_list_view_get_model(GTK_LIST_VIEW(w));
+    g_signal_connect(sel, "selection-changed", G_CALLBACK(objlist_sel_cb), d);
 
 
     frame = gtk_frame_new(NULL);
@@ -828,12 +733,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   menuadddrawrable(chkobject("draw"), &(d->drawrable));
-  list_store_clear(d->objlist);
+  listview_clear(d->objlist);
+  list = listview_get_string_list (d->objlist);
   num2 = arraynum(&(d->drawrable));
   for (j = 0; j < num2; j++) {
     buf = (char **) arraynget(&(d->drawrable), j);
-    list_store_append(d->objlist, &iter);
-    list_store_set_string(d->objlist, &iter, 0, _(*buf));
+    gtk_string_list_append(list, _(*buf));
   }
   num1 = arraynum(&(Menulocal.drawrable));
   obj_check = g_malloc0(sizeof(*obj_check) * num2);
