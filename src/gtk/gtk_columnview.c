@@ -85,6 +85,7 @@ ngraph_data_new (int id, int line, double x, double y)
   NgraphData *nobj;
 
   nobj = g_object_new (NGRAPH_TYPE_DATA, NULL);
+  nobj->id = id;
   nobj->line = line;
   nobj->x = x;
   nobj->y = y;
