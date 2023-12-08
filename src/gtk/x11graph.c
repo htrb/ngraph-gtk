@@ -535,6 +535,7 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
     num++;
   }
   SwitchDialogSetupItem(d->widget, d);
+  gtk_selection_model_unselect_all(selected);
   for (i = 0; i < num; i++) {
     gtk_selection_model_select_item(selected, i, FALSE);
   }
@@ -562,6 +563,7 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
     num++;
   }
   SwitchDialogSetupItem(d->widget, d);
+  gtk_selection_model_unselect_all(selected);
   for (i = size - num; i < size; i++) {
     gtk_selection_model_select_item(selected, i, FALSE);
   }
