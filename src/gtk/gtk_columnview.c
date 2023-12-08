@@ -392,3 +392,11 @@ selection_model_get_selected(GtkSelectionModel *model)
   }
   return -1;
 }
+
+int
+columnview_get_n_items(GtkWidget *view)
+{
+  GtkSelectionModel *model;
+  model = gtk_column_view_get_model (GTK_COLUMN_VIEW (view));
+  return g_list_model_get_n_items (G_LIST_MODEL (model));
+}
