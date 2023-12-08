@@ -257,7 +257,7 @@ columnview_get_active(GtkWidget *columnview)
   GtkSelectionModel *selection;
 
   selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
-  return gtk_single_selection_get_selected (GTK_SINGLE_SELECTION (selection));
+  return selection_model_get_selected(selection);
 }
 
 GObject *
