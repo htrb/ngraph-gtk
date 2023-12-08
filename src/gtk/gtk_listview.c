@@ -182,3 +182,10 @@ stringlist_move_top(GtkStringList *list, int pos)
   }
 }
 
+int
+listview_get_active(GtkWidget *list)
+{
+  GtkSelectionModel *model;
+  model = gtk_list_view_get_model (GTK_LIST_VIEW (list));
+  return selection_model_get_selected(model);
+}
