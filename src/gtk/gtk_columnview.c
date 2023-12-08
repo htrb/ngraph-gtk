@@ -370,3 +370,25 @@ columnview_remove_selected(GtkWidget *columnview)
   gtk_selection_model_select_all (selection);
   gtk_selection_model_unselect_all (selection);
 }
+
+int
+selection_model_get_selected(GtkSelectionModel *model)
+{
+  int i, n;
+  if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_SINGLE_SELECTION)) {
+    guint sel;
+    sel = gtk_single_selection_get_selected (GTK_SINGLE_SELECTION (model));
+    if (sel == GTK_INVALID_LIST_POSITION) {
+      return -1;
+    }
+    return sel;
+  }
+
+  n = g_list_model_get_n_items (G_LIST_MODEL (model));
+  for (i = 0; i < n; i++) {
+    if (gtk_selection_model_is_selected (model, i)) {
+      return i;
+    }
+  }
+  return -1;
+}

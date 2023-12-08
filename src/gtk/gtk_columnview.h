@@ -87,5 +87,6 @@ void columnview_select(GtkWidget *columnview, int i);
 void columnview_remove_selected(GtkWidget *columnview);
 GtkSelectionModel *selection_model_create(enum N_SELECTION_TYPE selection_type, GListModel *model);
 void columnview_set_numeric_sorter(GtkColumnViewColumn *column, GType type, GCallback sort, gpointer user_data);
+int selection_model_get_selected(GtkSelectionModel *model);
 
 #endif
