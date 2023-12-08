@@ -1,7 +1,7 @@
 #include "gtk_columnview.h"
 #include "gtk_listview.h"
 
-static void
+void
 setup_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;
@@ -11,7 +11,7 @@ setup_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
   gtk_list_item_set_child (list_item, label);
 }
 
-static void
+void
 bind_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;

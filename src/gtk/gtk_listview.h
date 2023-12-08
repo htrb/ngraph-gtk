@@ -15,4 +15,8 @@ void stringlist_move_up(GtkStringList *list, int pos);
 void stringlist_move_down(GtkStringList *list, int pos);
 void stringlist_move_top(GtkStringList *list, int pos);
 void stringlist_move_bottom(GtkStringList *list, int pos);
+
+void setup_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item);
+void bind_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item);
+
 #endif
