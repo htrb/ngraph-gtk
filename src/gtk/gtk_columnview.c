@@ -129,6 +129,41 @@ ngraph_array_new (int line)
   return nobj;
 }
 
+/* NgraphText Object */
+G_DEFINE_TYPE(NgraphText, ngraph_text, G_TYPE_OBJECT)
+
+static void
+ngraph_text_finalize (GObject *object)
+{
+  NgraphText *self = NGRAPH_TEXT (object);
+
+  g_clear_pointer (&self->text, g_strfreev);
+  G_OBJECT_CLASS (ngraph_text_parent_class)->finalize (object);
+}
+
+static void
+ngraph_text_class_init (NgraphTextClass * klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = ngraph_text_finalize;
+}
+
+static void
+ngraph_text_init (NgraphText * noop)
+{
+}
+
+NgraphText*
+ngraph_text_new (gchar **text)
+{
+  NgraphText *nobj;
+
+  nobj = g_object_new (NGRAPH_TYPE_TEXT, NULL);
+  nobj->text = g_strdupv (text);
+  nobj->size = (text) ? g_strv_length (text) : 0;
+  return nobj;
+}
+
 
 /* GtkColumnView */
 
@@ -260,6 +295,16 @@ list_store_append_ngraph_data(GListStore *store, int id, int line, double x, dou
 {
   NgraphData *item;
   item = ngraph_data_new(id, line, x, y);
+  g_list_store_append (store, item);
+  g_object_unref(item);
+  return item;
+}
+
+NgraphText *
+list_store_append_ngraph_text(GListStore *store, gchar **text)
+{
+  NgraphText *item;
+  item = ngraph_text_new(text);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
