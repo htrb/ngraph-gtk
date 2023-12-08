@@ -97,7 +97,7 @@ gchar *get_text_from_buffer(GtkTextBuffer *buffer);
 GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, const char *tooltip, GCallback proc, gpointer data);
 
-void add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
+GtkEventController * add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
 void set_widget_margin_all(GtkWidget *w, int margin);
 GtkWidget *widget_get_grandparent(GtkWidget *w);
 #endif

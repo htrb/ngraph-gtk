@@ -1270,7 +1270,7 @@ add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, cons
   return w;
 }
 
-void
+GtkEventController *
 add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data)
 {
   GtkEventController *ev;
@@ -1283,4 +1283,5 @@ add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, g
   if (release_proc) {
     g_signal_connect(ev, "key-released", release_proc, user_data);
   }
+  return ev;
 }
