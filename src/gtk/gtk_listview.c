@@ -105,3 +105,80 @@ listview_clear(GtkWidget *listview)
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
   gtk_string_list_splice (list, 0, n, NULL);
 }
+
+void
+stringlist_move_down(GtkStringList *list, int pos)
+{
+  int i, n;
+
+  if (pos < 0) {
+    return;
+  }
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  if (pos > n - 1) {
+    return;
+  }
+
+  stringlist_move_bottom(list, pos);
+  for (i = 0; i < n - pos - 2; i++) {
+    stringlist_move_bottom(list, pos + 1);
+  }
+}
+
+void
+stringlist_move_up(GtkStringList *list, int pos)
+{
+  int i, n;
+
+  if (pos < 1) {
+    return;
+  }
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  if (pos > n) {
+    return;
+  }
+
+  stringlist_move_bottom(list, pos);
+  for (i = 0; i < n - pos; i++) {
+    stringlist_move_bottom(list, pos - 1);
+  }
+}
+
+void
+stringlist_move_bottom(GtkStringList *list, int pos)
+{
+  int n;
+  const char *item;
+
+  if (pos < 0) {
+    return;
+  }
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  if (pos > n - 1) {
+    return;
+  }
+
+  item = gtk_string_list_get_string (list, pos);
+  gtk_string_list_append (list, item);
+  gtk_string_list_remove(list, pos);
+}
+
+void
+stringlist_move_top(GtkStringList *list, int pos)
+{
+  int i, n;
+
+  if (pos < 1) {
+    return;
+  }
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  if (pos > n - 1) {
+    return;
+  }
+
+  stringlist_move_bottom(list, pos);
+  for (i = 0; i < n - 1; i++) {
+    stringlist_move_bottom(list, i);
+  }
+}
+
