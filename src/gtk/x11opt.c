@@ -881,12 +881,10 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 {
   struct fontmap *fcur;
   GListStore *model;
-  int i;
 
   columnview_clear(d->list);
   fcur = Gra2cairoConf->fontmap_list_root;
   model = columnview_get_list (d->list);
-  i = 0;
   while (fcur) {
     char *text[4];
     text[0] = fcur->fontalias;
@@ -895,7 +893,6 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
     text[3] = NULL;
     list_store_append_ngraph_text(model, text);
     fcur = fcur->next;
-    i++;
   }
 }
 
