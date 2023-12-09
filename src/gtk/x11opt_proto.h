@@ -3,7 +3,7 @@ static void
 CREATE_NAME(Pref, DialogUpdate_response)(struct response_callback *cb)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
-  d = (struct CREATE_NAME(Pref, Dialog) *) cb->dialog;
+  d = (struct CREATE_NAME(Pref, Dialog) *) cb->data;
   CREATE_NAME(Pref, DialogSetupItem)(d);
 }
 
@@ -16,7 +16,7 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
 
-  a = list_store_get_selected_index(d->list);
+  a = columnview_get_active(d->list);
 
   j = 0;
   fcur = LIST_ROOT;
@@ -29,7 +29,7 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 #ifdef SET_DIALOG
   if (fcur) {
     CREATE_NAME(Set, Dialog)(&SET_DIALOG, fcur);
-    response_callback_add(&SET_DIALOG, CREATE_NAME(Pref, DialogUpdate_response), NULL, NULL);
+    response_callback_add(&SET_DIALOG, CREATE_NAME(Pref, DialogUpdate_response), NULL, d);
     DialogExecute(d->widget, &SET_DIALOG);
   }
 #endif
@@ -111,7 +111,7 @@ CREATE_NAME(Pref, DialogRemove)(GtkWidget *w, gpointer client_data)
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
 
-  a = list_store_get_selected_index(d->list);
+  a = columnview_get_active(d->list);
 
   j = 0;
   fprev = NULL;
@@ -143,7 +143,7 @@ CREATE_NAME(Pref, DialogMoveSub)(struct CREATE_NAME(Pref, Dialog) *d, int a)
   int j, n;
   struct LIST_TYPE *fcur, *fprev, *next;
 
-  n = list_store_get_num(d->list);
+  n = columnview_get_n_items(d->list);
   if (a < 0 || a >= n - 1)
     return -1;
 
@@ -182,10 +182,10 @@ CREATE_NAME(Pref, DialogUp)(GtkWidget *w, gpointer client_data)
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
 
-  a = list_store_get_selected_index(d->list);
+  a = columnview_get_active(d->list);
   a = CREATE_NAME(Pref, DialogMoveSub)(d, a - 1);
   if (a >= 0) {
-    list_store_select_nth(d->list, a);
+    gtk_column_view_scroll_to (GTK_COLUMN_VIEW (d->list), a, NULL, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
   }
 }
 
@@ -197,22 +197,22 @@ CREATE_NAME(Pref, DialogDown)(GtkWidget *w, gpointer client_data)
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
 
-  a = list_store_get_selected_index(d->list);
+  a = columnview_get_active(d->list);
   a = CREATE_NAME(Pref, DialogMoveSub)(d, a);
   if (a >= 0) {
-    list_store_select_nth(d->list, a + 1);
+    gtk_column_view_scroll_to (GTK_COLUMN_VIEW (d->list), a + 1, NULL, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
   }
 }
 
 static gboolean
-CREATE_NAME(Pref, ListDefailtCb)(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+CREATE_NAME(Pref, ListDefaultCb)(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
   int i;
 
   d = (struct CREATE_NAME(Pref, Dialog) *) user_data;
 
-  i = list_store_get_selected_index(d->list);
+  i = columnview_get_active(d->list);
   if (i < 0)
     return FALSE;
 
@@ -239,30 +239,26 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkEventControllerKey *controller, guint keyval
 }
 
 static void
-CREATE_NAME(Pref, ListActivatedCb)(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+CREATE_NAME(Pref, ListActivatedCb)(GtkSelectionModel *model, guint pos, gpointer user_data)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
-  int i;
 
   d = (struct CREATE_NAME(Pref, Dialog) *) user_data;
 
-  i = list_store_get_selected_index(d->list);
-  if (i < 0)
-    return;
 
   CREATE_NAME(Pref, DialogUpdate)(NULL, d);
 }
 
 static gboolean
-CREATE_NAME(Pref, ListSelCb)(GtkTreeSelection *sel, gpointer user_data)
+CREATE_NAME(Pref, ListSelCb)(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   int a, n;
   struct CREATE_NAME(Pref, Dialog) *d;
 
   d = (struct CREATE_NAME(Pref, Dialog) *) user_data;
 
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
+  a = selection_model_get_selected(sel);
+  n = g_list_model_get_n_items (G_LIST_MODEL (sel));
 
   gtk_widget_set_sensitive(d->update_b, a >= 0);
   gtk_widget_set_sensitive(d->del_b, a >= 0);
@@ -273,10 +269,25 @@ CREATE_NAME(Pref, ListSelCb)(GtkTreeSelection *sel, gpointer user_data)
 }
 
 static void
-CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkWidget *win_box, int n, n_list_store * list)
+CREATE_NAME (Bind, Item) (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkWidget *label;
+  NgraphText *item;
+  int i;
+
+  label = gtk_list_item_get_child (list_item);
+  item = gtk_list_item_get_item (list_item);
+  i = GPOINTER_TO_INT (user_data);
+  gtk_label_set_text(GTK_LABEL(label), item->text[i]);
+}
+
+static void
+CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkWidget *win_box, int n, char ** list)
 {
   GtkWidget *w, *hbox, *vbox, *swin;
-  GtkTreeSelection *sel;
+  GtkSelectionModel *sel;
+  int i;
+  GtkEventController *ev;
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -284,15 +295,19 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_widget_set_vexpand(swin, TRUE);
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  w = list_store_create(n, list);
+  w = columnview_create(NGRAPH_TYPE_TEXT, N_SELECTION_TYPE_SINGLE);
+  for (i = 0; i < n; i++) {
+    columnview_create_column(w, _(list[i]), G_CALLBACK(setup_listitem_cb), G_CALLBACK(CREATE_NAME (Bind, Item)), NULL, GINT_TO_POINTER (i), i == n - 1);
+  }
   d->list = w;
-  g_signal_connect(d->list, "row-activated", G_CALLBACK(CREATE_NAME(Pref, ListActivatedCb)), d);
-  add_event_key(d->list, G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), NULL, d);
 
+  g_signal_connect(d->list, "activate", G_CALLBACK(CREATE_NAME(Pref, ListActivatedCb)), d);
+  ev = add_event_key(d->list, G_CALLBACK(CREATE_NAME(Pref, ListDefaultCb)), NULL, d);
+  gtk_event_controller_set_propagation_phase(ev, GTK_PHASE_CAPTURE);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
 
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
-  g_signal_connect(sel, "changed", G_CALLBACK(CREATE_NAME(Pref, ListSelCb)), d);
+  sel = gtk_column_view_get_model(GTK_COLUMN_VIEW(w));
+  g_signal_connect(sel, "selection-changed", G_CALLBACK(CREATE_NAME(Pref, ListSelCb)), d);
 
   w = gtk_frame_new(NULL);
   gtk_frame_set_child(GTK_FRAME(w), swin);
@@ -305,7 +320,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   }
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
-  w= gtk_button_new_with_mnemonic(_("_Add"));
+  w = gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(w, "list-add");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogAdd)), d);
   gtk_box_append(GTK_BOX(vbox), w);

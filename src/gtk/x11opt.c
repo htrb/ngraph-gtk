@@ -36,6 +36,7 @@
 #include "oaxis.h"
 
 #include "gtk_liststore.h"
+#include "gtk_listview.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
@@ -59,6 +60,8 @@
 #define WIN_SIZE_MIN 100
 #define WIN_SIZE_MAX 2048
 #define GRID_MAX 1000
+
+static gboolean AlternativeFontListSelCb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data);
 
 static void
 DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -404,15 +407,18 @@ static void
 PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
 {
   struct script *fcur;
-  GtkTreeIter iter;
+  GListStore *model;
 
-  list_store_clear(d->list);
+  columnview_clear(d->list);
   fcur = Menulocal.scriptroot;
+  model = columnview_get_list (d->list);
   while (fcur) {
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, fcur->name);
-    list_store_set_string(d->list, &iter, 1, fcur->script);
-    list_store_set_string(d->list, &iter, 2, fcur->description);
+    char *text[4];
+    text[0] = fcur->name;
+    text[1] = fcur->script;
+    text[2] = fcur->description;
+    text[3] = NULL;
+    list_store_append_ngraph_text(model, text);
     fcur = fcur->next;
   }
 }
@@ -450,10 +456,11 @@ static void
 PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PrefScriptDialog *d;
-  n_list_store list[] = {
-    {N_("name"), G_TYPE_STRING, TRUE, FALSE, NULL},
-    {N_("file"), G_TYPE_STRING, TRUE, FALSE, NULL},
-    {N_("description"), G_TYPE_STRING, TRUE, FALSE, NULL},
+  GtkSelectionModel *model;
+  char *list[] = {
+    N_("name"),
+    N_("file"),
+    N_("description"),
   };
 
   d = (struct PrefScriptDialog *) data;
@@ -463,6 +470,8 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
   PrefScriptDialogSetupItem(d);
+  model = gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list));
+  PrefScriptListSelCb (model, 0, 0, d);
 }
 
 static void
@@ -492,6 +501,7 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
+  GtkSelectionModel *model;
   editable_set_init_text(d->alias, CHK_STR(d->alias_str));
   gtk_editable_set_editable(GTK_EDITABLE(d->alias), ! d->is_update);
 
@@ -503,35 +513,37 @@ FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
     g_free(tmp);
   }
 
-  list_store_clear(d->list);
+  listview_clear(d->list);
   if (d->alternative_str) {
-    GtkTreeIter iter;
+    GtkStringList *list;
     gchar **ary;
     int i;
 
+    list = listview_get_string_list (d->list);
     ary = g_strsplit(d->alternative_str, ",", 0);
     for (i = 0; ary[i]; i++) {
-      list_store_append(d->list, &iter);
-      list_store_set_string(d->list, &iter, 0, ary[i]);
+      gtk_string_list_append(list, ary[i]);
     }
     g_strfreev(ary);
   }
 
+  model = gtk_list_view_get_model (GTK_LIST_VIEW (d->list));
+  AlternativeFontListSelCb(model, 0, 0, d);
   d->alias_str = NULL;
   d->font_str = NULL;
   d->alternative_str = NULL;
 }
 
 static gboolean
-AlternativeFontListSelCb(GtkTreeSelection *sel, gpointer user_data)
+AlternativeFontListSelCb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   int a, n;
   struct FontSettingDialog *d;
 
   d = (struct FontSettingDialog *) user_data;
 
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
+  a = listview_get_active(d->list);
+  n = g_list_model_get_n_items (G_LIST_MODEL (sel));
 
   gtk_widget_set_sensitive(d->del_b, a >= 0);
   gtk_widget_set_sensitive(d->up_b, a > 0);
@@ -565,7 +577,6 @@ FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpoin
 {
   struct FontSettingDialog *d;
   PangoFontFamily *family;
-  GtkTreeIter iter;
 
   if (response != GTK_RESPONSE_OK) {
     gtk_window_destroy(GTK_WINDOW(dialog));
@@ -576,9 +587,10 @@ FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpoin
   family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
   if (family) {
     const gchar *font_name;
+    GtkStringList *list;
     font_name = pango_font_family_get_name(family);
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, font_name);
+    list = listview_get_string_list (d->list);
+    gtk_string_list_append (list, font_name);
   }
   gtk_window_destroy(GTK_WINDOW(dialog));
 }
@@ -603,71 +615,72 @@ static void
 FontSettingDialogRemoveAlternative(GtkWidget *w, gpointer client_data)
 {
   struct FontSettingDialog *d;
-  GtkTreeIter iter;
+  int sel;
+  GtkStringList *list;
+  GtkSelectionModel *model;
 
   d = (struct FontSettingDialog *) client_data;
 
-  if (list_store_get_selected_iter(d->list, &iter)) {
-    GtkTreeModel *model;
-
-    model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->list));
-    gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+  sel = listview_get_active(d->list);
+  if (sel < 0) {
+    return;
   }
+  list = listview_get_string_list (d->list);
+  gtk_string_list_remove (list, sel);
+
+  model = gtk_list_view_get_model (GTK_LIST_VIEW (d->list));
+  AlternativeFontListSelCb(model, 0, 0, d);
 }
 
 static void
 FontSettingDialogDownAlternative(GtkWidget *wi, gpointer data)
 {
   struct FontSettingDialog *d;
-  GtkTreeIter iter, next_iter;
-  GtkTreeModel *model;
-  GtkTreeSelection *sel;
+  GtkSelectionModel *model;
+  GtkStringList *list;
+  int n, sel;
 
   d = (struct FontSettingDialog *) data;
 
-  if (! list_store_get_selected_iter(d->list, &iter)) {
+  sel = listview_get_active(d->list);
+  if (sel < 0) {
     return;
   }
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->list));
+  list = listview_get_string_list(d->list);
+  stringlist_move_down(list, sel);
 
-  next_iter = iter;
-  if (! gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &next_iter)) {
-    return;
+  model = gtk_list_view_get_model (GTK_LIST_VIEW (d->list));
+  n = g_list_model_get_n_items (G_LIST_MODEL (model));
+  if (sel < n - 1) {
+    sel++;
   }
 
-  gtk_list_store_move_after(GTK_LIST_STORE(model), &iter, &next_iter);
-
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  AlternativeFontListSelCb(sel, data);
+  gtk_selection_model_select_item (model, sel, TRUE);
+  AlternativeFontListSelCb(model, 0, 0, data);
 }
 
 static void
 FontSettingDialogUpAlternative(GtkWidget *wi, gpointer data)
 {
   struct FontSettingDialog *d;
-  GtkTreeIter iter, prev_iter;
-  GtkTreeModel *model;
-  GtkTreePath *path;
-  GtkTreeSelection *sel;
+  GtkStringList *list;
+  GtkSelectionModel *model;
+  int sel;
 
   d = (struct FontSettingDialog *) data;
 
-  if (! list_store_get_selected_iter(d->list, &iter)) {
+  sel = listview_get_active(d->list);
+  if (sel < 1) {
     return;
   }
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->list));
+  list = listview_get_string_list(d->list);
+  stringlist_move_up(list, sel);
 
-  path = gtk_tree_model_get_path(GTK_TREE_MODEL(model), &iter);
-  if (gtk_tree_path_prev(path)) {
-    gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &prev_iter, path);
-    gtk_list_store_move_before(GTK_LIST_STORE(model), &iter, &prev_iter);
-  }
-  gtk_tree_path_free(path);
-
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  AlternativeFontListSelCb(sel, data);
+  model = gtk_list_view_get_model(GTK_LIST_VIEW(d->list));
+  gtk_selection_model_select_item (model, sel - 1, TRUE);
+  AlternativeFontListSelCb(model, 0, 0, data);
 }
 
 static void
@@ -679,11 +692,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *w, *hbox, *vbox, *table, *frame, *swin;
-    GtkTreeSelection *sel;
-    n_list_store list[] = {
-      {N_("Font name"),  G_TYPE_STRING, TRUE, FALSE, NULL},
-    };
-
+    GtkSelectionModel *sel;
     int j;
 
     table = gtk_grid_new();
@@ -708,13 +717,12 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_widget_set_hexpand(swin, TRUE);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    gtk_tree_view_set_reorderable(GTK_TREE_VIEW(w), TRUE);
+    w = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
     d->list = w;
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
-    g_signal_connect(sel, "changed", G_CALLBACK(AlternativeFontListSelCb), d);
+    sel = gtk_list_view_get_model(GTK_LIST_VIEW(w));
+    g_signal_connect(sel, "selection-changed", G_CALLBACK(AlternativeFontListSelCb), d);
 
     gtk_box_append(GTK_BOX(hbox), swin);
 
@@ -787,11 +795,13 @@ static void
 FontSettingDialogClose(GtkWidget *wi, void *data)
 {
   struct FontSettingDialog *d;
-  gchar *alias, *family, *font;
+  gchar *alias, *family;
+  const char *font;
   gchar *font_name;
   struct fontmap *fmap;
   GString *alt;
-  GtkTreeIter iter;
+  GtkStringList *list;
+  int i, n;
 
   d = (struct FontSettingDialog *) data;
 
@@ -835,19 +845,19 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
   }
   g_free(family);
 
-  if (! list_store_get_iter_first(d->list, &iter)) {
+  list = listview_get_string_list(d->list);
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  if (n < 1) {
     gra2cairo_set_alternative_font(alias, NULL);
     g_free(alias);
     return;
   }
 
-  font = list_store_get_string(d->list, &iter, 0);
+  font = gtk_string_list_get_string(list, 0);
   alt = g_string_new(font);
-  g_free(font);
-  while (list_store_iter_next(d->list, &iter)) {
-    font = list_store_get_string(d->list, &iter, 0);
+  for (i = 1; i < n; i++) {
+    font = gtk_string_list_get_string(list, i);
     g_string_append_printf(alt, ",%s", font);
-    g_free(font);
   }
 
   gra2cairo_set_alternative_font(alias, alt->str);
@@ -870,16 +880,22 @@ static void
 PrefFontDialogSetupItem(struct PrefFontDialog *d)
 {
   struct fontmap *fcur;
-  GtkTreeIter iter;
+  GListStore *model;
+  int i;
 
-  list_store_clear(d->list);
+  columnview_clear(d->list);
   fcur = Gra2cairoConf->fontmap_list_root;
+  model = columnview_get_list (d->list);
+  i = 0;
   while (fcur) {
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, fcur->fontalias);
-    list_store_set_string(d->list, &iter, 1, fcur->fontname);
-    list_store_set_string(d->list, &iter, 2, fcur->alternative);
+    char *text[4];
+    text[0] = fcur->fontalias;
+    text[1] = fcur->fontname;
+    text[2] = fcur->alternative;
+    text[3] = NULL;
+    list_store_append_ngraph_text(model, text);
     fcur = fcur->next;
+    i++;
   }
 }
 
@@ -898,17 +914,18 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
   struct fontmap *fcur;
-  char *fontalias;
+  NgraphText *text;
+  const char *fontalias;
 
   d = (struct PrefFontDialog *) client_data;
 
-  fontalias = list_store_get_selected_string(d->list, 0);
+  text = NGRAPH_TEXT (columnview_get_active_item(d->list));
 
-  if (fontalias == NULL)
+  if (text == NULL)
     return;
 
+  fontalias = text->text[0];
   fcur = gra2cairo_get_fontmap(fontalias);
-  g_free(fontalias);
   if (fcur == NULL)
     return;
 
@@ -921,13 +938,17 @@ static void
 PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
-  char *fontalias;
+  NgraphText *text;
+  const char *fontalias;
 
   d = (struct PrefFontDialog *) client_data;
 
-  fontalias = list_store_get_selected_string(d->list, 0);
+  text = NGRAPH_TEXT (columnview_get_active_item(d->list));
+  if (text == NULL)
+    return;
+
+  fontalias = text->text[0];
   gra2cairo_remove_fontmap(fontalias);
-  g_free(fontalias);
   PrefFontDialogSetupItem(d);
 }
 
@@ -953,10 +974,11 @@ static void
 PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PrefFontDialog *d;
-  n_list_store list[] = {
-    {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL},
-    {N_("name"),  G_TYPE_STRING, TRUE, FALSE, NULL},
-    {N_("alternative fonts"),  G_TYPE_STRING, TRUE, FALSE, NULL},
+  GtkSelectionModel *model;
+  char *list[] = {
+    N_("alias"),
+    N_("name"),
+    N_("alternative fonts"),
   };
 
   d = (struct PrefFontDialog *) data;
@@ -969,6 +991,8 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
   }
   PrefFontDialogSetupItem(d);
+  model = gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list));
+  PrefFontListSelCb (model, 0, 0, d);
 }
 
 static void
