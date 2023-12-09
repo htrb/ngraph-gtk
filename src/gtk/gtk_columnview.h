@@ -64,10 +64,10 @@ typedef struct _NgraphText NgraphText;
 struct _NgraphText {
   GObject parent_instance;
   gchar **text;
-  guint size;
+  guint size, attribute;
 };
 
-NgraphText *ngraph_text_new (gchar **text);
+NgraphText *ngraph_text_new (gchar **text, guint attribute);
 
 
 GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);
@@ -80,7 +80,7 @@ GListStore *columnview_get_list(GtkWidget *columnview);
 NgraphInst *list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
 NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
 NgraphData *list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y);
-NgraphText *list_store_append_ngraph_text(GListStore *store, gchar **test);
+NgraphText *list_store_append_ngraph_text(GListStore *store, gchar **test, guint attribute);
 void columnview_select_all(GtkWidget *columnview);
 void columnview_unselect_all(GtkWidget *columnview);
 void columnview_select(GtkWidget *columnview, int i);

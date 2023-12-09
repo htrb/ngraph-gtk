@@ -418,7 +418,7 @@ PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
     text[1] = fcur->script;
     text[2] = fcur->description;
     text[3] = NULL;
-    list_store_append_ngraph_text(model, text);
+    list_store_append_ngraph_text(model, text, 0);
     fcur = fcur->next;
   }
 }
@@ -891,7 +891,7 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
     text[1] = fcur->fontname;
     text[2] = fcur->alternative;
     text[3] = NULL;
-    list_store_append_ngraph_text(model, text);
+    list_store_append_ngraph_text(model, text, 0);
     fcur = fcur->next;
   }
 }

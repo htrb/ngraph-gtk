@@ -154,13 +154,14 @@ ngraph_text_init (NgraphText * noop)
 }
 
 NgraphText*
-ngraph_text_new (gchar **text)
+ngraph_text_new (gchar **text, guint attribute)
 {
   NgraphText *nobj;
 
   nobj = g_object_new (NGRAPH_TYPE_TEXT, NULL);
   nobj->text = g_strdupv (text);
   nobj->size = (text) ? g_strv_length (text) : 0;
+  nobj->attribute = attribute;
   return nobj;
 }
 
@@ -301,10 +302,10 @@ list_store_append_ngraph_data(GListStore *store, int id, int line, double x, dou
 }
 
 NgraphText *
-list_store_append_ngraph_text(GListStore *store, gchar **text)
+list_store_append_ngraph_text(GListStore *store, gchar **text, guint attribute)
 {
   NgraphText *item;
-  item = ngraph_text_new(text);
+  item = ngraph_text_new(text, attribute);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
