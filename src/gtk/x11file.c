@@ -3898,18 +3898,13 @@ set_headlines(struct FileDialog *d, const char *s)
 #define CHECK_VISIBILITY_ARRAY(i, skip, step)    ((i >= skip && ! ((i - skip) % step)))
 
 #define MAX_COLS 100
-#define HEADLINE_FIRST_CHAR_COLUMN (MAX_COLS + 0)
-#define HEADLINE_LINE_NUM_COLUMN   (MAX_COLS + 1)
-#define HEADLINE_VISIBILITY_COLUMN (MAX_COLS + 2)
-#define HEADLINE_ELLIPSIZE_COLUMN  (MAX_COLS + 3)
-#define HEADLINE_FONT_COLUMN       (MAX_COLS + 4)
-#define HEADLINE_COLUMN_NUM        (MAX_COLS + 5)
 
 static void
 set_headline_table_header(struct FileDialog *d)
 {
   int x, y, type, i;
   GString *str;
+  GListModel *columns;
 
   type = combo_box_get_active(d->type);
   if (type < 0) {
@@ -3923,12 +3918,13 @@ set_headline_table_header(struct FileDialog *d)
     return;
   }
 
+  columns = gtk_column_view_get_columns (GTK_COLUMN_VIEW (d->comment_table));
   for (i = 0; i < MAX_COLS; i++) {
-    GtkTreeViewColumn *col;
+    GtkColumnViewColumn *col;
 
     g_string_set_size(str, 0);
 
-    col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->comment_table), i);
+    col = GTK_COLUMN_VIEW_COLUMN (g_list_model_get_object (columns, i));
 
     if (i == x) {
       switch (type) {
@@ -4012,8 +4008,7 @@ set_headline_table_header(struct FileDialog *d)
     } else {
       g_string_append_printf(str, "%%%d", i);
     }
-    gtk_tree_view_column_set_title(col, str->str);
-    //    gtk_tree_view_column_set_visible(col, i < max_col);
+    gtk_column_view_column_set_title (col, str->str);
   }
   g_string_free(str, TRUE);
 }
@@ -4023,8 +4018,9 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
 {
   struct array_prm ary;
   int i, j, l, m, n, skip, step;
-  char *array, buf[64];
-  GtkListStore *model;
+  char *array;
+  GListStore *model;
+  char *text[MAX_COLS + 2];
 
   getobj(d->Obj, "array", d->Id, 0, NULL, &array);
   open_array(array, &ary);
@@ -4039,42 +4035,37 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
     step = 1;
   }
 
-  model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table)));
-  gtk_list_store_clear(model);
-  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
+  columnview_clear(d->comment_table);
+  model = columnview_get_list (d->comment_table);
 
   n = (ary.data_num > max_lines) ? max_lines : ary.data_num;
   m = (ary.col_num < MAX_COLS) ? ary.col_num : MAX_COLS;
   l = 1;
   for (i = 0; i < n; i++) {
-    GtkTreeIter iter;
     int v;
 
-    gtk_list_store_append(model, &iter);
     for (j = 0; j < m; j++) {
       void *ptr;
       ptr = arraynget(ary.ary[j], i);
       if (ptr) {
         double val;
 	val = * (double *) ptr;
-	snprintf(buf, sizeof(buf), "%G", val);
-	gtk_list_store_set(model, &iter, j + 1, buf, -1);
+	text[j + 1] = g_strdup_printf("%G", val);
       }
     }
+    text[j + 1] = NULL;
     v = CHECK_VISIBILITY_ARRAY(i, skip, step);
-    gtk_list_store_set(model, &iter,
-		       0, l,
-		       HEADLINE_LINE_NUM_COLUMN, i,
-		       HEADLINE_VISIBILITY_COLUMN, v,
-		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
-		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
-		       -1);
     if (v) {
+      text[0] = g_strdup_printf ("%d", l);
       l++;
+    } else {
+      text[0] = g_strdup ("");
+    }
+    list_store_append_ngraph_text(model, text, v);
+    for (j = 0; j < m + 1; j++) {
+      g_free (text[j]);
     }
   }
-
-  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), GTK_TREE_MODEL(model));
 }
 
 static void
@@ -4084,7 +4075,8 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   int i, j, l, n, skip, step, csv;
   const char *tmp, *remark, *po;
   GString *ifs;
-  GtkListStore *model;
+  GListStore *model;
+  char *text[MAX_COLS + 2];
 
   if (! d->initialized || s == NULL || max_lines < 1) {
     return;
@@ -4134,22 +4126,21 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     goto exit;
   }
 
-  model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table)));
-  gtk_list_store_clear(model);
-  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
+  columnview_clear (d->comment_table);
+  model = columnview_get_list(d->comment_table);
 
   l = 1;
   for (i = 0; i < n; i++) {
-    GtkTreeIter iter;
     int m, c, v;
     const char *str;
+    char buf[64];
 
-    gtk_list_store_append(model, &iter);
     m = arraynum(lines + i);
     m = (m < MAX_COLS) ? m : MAX_COLS;
     for (j = 0; j < m; j++) {
-      gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines + i, j), -1);
+      text[j + 1] = arraynget_str(lines + i, j);
     }
+    text[j + 1] = NULL;
     str = arraynget_str(lines + i, 0);
     if (str) {
       c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
@@ -4157,20 +4148,15 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
       c = 0;
     }
     v = CHECK_VISIBILITY(i, skip, step, remark, c);
-    gtk_list_store_set(model, &iter,
-		       0, l,
-		       HEADLINE_LINE_NUM_COLUMN, i,
-		       HEADLINE_FIRST_CHAR_COLUMN, c,
-		       HEADLINE_VISIBILITY_COLUMN, v,
-		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
-		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
-		       -1);
     if (v) {
+      snprintf (buf, sizeof (buf), "%d", l);
+      text[0] = buf;
       l++;
+    } else {
+      text[0] = "";
     }
+    list_store_append_ngraph_text (model, text, v);
   }
-
-  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), GTK_TREE_MODEL(model));
 
  exit:
   for (i = 0; i < n; i++) {
@@ -4179,143 +4165,57 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   g_free(lines);
 }
 
+static void
+setup_table (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+
+  label = gtk_label_new (NULL);
+  gtk_widget_set_halign (label, GTK_ALIGN_END);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkLabel *label;
+  NgraphText *text;
+  const char *str;
+  guint i;
+
+  label = GTK_LABEL (gtk_list_item_get_child (list_item));
+  text = NGRAPH_TEXT (gtk_list_item_get_item (list_item));
+  i = GPOINTER_TO_INT (user_data);
+  if (i < text->size) {
+    str = text->text[i];
+  } else {
+    str = "";
+  }
+  gtk_label_set_ellipsize (label, text->attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
+  gtk_widget_set_sensitive (GTK_WIDGET (label), text->attribute);
+  gtk_label_set_text(label, str);
+}
+
 static GtkWidget *
 create_preview_table(struct FileDialog *d)
 {
   GtkWidget *view;
-  GtkListStore *model;
-  GType *types;
   int i;
-
-  view = gtk_tree_view_new();
-  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(view), GTK_TREE_VIEW_GRID_LINES_BOTH);
-  types = g_malloc(sizeof(*types) * HEADLINE_COLUMN_NUM);
-  if (types == NULL) {
-    return NULL;
-  }
-
-  for (i = 1; i < MAX_COLS; i++) {
-    types[i] = G_TYPE_STRING;
-  }
-  types[0] = G_TYPE_INT;
-  types[HEADLINE_LINE_NUM_COLUMN] = G_TYPE_INT;
-  types[HEADLINE_FIRST_CHAR_COLUMN] = G_TYPE_INT;
-  types[HEADLINE_VISIBILITY_COLUMN] = G_TYPE_BOOLEAN;
-  types[HEADLINE_ELLIPSIZE_COLUMN] = G_TYPE_INT;
-  types[HEADLINE_FONT_COLUMN] = G_TYPE_STRING;
-
-  model = gtk_list_store_newv(HEADLINE_COLUMN_NUM, types);
-
-  g_free(types);
-
-  gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(model));
-
+  view = columnview_create(NGRAPH_TYPE_TEXT, N_SELECTION_TYPE_NONE);
+  set_widget_font(view, Menulocal.file_preview_font);
   for (i = 0; i < MAX_COLS; i++) {
     char buf[32];
-    GtkCellRenderer *cell;
-    GtkTreeViewColumn *column;
-
     snprintf(buf, sizeof(buf), "%%%d", i);
-    cell = gtk_cell_renderer_text_new();
-    column = gtk_tree_view_column_new_with_attributes(buf, cell,
-						      "text", i,
-						      "sensitive", HEADLINE_VISIBILITY_COLUMN,
-						      "ellipsize", HEADLINE_ELLIPSIZE_COLUMN,
-						      "font", HEADLINE_FONT_COLUMN,
-						      NULL);
-    if (i == 0) {
-      gtk_tree_view_column_add_attribute(column, cell, "visible", HEADLINE_VISIBILITY_COLUMN);
-    }
-
-    g_object_set((GObject *) cell, "xalign", (gfloat) 1.0, NULL);
-    gtk_tree_view_column_set_alignment(column, 0.5);
-    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+    columnview_create_column (view, buf, G_CALLBACK (setup_table), G_CALLBACK (bind_table), NULL, GINT_TO_POINTER (i), FALSE);
   }
 
   return view;
 }
 
 static void
-update_table(GtkEditable *editable, gpointer user_data)
+update_table(struct FileDialog *d)
 {
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) user_data;
   set_headline_table(d, d->head_lines, Menulocal.data_head_lines);
-}
-
-static void
-update_table_visibility(GtkEditable *editable, gpointer user_data)
-{
-  struct FileDialog *d;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  const char *remark;
-  int skip, step, ln, fc, v, i;
-
-  d = (struct FileDialog *) user_data;
-
-  skip = spin_entry_get_val(d->load.headskip);
-  if (skip < 0) {
-    skip = 0;
-  }
-
-  step = spin_entry_get_val(d->load.readstep);
-  if (step < 1) {
-    step = 1;
-  }
-
-  remark = NULL;
-  if (d->source == DATA_SOURCE_FILE) {
-    remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
-  }
-  if (remark == NULL) {
-    remark = "";
-  }
-
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
-
-  if (! gtk_tree_model_get_iter_first(model, &iter)) {
-    return;
-  }
-
-  i = 1;
-  do {
-    gtk_tree_model_get(model, &iter,
-		       HEADLINE_LINE_NUM_COLUMN, &ln,
-		       HEADLINE_FIRST_CHAR_COLUMN, &fc, -1);
-
-    if (d->source == DATA_SOURCE_FILE) {
-      v = CHECK_VISIBILITY(ln, skip, step, remark, fc);
-    } else {
-      v = CHECK_VISIBILITY_ARRAY(ln, skip, step);
-    }
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-		       0, i,
-		       HEADLINE_VISIBILITY_COLUMN, v,
-		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
-		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
-		       -1);
-    if (v) {
-      i++;
-    }
-  } while (gtk_tree_model_iter_next(model, &iter));
-}
-
-static void
-update_table_header(GtkEditable *editable, gpointer user_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) user_data;
-  set_headline_table_header(d);
-}
-
-static void
-select_type_notify(GObject* self, GParamSpec* pspec, gpointer user_data)
-{
-  update_table_header(GTK_EDITABLE (self), user_data);
 }
 
 static void
@@ -4380,16 +4280,16 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Plain"));
     gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
 
-    g_signal_connect(d->load.ifs, "changed", G_CALLBACK(update_table), d);
-    g_signal_connect(d->load.csv, "toggled", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.ifs, "changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.csv, "toggled", G_CALLBACK(update_table), d);
 
-    g_signal_connect(d->load.remark, "changed", G_CALLBACK(update_table_visibility), d);
-    g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table_visibility), d);
-    g_signal_connect(d->load.headskip, "changed", G_CALLBACK(update_table_visibility), d);
+    g_signal_connect_swapped(d->load.remark, "changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
 
-    g_signal_connect(d->xcol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->type, "notify::selected", G_CALLBACK(select_type_notify), d);
+    g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
+    g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
+    g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(set_headline_table_header), d);
 
     gtk_grid_attach(GTK_GRID(d->comment_box), w, 1, 0, 1, 1);
     w = gtk_button_new_with_label(_("Create"));
@@ -4450,12 +4350,12 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
     d->comment_table = view;
 
-    g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table_visibility), d);
-    g_signal_connect(d->load.headskip, "changed", G_CALLBACK(update_table_visibility), d);
+    g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
 
-    g_signal_connect(d->xcol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
-    g_signal_connect(d->type, "notify::selected", G_CALLBACK(select_type_notify), d);
+    g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
+    g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
+    g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(set_headline_table_header), d);
 
     gtk_widget_set_hexpand(swin, TRUE);
     gtk_widget_set_vexpand(swin, TRUE);
