@@ -34,7 +34,7 @@ typedef struct _NgraphData NgraphData;
 
 struct _NgraphData {
   GObject parent_instance;
-  int id, line;
+  int id, line, data;
   double x, y;
 };
 

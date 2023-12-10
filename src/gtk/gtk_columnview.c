@@ -89,6 +89,7 @@ ngraph_data_new (int id, int line, double x, double y)
   nobj->line = line;
   nobj->x = x;
   nobj->y = y;
+  nobj->data = 0;
 
   return nobj;
 }
