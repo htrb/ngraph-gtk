@@ -40,7 +40,7 @@
 #include "nstring.h"
 #include "shell.h"
 
-#include "gtk_liststore.h"
+#include "gtk_columnview.h"
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
 #include "gtk_presettings.h"
@@ -1134,142 +1134,114 @@ init_dnd(struct Viewer *d)
 }
 
 static void
-eval_dialog_set_parent_cal(GtkWidget *w, GtkTreeIter *iter, int id, int n)
-{
-  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_ID, id);
-  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_LN, n);
-  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_N, -1);
-}
-
-static void
 EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
 {
-  int i, id, n;
-  GtkTreeIter iter, parent;
-  char buf[64];
+  int i;
+  GListStore *list;
 
-  tree_store_clear(d->list);
+  columnview_clear(d->list);
+  list = columnview_get_list (d->list);
 
-  id = -1;
-  n = 0;
-  for (i = d->Num - 1; i >= 0; i--) {
-    if (id != EvalList[i].id) {
-      if (id >= 0) {
-	eval_dialog_set_parent_cal(d->list, &parent, id, n);
-      }
-      tree_store_prepend(d->list, &parent, NULL);
-      id = EvalList[i].id;
-      n = 0;
-    }
-
-    tree_store_prepend(d->list, &iter, &parent);
-    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_ID, EvalList[i].id);
-    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_LN, EvalList[i].line);
-
-    snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].x);
-    tree_store_set_string(d->list, &iter, EVAL_DIALOG_COL_TYPE_X, buf);
-
-    snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].y);
-    tree_store_set_string(d->list, &iter, EVAL_DIALOG_COL_TYPE_Y, buf);
-
-    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_N, i);
-
-    n++;
+  for (i = 0; i < d->Num; i++) {
+    NgraphData *data;
+    data = list_store_append_ngraph_data(list, EvalList[i].id, EvalList[i].line, EvalList[i].x, EvalList[i].y);
+    data->data = i;
   }
-
-  eval_dialog_set_parent_cal(d->list, &parent, id, n);
-
-  gtk_tree_view_expand_all(GTK_TREE_VIEW(d->list));
 }
 
 static void
-eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
+eval_dialog_copy_selected(GtkSelectionModel *sel)
 {
-  GtkTreeView *tv;
-  GtkTreeSelection *sel;
-  GtkTreeIter iter;
-  GtkTreeModel *model;
-  GList *list, *ptr;
+  int i, n;
   GString *str;
-
-  tv = GTK_TREE_VIEW(user_data);
-  sel = gtk_tree_view_get_selection(tv);
-  list = gtk_tree_selection_get_selected_rows(sel, &model);
 
   str = g_string_sized_new(256);
   if (str == NULL)
     return;
 
-  for (ptr = g_list_first(list); ptr; ptr = g_list_next(ptr)) {
-    gboolean found;
-    int id, ln;
-    char *x, *y;
-
-    found = gtk_tree_model_get_iter(model, &iter, ptr->data);
-    if (! found)
+  n = g_list_model_get_n_items (G_LIST_MODEL (sel));
+  for (i = 0; i < n; i ++) {
+    NgraphData *data;
+    if (! gtk_selection_model_is_selected (sel, i)) {
       continue;
-
-    if (gtk_tree_path_get_depth(ptr->data) < 2) {
-      gtk_tree_model_get(model, &iter,
-			 EVAL_DIALOG_COL_TYPE_ID, &id,
-			 EVAL_DIALOG_COL_TYPE_LN, &ln,
-			 -1);
-      g_string_append_printf(str, "%d %d\n", id, ln);
-    } else {
-      gtk_tree_model_get(model, &iter,
-			 EVAL_DIALOG_COL_TYPE_ID, &id,
-			 EVAL_DIALOG_COL_TYPE_LN, &ln,
-			 EVAL_DIALOG_COL_TYPE_X,  &x,
-			 EVAL_DIALOG_COL_TYPE_Y,  &y,
-			 -1);
-
-      if (x && y) {
-	g_string_append_printf(str, "%d %d %s %s\n", id, ln, x, y);
-      }
-
-      g_free(x);
-      g_free(y);
     }
+    data = NGRAPH_DATA (g_list_model_get_item (G_LIST_MODEL (sel), i));
+    g_string_append_printf(str, "%d %d %+.15e %+.15e\n", data->id, data->line, data->x, data->y);
   }
 
   copy_text(str->str);
 
   g_string_free(str, TRUE);
-
-  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
 }
 
 static gboolean
-eval_data_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+eval_data_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   int n;
   GtkWidget *w;
 
   w = GTK_WIDGET(user_data);
 
-  n = gtk_tree_selection_count_selected_rows(sel);
-  gtk_widget_set_sensitive(w, n);
+  n = selection_model_get_selected (sel);
+  gtk_widget_set_sensitive(w, n >= 0);
 
   return FALSE;
+}
+
+static void
+setup_eval_item (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+
+  label = gtk_label_new (NULL);
+  gtk_widget_set_halign (label, GTK_ALIGN_END);
+  gtk_list_item_set_child (list_item, label);
+}
+
+static void
+bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkLabel *label;
+  NgraphData *data;
+  guint i;
+  char buf[64];
+
+  label = GTK_LABEL (gtk_list_item_get_child (list_item));
+  data = NGRAPH_DATA (gtk_list_item_get_item (list_item));
+  i = GPOINTER_TO_INT (user_data);
+  switch (i) {
+  case 0:
+    snprintf(buf, sizeof(buf), "%d", data->id);
+    break;
+  case 1:
+    snprintf(buf, sizeof(buf), "%d", data->line);
+    break;
+  case 2:
+    snprintf(buf, sizeof(buf), "%+.15e", data->x);
+    break;
+  case 3:
+    snprintf(buf, sizeof(buf), "%+.15e", data->y);
+    break;
+  }
+  gtk_label_set_text(label, buf);
 }
 
 static void
 EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct EvalDialog *d;
-  n_list_store list[] = {
-    {"#",           G_TYPE_INT,    TRUE,  FALSE, NULL},
-    {_("Line No."), G_TYPE_INT,    TRUE,  FALSE, NULL},
-    {"X",           G_TYPE_STRING, TRUE,  FALSE, NULL},
-    {"Y",           G_TYPE_STRING, TRUE,  FALSE, NULL},
-    {"N",           G_TYPE_INT,    FALSE, FALSE, NULL},
-  };
-
 
   d = (struct EvalDialog *) data;
   if (makewidget) {
+    char *list[] = {
+      "#",
+      _("Line No."),
+      "X",
+      "Y",
+    };
+    int i, n;
     GtkWidget *w, *swin, *hbox;
-    GtkTreeSelection *sel;
+    GtkSelectionModel *model;
     gtk_dialog_add_buttons(GTK_DIALOG(wi),
 			   _("_Mask"), IDEVMASK,
 			   _("_Move"), IDEVMOVE,
@@ -1278,8 +1250,12 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    w = tree_store_create(sizeof(list) / sizeof(*list), list);
-    tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+    n = G_N_ELEMENTS (list);
+    for (i = 0; i < n; i++) {
+      columnview_create_column (w, list[i], G_CALLBACK (setup_eval_item), G_CALLBACK (bind_eval_item), NULL, GINT_TO_POINTER (i), i == n - 1);
+    }
+    model = gtk_column_view_get_model (GTK_COLUMN_VIEW (w));
     d->list = w;
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
 
@@ -1290,16 +1266,15 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
-    g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(gtk_selection_model_select_all), model);
     gtk_box_append(GTK_BOX(hbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Copy"));
-    g_signal_connect(w, "clicked", G_CALLBACK(eval_dialog_copy_selected), d->list);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(eval_dialog_copy_selected), model);
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_widget_set_sensitive(w, FALSE);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-    g_signal_connect(sel, "changed", G_CALLBACK(eval_data_sel_cb), w);
+    g_signal_connect(model, "selection-changed", G_CALLBACK(eval_data_sel_cb), w);
 
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 
@@ -1312,33 +1287,24 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
-select_data_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-{
-  struct EvalDialog *d;
-  int a;
-
-  a = gtk_tree_path_get_depth(path);
-  if (a < 2)
-    return;
-
-  d = (struct EvalDialog *) data;
-
-  gtk_tree_model_get(model, iter, EVAL_DIALOG_COL_TYPE_N, &a, -1);
-  if (a >= 0) {
-    arrayadd(d->sel, &a);
-  }
-}
-
-static void
 EvalDialogClose(GtkWidget *w, void *data)
 {
   struct EvalDialog *d;
 
   d = (struct EvalDialog *) data;
   if ((d->ret == IDEVMASK) || (d->ret == IDEVMOVE)) {
-    GtkTreeSelection *selected;
-    selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-    gtk_tree_selection_selected_foreach(selected, select_data_cb, d);
+    GtkSelectionModel *selected;
+    int i, n;
+    selected = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->list));
+    n = g_list_model_get_n_items (G_LIST_MODEL (selected));
+    for (i = 0; i < n; i++) {
+      NgraphData *data;
+      if (! gtk_selection_model_is_selected (selected, i)) {
+	continue;
+      }
+      data = NGRAPH_DATA (g_list_model_get_item (G_LIST_MODEL (selected), i));
+      arrayadd(d->sel, &data->data);
+    }
   }
 }
 
