@@ -184,6 +184,7 @@ columnview_create(GType item_type, enum N_SELECTION_TYPE selection_type)
   sorter = g_object_ref (gtk_column_view_get_sorter (GTK_COLUMN_VIEW(columnview)));
   model = G_LIST_MODEL(gtk_sort_list_model_new (model, sorter));
   gtk_column_view_set_enable_rubberband (GTK_COLUMN_VIEW (columnview), selection_type == N_SELECTION_TYPE_MULTI);
+  gtk_column_view_set_reorderable (GTK_COLUMN_VIEW (columnview), FALSE);
   selection = selection_model_create(selection_type, model);
   gtk_column_view_set_model (GTK_COLUMN_VIEW (columnview), selection);
   return columnview;
