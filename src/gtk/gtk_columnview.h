@@ -73,7 +73,7 @@ NgraphText *ngraph_text_new (gchar **text, guint attribute);
 GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);
 void columnview_clear(GtkWidget *columnview);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand);
-void columnview_set_active(GtkWidget *columnview, int active);
+void columnview_set_active(GtkWidget *columnview, int active, gboolean scroll);
 int columnview_get_active(GtkWidget *columnview);
 GObject *columnview_get_active_item(GtkWidget *columnview);
 GListStore *columnview_get_list(GtkWidget *columnview);

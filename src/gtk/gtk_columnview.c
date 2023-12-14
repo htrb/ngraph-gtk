@@ -246,12 +246,16 @@ columnview_get_list(GtkWidget *columnview)
 }
 
 void
-columnview_set_active(GtkWidget *columnview, int active)
+columnview_set_active(GtkWidget *columnview, int active, gboolean scroll)
 {
-  GtkSelectionModel *selection;
+  if (scroll) {
+    gtk_column_view_scroll_to (GTK_COLUMN_VIEW (columnview), active, NULL, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
+  } else {
+    GtkSelectionModel *selection;
 
-  selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
-  gtk_selection_model_select_item (selection, active, TRUE);
+    selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
+    gtk_selection_model_select_item (selection, active, TRUE);
+  }
 }
 
 int

@@ -453,7 +453,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   */
 
   if (chkobjlastinst(d->Obj) == 0) {
-    columnview_set_active (d->list, 0);
+    columnview_set_active (d->list, 0, TRUE);
   } else if (d->isel) {
     seldata = arraydata(d->isel);
     selnum = arraynum(d->isel);
@@ -567,11 +567,11 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   if (chkobjlastinst(d->Obj) == 0) {
-    columnview_set_active (d->list, 0);
+    columnview_set_active (d->list, 0, TRUE);
   } else if (d->Id >= 0) {
     a = search_id(d->list, d->Id);
     if (a >= 0) {
-      columnview_set_active (d->list, a);
+      columnview_set_active (d->list, a, TRUE);
     }
   }
   /*
