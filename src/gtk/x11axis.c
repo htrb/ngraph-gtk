@@ -58,18 +58,18 @@ static void bind_inc (struct objlist *obj, int id, const char *field, GtkWidget 
 static void bind_name (struct objlist *obj, int id, const char *field, GtkWidget *w);
 
 static n_list_store Alist[] = {
-  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, FALSE, "group", bind_name},
-  {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "min", bind_minmax},
-  {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "max", bind_minmax},
-  {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "inc", bind_inc},
-  {N_("type"), G_TYPE_PARAM,   TRUE, TRUE,  FALSE, "type"},
-  {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "x",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "y",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "direction",     NULL,        0,          36000, 100, 1500},
-  {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "length",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",        G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",        G_TYPE_INT,     FALSE, FALSE, "id"},
+  {N_("name"), G_TYPE_STRING,  FALSE, FALSE, "group", bind_name},
+  {N_("min"),  G_TYPE_STRING,  TRUE,  TRUE,  "min", bind_minmax},
+  {N_("max"),  G_TYPE_STRING,  TRUE,  TRUE,  "max", bind_minmax},
+  {N_("inc"),  G_TYPE_STRING,  TRUE,  TRUE,  "inc", bind_inc},
+  {N_("type"), G_TYPE_PARAM,   TRUE,  FALSE, "type"},
+  {"x",        G_TYPE_DOUBLE,  TRUE,  FALSE, "x",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",        G_TYPE_DOUBLE,  TRUE,  FALSE, "y",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("dir"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "direction",     NULL,        0,          36000, 100, 1500},
+  {N_("len"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "length",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",       G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define AXIS_WIN_COL_NUM G_N_ELEMENTS (Alist)

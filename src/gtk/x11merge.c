@@ -50,14 +50,14 @@
 static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
 
 static n_list_store Mlist[] = {
-  {" ",          G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",          G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {N_("file"),   G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "file", bind_file},
-  {N_("top"),    G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "top_margin", NULL,  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("left"),   G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "left_margin", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "zoom_x", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "zoom_y", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",         G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",          G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",          G_TYPE_INT,     FALSE, FALSE, "id"},
+  {N_("file"),   G_TYPE_STRING,  TRUE,  TRUE,  "file", bind_file},
+  {N_("top"),    G_TYPE_DOUBLE,  TRUE,  FALSE, "top_margin", NULL,  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"),   G_TYPE_DOUBLE,  TRUE,  FALSE, "left_margin", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE,  FALSE, "zoom_x", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE,  FALSE, "zoom_y", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",         G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))

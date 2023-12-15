@@ -31,7 +31,7 @@ typedef void (* bind_item_func) (struct objlist *obj, int id, const char *field,
 typedef struct _list_store {
   char *title;
   GType type;
-  gboolean visible, editable, expand;
+  gboolean editable, expand;
   char *name;
   bind_item_func bind_func;
   int min, max, inc, page;

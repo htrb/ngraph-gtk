@@ -496,11 +496,8 @@ create_tree_view(int n, n_list_store *list, int tree)
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
 
   for (i = 0; i < n; i++) {
-    if (list[i].visible) {
-      col = create_column(list, i);
-      gtk_tree_view_column_set_visible(col, list[i].visible);
-      gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-    }
+    col = create_column(list, i);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tview), n > 1);

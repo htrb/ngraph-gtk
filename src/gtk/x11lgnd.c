@@ -74,77 +74,77 @@ static void bind_mark (struct objlist *obj, int id, const char *field, GtkWidget
 static void bind_text (struct objlist *obj, int id, const char *field, GtkWidget *w);
 
 static n_list_store Plist[] = {
-  {" ",                G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",                G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {"type",             G_TYPE_PARAM,   TRUE, TRUE,  FALSE, "type",   bind_path_type},
-  {N_("marker begin"), G_TYPE_ENUM,    TRUE, TRUE,  FALSE, "marker_begin"},
-  {N_("marker end"),   G_TYPE_ENUM,    TRUE, TRUE,  FALSE, "marker_end"},
-  {N_("color"),        G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color",  bind_color},
-  {"x",                G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",                G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),        G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width",  NULL,            0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("points"),       G_TYPE_INT,     TRUE, FALSE, FALSE, "points", bind_path_pos},
-  {"^#",               G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",                G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",                G_TYPE_INT,     FALSE, FALSE, "id"},
+  {"type",             G_TYPE_PARAM,   TRUE,  FALSE, "type",   bind_path_type},
+  {N_("marker begin"), G_TYPE_ENUM,    TRUE,  FALSE, "marker_begin"},
+  {N_("marker end"),   G_TYPE_ENUM,    TRUE,  FALSE, "marker_end"},
+  {N_("color"),        G_TYPE_OBJECT,  TRUE,  FALSE, "color",  bind_color},
+  {"x",                G_TYPE_DOUBLE,  TRUE,  TRUE,  "x",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",                G_TYPE_DOUBLE,  TRUE,  TRUE,  "y",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),        G_TYPE_DOUBLE,  TRUE,  TRUE,  "width",  NULL,            0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("points"),       G_TYPE_INT,     FALSE, FALSE, "points", bind_path_pos},
+  {"^#",               G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define PATH_LIST_COL_NUM G_N_ELEMENTS (Plist)
 
 
 static n_list_store Rlist[] = {
-  {" ",              G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",              G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {N_("color"),      G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color", bind_color},
-  {"x",              G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x1",    bind_rect_x, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",              G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y1",    bind_rect_y, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"width",          G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x2",    bind_rect_x,                0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("height"),     G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y2",    bind_rect_y,                0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("line width"), G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width", NULL,                       0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",             G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",              G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",              G_TYPE_INT,     FALSE, FALSE, "id"},
+  {N_("color"),      G_TYPE_OBJECT,  TRUE,  FALSE, "color", bind_color},
+  {"x",              G_TYPE_DOUBLE,  TRUE,  TRUE,  "x1",    bind_rect_x, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",              G_TYPE_DOUBLE,  TRUE,  TRUE,  "y1",    bind_rect_y, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"width",          G_TYPE_DOUBLE,  TRUE,  TRUE,  "x2",    bind_rect_x,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("height"),     G_TYPE_DOUBLE,  TRUE,  TRUE,  "y2",    bind_rect_y,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("line width"), G_TYPE_DOUBLE,  TRUE,  TRUE,  "width", NULL,                       0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",             G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define  RECT_LIST_COL_NUM G_N_ELEMENTS (Rlist)
 
 static n_list_store Alist[] = {
-  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {"color",        G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color",  bind_color},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"rx",           G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "rx",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
-  {"ry",           G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "ry",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("angle1"),   G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "angle1", NULL, 0, 36000, 100, 1500},
-  {N_("angle2"),   G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "angle2", NULL, 0, 36000, 100, 1500},
-  {N_("pieslice"), G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "pieslice"},
-  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width",  NULL, 0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",            G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",            G_TYPE_INT,     FALSE, FALSE, "id"},
+  {"color",        G_TYPE_OBJECT,  TRUE,  FALSE, "color",  bind_color},
+  {"x",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "x",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "y",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"rx",           G_TYPE_DOUBLE,  TRUE,  TRUE,  "rx",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {"ry",           G_TYPE_DOUBLE,  TRUE,  TRUE,  "ry",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("angle1"),   G_TYPE_DOUBLE,  TRUE,  TRUE,  "angle1", NULL, 0, 36000, 100, 1500},
+  {N_("angle2"),   G_TYPE_DOUBLE,  TRUE,  TRUE,  "angle2", NULL, 0, 36000, 100, 1500},
+  {N_("pieslice"), G_TYPE_BOOLEAN, TRUE,  FALSE, "pieslice"},
+  {N_("width"),    G_TYPE_DOUBLE,  TRUE,  TRUE,  "width",  NULL, 0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define ARC_LIST_COL_NUM G_N_ELEMENTS (Alist)
 
 static n_list_store Mlist[] = {
-  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {"mark",         G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "type", bind_mark},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "size", NULL,             0, SPIN_ENTRY_MAX, 100,  200},
-  {"width",        G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width", NULL,            0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",            G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",            G_TYPE_INT,     FALSE, FALSE, "id"},
+  {"mark",         G_TYPE_OBJECT,  TRUE,  FALSE, "type", bind_mark},
+  {"x",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("size"),     G_TYPE_DOUBLE,  TRUE,  TRUE,  "size", NULL,             0, SPIN_ENTRY_MAX, 100,  200},
+  {"width",        G_TYPE_DOUBLE,  TRUE,  TRUE,  "width", NULL,            0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define MARK_LIST_COL_NUM G_N_ELEMENTS (Mlist)
 
 static n_list_store Tlist[] = {
-  {" ",             G_TYPE_BOOLEAN, TRUE,  TRUE,  FALSE, "hidden"},
-  {"#",             G_TYPE_INT,     TRUE,  FALSE, FALSE, "id"},
-  {"text",          G_TYPE_STRING,  TRUE,  TRUE,  TRUE,  "text", bind_text, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {N_("font"),      G_TYPE_PARAM,   TRUE,  TRUE,  FALSE, "font"},
-  {"x",             G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",             G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("pt"),        G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "pt", NULL,               0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("direction"), G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "direction", NULL,        0, 36000,          100, 1500},
-  {"raw",           G_TYPE_BOOLEAN, TRUE,  TRUE,  FALSE, "raw"},
-  {"^#",            G_TYPE_INT,     TRUE,  FALSE, FALSE, "oid"},
+  {" ",             G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
+  {"#",             G_TYPE_INT,     FALSE, FALSE, "id"},
+  {"text",          G_TYPE_STRING,  TRUE,  TRUE,  "text", bind_text, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {N_("font"),      G_TYPE_PARAM,   TRUE,  FALSE, "font"},
+  {"x",             G_TYPE_DOUBLE,  TRUE,  FALSE, "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",             G_TYPE_DOUBLE,  TRUE,  FALSE, "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("pt"),        G_TYPE_DOUBLE,  TRUE,  FALSE, "pt", NULL,               0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("direction"), G_TYPE_DOUBLE,  TRUE,  FALSE, "direction", NULL,        0, 36000,          100, 1500},
+  {"raw",           G_TYPE_BOOLEAN, TRUE,  FALSE, "raw"},
+  {"^#",            G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define TEXT_LIST_COL_NUM G_N_ELEMENTS (Tlist)

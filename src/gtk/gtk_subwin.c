@@ -689,9 +689,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data->text = lstor;
 
   for (i = 0; i < lisu_num; i++) {
-    if (list[i].visible) {
-      columnview_create_column (lstor, _(list[i].title), G_CALLBACK (setup_column), G_CALLBACK (bind_column), NULL, list + i, list[i].expand);
-    }
+    columnview_create_column (lstor, _(list[i].title), G_CALLBACK (setup_column), G_CALLBACK (bind_column), NULL, list + i, list[i].expand);
   }
 
   add_event_controller(lstor, data);

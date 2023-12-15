@@ -72,21 +72,21 @@ static void bind_type(struct objlist *obj, int id, const char *field, GtkWidget 
 static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
 
 static n_list_store Flist[] = {
-  {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE, FALSE,  "hidden"},
-  {"#",		G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
-  {N_("file/range"),	G_TYPE_STRING,  TRUE, TRUE, TRUE,  "file", bind_file, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {"x   ",	G_TYPE_INT,     TRUE, TRUE, FALSE,  "x", NULL,  0, 999, 1, 10},
-  {"y   ",	G_TYPE_INT,     TRUE, TRUE, FALSE,  "y", NULL,  0, 999, 1, 10},
-  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE, FALSE,  "axis_x", bind_axis},
-  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE, FALSE,  "axis_y", bind_axis},
-  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE, FALSE,  "type",   bind_type},
-  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE, FALSE,  "mark_size",  NULL, 0,       SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE, FALSE,  "line_width", NULL, 0,       SPIN_ENTRY_MAX, 10,   100},
-  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "head_skip",  NULL, 0,       INT_MAX,         1,    10},
-  {N_("step"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "read_step",  NULL, 1,       INT_MAX,         1,    10},
-  {N_("final"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "final_line", NULL, INT_MIN, INT_MAX,    1,    10},
-  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, FALSE, "data_num"},
-  {"^#",	G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {" ",	        G_TYPE_BOOLEAN, TRUE, FALSE,  "hidden"},
+  {"#",		G_TYPE_INT,     FALSE, FALSE, "id"},
+  {N_("file/range"),	G_TYPE_STRING, TRUE, TRUE,  "file", bind_file, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x   ",	G_TYPE_INT,     TRUE, FALSE,  "x", NULL,  0, 999, 1, 10},
+  {"y   ",	G_TYPE_INT,     TRUE, FALSE,  "y", NULL,  0, 999, 1, 10},
+  {N_("ax"),	G_TYPE_PARAM,   TRUE, FALSE,  "axis_x", bind_axis},
+  {N_("ay"),	G_TYPE_PARAM,   TRUE, FALSE,  "axis_y", bind_axis},
+  {N_("type"),	G_TYPE_OBJECT,  TRUE, FALSE,  "type",   bind_type},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "mark_size",  NULL, 0,       SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "line_width", NULL, 0,       SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, FALSE,  "head_skip",  NULL, 0,       INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, FALSE,  "read_step",  NULL, 1,       INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, FALSE,  "final_line", NULL, INT_MIN, INT_MAX,    1,    10},
+  {N_("num"), 	G_TYPE_INT,     FALSE, FALSE, "data_num"},
+  {"^#",	G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 
 #define FILE_WIN_COL_NUM G_N_ELEMENTS (Flist)
