@@ -12,6 +12,7 @@
 #include "dir_defs.h"
 
 #include "object.h"
+#include "ioutil.h"
 #include "nstring.h"
 #include "mathfn.h"
 
@@ -22,6 +23,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "gtk_liststore.h"
+#include "gtk_columnview.h"
 #include "gtk_widget.h"
 #include "gtk_combo.h"
 
@@ -505,7 +507,7 @@ copy(struct obj_list_data *d)
 
   UnFocus();
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
@@ -532,7 +534,7 @@ delete(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   inst_num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > inst_num) {
     return;
@@ -570,7 +572,7 @@ move_top(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -595,7 +597,7 @@ move_last(struct obj_list_data *d)
 
   UnFocus();
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -618,7 +620,7 @@ move_up(struct obj_list_data *d)
 
   UnFocus();
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if ((sel >= 1) && (sel <= num)) {
     menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
@@ -639,7 +641,7 @@ move_down(struct obj_list_data *d)
 
   UnFocus();
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if ((sel >= 0) && (sel < num)) {
     menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
@@ -698,7 +700,7 @@ swin_update(struct obj_list_data *d)
 
   UnFocus();
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -732,7 +734,7 @@ focus(struct obj_list_data *d, enum FOCUS_MODE add)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num))
@@ -782,7 +784,7 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -812,7 +814,7 @@ modify_string(struct obj_list_data *d, char *field, char *str)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -837,7 +839,7 @@ hidden(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;
@@ -866,7 +868,7 @@ do_popup(gdouble x, gdouble y, struct obj_list_data *d)
       d->parent->type == TypeArcWin ||
       d->parent->type == TypeMarkWin ||
       d->parent->type == TypeTextWin) {
-    d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+    d->select = columnview_get_active (d->text);
   }
   rect.x = x;
   rect.y = y;
@@ -913,9 +915,11 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
     }
     break;
   case 3:
+    /*
     if (tree_view_select_pos(gesture, x, y)) {
       state = GTK_EVENT_SEQUENCE_CLAIMED;
     }
+    */
     if (d->popup) {
       do_popup(x, y, d);
       state = GTK_EVENT_SEQUENCE_CLAIMED;
@@ -930,6 +934,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
 {
   struct obj_list_data *d;
   GtkWidget *w;
+  /*
   static guint32 ev_time = 0;
   guint32 t;
 
@@ -939,6 +944,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
   } else {
     ev_time = t;
   }
+  */
 
   if (Menulock || Globallock)
     return TRUE;
@@ -980,6 +986,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
     else
       return FALSE;
     break;
+    /*
   case GDK_KEY_Return:
     if (state & GDK_SHIFT_MASK) {
       //      e->state &= ~ GDK_SHIFT_MASK;
@@ -988,6 +995,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
 
     swin_update(d);
     break;
+      */
   case GDK_KEY_BackSpace:
     hidden(d);
     break;
@@ -1106,6 +1114,7 @@ static void
 add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 {
   GtkGesture *gesture;
+  GtkEventController *ev;
 
   gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
@@ -1113,7 +1122,97 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
   g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
 
-  add_event_key(widget, G_CALLBACK(ev_key_down), NULL, data);
+  ev = add_event_key(widget, G_CALLBACK(ev_key_down), NULL, data);
+  gtk_event_controller_set_propagation_phase (ev, GTK_PHASE_CAPTURE);
+}
+
+void
+setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
+{
+  GtkWidget *w;
+
+  switch (item->type) {
+  case G_TYPE_BOOLEAN:
+    w = gtk_check_button_new ();
+    gtk_list_item_set_child (list_item, w);
+    break;
+  case G_TYPE_OBJECT:
+    w = gtk_picture_new ();
+    gtk_list_item_set_child (list_item, w);
+    gtk_picture_set_content_fit (GTK_PICTURE (w), GTK_CONTENT_FIT_CONTAIN);
+    break;
+  case G_TYPE_INT:
+  case G_TYPE_DOUBLE:
+    w = gtk_label_new (NULL);
+    gtk_widget_set_halign (w, GTK_ALIGN_END);
+    gtk_list_item_set_child (list_item, w);
+    break;
+  default:
+    w = gtk_label_new (NULL);
+    gtk_widget_set_halign (w, GTK_ALIGN_START);
+    gtk_label_set_ellipsize (GTK_LABEL (w), item->ellipsize);
+    gtk_list_item_set_child (list_item, w);
+  }
+}
+
+void
+bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
+{
+  GtkWidget *w;
+  NgraphInst *inst;
+  enum ngraph_object_field_type type;
+  int ival;
+  double dval;
+  const char *sval;
+  char *str, *field, **enumlist, buf[256];
+
+  field = item->name;
+  w = gtk_list_item_get_child (list_item);
+  inst = gtk_list_item_get_item (list_item);
+  getobj (inst->obj, "hidden", inst->id, 0, NULL, &ival);
+  if (strcmp (field, "hidden")) {
+    gtk_widget_set_sensitive (w, ! ival);
+  }
+  if (item->bind_func) {
+    item->bind_func(inst->obj, inst->id, item->name, w);
+    return;
+  }
+  str = NULL;
+  type = chkobjfieldtype(inst->obj, field);
+  switch (type){
+  case NBOOL:
+    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
+    if (strcmp (item->name, "hidden") == 0) {
+      ival = ! ival;
+    }
+    gtk_check_button_set_active(GTK_CHECK_BUTTON (w), ival);
+    return;
+  case NENUM:
+    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
+    enumlist = (char **) chkobjarglist(inst->obj, field);
+    str = _(enumlist[ival]);
+    break;
+  case NINT:
+    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
+    if (item->type == G_TYPE_INT) {
+      snprintf (buf, sizeof (buf), "%d", ival);
+    } else {
+      snprintf (buf, sizeof (buf), "%.2f", ival / 100.0);
+    }
+    str = buf;
+    break;
+  case NDOUBLE:
+    getobj (inst->obj, field, inst->id, 0, NULL, &dval);
+    snprintf (buf, sizeof (buf), "%.15g", dval);
+    str = buf;
+    break;
+  case NSTR:
+    getobj (inst->obj, field, inst->id, 0, NULL, &str);
+    break;
+  default:
+    return;
+  }
+  gtk_label_set_text(GTK_LABEL (w), str);
 }
 
 static struct obj_list_data *
@@ -1121,8 +1220,8 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 {
   struct obj_list_data *data;
   GtkWidget *lstor, *swin;
-  GList *col_list, *col;
   GtkEventController *ev;
+  int i;
 
   data = g_malloc0(sizeof(*data));
   data->select = -1;
@@ -1131,35 +1230,26 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;
-  lstor = list_store_create(lisu_num, list);
+  lstor = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_SINGLE);
   data->text = lstor;
 
-  set_cell_renderer_cb(data, lisu_num, list, lstor);
+  for (i = 0; i < lisu_num; i++) {
+    if (list[i].visible) {
+      columnview_create_column (lstor, _(list[i].title), G_CALLBACK (setup_column), G_CALLBACK (bind_column), NULL, list + i, list[i].expand);
+    }
+  }
 
   add_event_controller(lstor, data);
+  g_signal_connect_swapped(lstor, "activate", G_CALLBACK (swin_update), data);
 
   /* to handle key-press-event correctly in single window mode */
   ev = gtk_event_controller_focus_new();
   g_signal_connect(ev, "enter", G_CALLBACK(list_focused), NULL);
   gtk_widget_add_controller(lstor, ev);
 
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
-
   swin = gtk_scrolled_window_new();
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), lstor);
-
-  col_list = gtk_tree_view_get_columns(GTK_TREE_VIEW(lstor));
-  for (col = g_list_next(col_list); col; col = g_list_next(col)) {
-    GList *rend_list;
-    rend_list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col->data));
-    gtk_tree_view_column_add_attribute(GTK_TREE_VIEW_COLUMN(col->data),
-				       GTK_CELL_RENDERER(rend_list->data),
-				       "sensitive", 0);
-    g_list_free(rend_list);
-  }
-  g_list_free(col_list);
 
   g_signal_connect(swin, "realize", G_CALLBACK(swin_realized), data);
 
@@ -1187,42 +1277,31 @@ list_sub_window_must_rebuild(struct obj_list_data *d)
   int n, num;
 
   num = chkobjlastinst(d->obj);
-  n = list_store_get_num(GTK_WIDGET(d->text));
+  n = columnview_get_n_items(d->text);
 
   return (n != num + 1);
 }
 
 void
-list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func)
+list_sub_window_build(struct obj_list_data *d)
 {
-  GtkTreeIter iter;
   int i, num;
 
   num = chkobjlastinst(d->obj);
-  list_store_clear(d->text);
+  columnview_clear(d->text);
   for (i = 0; i <= num; i++) {
-    list_store_append(GTK_WIDGET(d->text), &iter);
-    func(d, &iter, i);
+    columnview_append_ngraph_inst(d->text, chkobjectname (d->obj), i, d->obj);
   }
 }
 
 void
-list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func)
+list_sub_window_set(struct obj_list_data *d)
 {
-  GtkTreeIter iter;
-  int i, num;
-  gboolean state;
-
-  state = list_store_get_iter_first(GTK_WIDGET(d->text), &iter);
-  if (! state)
-    return;
-
-  num = chkobjlastinst(d->obj);
-  for (i = 0; i <= num; i++) {
-    func(d, &iter, i);
-    if (! list_store_iter_next(GTK_WIDGET(d->text), &iter)) {
-      break;
-    }
+  int active;
+  active = columnview_get_active (d->text);
+  list_sub_window_build(d);
+  if (active >= 0) {
+    columnview_set_active (d->text, active, TRUE);
   }
 }
 
@@ -1371,7 +1450,7 @@ list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {
     return;

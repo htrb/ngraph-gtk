@@ -36,6 +36,7 @@
 #include "axis.h"
 
 #include "gtk_liststore.h"
+#include "gtk_columnview.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
@@ -52,20 +53,24 @@
 #include "x11axis.h"
 #include "x11commn.h"
 
+static void bind_minmax (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_inc (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_name (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
 static n_list_store Alist[] = {
-  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "group"},
-  {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min"},
-  {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max"},
-  {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc"},
-  {N_("type"), G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0,          36000, 100, 1500},
-  {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "length", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
-  {"num_math", G_TYPE_INT,     FALSE, FALSE, "num_math"},
+  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",        G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, FALSE, "group", bind_name},
+  {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "min", bind_minmax},
+  {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "max", bind_minmax},
+  {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "inc", bind_inc},
+  {N_("type"), G_TYPE_PARAM,   TRUE, TRUE,  FALSE, "type"},
+  {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "x",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "y",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "direction",     NULL,        0,          36000, 100, 1500},
+  {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "length",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",       G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {"num_math", G_TYPE_INT,     FALSE, FALSE, FALSE, "num_math"},
 };
 
 enum {
@@ -2930,7 +2935,7 @@ axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer user_da
 
   d = (struct obj_list_data *) user_data;
 
-  sel = list_store_get_selected_int(d->text, AXIS_WIN_COL_ID);
+  sel = columnview_get_active (d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
@@ -3168,13 +3173,13 @@ AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, axis_list_set_val);
+    list_sub_window_build(d);
   } else {
-    list_sub_window_set(d, axis_list_set_val);
+    list_sub_window_set(d);
   }
 
   if (! clear && d->select >= 0) {
-    list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
+    columnview_set_active(d->text, d->select, TRUE);
   }
   if (draw) {
     char const *objects[4];
@@ -3191,6 +3196,73 @@ static void
 AxisDelCB(struct obj_list_data *data, int id)
 {
   AxisDel(id);
+}
+
+static void
+bind_minmax (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  double min, max, val;
+  char buf[256], *math;
+
+  getobj(obj, "min", id, 0, NULL, &min);
+  getobj(obj, "max", id, 0, NULL, &max);
+  gtk_widget_set_halign (w, GTK_ALIGN_END);
+  if ((min == 0) && (max == 0)) {
+    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+    return;
+  }
+
+  val = (field[2] == 'n') ? min : max;
+  getobj(obj, "num_math", id, 0, NULL, &math);
+  if (math) {
+    snprintf(buf, sizeof(buf), "<i>%g</i>", val);
+    gtk_label_set_markup (GTK_LABEL (w), buf);
+  } else {
+    snprintf(buf, sizeof(buf), "%g", val);
+    gtk_label_set_text (GTK_LABEL (w), buf);
+  }
+}
+
+static void
+bind_inc (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  double inc;
+  char buf[256], *math;
+
+  getobj(obj, "inc", id, 0, NULL, &inc);
+  gtk_widget_set_halign (w, GTK_ALIGN_END);
+  if (inc == 0) {
+    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+    return;
+  }
+
+  getobj(obj, "num_math", id, 0, NULL, &math);
+  if (math) {
+    snprintf(buf, sizeof(buf), "<i>%g</i>", inc);
+    gtk_label_set_markup (GTK_LABEL (w), buf);
+  } else {
+    snprintf(buf, sizeof(buf), "%g", inc);
+    gtk_label_set_text (GTK_LABEL (w), buf);
+  }
+}
+
+static void
+bind_name (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  char buf[256], *group, *math;
+
+  getobj(obj, "group", id, 0, NULL, &group);
+  if (group == NULL) {
+    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+    return;
+  }
+
+  getobj(obj, "num_math", id, 0, NULL, &math);
+  if (math) {
+    label_set_italic_text (w, group);
+  } else {
+    gtk_label_set_text (GTK_LABEL (w), group);
+  }
 }
 
 static void
@@ -3886,7 +3958,7 @@ axiswin_delete_axis(struct obj_list_data *d)
     return;
 
   UnFocus();
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
@@ -3918,7 +3990,7 @@ AxisWinAxisTop(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 
   if (Menulock || Globallock) return;
   UnFocus();
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel  >=  0) && (sel <= num)) {
@@ -3942,7 +4014,7 @@ AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer client_data
 
   if (Menulock || Globallock) return;
   UnFocus();
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
@@ -3966,7 +4038,7 @@ AxisWinAxisUp(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 
   if (Menulock || Globallock) return;
   UnFocus();
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 1) && (sel <= num)) {
@@ -3990,7 +4062,7 @@ AxisWinAxisDown(GSimpleAction *action, GVariant *parameter, gpointer client_data
 
   if (Menulock || Globallock) return;
   UnFocus();
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num-1) {
@@ -4071,26 +4143,5 @@ create_axis_list(struct SubWin *d)
   d->data.data->obj = chkobject("axis");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
-  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
-  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
-  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
-  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
-
-  set_cell_attribute_source(d, "style", AXIS_WIN_COL_NAME, AXIS_WIN_COL_MATH);
-  set_cell_attribute_source(d, "style", AXIS_WIN_COL_MIN, AXIS_WIN_COL_MATH);
-  set_cell_attribute_source(d, "style", AXIS_WIN_COL_MAX, AXIS_WIN_COL_MATH);
-  set_cell_attribute_source(d, "style", AXIS_WIN_COL_INC, AXIS_WIN_COL_MATH);
-
-  set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing_type), NULL);
-
-  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MIN, 1.0);
-  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MAX, 1.0);
-  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_INC, 1.0);
-
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
-  tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
-
   return d->Win;
 }

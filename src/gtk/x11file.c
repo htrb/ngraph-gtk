@@ -67,26 +67,30 @@
 #include "sourcecompletionwords.h"
 #include "completion_info.h"
 
+static void bind_axis(struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_type(struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
 static n_list_store Flist[] = {
-  {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",		G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("file/range"),	G_TYPE_STRING,  TRUE, TRUE,  "file", 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",  0, 999, 1, 10},
-  {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",  0, 999, 1, 10},
-  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_x"},
-  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_y"},
-  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type"},
-  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  0,       SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", 0,       SPIN_ENTRY_MAX, 10,   100},
-  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  0,       INT_MAX,         1,    10},
-  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  1,       INT_MAX,         1,    10},
-  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", INT_MIN, INT_MAX,    1,    10},
-  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num"},
-  {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid"},
-  {"masked",	G_TYPE_INT,     FALSE, FALSE, "masked"},
-  {"tip",	G_TYPE_STRING,  FALSE, FALSE, "file"},
-  {"not_func",	G_TYPE_INT,     FALSE, FALSE, "source"},
-  {"is_file",	G_TYPE_INT,     FALSE, FALSE, "source"},
+  {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE, FALSE,  "hidden"},
+  {"#",		G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {N_("file/range"),	G_TYPE_STRING,  TRUE, TRUE, TRUE,  "file", bind_file, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x   ",	G_TYPE_INT,     TRUE, TRUE, FALSE,  "x", NULL,  0, 999, 1, 10},
+  {"y   ",	G_TYPE_INT,     TRUE, TRUE, FALSE,  "y", NULL,  0, 999, 1, 10},
+  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE, FALSE,  "axis_x", bind_axis},
+  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE, FALSE,  "axis_y", bind_axis},
+  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE, FALSE,  "type",   bind_type},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE, FALSE,  "mark_size",  NULL, 0,       SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE, FALSE,  "line_width", NULL, 0,       SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "head_skip",  NULL, 0,       INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "read_step",  NULL, 1,       INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, TRUE, FALSE,  "final_line", NULL, INT_MIN, INT_MAX,    1,    10},
+  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, FALSE, "data_num"},
+  {"^#",	G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
+  {"masked",	G_TYPE_INT,     FALSE, FALSE, FALSE, "masked"},
+  {"tip",	G_TYPE_STRING,  FALSE, FALSE, FALSE, "file"},
+  {"not_func",	G_TYPE_INT,     FALSE, FALSE, FALSE, "source"},
+  {"is_file",	G_TYPE_INT,     FALSE, FALSE, FALSE, "source"},
 };
 
 enum {
@@ -5335,7 +5339,7 @@ FileWinFileDelete(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  sel = columnview_get_active (d->text);;
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
@@ -5374,7 +5378,7 @@ file_obj_copy(struct obj_list_data *d)
   if (Menulock || Globallock)
     return -1;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  sel = columnview_get_active (d->text);;
   num = chkobjlastinst(d->obj);
 
   if ((sel < 0) || (sel > num))
@@ -5416,7 +5420,7 @@ FileWinFileCopy2(struct obj_list_data *d)
     return;
 
   data_save_undo(UNDO_TYPE_COPY);
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  sel = columnview_get_active (d->text);;
   id = file_obj_copy(d);
   num = chkobjlastinst(d->obj);
 
@@ -5475,7 +5479,7 @@ FileWinFileUpdate(struct obj_list_data *d)
 
   if (Menulock || Globallock)
     return;
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  sel = columnview_get_active (d->text);;
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
@@ -5514,7 +5518,7 @@ FileWinFileDraw(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_index(GTK_WIDGET(d->text));
+  sel = columnview_get_active(d->text);
   num = chkobjlastinst(d->obj);
 
   modified = FALSE;
@@ -5568,13 +5572,13 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, file_list_set_val);
+    list_sub_window_build(d);
   } else {
-    list_sub_window_set(d, file_list_set_val);
+    list_sub_window_set(d);
   }
 
   if (! clear && d->select >= 0) {
-    list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
+    columnview_set_active (d->text, d->select, TRUE);
   }
 
   switch (draw) {
@@ -5632,7 +5636,7 @@ FileWinFit(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  sel = columnview_get_active (d->text);;
   num = chkobjlastinst(d->obj);
 
   if (sel < 0 || sel > num)
@@ -5678,7 +5682,7 @@ FileWinFit(struct obj_list_data *d)
   execute_fit_dialog(parent, d->obj, sel, fitobj, fitid, file_win_fit_response, data);
 }
 
-#define MARK_PIX_LINE_WIDTH 1
+#define MARK_PIX_LINE_WIDTH 2
 
 static void
 set_line_style(struct objlist *obj, int id, int ggc)
@@ -6004,6 +6008,77 @@ get_plot_info_str(struct objlist *obj, int id, int src)
   }
 
   return str;
+}
+
+static void
+bind_axis(struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  char *axis;
+  int type;
+  type = strcmp (field, "axis_y");
+  axis = get_axis_obj_str(obj, id, (type) ? AXIS_X : AXIS_Y);
+  if (axis) {
+    gtk_label_set_text(GTK_LABEL (w), axis);
+    g_free(axis);
+  } else {
+    gtk_label_set_text(GTK_LABEL (w), NULL);
+  }
+}
+
+static void
+bind_type(struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  GdkPixbuf *pixbuf;
+  pixbuf = draw_type_pixbuf(obj, id);
+  if (pixbuf) {
+    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
+    g_object_unref(pixbuf);
+  }
+}
+
+static void
+bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  int src, masked;
+  struct narray *mask, *move;
+  const char *str;
+
+  getobj(obj, "source", id, 0, NULL, &src);
+  str = get_plot_info_str(obj, id, src);
+  gtk_widget_set_tooltip_text (w, str);
+
+  if (str == NULL) {
+    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+    return;
+  }
+
+  getobj(obj, "mask", id, 0, NULL, &mask);
+  getobj(obj, "move_data", id, 0, NULL, &move);
+  masked = ((arraynum(mask) != 0) || (arraynum(move) != 0));
+
+  if (src == DATA_SOURCE_FILE) {
+    char *bfile;
+    bfile = getbasename(str);
+    if (bfile) {
+      if (masked) {
+	label_set_italic_text (w, bfile);
+      } else {
+	gtk_label_set_text (GTK_LABEL (w), bfile);
+      }
+      g_free(bfile);
+    } else {
+      gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+    }
+  } else {
+    char *tmpstr;
+    tmpstr = g_strescape(str, "\\");
+    if (masked) {
+      label_set_italic_text (w, tmpstr);
+    } else {
+      gtk_label_set_text (GTK_LABEL (w), tmpstr);
+    }
+    g_free (tmpstr);
+  }
 }
 
 static void
@@ -7001,17 +7076,6 @@ GtkWidget *
 create_data_list(struct SubWin *d)
 {
   int n;
-  int noexpand_colmns[] = {FILE_WIN_COL_X,
-			   FILE_WIN_COL_Y,
-			   FILE_WIN_COL_X_AXIS,
-			   FILE_WIN_COL_Y_AXIS,
-			   FILE_WIN_COL_TYPE,
-			   FILE_WIN_COL_SIZE,
-			   FILE_WIN_COL_WIDTH,
-			   FILE_WIN_COL_SKIP,
-			   FILE_WIN_COL_STEP,
-			   FILE_WIN_COL_FINAL,
-			   FILE_WIN_COL_DNUM};
 
   if (d->Win) {
     return d->Win;
@@ -7028,25 +7092,8 @@ create_data_list(struct SubWin *d)
   d->data.data->obj = chkobject("data");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-  set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
-  set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
-  set_obj_cell_renderer_cb(d->data.data, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
 
   init_dnd_file(d, FILE_TYPE_DATA);
-
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
-  tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
-
-  n = sizeof(noexpand_colmns) / sizeof(*noexpand_colmns);
-  tree_view_set_no_expand_column(d->data.data->text, noexpand_colmns, n);
-
-  set_cell_attribute_source(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
-
-  set_cell_attribute_source(d, "visible", FILE_WIN_COL_X, FILE_WIN_COL_NOT_RANGE);
-  set_cell_attribute_source(d, "visible", FILE_WIN_COL_Y, FILE_WIN_COL_NOT_RANGE);
-
-  set_cell_attribute_source(d, "editable", FILE_WIN_COL_FILE, FILE_WIN_COL_IS_FILE);
 
   return d->Win;
 }

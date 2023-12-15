@@ -43,6 +43,7 @@
 #include "mathfn.h"
 
 #include "gtk_liststore.h"
+#include "gtk_columnview.h"
 #include "gtk_entry_completion.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
@@ -64,18 +65,26 @@
 
 #define ARROW_VIEW_SIZE 160
 
+static void bind_path_type (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_path_pos (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_color (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_rect_x (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_rect_y (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_mark (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_text (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
 static n_list_store Plist[] = {
-  {" ",                G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",                G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"type",             G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {N_("marker begin"), G_TYPE_ENUM,    TRUE, TRUE,  "marker_begin"},
-  {N_("marker end"),   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
-  {N_("color"),        G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
-  {"x",                G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",                G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),        G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("points"),       G_TYPE_INT,     TRUE, FALSE, "points"},
-  {"^#",               G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",                G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",                G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {"type",             G_TYPE_PARAM,   TRUE, TRUE,  FALSE, "type",   bind_path_type},
+  {N_("marker begin"), G_TYPE_ENUM,    TRUE, TRUE,  FALSE, "marker_begin"},
+  {N_("marker end"),   G_TYPE_ENUM,    TRUE, TRUE,  FALSE, "marker_end"},
+  {N_("color"),        G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color",  bind_color},
+  {"x",                G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",                G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y",      bind_path_pos, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),        G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width",  NULL,            0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("points"),       G_TYPE_INT,     TRUE, FALSE, FALSE, "points", bind_path_pos},
+  {"^#",               G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
 };
 
 enum PATH_LIST_COL {
@@ -94,15 +103,15 @@ enum PATH_LIST_COL {
 };
 
 static n_list_store Rlist[] = {
-  {" ",              G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",              G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("color"),      G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
-  {"x",              G_TYPE_DOUBLE,  TRUE, TRUE,  "x1", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",              G_TYPE_DOUBLE,  TRUE, TRUE,  "y1", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"width",          G_TYPE_DOUBLE,  TRUE, TRUE,  "width",             0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("height"),     G_TYPE_DOUBLE,  TRUE, TRUE,  "height",            0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("line width"), G_TYPE_DOUBLE,  TRUE, TRUE,  "width",             0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",             G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",              G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",              G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {N_("color"),      G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color", bind_color},
+  {"x",              G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x1",    bind_rect_x, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",              G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y1",    bind_rect_y, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"width",          G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x2",    bind_rect_x,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("height"),     G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y2",    bind_rect_y,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("line width"), G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width", NULL,                       0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",             G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
 };
 
 enum RECT_LIST_COL {
@@ -119,18 +128,18 @@ enum RECT_LIST_COL {
 };
 
 static n_list_store Alist[] = {
-  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"color",        G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"rx",           G_TYPE_DOUBLE,  TRUE, TRUE,  "rx", 0, SPIN_ENTRY_MAX, 100, 1000},
-  {"ry",           G_TYPE_DOUBLE,  TRUE, TRUE,  "ry", 0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("angle1"),   G_TYPE_DOUBLE,  TRUE, TRUE,  "angle1", 0, 36000, 100, 1500},
-  {N_("angle2"),   G_TYPE_DOUBLE,  TRUE, TRUE,  "angle2", 0, 36000, 100, 1500},
-  {N_("pieslice"), G_TYPE_BOOLEAN, TRUE, TRUE,  "pieslice"},
-  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width", 0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {"color",        G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "color",  bind_color},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y",      NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"rx",           G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "rx",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {"ry",           G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "ry",     NULL, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("angle1"),   G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "angle1", NULL, 0, 36000, 100, 1500},
+  {N_("angle2"),   G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "angle2", NULL, 0, 36000, 100, 1500},
+  {N_("pieslice"), G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "pieslice"},
+  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width",  NULL, 0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
 };
 
 enum ARC_LIST_COL {
@@ -150,14 +159,14 @@ enum ARC_LIST_COL {
 };
 
 static n_list_store Mlist[] = {
-  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"mark",         G_TYPE_OBJECT,  TRUE, TRUE,  "type"},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  "size",             0, SPIN_ENTRY_MAX, 100,  200},
-  {"width",        G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {"mark",         G_TYPE_OBJECT,  TRUE, TRUE,  FALSE, "type", bind_mark},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "size", NULL,             0, SPIN_ENTRY_MAX, 100,  200},
+  {"width",        G_TYPE_DOUBLE,  TRUE, TRUE,  TRUE,  "width", NULL,            0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
 };
 
 enum MARK_LIST_COL {
@@ -175,22 +184,22 @@ enum MARK_LIST_COL {
 #define TEXT_LIST_USE_FONT_FAMILY
 
 static n_list_store Tlist[] = {
-  {" ",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",             G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"text",          G_TYPE_STRING,  TRUE, TRUE,  "text", 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {N_("font"),      G_TYPE_PARAM,   TRUE, TRUE,  "font"},
-  {"x",             G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",             G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("pt"),        G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",               0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("direction"), G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0, 36000,          100, 1500},
-  {"raw",           G_TYPE_BOOLEAN, TRUE, TRUE,  "raw"},
-  {"^#",            G_TYPE_INT,     TRUE, FALSE, "oid"},
-  {"style",         G_TYPE_INT,     FALSE, FALSE, "style"},
-  {"weight",        G_TYPE_INT,     FALSE, FALSE, "weight"},
-  {"color",         G_TYPE_STRING,  FALSE, FALSE, "color"},
-  {"bgcolor",       G_TYPE_STRING,  FALSE, FALSE, "bgcolor"},
+  {" ",             G_TYPE_BOOLEAN, TRUE,  TRUE,  FALSE, "hidden"},
+  {"#",             G_TYPE_INT,     TRUE,  FALSE, FALSE, "id"},
+  {"text",          G_TYPE_STRING,  TRUE,  TRUE,  TRUE,  "text", bind_text, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {N_("font"),      G_TYPE_PARAM,   TRUE,  TRUE,  FALSE, "font"},
+  {"x",             G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "x", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",             G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "y", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("pt"),        G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "pt", NULL,               0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("direction"), G_TYPE_DOUBLE,  TRUE,  TRUE,  FALSE, "direction", NULL,        0, 36000,          100, 1500},
+  {"raw",           G_TYPE_BOOLEAN, TRUE,  TRUE,  FALSE, "raw"},
+  {"^#",            G_TYPE_INT,     TRUE,  FALSE, FALSE, "oid"},
+  {"style",         G_TYPE_INT,     FALSE, FALSE, FALSE, "style"},
+  {"weight",        G_TYPE_INT,     FALSE, FALSE, FALSE, "weight"},
+  {"color",         G_TYPE_STRING,  FALSE, FALSE, FALSE, "color"},
+  {"bgcolor",       G_TYPE_STRING,  FALSE, FALSE, FALSE, "bgcolor"},
 #ifdef TEXT_LIST_USE_FONT_FAMILY
-  {"font_family",   G_TYPE_STRING,  FALSE, FALSE, "font_family"},
+  {"font_family",   G_TYPE_STRING,  FALSE, FALSE, FALSE, "font_family"},
 #endif
 };
 
@@ -2368,7 +2377,7 @@ LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 }
 
 static void
-ObjListUpdate(struct obj_list_data *d, int clear, int draw, list_sub_window_set_val_func func)
+ObjListUpdate(struct obj_list_data *d, int clear, int draw)
 {
   if (Menulock || Globallock)
     return;
@@ -2378,13 +2387,13 @@ ObjListUpdate(struct obj_list_data *d, int clear, int draw, list_sub_window_set_
   }
 
   if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, func);
+    list_sub_window_build(d);
   } else {
-    list_sub_window_set(d, func);
+    list_sub_window_set(d);
   }
 
   if (! clear && d->select >= 0) {
-    list_store_select_int(GTK_WIDGET(d->text), COL_ID, d->select);
+    columnview_set_active(d->text, d->select, TRUE);
   }
   if (draw) {
 //    NgraphApp.Viewer.allclear = TRUE;
@@ -2392,35 +2401,6 @@ ObjListUpdate(struct obj_list_data *d, int clear, int draw, list_sub_window_set_
   }
 }
 
-static void
-PathListUpdate(struct obj_list_data *d, int clear, int draw)
-{
-  ObjListUpdate(d, clear, draw, path_list_set_val);
-}
-
-static void
-ArcListUpdate(struct obj_list_data *d, int clear, int draw)
-{
-  ObjListUpdate(d, clear, draw, arc_list_set_val);
-}
-
-static void
-RectListUpdate(struct obj_list_data *d ,int clear, int draw)
-{
-  ObjListUpdate(d, clear, draw, rect_list_set_val);
-}
-
-static void
-MarkListUpdate(struct obj_list_data *d, int clear, int draw)
-{
-  ObjListUpdate(d, clear, draw, mark_list_set_val);
-}
-
-static void
-TextListUpdate(struct obj_list_data *d, int clear, int draw)
-{
-  ObjListUpdate(d, clear, draw, text_list_set_val);
-}
 
 void
 LegendWinUpdate(char **objects, int clear, int draw)
@@ -2593,6 +2573,58 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
 }
 
 static void
+bind_color (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  GdkPixbuf *pixbuf;
+  pixbuf = draw_color_pixbuf(obj, id, OBJ_FIELD_COLOR_TYPE_STROKE, 40);
+  if (pixbuf) {
+    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
+    g_object_unref(pixbuf);
+  }
+}
+
+static void
+bind_path_type (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  char **enumlist;
+  int type, interpolation;
+
+  getobj(obj, "type", id, 0, NULL, &type);
+  getobj(obj, "interpolation", id, 0, NULL, &interpolation);
+
+  if (type == 0) {
+    enumlist = (char **) chkobjarglist(obj, "type");
+    gtk_label_set_text(GTK_LABEL(w), _(enumlist[0]));
+  } else {
+    enumlist = (char **) chkobjarglist(obj, "interpolation");
+    gtk_label_set_text(GTK_LABEL(w), _(enumlist[interpolation]));
+  }
+}
+
+static void
+bind_path_pos (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  int n, x0, y0;
+  char str[256];
+
+  get_points(obj, id, &x0, &y0, &n);
+  switch (field[0]) {
+  case 'x':
+    snprintf (str, sizeof (str), "%.2f", x0 / 100.0);
+    break;
+  case 'y':
+    snprintf (str, sizeof (str), "%.2f", y0 / 100.0);
+    break;
+  case 'p':
+    snprintf (str, sizeof (str), "%d", n);
+    break;
+  default:
+    return;
+  }
+  gtk_label_set_text(GTK_LABEL (w), str);
+}
+
+static void
 path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx, n, x0, y0, w, i, interpolation, type;
@@ -2655,6 +2687,38 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
     }
   }
+}
+
+static void
+bind_rect_x (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  int x1, x2;
+  char str[256];
+
+  getobj(obj, "x1", id, 0, NULL, &x1);
+  getobj(obj, "x2", id, 0, NULL, &x2);
+  if (field[1] == '1') {
+    snprintf (str, sizeof (str), "%.2f",  ((x1 < x2) ? x1 : x2) / 100.0);
+  } else {
+    snprintf (str, sizeof (str), "%.2f",  abs(x1 - x2) / 100.0);
+  }
+  gtk_label_set_text(GTK_LABEL (w), str);
+}
+
+static void
+bind_rect_y (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  int y1, y2;
+  char str[256];
+
+  getobj(obj, "y1", id, 0, NULL, &y1);
+  getobj(obj, "y2", id, 0, NULL, &y2);
+  if (field[1] == '1') {
+    snprintf (str, sizeof (str), "%.2f",  ((y1 < y2) ? y1 : y2) / 100.0);
+  } else {
+    snprintf (str, sizeof (str), "%.2f",  abs(y1 - y2) / 100.0);
+  }
+  gtk_label_set_text(GTK_LABEL (w), str);
 }
 
 static void
@@ -2811,6 +2875,17 @@ draw_mark_pixbuf(struct objlist *obj, int i)
 }
 
 static void
+bind_mark (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  GdkPixbuf *pixbuf;
+  pixbuf = draw_mark_pixbuf(obj, id);
+  if (pixbuf) {
+    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
+    g_object_unref(pixbuf);
+  }
+}
+
+static void
 mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx, w, i;
@@ -2842,6 +2917,51 @@ mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
     }
   }
+}
+
+static void
+bind_text (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  int style, r, g ,b;
+  struct fontmap *fmap;
+  char *text, *str, *font, *alias;
+
+  getobj(obj, field, id, 0, NULL, &str);
+  if (str == NULL) {
+    gtk_label_set_text(GTK_LABEL (w), NULL);
+    return;
+  }
+
+  getobj(obj, "font", id, 0, NULL, &alias);
+  fmap = gra2cairo_get_fontmap(alias);
+  if (fmap && fmap->fontname) {
+    font = fmap->fontname;
+  } else {
+    font = "Sans";
+  }
+
+  getobj(obj, "style", id, 0, NULL, &style);
+  getobj(obj, "R", id, 0, NULL, &r);
+  getobj(obj, "G", id, 0, NULL, &g);
+  getobj(obj, "B", id, 0, NULL, &b);
+  text = g_markup_printf_escaped ("<span"
+				  " face=\"%s\""
+				  " style=\"%s\""
+				  " weight=\"%s\""
+				  " fgcolor=\"#%02x%02x%02x\""
+				  " bgcolor=\"#%02x%02x%02x\">"
+				  "%s"
+				  "</span>",
+				  font,
+				  (style & GRA_FONT_STYLE_ITALIC) ? "italic" : "normal",
+				  (style & GRA_FONT_STYLE_BOLD) ? "bold" : "normal",
+				  r, g, b,
+				  ((int) (Menulocal.bg_r * 255)) & 0xff,
+				  ((int) (Menulocal.bg_g * 255)) & 0xff,
+				  ((int) (Menulocal.bg_b * 255)) & 0xff,
+				  str);
+  gtk_label_set_markup(GTK_LABEL (w), text);
+  g_free (text);
 }
 
 static void
@@ -2935,7 +3055,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 
   name = chkobjectname(d->obj);
-  m = list_store_get_selected_int(d->text, COL_ID);
+  m = columnview_get_active(d->text);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
     char action_name[256];
     GAction *action;
@@ -3744,7 +3864,7 @@ create_path_list(struct SubWin *d)
 
   list_sub_window_create(d, PATH_LIST_COL_NUM, Plist);
   data = d->data.data;
-  data->update = PathListUpdate;
+  data->update = ObjListUpdate;
   data->dialog = &DlgLegendArrow;
   data->setup_dialog = LegendWinPathUpdate;
   data->ev_key = NULL;
@@ -3752,10 +3872,6 @@ create_path_list(struct SubWin *d)
 
   create_legend_popup_menu(data);
 
-  set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Plist, G_CALLBACK(start_editing_line_type), NULL);
-  set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Plist, G_CALLBACK(pos_x_edited));
-  set_editable_cell_renderer_cb(data, PATH_LIST_COL_Y, Plist, G_CALLBACK(pos_y_edited));
-  set_obj_cell_renderer_cb(data, PATH_LIST_COL_COLOR, Plist, G_CALLBACK(start_editing_color));
   return d->Win;
 }
 
@@ -3766,7 +3882,7 @@ create_rect_list(struct SubWin *d)
 
   list_sub_window_create(d, RECT_LIST_COL_NUM, Rlist);
   data = d->data.data;
-  data->update = RectListUpdate;
+  data->update = ObjListUpdate;
   data->dialog = &DlgLegendRect;
   data->setup_dialog = LegendWinRectUpdate;
   data->ev_key = NULL;
@@ -3774,11 +3890,6 @@ create_rect_list(struct SubWin *d)
 
   create_legend_popup_menu(data);
 
-  set_editable_cell_renderer_cb(data, RECT_LIST_COL_X, Rlist, G_CALLBACK(pos_x_edited));
-  set_editable_cell_renderer_cb(data, RECT_LIST_COL_Y, Rlist, G_CALLBACK(pos_y_edited));
-  set_editable_cell_renderer_cb(data, RECT_LIST_COL_WIDTH, Rlist, G_CALLBACK(rect_width_edited));
-  set_editable_cell_renderer_cb(data, RECT_LIST_COL_HEIGHT, Rlist, G_CALLBACK(rect_height_edited));
-  set_obj_cell_renderer_cb(data, RECT_LIST_COL_COLOR, Rlist, G_CALLBACK(start_editing_color));
   return d->Win;
 }
 
@@ -3789,7 +3900,7 @@ create_arc_list(struct SubWin *d)
 
   list_sub_window_create(d, ARC_LIST_COL_NUM, Alist);
   data = d->data.data;
-  data->update = ArcListUpdate;
+  data->update = ObjListUpdate;
   data->dialog = &DlgLegendArc;
   data->setup_dialog = LegendWinArcUpdate;
   data->ev_key = NULL;
@@ -3797,7 +3908,6 @@ create_arc_list(struct SubWin *d)
 
   create_legend_popup_menu(data);
 
-  set_obj_cell_renderer_cb(data, ARC_LIST_COL_COLOR, Alist, G_CALLBACK(start_editing_color));
   return d->Win;
 }
 
@@ -3808,7 +3918,7 @@ create_mark_list(struct SubWin *d)
 
   list_sub_window_create(d, MARK_LIST_COL_NUM, Mlist);
   data = d->data.data;
-  data->update = MarkListUpdate;
+  data->update = ObjListUpdate;
   data->dialog = &DlgLegendMark;
   data->setup_dialog = LegendWinMarkUpdate;
   data->ev_key = NULL;
@@ -3816,7 +3926,6 @@ create_mark_list(struct SubWin *d)
 
   create_legend_popup_menu(data);
 
-  set_obj_cell_renderer_cb(data, MARK_LIST_COL_MARK, Mlist, G_CALLBACK(start_editing_mark));
   return d->Win;
 }
 
@@ -3824,14 +3933,11 @@ GtkWidget *
 create_text_list(struct SubWin *d)
 {
   struct obj_list_data *data;
-  int n;
   GList *list;
-  GtkTreeViewColumn *col;
-  int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
 
   list_sub_window_create(d, TEXT_LIST_COL_NUM, Tlist);
   data = d->data.data;
-  data->update = TextListUpdate;
+  data->update = ObjListUpdate;
   data->dialog = &DlgLegendText;
   data->setup_dialog = LegendWinTextUpdate;
   data->ev_key = NULL;
@@ -3839,29 +3945,5 @@ create_text_list(struct SubWin *d)
 
   create_legend_popup_menu(data);
 
-  set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Tlist, G_CALLBACK(start_editing_font), NULL);
-  col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
-  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  if (list == NULL) {
-    return NULL;
-  }
-  if (list->data) {
-    GtkCellRenderer *renderer;
-    renderer = list->data;
-    gtk_tree_view_column_add_attribute(col, renderer, "style", TEXT_LIST_COL_STYLE);
-    gtk_tree_view_column_add_attribute(col, renderer, "weight", TEXT_LIST_COL_WEIGHT);
-#ifdef TEXT_LIST_USE_FONT_FAMILY
-    gtk_tree_view_column_add_attribute(col, renderer, "family", TEXT_LIST_COL_FONT_FAMILY);
-#endif
-    gtk_tree_view_column_add_attribute(col, renderer, "foreground", TEXT_LIST_COL_COLOR);
-    gtk_tree_view_column_add_attribute(col, renderer, "background", TEXT_LIST_COL_BGCOLOR);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
-#endif
-  }
-  g_list_free(list);
-  n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
-  tree_view_set_no_expand_column(data->text, noexpand_text_colmns, n);
-  tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
   return d->Win;
 }

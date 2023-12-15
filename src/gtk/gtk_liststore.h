@@ -26,11 +26,14 @@ enum OBJECT_COLUMN_TYPE {
   OBJECT_COLUMN_TYPE_NUM,
 };
 
+typedef void (* bind_item_func) (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
 typedef struct _list_store {
   char *title;
   GType type;
-  gboolean visible, editable;
+  gboolean visible, editable, expand;
   char *name;
+  bind_item_func bind_func;
   int min, max, inc, page;
   PangoEllipsizeMode ellipsize;
   gulong edited_id;

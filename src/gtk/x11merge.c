@@ -33,6 +33,7 @@
 #include "ioutil.h"
 
 #include "gtk_liststore.h"
+#include "gtk_columnview.h"
 #include "gtk_subwin.h"
 #include "gtk_widget.h"
 
@@ -46,15 +47,17 @@
 #include "x11commn.h"
 #include "x11view.h"
 
+static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
 static n_list_store Mlist[] = {
-  {" ",          G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",          G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("file"),   G_TYPE_STRING,  TRUE, TRUE,  "file"},
-  {N_("top"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("left"),   G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_x",                     0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_y",                     0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",         G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",          G_TYPE_BOOLEAN, TRUE, TRUE,  FALSE, "hidden"},
+  {"#",          G_TYPE_INT,     TRUE, FALSE, FALSE, "id"},
+  {N_("file"),   G_TYPE_STRING,  TRUE, TRUE,  TRUE,  "file", bind_file},
+  {N_("top"),    G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "top_margin", NULL,  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"),   G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "left_margin", NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "zoom_x", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE, TRUE,  FALSE, "zoom_y", NULL,                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",         G_TYPE_INT,     TRUE, FALSE, FALSE, "oid"},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
@@ -451,13 +454,13 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, merge_list_set_val);
+    list_sub_window_build(d);
   } else {
-    list_sub_window_set(d, merge_list_set_val);
+    list_sub_window_set(d);
   }
 
   if (! clear && d->select >= 0) {
-    list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
+    columnview_set_active(d->text, d->select, TRUE);
   }
 
   switch (draw) {
@@ -473,6 +476,22 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
   case DRAW_NOTIFY:
     draw_notify(TRUE);
     break;
+  }
+}
+
+static void
+bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w)
+{
+  char *file, *bfile;
+
+  getobj(obj, "file", id, 0, NULL, &file);
+  gtk_widget_set_tooltip_text (w, file);
+  bfile = getbasename(file);
+  if (bfile) {
+    gtk_label_set_text (GTK_LABEL (w), bfile);
+    g_free(bfile);
+  } else {
+    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
   }
 }
 
@@ -564,10 +583,6 @@ create_merge_list(struct SubWin *d)
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
   init_dnd_file(d, FILE_TYPE_MERGE);
-
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
-  tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
 
   return d->Win;
 }
