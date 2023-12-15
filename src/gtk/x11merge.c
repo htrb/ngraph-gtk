@@ -61,12 +61,6 @@ static n_list_store Mlist[] = {
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
-#define MERG_WIN_COL_OID (MERG_WIN_COL_NUM - 1)
-#define MERG_WIN_COL_HIDDEN 0
-#define MERG_WIN_COL_ID     1
-#define MERG_WIN_COL_FILE   2
-
-static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
 static GActionEntry Popup_list[] = {
   {"mergeFocusAllAction",     list_sub_window_focus_all, NULL, NULL, NULL},
@@ -492,42 +486,6 @@ bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w)
     g_free(bfile);
   } else {
     gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
-  }
-}
-
-static void
-merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
-{
-  int cx;
-  unsigned int i = 0;
-  char *file, *bfile;
-
-  for (i = 0; i < MERG_WIN_COL_NUM; i++) {
-    switch (i) {
-    case MERG_WIN_COL_FILE:
-      getobj(d->obj, "file", row, 0, NULL, &file);
-      bfile = getbasename(file);
-      if (bfile) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(bfile));
-	g_free(bfile);
-      } else {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
-      }
-      break;
-    case MERG_WIN_COL_HIDDEN:
-      getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
-      cx = ! cx;
-      list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
-      break;
-    default:
-      if (Mlist[i].type == G_TYPE_DOUBLE) {
-	getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
-	list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
-      } else {
-	getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
-	list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
-      }
-    }
   }
 }
 
