@@ -1285,3 +1285,12 @@ add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, g
   }
   return ev;
 }
+
+void
+label_set_italic_text (GtkWidget *label, const char *text)
+{
+  char *str;
+  str = g_markup_printf_escaped ("<i>%s</i>", text);
+  gtk_label_set_markup (GTK_LABEL (label), str);
+  g_free (str);
+}

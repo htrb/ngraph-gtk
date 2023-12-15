@@ -100,4 +100,5 @@ GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon
 GtkEventController * add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
 void set_widget_margin_all(GtkWidget *w, int margin);
 GtkWidget *widget_get_grandparent(GtkWidget *w);
+void label_set_italic_text (GtkWidget *label, const char *text);
 #endif
