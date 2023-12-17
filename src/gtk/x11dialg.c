@@ -767,12 +767,6 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     r = SetObjFieldFromSpin(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     r = SetObjFieldFromText(w, Obj, Id, field);
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-    if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
-      r = SetObjFieldFromText(gtk_combo_box_get_child(GTK_COMBO_BOX(w)), Obj, Id, field);
-    } else {
-      r = SetObjFieldFromList(w, Obj, Id, field);
-    }
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_DROP_DOWN)) {
     r = SetObjFieldFromList(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
@@ -799,12 +793,6 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     SetSpinFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     SetTextFromObjField(w, Obj, Id, field);
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-    if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
-      SetTextFromObjField(gtk_combo_box_get_child(GTK_COMBO_BOX(w)), Obj, Id, field);
-    } else {
-      SetListFromObjField(w, Obj, Id, field);
-    }
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_DROP_DOWN)) {
     SetListFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
