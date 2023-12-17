@@ -22,7 +22,6 @@
 #include "x11view.h"
 #include "x11gui.h"
 #include "x11dialg.h"
-#include "gtk_liststore.h"
 #include "gtk_columnview.h"
 #include "gtk_widget.h"
 #include "gtk_combo.h"
