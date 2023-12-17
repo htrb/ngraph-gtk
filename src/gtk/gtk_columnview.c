@@ -190,6 +190,25 @@ columnview_create(GType item_type, enum N_SELECTION_TYPE selection_type)
   return columnview;
 }
 
+GtkWidget *
+columnview_tree_create(GListModel *root, GtkTreeListModelCreateModelFunc create_func, gpointer user_data)
+{
+  GtkWidget *columnview;
+  GtkSelectionModel *selection;
+  GtkTreeListModel *model;
+
+  columnview = gtk_column_view_new (NULL);
+  gtk_column_view_set_show_column_separators (GTK_COLUMN_VIEW (columnview), TRUE);
+
+  model = gtk_tree_list_model_new (G_LIST_MODEL (root), FALSE, FALSE, create_func, user_data, NULL);
+  gtk_column_view_set_enable_rubberband (GTK_COLUMN_VIEW (columnview), TRUE);
+  gtk_column_view_set_reorderable (GTK_COLUMN_VIEW (columnview), FALSE);
+
+  selection = GTK_SELECTION_MODEL (gtk_multi_selection_new (G_LIST_MODEL (model)));
+  gtk_column_view_set_model (GTK_COLUMN_VIEW (columnview), selection);
+  return columnview;
+}
+
 GtkColumnViewColumn *
 columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand)
 {

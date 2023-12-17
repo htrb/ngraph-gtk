@@ -71,6 +71,7 @@ NgraphText *ngraph_text_new (gchar **text, guint attribute);
 
 
 GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);
+GtkWidget *columnview_tree_create(GListModel *root, GtkTreeListModelCreateModelFunc create_func, gpointer user_data);
 void columnview_clear(GtkWidget *columnview);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, GCallback sort, gpointer user_data, gboolean expand);
 void columnview_set_active(GtkWidget *columnview, int active, gboolean scroll);
