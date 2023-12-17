@@ -707,8 +707,6 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     gtk_box_append(GTK_BOX(vbox2), vbox);
 
-    gtk_box_append(GTK_BOX(vbox2), vbox);
-
     gtk_box_append(GTK_BOX(hbox), vbox2);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
