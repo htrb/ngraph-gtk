@@ -1022,157 +1022,131 @@ width_setup(struct LegendDialog *d, GtkWidget *table, int i)
 #define POINTS_DIMENSION 2
 
 static void
-renderer_func(GtkTreeViewColumn *col, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+insert_column(GtkWidget *columnview)
 {
-  int n;
-  double v;
-  char buf[1024];
+  GListStore *list;
+  GtkSelectionModel *sel;
+  int i, n;
 
-  n = GPOINTER_TO_INT(data);
+  sel = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
+  list = columnview_get_list (columnview);
 
-  gtk_tree_model_get(model, iter, n, &v, -1);
-  snprintf(buf, sizeof(buf), "%.2f", v);
-  g_object_set((GObject *) renderer, "text", buf, NULL);
+  n = g_list_model_get_n_items (G_LIST_MODEL (sel));
+  for (i = 0; i < n; i++) {
+    if (gtk_selection_model_is_selected (sel, i)) {
+      NgraphPoint *item;
+      item = ngraph_point_new (0, 0);
+      g_list_store_insert (list, i, item);
+      g_object_unref (item);
+      return;
+    }
+  }
+  list_store_append_ngraph_point(list, 0, 0);
 }
 
 static void
-column_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, int column, gpointer user_data)
+point_changed (GtkEditable *label, gpointer user_data)
 {
-  double d;
-  char *eptr;
-  GtkTreeModel *list;
-  GtkTreeIter iter;
-  GtkTreePath *path;
-  int r;
-
-  path = gtk_tree_path_new_from_string(path_str);
-  if (path == NULL)
-    return;
-
-  list = GTK_TREE_MODEL(user_data);
-  r = gtk_tree_model_get_iter(list, &iter, path);
-  if (! r)
-    return;
-
-  d = strtod(str, &eptr);
-  if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr == str)
-    return;
-
-  gtk_list_store_set(GTK_LIST_STORE(list), &iter, column, d, -1);
-}
-
-static void
-column_0_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, gpointer user_data)
-{
-  column_edited(cell_renderer, path_str, str, 0, user_data);
-}
-
-static void
-column_1_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, gpointer user_data)
-{
-  column_edited(cell_renderer, path_str, str, 1, user_data);
-}
-
-static void
-insert_column(GtkWidget *w, gpointer user_data)
-{
-  GtkTreeView *tree_view;
-  GtkTreeModel *list;
-  GtkTreeIter iter, tmp;
-  GtkTreePath *path;
-  int r;
-
-  tree_view = GTK_TREE_VIEW(user_data);
-
-  list = gtk_tree_view_get_model(tree_view);
-  if (list == NULL) {
+  GtkListItem *item;
+  const char *col, *text;
+  NgraphPoint *point;
+  int val;
+  item = GTK_LIST_ITEM (user_data);
+  text = gtk_editable_get_text (label);
+  col = gtk_list_item_get_accessible_label (item);
+  if (text == NULL) {
     return;
   }
-
-  gtk_tree_view_get_cursor(tree_view, &path, NULL);
-  if (path) {
-    r = gtk_tree_model_get_iter(list, &iter, path);
-    if (! r)
-      goto End;
-
-    gtk_list_store_insert_after(GTK_LIST_STORE(list), &tmp, &iter);
+  val = strtod (text, NULL) * 100;
+  point = gtk_list_item_get_item (item);
+  if (col[0] == 'x') {
+    point->x = val;
   } else {
-    gtk_list_store_append(GTK_LIST_STORE(list), &tmp);
+    point->y = val;
   }
-
-  if (path) {
-    gtk_tree_path_free(path);
-  }
-
-  path = gtk_tree_model_get_path(list, &tmp);
-
-  if (path) {
-    gtk_tree_view_set_cursor(tree_view, path, NULL, FALSE);
-  }
-
- End:
-  if (path)
-    gtk_tree_path_free(path);
 }
 
 static void
-set_delete_button_sensitivity(GtkTreeSelection *sel, gpointer user_data)
+setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_editable_label_new ("");
+  gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
+  gtk_list_item_set_accessible_label (list_item, user_data);
+  gtk_list_item_set_child (list_item, label);
+  g_signal_connect (label, "changed", G_CALLBACK (point_changed), list_item);
+}
+
+static void
+bind_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  NgraphPoint *item = NGRAPH_POINT(gtk_list_item_get_item (list_item));
+  char text[20];
+  const char *col;
+
+  col =  (const char *) user_data;
+  snprintf(text, sizeof(text), "%.2f", ((col[0] == 'x') ? item->x : item->y) / 100.0);
+  gtk_editable_set_text (GTK_EDITABLE (label), text);
+}
+
+static void
+remove_selected_points(GtkWidget *columnview)
 {
-  GtkWidget *btn;
+  GListStore *list;
   int n;
 
-  btn = GTK_WIDGET(user_data);
-  n = gtk_tree_selection_count_selected_rows(sel);
+  list = columnview_get_list (columnview);
+  n = columnview_get_active (columnview);
+  if (n >= 0) {
+    g_list_store_remove (list, n);
+  }
+}
 
-  gtk_widget_set_sensitive(btn, n > 0);
+static void
+point_row_up (GtkWidget *columnview)
+{
+  GListStore *list;
+  NgraphPoint *item;
+  int i;
+  list = columnview_get_list (columnview);
+  i = columnview_get_active (columnview);
+  if (i < 1) {
+    return;
+  }
+  item = g_list_model_get_item (G_LIST_MODEL (list), i);
+  g_list_store_remove (list, i);
+  g_list_store_insert (list, i - 1, item);
+  columnview_set_active (columnview, i - 1, TRUE);
+  g_object_unref (item);
+}
+
+static void
+point_row_down (GtkWidget *columnview)
+{
+  GListStore *list;
+  NgraphPoint *item;
+  int i, n;
+  list = columnview_get_list (columnview);
+  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  i = columnview_get_active (columnview);
+  if (i < 0 || i >= n - 1) {
+    return;
+  }
+  item = g_list_model_get_item (G_LIST_MODEL (list), i);
+  g_list_store_remove (list, i);
+  g_list_store_insert (list, i + 1, item);
+  columnview_set_active (columnview, i + 1, TRUE);
+  g_object_unref (item);
 }
 
 static GtkWidget *
 points_setup(struct LegendDialog *d)
 {
-  GtkWidget *label, *swin, *vbox, *hbox, *tree_view, *btn;
-  GtkTreeModel *list;
-  GtkTreeSelection *sel;
+  GtkWidget *label, *swin, *vbox, *hbox, *columnview, *btn;
   char *title[] = {"x", "y"};
   int i;
-  GCallback edited_func[] = {G_CALLBACK(column_0_edited), G_CALLBACK(column_1_edited)};
 
-  list = GTK_TREE_MODEL(gtk_list_store_new(POINTS_DIMENSION, G_TYPE_DOUBLE, G_TYPE_DOUBLE));
-  tree_view = gtk_tree_view_new_with_model(list);
-  gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(tree_view), FALSE);
-  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tree_view), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
-  gtk_tree_view_set_reorderable(GTK_TREE_VIEW(tree_view), TRUE);
-
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
-  gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
-
+  columnview = columnview_create (NGRAPH_TYPE_POINT, N_SELECTION_TYPE_SINGLE);
   for (i = 0; i < POINTS_DIMENSION; i++) {
-    GtkCellRenderer *renderer;
-    GtkTreeViewColumn *col;
-    renderer = gtk_cell_renderer_spin_new();
-    g_object_set((GObject *) renderer,
-		 "xalign", 1.0,
-		 "editable", TRUE,
-		 "adjustment", gtk_adjustment_new(0,
-						  -SPIN_ENTRY_MAX / 100.0,
-						  SPIN_ENTRY_MAX / 100.0,
-						  1,
-						  10,
-						  0),
-		 "digits", 2,
-		 NULL);
-
-    g_signal_connect(renderer, "edited", G_CALLBACK(edited_func[i]), list);
-    col = gtk_tree_view_column_new_with_attributes(title[i], renderer,
-						   "text", i,
-						   NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
-    gtk_tree_view_column_set_cell_data_func(col,
-					    renderer,
-					    renderer_func,
-					    GINT_TO_POINTER(i),
-					    NULL);
-    gtk_tree_view_column_set_expand(col, TRUE);
+    columnview_create_column(columnview, title[i], G_CALLBACK (setup_point_column), G_CALLBACK (bind_point_column), NULL, title[i], TRUE);
   }
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -1180,7 +1154,7 @@ points_setup(struct LegendDialog *d)
   label = gtk_label_new_with_mnemonic(_("_Points:"));
   set_widget_margin(label, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
   gtk_widget_set_halign(label, GTK_ALIGN_START);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), columnview);
   gtk_box_append(GTK_BOX(vbox), label);
 
   swin = gtk_scrolled_window_new();
@@ -1188,26 +1162,33 @@ points_setup(struct LegendDialog *d)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   set_widget_margin(swin, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
   gtk_widget_set_vexpand(swin, TRUE);
-  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), tree_view);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), columnview);
   gtk_box_append(GTK_BOX(vbox), swin);
 
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  hbox = gtk_grid_new();
 
   btn = gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(btn, "list-add");
-  g_signal_connect(btn, "clicked", G_CALLBACK(insert_column), tree_view);
-  gtk_box_append(GTK_BOX(hbox), btn);
+  g_signal_connect_swapped(btn, "clicked", G_CALLBACK(insert_column), columnview);
+  gtk_grid_attach(GTK_GRID(hbox), btn, 0, 0, 1, 1);
 
   btn = gtk_button_new_with_mnemonic(_("_Delete"));
-  g_signal_connect(btn, "clicked", G_CALLBACK(list_store_remove_selected_cb), tree_view);
-  g_signal_connect(sel, "changed", G_CALLBACK(set_delete_button_sensitivity), btn);
-  gtk_widget_set_sensitive(btn, FALSE);
-  gtk_box_append(GTK_BOX(hbox), btn);
+  g_signal_connect_swapped(btn, "clicked", G_CALLBACK(remove_selected_points), columnview);
+  gtk_grid_attach(GTK_GRID(hbox), btn, 1, 0, 1, 1);
   set_widget_margin(hbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
+
+
+  btn = gtk_button_new_with_mnemonic(_("_Up"));
+  g_signal_connect_swapped(btn, "clicked", G_CALLBACK(point_row_up), columnview);
+  gtk_grid_attach(GTK_GRID(hbox), btn, 0, 1, 1, 1);
+
+  btn = gtk_button_new_with_mnemonic(_("_Down"));
+  g_signal_connect_swapped(btn, "clicked", G_CALLBACK(point_row_down), columnview);
+  gtk_grid_attach(GTK_GRID(hbox), btn, 1, 1, 1, 1);
 
   gtk_box_append(GTK_BOX(vbox), hbox);
 
-  d->points = tree_view;
+  d->points = columnview;
 
   return vbox;
 }

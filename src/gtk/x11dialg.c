@@ -647,48 +647,27 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 int
 SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  GtkTreeModel *list;
-  GtkTreeIter iter;
-  GtkTreeView *tree_view;
-  struct narray *array, *atmp;
-  unsigned int i;
-  int  r, ip;
-  double point[2];
+  GListModel *list;
+  struct narray *array;
+  int  i, n;
 
   if (w == NULL) {
     return 0;
   }
 
-  tree_view = GTK_TREE_VIEW(w);
-  list = gtk_tree_view_get_model(tree_view);
-
-  r = gtk_tree_model_get_iter_first(list, &iter);
-  if (! r) {
-    return -1;
-  }
-
+  list = G_LIST_MODEL (columnview_get_list (w));
   array = arraynew(sizeof(int));
   if (array == NULL) {
     return -1;
   }
 
-  while (r) {
-    gtk_tree_model_get(list, &iter,
-		       0, point,
-		       1, point + 1,
-		       -1);
-
-    for (i = 0; i < sizeof(point) / sizeof(*point); i++) {
-      ip = nround(point[i] * 100);
-      atmp = arrayadd(array, &ip);
-      if (atmp == NULL){
-	goto ErrEnd;
-      }
-
-      array = atmp;
-    }
-
-    r = gtk_tree_model_iter_next(list, &iter);
+  n = g_list_model_get_n_items (list);
+  for (i = 0; i < n; i++) {
+    NgraphPoint *point;
+    point = g_list_model_get_item (list, i);
+    arrayadd(array, &point->x);
+    arrayadd(array, &point->y);
+    g_object_unref (point);
   }
 
   if (get_graph_modified()) {
@@ -724,13 +703,10 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return -1;
 }
 
-
 void
 SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  GtkListStore *list;
-  GtkTreeIter iter;
-  GtkTreeView *tree_view;
+  GListStore *list;
   struct narray *array;
   int i, n, *points;
 
@@ -738,20 +714,14 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return;
   }
 
-  tree_view = GTK_TREE_VIEW(w);
-  list = GTK_LIST_STORE(gtk_tree_view_get_model(tree_view));
-  gtk_list_store_clear(list);
+  list = columnview_get_list (w);
+  g_list_store_remove_all (list);
 
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
   points = arraydata(array);
   for (i = 0; i < n / 2; i++) {
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter,
-		       0, points[i * 2] / 100.0,
-		       1, points[i * 2 + 1] / 100.0,
-		       -1);
-
+    list_store_append_ngraph_point (list, points[i * 2], points[i * 2 + 1]);
   }
 }
 
