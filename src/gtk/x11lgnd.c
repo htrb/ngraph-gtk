@@ -43,6 +43,7 @@
 #include "mathfn.h"
 
 #include "gtk_liststore.h"
+#include "gtk_listview.h"
 #include "gtk_columnview.h"
 #include "gtk_entry_completion.h"
 #include "gtk_subwin.h"
@@ -1944,68 +1945,71 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
 }
 
 static void
-insert_selcted_char(GtkIconView *icon_view, GtkTreePath *path, gpointer user_data)
+insert_selcted_char(GtkGridView *icon_view, guint i, gpointer user_data)
 {
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  char *ptr;
+  GtkSelectionModel *model;
+  GtkStringList *list;
+  const char *str;
   GtkEditable *entry;
   int pos;
 
-  model = gtk_icon_view_get_model(icon_view);
-  if (! gtk_tree_model_get_iter(model, &iter, path)) {
-    return;
-  }
-
-  gtk_tree_model_get(model, &iter, 0, &ptr, -1);
+  model = gtk_grid_view_get_model(icon_view);
+  list = GTK_STRING_LIST (gtk_single_selection_get_model (GTK_SINGLE_SELECTION (model)));
+  str = gtk_string_list_get_string (list, i);
 
   entry = GTK_EDITABLE(user_data);
   pos = gtk_editable_get_position(entry);
-  gtk_editable_insert_text(entry, ptr, -1, &pos);
+  gtk_editable_insert_text(entry, str, -1, &pos);
   gtk_editable_set_position(entry, pos + 1);
   gtk_widget_grab_focus(GTK_WIDGET(user_data));
   gtk_editable_select_region(entry, pos, pos);
+}
 
-  g_free(ptr);
+static void
+setup_character_map (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+
+  label = gtk_label_new (NULL);
+  gtk_list_item_set_child (list_item, label);
 }
 
 static GtkWidget *
 create_character_view(GtkWidget *entry, gchar *data)
 {
   GtkWidget *icon_view, *swin;
-  GtkListStore *model;
-  GtkTreeIter iter;
   gchar *ptr;
-
-  model = gtk_list_store_new(1, G_TYPE_STRING);
-  icon_view = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model));
-  gtk_icon_view_set_text_column(GTK_ICON_VIEW(icon_view), 0);
-  gtk_icon_view_set_spacing(GTK_ICON_VIEW(icon_view), 0);
-  gtk_icon_view_set_row_spacing(GTK_ICON_VIEW(icon_view), 0);
-  gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
-  gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
-  gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
-  g_signal_connect(icon_view, "item-activated", G_CALLBACK(insert_selcted_char), entry);
+  GtkStringList *list;
+  GtkSelectionModel *model;
+  GtkListItemFactory *factory;
+  list = gtk_string_list_new (NULL);
+  model = GTK_SELECTION_MODEL(gtk_single_selection_new (G_LIST_MODEL (list)));
+  factory = gtk_signal_list_item_factory_new();
+  icon_view = gtk_grid_view_new (model, factory);
+  gtk_grid_view_set_max_columns (GTK_GRID_VIEW (icon_view), 100);
+  gtk_grid_view_set_single_click_activate (GTK_GRID_VIEW (icon_view), TRUE);
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_character_map), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_listitem_cb), NULL);
+  g_signal_connect (icon_view, "activate", G_CALLBACK(insert_selcted_char), entry);
 
   for (ptr = data; *ptr; ptr = g_utf8_next_char(ptr)) {
     gunichar ch;
     gchar str[8];
     int l;
 
-    gtk_list_store_append(model, &iter);
     ch = g_utf8_get_char(ptr);
     l = g_unichar_to_utf8(ch, str);
     str[l] = '\0';
-    gtk_list_store_set(model, &iter, 0, str, -1);
+    gtk_string_list_append (list, str);
   }
 
   swin = gtk_scrolled_window_new();
 
-  gtk_icon_view_set_activate_on_single_click(GTK_ICON_VIEW(icon_view),TRUE);
   gtk_widget_set_size_request(GTK_WIDGET(swin), -1, 100);
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), icon_view);
+  gtk_widget_set_vexpand (swin, TRUE);
 
   return swin;
 }
