@@ -594,12 +594,9 @@ set_font(struct LegendDialog *d, int id)
 }
 
 static void
-legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
+legend_dialog_set_sensitive(struct LegendDialog *d)
 {
-  struct LegendDialog *d;
   int path_type;
-
-  d = (struct LegendDialog *) client_data;
 
   path_type = PATH_TYPE_LINE;
   if (d->path_type && d->interpolation) {
@@ -812,7 +809,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   if (d->fill_color)
     set_fill_color(d->fill_color, d->Obj, id);
 
-  legend_dialog_set_sensitive(NULL, d);
+  legend_dialog_set_sensitive(d);
 }
 
 static int
@@ -1454,12 +1451,6 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 }
 
 static void
-legend_combo_selected_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
-{
-  legend_dialog_set_sensitive(w, user_data);
-}
-
-static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct LegendDialog *d;
@@ -1493,13 +1484,13 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
-    g_signal_connect(w, "notify::selected", G_CALLBACK(legend_combo_selected_notify), d);
+    g_signal_connect_swapped(w, "notify::selected", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->path_type = w;
 
     w = combo_box_create();
     d->interpolation = w;
     add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
-    g_signal_connect(w, "notify::selected", G_CALLBACK(legend_combo_selected_notify), d);
+    g_signal_connect_swapped(w, "notify::selected", G_CALLBACK(legend_dialog_set_sensitive), d);
 
     gtk_box_append(GTK_BOX(vbox2), table);
 
@@ -1524,7 +1515,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->stroke = w;
 
     frame = gtk_frame_new(NULL);
@@ -1543,7 +1534,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     fill_color_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->fill = w;
 
     frame = gtk_frame_new(NULL);
@@ -1625,7 +1616,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     stroke_color_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->stroke = w;
 
     frame = gtk_frame_new(NULL);
@@ -1640,7 +1631,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     fill_color_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->fill = w;
 
     frame = gtk_frame_new(NULL);
@@ -1749,7 +1740,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->stroke = w;
 
     frame = gtk_frame_new(NULL);
@@ -1764,7 +1755,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     fill_color_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->fill = w;
 
     frame = gtk_frame_new(NULL);
