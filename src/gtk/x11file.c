@@ -347,6 +347,9 @@ get_id_from_instance_selection (GtkSelectionModel *gsel, int row)
   NgraphInst *ni;
   int id;
   ni = g_list_model_get_item (G_LIST_MODEL (gsel), row);
+  if (ni == NULL) {
+    return -1;
+  }
   id = ni->id;
   g_object_unref (ni);
   return id;
