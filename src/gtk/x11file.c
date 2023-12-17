@@ -341,6 +341,17 @@ move_cursor_to_error_line(GtkWidget *view)
   gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(view), &iter, 0, FALSE, 0, 0);
 }
 
+static int
+get_id_from_instance_selection (GtkSelectionModel *gsel, int row)
+{
+  NgraphInst *ni;
+  int id;
+  ni = g_list_model_get_item (G_LIST_MODEL (gsel), row);
+  id = ni->id;
+  g_object_unref (ni);
+  return id;
+}
+
 static void
 MathTextDialogClose(GtkWidget *w, void *data)
 {
