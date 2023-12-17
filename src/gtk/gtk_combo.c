@@ -111,16 +111,7 @@ void
 combo_box_append_text(GtkWidget *cbox, char *str)
 {
   GtkStringList *list;
-  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
-    GtkListStore  *list;
-    GtkTreeIter iter;
-
-    list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
-
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter, 0, str, -1);
-    return;
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
     list = get_string_list(cbox);
     gtk_string_list_append (list, str);
     gtk_entry_set_icon_activatable(GTK_ENTRY(cbox), GTK_ENTRY_ICON_SECONDARY, TRUE);
@@ -135,9 +126,6 @@ int
 combo_box_get_active(GtkWidget *cbox)
 {
   guint active;
-  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
-    return gtk_combo_box_get_active(GTK_COMBO_BOX(cbox));
-  }
 
   active = gtk_drop_down_get_selected (GTK_DROP_DOWN (cbox));
   if (active == GTK_INVALID_LIST_POSITION) {
@@ -165,9 +153,7 @@ combo_box_get_active_text(GtkWidget *cbox)
 void
 combo_box_set_active(GtkWidget *cbox, int i)
 {
-  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
-    gtk_combo_box_set_active(GTK_COMBO_BOX (cbox), i);
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
+  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
     GtkStringList *list;
     const char *str;
     list = get_string_list(cbox);
@@ -186,13 +172,6 @@ combo_box_clear(GtkWidget *cbox)
   GtkStringList *list;
   int n;
 
-  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
-    GtkListStore *list;
-
-    list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
-    gtk_list_store_clear(list);
-    return;
-  }
   if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
     gtk_entry_set_icon_activatable(GTK_ENTRY (cbox), GTK_ENTRY_ICON_SECONDARY, FALSE);
     list = get_string_list(cbox);
@@ -209,12 +188,6 @@ combo_box_get_num(GtkWidget *cbox)
 {
   GListModel *model;
 
-  if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_COMBO_BOX)) {
-    GtkTreeModel *model;
-
-    model = gtk_combo_box_get_model(GTK_COMBO_BOX(cbox));
-    return gtk_tree_model_iter_n_children(model, NULL);
-  }
   if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
     model = G_LIST_MODEL(get_string_list(cbox));
   } else {
