@@ -392,13 +392,11 @@ MathTextDialogClose(GtkWidget *w, void *data)
   gsel = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->tree));
   n = g_list_model_get_n_items (G_LIST_MODEL (gsel));
   for (i = 0; i < n; i++) {
-    NgraphInst *ni;
     int id;
     if (! gtk_selection_model_is_selected (gsel, i)) {
       continue;
     }
-    ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
-    id = ni->id;
+    id = get_id_from_instance_selection (gsel, i);
 
     sgetobjfield(d->Obj, id, FieldStr[d->Mode], NULL, &obuf, FALSE, FALSE, FALSE);
     if (obuf == NULL || strcmp(obuf, ptr)) {
@@ -513,16 +511,16 @@ update_selected_item(struct MathDialog *d)
   n = g_list_model_get_n_items (G_LIST_MODEL (gsel));
   for (i = 0; i < n; i++) {
     if (gtk_selection_model_is_selected (gsel, i)) {
-      NgraphInst *ni;
-      ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
-      arrayadd(&array, &ni->id);
+      int id;
+      id = get_id_from_instance_selection (gsel, i);
+      arrayadd(&array, &id);
     }
   }
   MathDialogSetupItem(d->widget, d);
   for (i = 0; i < n; i++) {
-    NgraphInst *ni;
-    ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
-    if (array_find_int(&array, ni->id) < 0) {
+    int id;
+    id = get_id_from_instance_selection (gsel, i);
+    if (array_find_int(&array, id) < 0) {
       continue;
     }
     gtk_selection_model_select_item (gsel, i, FALSE);
@@ -556,7 +554,6 @@ MathDialogList(GtkButton *w, gpointer client_data)
   GtkSelectionModel *gsel;
   struct math_dialog_list_data *res_data;
   GtkBitset *selected;
-  NgraphInst *ni;
 
   d = (struct MathDialog *) client_data;
 
@@ -569,8 +566,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
   }
   i = gtk_bitset_get_nth (selected, n - 1);
   gtk_bitset_unref (selected);
-  ni = g_list_model_get_item (G_LIST_MODEL (gsel), i);
-  a = ni->id;
+  a = get_id_from_instance_selection (gsel, i);
 
   if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
     d->Mode = 0;
