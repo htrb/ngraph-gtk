@@ -215,6 +215,19 @@ enum SubWinType {
 
 struct SubWin;
 
+typedef void (* bind_item_func) (struct objlist *obj, int id, const char *field, GtkWidget *w);
+
+typedef struct _list_store {
+  char *title;
+  GType type;
+  gboolean editable, expand;
+  char *name;
+  bind_item_func bind_func;
+  int min, max, inc, page;
+  PangoEllipsizeMode ellipsize;
+  gulong edited_id;
+} n_list_store;
+
 struct obj_list_data
 {
   GtkWidget *popup, **popup_item;
