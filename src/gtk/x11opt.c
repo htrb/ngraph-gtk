@@ -35,7 +35,6 @@
 #include "odraw.h"
 #include "oaxis.h"
 
-#include "gtk_liststore.h"
 #include "gtk_listview.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"

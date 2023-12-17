@@ -35,7 +35,6 @@
 #include "gra.h"
 #include "axis.h"
 
-#include "gtk_liststore.h"
 #include "gtk_columnview.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"

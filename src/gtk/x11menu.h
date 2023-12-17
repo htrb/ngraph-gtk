@@ -25,7 +25,6 @@
 #define GTK_MENU_HEADER
 
 #include "common.h"
-#include "gtk_liststore.h"
 #include "ogra2cairo.h"
 
 #define N2GTK_RULER_METRIC(v) ((v) / 100.0 * 72.0 / 25.4 * 10)

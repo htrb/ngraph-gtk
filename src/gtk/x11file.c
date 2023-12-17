@@ -33,7 +33,6 @@
 #include <ctype.h>
 
 #include "gtk_entry_completion.h"
-#include "gtk_liststore.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"

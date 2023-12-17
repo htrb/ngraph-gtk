@@ -32,7 +32,6 @@
 #include "object.h"
 #include "ioutil.h"
 
-#include "gtk_liststore.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 

@@ -42,7 +42,6 @@
 #include "nstring.h"
 #include "mathfn.h"
 
-#include "gtk_liststore.h"
 #include "gtk_listview.h"
 #include "gtk_columnview.h"
 #include "gtk_entry_completion.h"

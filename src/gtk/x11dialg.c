@@ -40,7 +40,6 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 
-#include "gtk_liststore.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 #include "gtk_columnview.h"

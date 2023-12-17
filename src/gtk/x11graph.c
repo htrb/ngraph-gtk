@@ -50,7 +50,6 @@
 #include "x11info.h"
 #include "x11bitmp.h"
 
-#include "gtk_liststore.h"
 #include "gtk_listview.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
