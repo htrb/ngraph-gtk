@@ -13,7 +13,6 @@
 GtkWidget *
 combo_box_create(void)
 {
-
   GtkStringList *list;
   list = gtk_string_list_new (NULL);
   return gtk_drop_down_new(G_LIST_MODEL(list), NULL);
