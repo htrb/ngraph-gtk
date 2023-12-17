@@ -110,6 +110,7 @@ static int ViewerZooming = FALSE;
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
+static GListStore *EvalListRoot = NULL;
 static struct narray SelList;
 
 #define IDEVMASK        101
@@ -1136,16 +1137,18 @@ init_dnd(struct Viewer *d)
 static void
 EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
 {
-  int i;
-  GListStore *list;
+  GtkSelectionModel *sel;
+  GListModel *tree;
+  int i, n;
 
-  columnview_clear(d->list);
-  list = columnview_get_list (d->list);
-
-  for (i = 0; i < d->Num; i++) {
-    NgraphData *data;
-    data = list_store_append_ngraph_data(list, EvalList[i].id, EvalList[i].line, EvalList[i].x, EvalList[i].y);
-    data->data = i;
+  sel = gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list));
+  tree = gtk_multi_selection_get_model (GTK_MULTI_SELECTION (sel));
+  n = g_list_model_get_n_items (G_LIST_MODEL (tree));
+  for (i = n - 1; i >= 0; i--) {
+    GtkTreeListRow *row;
+    row = gtk_tree_list_model_get_row (GTK_TREE_LIST_MODEL (tree), i);
+    gtk_tree_list_row_set_expanded (row, TRUE);
+    g_object_unref (row);
   }
 }
 
@@ -1161,12 +1164,20 @@ eval_dialog_copy_selected(GtkSelectionModel *sel)
 
   n = g_list_model_get_n_items (G_LIST_MODEL (sel));
   for (i = 0; i < n; i ++) {
-    NgraphData *data;
+    GtkTreeListRow *row;
+    GObject *item;
     if (! gtk_selection_model_is_selected (sel, i)) {
       continue;
     }
-    data = NGRAPH_DATA (g_list_model_get_item (G_LIST_MODEL (sel), i));
-    g_string_append_printf(str, "%d %d %+.15e %+.15e\n", data->id, data->line, data->x, data->y);
+    row = g_list_model_get_item (G_LIST_MODEL (sel), i);
+    item = gtk_tree_list_row_get_item (row);
+    if (G_TYPE_CHECK_INSTANCE_TYPE(item, NGRAPH_TYPE_DATA)) {
+      NgraphData *data;
+      data = NGRAPH_DATA (item);
+      g_string_append_printf(str, "%d %d %+.15e %+.15e\n", data->id, data->line, data->x, data->y);
+    }
+    g_object_unref (item);
+    g_object_unref (row);
   }
 
   copy_text(str->str);
@@ -1189,27 +1200,54 @@ eval_data_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer
 }
 
 static void
-setup_eval_item (GtkListItemFactory *factory, GtkListItem *list_item)
+setup_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
-  GtkWidget *label;
+  int i;
 
-  label = gtk_label_new (NULL);
-  gtk_widget_set_halign (label, GTK_ALIGN_END);
-  gtk_list_item_set_child (list_item, label);
+  i = GPOINTER_TO_INT (user_data);
+  if (i == 0) {
+    GtkWidget *label, *exp;
+    exp = gtk_tree_expander_new ();
+    gtk_tree_expander_set_indent_for_depth (GTK_TREE_EXPANDER (exp), FALSE);
+    gtk_list_item_set_child (list_item, exp);
+
+    label = gtk_label_new (NULL);
+    gtk_widget_set_halign (exp, GTK_ALIGN_END);
+    gtk_widget_set_halign (label, GTK_ALIGN_END);
+    gtk_tree_expander_set_child (GTK_TREE_EXPANDER (exp), label);
+  } else {
+    GtkWidget *label;
+    label = gtk_label_new (NULL);
+    gtk_widget_set_halign (label, GTK_ALIGN_END);
+    gtk_list_item_set_child (list_item, label);
+  }
 }
 
 static void
-bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+bind_eval_inst_item (GtkLabel *label, int column, NgraphInst *inst)
 {
-  GtkLabel *label;
-  NgraphData *data;
-  guint i;
   char buf[64];
 
-  label = GTK_LABEL (gtk_list_item_get_child (list_item));
-  data = NGRAPH_DATA (gtk_list_item_get_item (list_item));
-  i = GPOINTER_TO_INT (user_data);
-  switch (i) {
+  switch (column) {
+  case 0:
+    snprintf(buf, sizeof(buf), "%d", inst->id);
+    gtk_label_set_text(label, buf);
+    break;
+  case 1:
+    gtk_label_set_text(label, inst->name);
+    break;
+  default:
+    gtk_label_set_text(label, NULL);
+    break;
+  }
+}
+
+static void
+bind_eval_data_item (GtkLabel *label, int column, NgraphData *data)
+{
+  char buf[64];
+
+  switch (column) {
   case 0:
     snprintf(buf, sizeof(buf), "%d", data->id);
     break;
@@ -1224,6 +1262,60 @@ bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer us
     break;
   }
   gtk_label_set_text(label, buf);
+}
+
+static void
+bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  GtkLabel *label;
+  GObject *data;
+  guint i;
+  GtkTreeListRow *tree_row;
+
+  tree_row = gtk_list_item_get_item(list_item);
+  i = GPOINTER_TO_INT (user_data);
+  if (i == 0) {
+    GtkWidget *exp;
+    exp = gtk_list_item_get_child (list_item);
+    label = GTK_LABEL (gtk_tree_expander_get_child (GTK_TREE_EXPANDER (exp)));
+    gtk_tree_expander_set_list_row(GTK_TREE_EXPANDER(exp), tree_row);
+  } else {
+    label = GTK_LABEL (gtk_list_item_get_child (list_item));
+  }
+  data = gtk_tree_list_row_get_item (tree_row);
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(data, NGRAPH_TYPE_DATA)) {
+    bind_eval_data_item (label, i, NGRAPH_DATA (data));
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(data, NGRAPH_TYPE_INST)) {
+    bind_eval_inst_item (label, i, NGRAPH_INST (data));
+  }
+  g_object_unref (data);
+}
+
+static GListModel *
+create_child_func (GObject *item, gpointer user_data)
+{
+  struct EvalDialog *d;
+  int i, id;
+  GListStore *list;
+  NgraphInst *inst;
+
+  if (! G_TYPE_CHECK_INSTANCE_TYPE(item, NGRAPH_TYPE_INST)) {
+    return NULL;
+  }
+
+  d = (struct EvalDialog *) user_data;
+  inst = NGRAPH_INST (item);
+  id = inst->id;
+  list = g_list_store_new (NGRAPH_TYPE_DATA);
+  for (i = 0; i < d->Num; i++) {
+    NgraphData *data;
+    if (id == EvalList[i].id) {
+      data = list_store_append_ngraph_data(list, EvalList[i].id, EvalList[i].line, EvalList[i].x, EvalList[i].y);
+      data->data = i;
+    }
+  }
+  return G_LIST_MODEL (list);
 }
 
 static void
@@ -1250,7 +1342,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+    w = columnview_tree_create(G_LIST_MODEL (EvalListRoot), (GtkTreeListModelCreateModelFunc) create_child_func, d);
     n = G_N_ELEMENTS (list);
     for (i = 0; i < n; i++) {
       columnview_create_column (w, list[i], G_CALLBACK (setup_eval_item), G_CALLBACK (bind_eval_item), NULL, GINT_TO_POINTER (i), i == n - 1);
@@ -1298,12 +1390,20 @@ EvalDialogClose(GtkWidget *w, void *data)
     selected = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->list));
     n = g_list_model_get_n_items (G_LIST_MODEL (selected));
     for (i = 0; i < n; i++) {
-      NgraphData *data;
+      GtkTreeListRow *row;
+      GObject *item;
       if (! gtk_selection_model_is_selected (selected, i)) {
 	continue;
       }
-      data = NGRAPH_DATA (g_list_model_get_item (G_LIST_MODEL (selected), i));
-      arrayadd(d->sel, &data->data);
+      row = g_list_model_get_item (G_LIST_MODEL (selected), i);
+      item = gtk_tree_list_row_get_item (row);
+      if (G_TYPE_CHECK_INSTANCE_TYPE(item, NGRAPH_TYPE_DATA)) {
+	NgraphData *data;
+	data = NGRAPH_DATA (item);
+	arrayadd(d->sel, &data->data);
+      }
+      g_object_unref (item);
+      g_object_unref (row);
     }
   }
 }
@@ -2043,6 +2143,12 @@ evaluate_main(gpointer user_data)
   tot = 0;
 
   ignorestdio(&save);
+
+  if (EvalListRoot == NULL) {
+    EvalListRoot = g_list_store_new (NGRAPH_TYPE_INST);
+  }
+
+  g_list_store_remove_all (EvalListRoot);
   for (i = 0; i < data->snum; i++) {
     N_VALUE *dinst;
     dinst = chkobjinst(data->fileobj, i);
@@ -2066,6 +2172,11 @@ evaluate_main(gpointer user_data)
       EvalList[tot - 1].line = nround(line);
       EvalList[tot - 1].x = dx;
       EvalList[tot - 1].y = dy;
+    }
+    if (evalnum > 0) {
+      char buf[64];
+      snprintf (buf, sizeof (buf), "%d", j);
+      list_store_append_ngraph_inst(EvalListRoot, buf, i, data->fileobj);
     }
     if (tot >= data->limit) break;
   }
