@@ -1350,28 +1350,49 @@ format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
   return g_strdup_printf ("%.0f°", value);
 }
 
+static void
+setup_mark_item (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *image;
+
+  image = gtk_image_new ();
+  gtk_image_set_icon_size(GTK_IMAGE(image), Menulocal.icon_size);
+  gtk_list_item_set_child (list_item, image);
+}
+
+static void
+bind_mark_item (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *image;
+  GtkStringObject *strobj;
+  const char *icon;
+
+  image = gtk_list_item_get_child (list_item);
+  strobj = gtk_list_item_get_item (list_item);
+  icon = gtk_string_object_get_string (strobj);
+  gtk_image_set_from_icon_name (GTK_IMAGE (image), icon);
+}
+
 static GtkWidget *
 create_marker_type_combo_box(const char *postfix, const char *tooltip)
 {
   GtkWidget *cbox;
-  GtkListStore *list;
-  GtkTreeIter iter;
+  GtkStringList *list;
+  GtkListItemFactory *factory;
   int j;
-  GtkCellRenderer *rend;
-
-  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
-  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
-  rend = gtk_cell_renderer_pixbuf_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 0);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-size", 1);
+  cbox = combo_box_create();
+  gtk_drop_down_set_show_arrow (GTK_DROP_DOWN (cbox), FALSE);
+  list = GTK_STRING_LIST (gtk_drop_down_get_model (GTK_DROP_DOWN (cbox)));
+  factory = gtk_signal_list_item_factory_new ();
+  gtk_drop_down_set_factory (GTK_DROP_DOWN (cbox), factory);
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_mark_item), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_mark_item), NULL);
   for (j = 0; j < MARKER_TYPE_NUM; j++) {
     char img_file[256];
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", marker_type_char[j], postfix);
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter, 0, img_file, 1, Menulocal.icon_size, -1);
+    gtk_string_list_append (list, img_file);
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
+  combo_box_set_active (cbox, 1);
   gtk_widget_set_name(cbox, "MarkerType");
   gtk_widget_set_tooltip_text(cbox, tooltip);
   return cbox;
@@ -1401,8 +1422,8 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
   d->mark_type_end = w;
 
-  g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-  g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+  g_signal_connect_swapped(d->marker_begin, "notify::selected-item", G_CALLBACK(legend_dialog_set_sensitive), d);
+  g_signal_connect_swapped(d->marker_end,   "notify::selected-item", G_CALLBACK(legend_dialog_set_sensitive), d);
 
   label = gtk_label_new_with_mnemonic(_("_Marker:"));
   gtk_widget_set_halign(label, GTK_ALIGN_START);
