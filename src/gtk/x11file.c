@@ -2296,6 +2296,7 @@ move_tab_set_value(struct FileDialog *d)
       arrayadd(movex, &ndata->x);
       arrayadd(movey, &ndata->y);
     }
+    g_object_unref (ndata);
   }
 
   putobj(d->Obj, "move_data", d->Id, move);
