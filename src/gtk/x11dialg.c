@@ -350,8 +350,11 @@ search_id(GtkWidget *columnview, int id)
 
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
   for (i = 0; i < n; i++) {
+    int target_id;
     ni = g_list_model_get_item (G_LIST_MODEL (list), i);
-    if (ni->id == id) {
+    target_id = ni->id;
+    g_object_unref (ni);
+    if (target_id == id) {
       return i;
     }
   }
@@ -490,12 +493,14 @@ SelectDialogClose(GtkWidget *w, void *data)
       if (gtk_selection_model_is_selected (GTK_SELECTION_MODEL (list), i)) {
 	ni = g_list_model_get_item (list, i);
 	arrayadd(d->sel, &ni->id);
+	g_object_unref (ni);
       }
     }
   } else if (d->ret == IDSALL) {
     for (i = 0; i < n; i++) {
       ni = g_list_model_get_item (G_LIST_MODEL (list), i);
       arrayadd(d->sel, &ni->id);
+      g_object_unref (ni);
     }
     d->ret = IDOK;
   }

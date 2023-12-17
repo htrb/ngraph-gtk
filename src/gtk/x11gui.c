@@ -1127,6 +1127,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
     }
 
     tmp = g_file_get_path(path);
+    g_object_unref (path);
     if (tmp == NULL || strlen(tmp) < 1) {
       g_free(tmp);
       message_beep(TopLevel);
