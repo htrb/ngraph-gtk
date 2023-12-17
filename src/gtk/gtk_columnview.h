@@ -40,6 +40,19 @@ struct _NgraphData {
 
 NgraphData *ngraph_data_new (int id, int line, double x, double y);
 
+/* NgraphPoint Object */
+#define NGRAPH_TYPE_POINT (ngraph_point_get_type())
+G_DECLARE_FINAL_TYPE (NgraphPoint, ngraph_point, NGRAPH, POINT, GObject)
+
+typedef struct _NgraphPoint NgraphPoint;
+
+struct _NgraphPoint {
+  GObject parent_instance;
+  int x, y;
+};
+
+NgraphPoint *ngraph_point_new (int x, int y);
+
 
 /* NgraphArray Object */
 #define NGRAPH_TYPE_ARRAY (ngraph_array_get_type())
@@ -81,6 +94,7 @@ GListStore *columnview_get_list(GtkWidget *columnview);
 NgraphInst *list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
 NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
 NgraphData *list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y);
+NgraphPoint *list_store_append_ngraph_point(GListStore *store, int x, int y);
 NgraphText *list_store_append_ngraph_text(GListStore *store, gchar **test, guint attribute);
 void columnview_select_all(GtkWidget *columnview);
 void columnview_unselect_all(GtkWidget *columnview);

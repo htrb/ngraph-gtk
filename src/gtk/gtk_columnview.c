@@ -94,6 +94,39 @@ ngraph_data_new (int id, int line, double x, double y)
   return nobj;
 }
 
+/* NgraphPoint Object */
+G_DEFINE_TYPE(NgraphPoint, ngraph_point, G_TYPE_OBJECT)
+
+static void
+ngraph_point_finalize (GObject *object)
+{
+  G_OBJECT_CLASS (ngraph_point_parent_class)->finalize (object);
+}
+
+static void
+ngraph_point_class_init (NgraphPointClass * klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = ngraph_point_finalize;
+}
+
+static void
+ngraph_point_init (NgraphPoint * noop)
+{
+}
+
+NgraphPoint*
+ngraph_point_new (int x, int y)
+{
+  NgraphPoint *nobj;
+
+  nobj = g_object_new (NGRAPH_TYPE_POINT, NULL);
+  nobj->x = x;
+  nobj->y = y;
+
+  return nobj;
+}
+
 /* NgraphArray Object */
 G_DEFINE_TYPE(NgraphArray, ngraph_array, G_TYPE_OBJECT)
 
@@ -321,6 +354,16 @@ list_store_append_ngraph_data(GListStore *store, int id, int line, double x, dou
 {
   NgraphData *item;
   item = ngraph_data_new(id, line, x, y);
+  g_list_store_append (store, item);
+  g_object_unref(item);
+  return item;
+}
+
+NgraphPoint *
+list_store_append_ngraph_point(GListStore *store, int x, int y)
+{
+  NgraphPoint *item;
+  item = ngraph_point_new(x, y);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
