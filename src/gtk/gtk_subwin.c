@@ -477,12 +477,8 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
 }
 
 static void
-swin_realized(GtkWidget *widget, gpointer user_data)
+swin_realized(struct obj_list_data *ptr)
 {
-  struct obj_list_data *ptr;
-
-  ptr = (struct obj_list_data *) user_data;
-
   ptr->update(ptr, TRUE, TRUE);
 }
 
@@ -703,7 +699,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), lstor);
 
-  g_signal_connect(swin, "realize", G_CALLBACK(swin_realized), data);
+  g_signal_connect_swapped(swin, "realize", G_CALLBACK(swin_realized), data);
 
   *w = swin;
 
