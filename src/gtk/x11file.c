@@ -4233,6 +4233,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     w = gtk_notebook_new();
+    gtk_notebook_set_tab_pos (GTK_NOTEBOOK (w), GTK_POS_LEFT);
 
     view = create_preview_table(d);
     if (view) {
