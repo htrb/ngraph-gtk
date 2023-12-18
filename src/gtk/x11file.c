@@ -3766,50 +3766,49 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 static void
 FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 {
-  GtkWidget *w, *hbox, *vbox2, *frame, *notebook, *label;
+  GtkWidget *w, *hbox, *vbox2, *table, *frame, *notebook, *label;
+  int row;
 
+  table = gtk_grid_new();
+  gtk_grid_set_column_spacing(GTK_GRID(table), 4);
 
-  vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-
+  row = 0;
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
-    item_setup(hbox, w, _("_X column:"), TRUE);
+    add_widget_to_table(table, w, _("_X column:"), FALSE, row);
     d->xcol = w;
+    row++;
   }
 
   w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
-  item_setup(hbox, w, _("_X axis:"), TRUE);
+  add_widget_to_table(table, w, _("_X axis:"), FALSE, row);
   d->xaxis = w;
-
-  gtk_box_append(GTK_BOX(vbox2), hbox);
-
-
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  row++;
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
-    item_setup(hbox, w, _("_Y column:"), TRUE);
+    add_widget_to_table(table, w, _("_Y column:"), FALSE, row);
     d->ycol = w;
+    row++;
   }
 
   w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
-  item_setup(hbox, w, _("_Y axis:"), TRUE);
+  add_widget_to_table(table, w, _("_Y axis:"), FALSE, row);
   d->yaxis = w;
-
-  gtk_box_append(GTK_BOX(vbox2), hbox);
-
-  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
   hbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
   d->comment_box = hbox;
   frame = gtk_frame_new(NULL);
-  gtk_frame_set_child(GTK_FRAME(frame), vbox2);
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+
+  vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+  gtk_box_append(GTK_BOX(vbox2), frame);
+  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
   gtk_widget_set_hexpand(frame, FALSE);
-  gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
+  gtk_widget_set_vexpand(frame, TRUE);
+  gtk_grid_attach(GTK_GRID(hbox), vbox2, 0, 0, 1, 1);
   gtk_box_append(GTK_BOX(d->vbox), hbox);
 
   notebook = gtk_notebook_new();
