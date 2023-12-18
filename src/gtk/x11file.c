@@ -2379,7 +2379,7 @@ static void
 mask_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   char buf[64];
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NData *item = N_DATA(gtk_list_item_get_item (list_item));
+  const NData *item = N_DATA(gtk_list_item_get_item (list_item));
   snprintf(buf, sizeof(buf), "%d", item->line);
   gtk_label_set_text(GTK_LABEL(label), buf);
 }
