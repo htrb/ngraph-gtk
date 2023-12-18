@@ -340,7 +340,7 @@ search_id(GtkWidget *columnview, int id)
 {
   GListStore *list;
   int n, i;
-  NgraphInst *ni;
+  NInst *ni;
 
   list = columnview_get_list(columnview);
   if (list == NULL) {
@@ -372,7 +372,7 @@ setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointe
 static void
 bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NgraphInst *item = NGRAPH_INST(gtk_list_item_get_item (list_item));
+  NInst *item = N_INST(gtk_list_item_get_item (list_item));
 
   if (GPOINTER_TO_INT (user_data)) {
     gtk_label_set_text(GTK_LABEL(label), item->name);
@@ -385,13 +385,13 @@ bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer
 }
 
 static char *
-sort_column (NgraphInst *item, gpointer user_data)
+sort_column (NInst *item, gpointer user_data)
 {
   return g_strdup (item->name);
 }
 
 static int
-sort_by_id (NgraphInst *item, gpointer user_data)
+sort_by_id (NInst *item, gpointer user_data)
 {
   return item->id;
 }
@@ -407,7 +407,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *swin, *w, *hbox;
     GtkColumnViewColumn *col;
-    d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_MULTI);
+    d->list = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_MULTI);
     col = columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, GINT_TO_POINTER (0), FALSE);
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
@@ -441,7 +441,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     char *s;
     s = d->cb(d->Obj, i);
     if (s) {
-      columnview_append_ngraph_inst(d->list, CHK_STR(s), i, d->Obj);
+      columnview_append_n_inst(d->list, CHK_STR(s), i, d->Obj);
       g_free(s);
     }
   }
@@ -475,7 +475,7 @@ SelectDialogClose(GtkWidget *w, void *data)
 {
   struct SelectDialog *d;
   GListModel *list;
-  NgraphInst *ni;
+  NInst *ni;
   int n, i;
 
   d = (struct SelectDialog *) data;
@@ -541,7 +541,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *swin, *w;
     GtkColumnViewColumn *col;
-    d->list = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_SINGLE);
+    d->list = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_SINGLE);
     col = columnview_create_column(d->list, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (0), FALSE);
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
@@ -565,7 +565,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     char *s;
     s = d->cb(d->Obj, i);
     if (s) {
-      columnview_append_ngraph_inst(d->list, CHK_STR(s), i, d->Obj);
+      columnview_append_n_inst(d->list, CHK_STR(s), i, d->Obj);
       g_free(s);
     }
   }
@@ -591,7 +591,7 @@ static void
 CopyDialogClose(GtkWidget *w, void *data)
 {
   struct CopyDialog *d;
-  NgraphInst *inst;
+  NInst *inst;
 
 
   d = (struct CopyDialog *) data;
@@ -600,7 +600,7 @@ CopyDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  inst = NGRAPH_INST (columnview_get_active_item(d->list));
+  inst = N_INST (columnview_get_active_item(d->list));
   d->sel = inst->id;
 }
 
@@ -662,7 +662,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   n = g_list_model_get_n_items (list);
   for (i = 0; i < n; i++) {
-    NgraphPoint *point;
+    NPoint *point;
     point = g_list_model_get_item (list, i);
     arrayadd(array, &point->x);
     arrayadd(array, &point->y);
@@ -720,7 +720,7 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   n = arraynum(array);
   points = arraydata(array);
   for (i = 0; i < n / 2; i++) {
-    list_store_append_ngraph_point (list, points[i * 2], points[i * 2 + 1]);
+    list_store_append_n_point (list, points[i * 2], points[i * 2 + 1]);
   }
 }
 

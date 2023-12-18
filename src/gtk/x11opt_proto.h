@@ -272,7 +272,7 @@ static void
 CREATE_NAME (Bind, Item) (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
   GtkWidget *label;
-  NgraphText *item;
+  NText *item;
   int i;
 
   label = gtk_list_item_get_child (list_item);
@@ -295,7 +295,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_widget_set_vexpand(swin, TRUE);
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  w = columnview_create(NGRAPH_TYPE_TEXT, N_SELECTION_TYPE_SINGLE);
+  w = columnview_create(N_TYPE_TEXT, N_SELECTION_TYPE_SINGLE);
   for (i = 0; i < n; i++) {
     columnview_create_column(w, _(list[i]), G_CALLBACK(setup_listitem_cb), G_CALLBACK(CREATE_NAME (Bind, Item)), NULL, GINT_TO_POINTER (i), i == n - 1);
   }

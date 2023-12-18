@@ -614,7 +614,7 @@ void
 bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
 {
   GtkWidget *w;
-  NgraphInst *inst;
+  NInst *inst;
   enum ngraph_object_field_type type;
   int ival;
   double dval;
@@ -684,7 +684,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;
-  lstor = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_SINGLE);
+  lstor = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_SINGLE);
   data->text = lstor;
 
   for (i = 0; i < lisu_num; i++) {
@@ -742,7 +742,7 @@ list_sub_window_build(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
   columnview_clear(d->text);
   for (i = 0; i <= num; i++) {
-    columnview_append_ngraph_inst(d->text, chkobjectname (d->obj), i, d->obj);
+    columnview_append_n_inst(d->text, chkobjectname (d->obj), i, d->obj);
   }
 }
 

@@ -21,36 +21,36 @@ selection_model_create(enum N_SELECTION_TYPE selection_type, GListModel *model)
 }
 
 
-/* NgraphInst Object */
-G_DEFINE_TYPE(NgraphInst, ngraph_inst, G_TYPE_OBJECT)
+/* NInst Object */
+G_DEFINE_TYPE(NInst, n_inst, G_TYPE_OBJECT)
 
 static void
-ngraph_inst_finalize (GObject *object)
+n_inst_finalize (GObject *object)
 {
-  NgraphInst *self = NGRAPH_INST (object);
+  NInst *self = N_INST (object);
 
   g_clear_pointer (&self->name, g_free);
-  G_OBJECT_CLASS (ngraph_inst_parent_class)->finalize (object);
+  G_OBJECT_CLASS (n_inst_parent_class)->finalize (object);
 }
 
 static void
-ngraph_inst_class_init (NgraphInstClass * klass)
+n_inst_class_init (NInstClass * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->finalize = ngraph_inst_finalize;
+  object_class->finalize = n_inst_finalize;
 }
 
 static void
-ngraph_inst_init (NgraphInst * noop)
+n_inst_init (NInst * noop)
 {
 }
 
-NgraphInst*
-ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
+NInst*
+n_inst_new (const gchar *name, int id, struct objlist *obj)
 {
-  NgraphInst *nobj;
+  NInst *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_INST, NULL);
+  nobj = g_object_new (N_TYPE_INST, NULL);
   nobj->name = g_strdup (name);
   nobj->obj = obj;
   nobj->id = id;
@@ -58,33 +58,33 @@ ngraph_inst_new (const gchar *name, int id, struct objlist *obj)
   return nobj;
 }
 
-/* NgraphData Object */
-G_DEFINE_TYPE(NgraphData, ngraph_data, G_TYPE_OBJECT)
+/* NData Object */
+G_DEFINE_TYPE(NData, n_data, G_TYPE_OBJECT)
 
 static void
-ngraph_data_finalize (GObject *object)
+n_data_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (ngraph_data_parent_class)->finalize (object);
+  G_OBJECT_CLASS (n_data_parent_class)->finalize (object);
 }
 
 static void
-ngraph_data_class_init (NgraphDataClass * klass)
+n_data_class_init (NDataClass * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->finalize = ngraph_data_finalize;
+  object_class->finalize = n_data_finalize;
 }
 
 static void
-ngraph_data_init (NgraphData * noop)
+n_data_init (NData * noop)
 {
 }
 
-NgraphData*
-ngraph_data_new (int id, int line, double x, double y)
+NData*
+n_data_new (int id, int line, double x, double y)
 {
-  NgraphData *nobj;
+  NData *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_DATA, NULL);
+  nobj = g_object_new (N_TYPE_DATA, NULL);
   nobj->id = id;
   nobj->line = line;
   nobj->x = x;
@@ -94,105 +94,105 @@ ngraph_data_new (int id, int line, double x, double y)
   return nobj;
 }
 
-/* NgraphPoint Object */
-G_DEFINE_TYPE(NgraphPoint, ngraph_point, G_TYPE_OBJECT)
+/* NPoint Object */
+G_DEFINE_TYPE(NPoint, n_point, G_TYPE_OBJECT)
 
 static void
-ngraph_point_finalize (GObject *object)
+n_point_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (ngraph_point_parent_class)->finalize (object);
+  G_OBJECT_CLASS (n_point_parent_class)->finalize (object);
 }
 
 static void
-ngraph_point_class_init (NgraphPointClass * klass)
+n_point_class_init (NPointClass * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->finalize = ngraph_point_finalize;
+  object_class->finalize = n_point_finalize;
 }
 
 static void
-ngraph_point_init (NgraphPoint * noop)
+n_point_init (NPoint * noop)
 {
 }
 
-NgraphPoint*
-ngraph_point_new (int x, int y)
+NPoint*
+n_point_new (int x, int y)
 {
-  NgraphPoint *nobj;
+  NPoint *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_POINT, NULL);
+  nobj = g_object_new (N_TYPE_POINT, NULL);
   nobj->x = x;
   nobj->y = y;
 
   return nobj;
 }
 
-/* NgraphArray Object */
-G_DEFINE_TYPE(NgraphArray, ngraph_array, G_TYPE_OBJECT)
+/* NArray Object */
+G_DEFINE_TYPE(NArray, n_array, G_TYPE_OBJECT)
 
 static void
-ngraph_array_finalize (GObject *object)
+n_array_finalize (GObject *object)
 {
-  NgraphArray *self = NGRAPH_ARRAY (object);
+  NArray *self = N_ARRAY (object);
 
   g_clear_pointer (&self->array, arrayfree2);
-  G_OBJECT_CLASS (ngraph_array_parent_class)->finalize (object);
+  G_OBJECT_CLASS (n_array_parent_class)->finalize (object);
 }
 
 static void
-ngraph_array_class_init (NgraphArrayClass * klass)
+n_array_class_init (NArrayClass * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->finalize = ngraph_array_finalize;
+  object_class->finalize = n_array_finalize;
 }
 
 static void
-ngraph_array_init (NgraphArray * noop)
+n_array_init (NArray * noop)
 {
 }
 
-NgraphArray*
-ngraph_array_new (int line)
+NArray*
+n_array_new (int line)
 {
-  NgraphArray *nobj;
+  NArray *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_ARRAY, NULL);
+  nobj = g_object_new (N_TYPE_ARRAY, NULL);
   nobj->array = arraynew(sizeof(char *));
   nobj->line = line;
 
   return nobj;
 }
 
-/* NgraphText Object */
-G_DEFINE_TYPE(NgraphText, ngraph_text, G_TYPE_OBJECT)
+/* NText Object */
+G_DEFINE_TYPE(NText, n_text, G_TYPE_OBJECT)
 
 static void
-ngraph_text_finalize (GObject *object)
+n_text_finalize (GObject *object)
 {
-  NgraphText *self = NGRAPH_TEXT (object);
+  NText *self = N_TEXT (object);
 
   g_clear_pointer (&self->text, g_strfreev);
-  G_OBJECT_CLASS (ngraph_text_parent_class)->finalize (object);
+  G_OBJECT_CLASS (n_text_parent_class)->finalize (object);
 }
 
 static void
-ngraph_text_class_init (NgraphTextClass * klass)
+n_text_class_init (NTextClass * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->finalize = ngraph_text_finalize;
+  object_class->finalize = n_text_finalize;
 }
 
 static void
-ngraph_text_init (NgraphText * noop)
+n_text_init (NText * noop)
 {
 }
 
-NgraphText*
-ngraph_text_new (gchar **text, guint attribute)
+NText*
+n_text_new (gchar **text, guint attribute)
 {
-  NgraphText *nobj;
+  NText *nobj;
 
-  nobj = g_object_new (NGRAPH_TYPE_TEXT, NULL);
+  nobj = g_object_new (N_TYPE_TEXT, NULL);
   nobj->text = g_strdupv (text);
   nobj->size = (text) ? g_strv_length (text) : 0;
   nobj->attribute = attribute;
@@ -328,52 +328,52 @@ columnview_get_active_item(GtkWidget *columnview)
   return gtk_single_selection_get_selected_item (GTK_SINGLE_SELECTION (selection));
 }
 
-NgraphInst *
-list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj)
+NInst *
+list_store_append_n_inst(GListStore *store, const gchar *name, int id, struct objlist *obj)
 {
-  NgraphInst *item;
-  item = ngraph_inst_new(name, id, obj);
+  NInst *item;
+  item = n_inst_new(name, id, obj);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
 }
 
-NgraphInst *
-columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj)
+NInst *
+columnview_append_n_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj)
 {
   GListStore *store;
   store = columnview_get_list(columnview);
   if (store) {
-    return list_store_append_ngraph_inst(store, name, id, obj);
+    return list_store_append_n_inst(store, name, id, obj);
   }
   return NULL;
 }
 
-NgraphData *
-list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y)
+NData *
+list_store_append_n_data(GListStore *store, int id, int line, double x, double y)
 {
-  NgraphData *item;
-  item = ngraph_data_new(id, line, x, y);
+  NData *item;
+  item = n_data_new(id, line, x, y);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
 }
 
-NgraphPoint *
-list_store_append_ngraph_point(GListStore *store, int x, int y)
+NPoint *
+list_store_append_n_point(GListStore *store, int x, int y)
 {
-  NgraphPoint *item;
-  item = ngraph_point_new(x, y);
+  NPoint *item;
+  item = n_point_new(x, y);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;
 }
 
-NgraphText *
-list_store_append_ngraph_text(GListStore *store, gchar **text, guint attribute)
+NText *
+list_store_append_n_text(GListStore *store, gchar **text, guint attribute)
 {
-  NgraphText *item;
-  item = ngraph_text_new(text, attribute);
+  NText *item;
+  item = n_text_new(text, attribute);
   g_list_store_append (store, item);
   g_object_unref(item);
   return item;

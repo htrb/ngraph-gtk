@@ -343,7 +343,7 @@ move_cursor_to_error_line(GtkWidget *view)
 static int
 get_id_from_instance_selection (GtkSelectionModel *gsel, int row)
 {
-  NgraphInst *ni;
+  NInst *ni;
   int id;
   ni = g_list_model_get_item (G_LIST_MODEL (gsel), row);
   if (ni == NULL) {
@@ -470,7 +470,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     math = NULL;
     getobj(d->Obj, field, i, 0, NULL, &math);
-    columnview_append_ngraph_inst(d->list, math, i, d->Obj);
+    columnview_append_n_inst(d->list, math, i, d->Obj);
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM) {
@@ -642,7 +642,7 @@ setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointe
 static void
 bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NgraphInst *item = NGRAPH_INST(gtk_list_item_get_item (list_item));
+  NInst *item = N_INST(gtk_list_item_get_item (list_item));
 
   if (GPOINTER_TO_INT (user_data)) {
     const char *str;
@@ -663,13 +663,13 @@ bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer
 }
 
 static char *
-sort_column (NgraphInst *item, gpointer user_data)
+sort_column (NInst *item, gpointer user_data)
 {
   return g_strdup (item->name);
 }
 
 static int
-sort_by_id (NgraphInst *item, gpointer user_data)
+sort_by_id (NInst *item, gpointer user_data)
 {
   return item->id;
 }
@@ -698,7 +698,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     gtk_box_append(GTK_BOX(vbox), hbox);
 
-    w = columnview_create(NGRAPH_TYPE_INST, N_SELECTION_TYPE_MULTI);
+    w = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_MULTI);
     col = columnview_create_column(w, _("id"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, GINT_TO_POINTER (0), FALSE);
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(w, _("math"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
@@ -2034,7 +2034,7 @@ move_tab_setup_item(struct FileDialog *d, int id)
     x = arraynget_double(movex, j);
     y = arraynget_double(movey, j);
 
-    list_store_append_ngraph_data(list, d->Id, line, x, y);
+    list_store_append_n_data(list, d->Id, line, x, y);
   }
 }
 
@@ -2067,7 +2067,7 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
     return;
 
   list = columnview_get_list (d->move.list);
-  list_store_append_ngraph_data(list, d->Id, a, x, y);
+  list_store_append_n_data(list, d->Id, a, x, y);
 
   editable_set_init_text(d->move.x, "");
   editable_set_init_text(d->move.y, "");
@@ -2121,7 +2121,7 @@ move_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gp
 static void
 move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NgraphData *item = NGRAPH_DATA(gtk_list_item_get_item (list_item));
+  NData *item = N_DATA(gtk_list_item_get_item (list_item));
   char buf[64];
 
   switch (GPOINTER_TO_INT (user_data)) {
@@ -2139,13 +2139,13 @@ move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpo
 }
 
 static int
-sort_by_line (NgraphData *item, gpointer user_data)
+sort_by_line (NData *item, gpointer user_data)
 {
   return item->line;
 }
 
 static double
-sort_by_data (NgraphData *item, gpointer user_data)
+sort_by_data (NData *item, gpointer user_data)
 {
   int col = GPOINTER_TO_INT (user_data);
   switch (col) {
@@ -2172,7 +2172,7 @@ move_tab_create(struct FileDialog *d)
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-  w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+  w = columnview_create(N_TYPE_DATA, N_SELECTION_TYPE_MULTI);
   col = columnview_create_column(w, _("Line No."), G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('L'), FALSE);
   columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_line), NULL);
   col = columnview_create_column(w, "X", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('X'), FALSE);
@@ -2267,7 +2267,7 @@ move_tab_set_value(struct FileDialog *d)
   n = g_list_model_get_n_items(G_LIST_MODEL (list));
   for (i = 0; i < n; i++) {
     unsigned int movenum, j;
-    NgraphData *ndata;
+    NData *ndata;
     ndata = g_list_model_get_item (G_LIST_MODEL (list), i);
     a = ndata->line;
 
@@ -2323,7 +2323,7 @@ mask_tab_setup_item(struct FileDialog *d, int id)
     for (j = 0; j < masknum; j++) {
       int line;
       line = arraynget_int(mask, j);
-      list_store_append_ngraph_data(list, d->Id, line, 0, 0);
+      list_store_append_n_data(list, d->Id, line, 0, 0);
     }
   }
 }
@@ -2339,7 +2339,7 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
 
   list = columnview_get_list(d->mask.list);
   a = spin_entry_get_val(d->mask.line);
-  list_store_append_ngraph_data(list, d->Id, a, 0, 0);
+  list_store_append_n_data(list, d->Id, a, 0, 0);
   d->mask.changed = TRUE;
 }
 
@@ -2384,7 +2384,7 @@ static void
 mask_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   char buf[64];
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NgraphData *item = NGRAPH_DATA(gtk_list_item_get_item (list_item));
+  NData *item = N_DATA(gtk_list_item_get_item (list_item));
   snprintf(buf, sizeof(buf), "%d", item->line);
   gtk_label_set_text(GTK_LABEL(label), buf);
 }
@@ -2409,7 +2409,7 @@ mask_tab_create(struct FileDialog *d)
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  w = columnview_create(NGRAPH_TYPE_DATA, N_SELECTION_TYPE_MULTI);
+  w = columnview_create(N_TYPE_DATA, N_SELECTION_TYPE_MULTI);
   col = columnview_create_column(w, _("Line No."), G_CALLBACK(mask_setup_column), G_CALLBACK(mask_bind_column), NULL, NULL, TRUE);
   columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_line), NULL);
 
@@ -4030,7 +4030,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
     } else {
       text[0] = g_strdup ("");
     }
-    list_store_append_ngraph_text(model, text, v);
+    list_store_append_n_text(model, text, v);
     for (j = 0; j < m + 1; j++) {
       g_free (text[j]);
     }
@@ -4124,7 +4124,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     } else {
       text[0] = "";
     }
-    list_store_append_ngraph_text (model, text, v);
+    list_store_append_n_text (model, text, v);
   }
 
  exit:
@@ -4148,12 +4148,12 @@ static void
 bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
   GtkLabel *label;
-  NgraphText *text;
+  NText *text;
   const char *str;
   guint i;
 
   label = GTK_LABEL (gtk_list_item_get_child (list_item));
-  text = NGRAPH_TEXT (gtk_list_item_get_item (list_item));
+  text = N_TEXT (gtk_list_item_get_item (list_item));
   i = GPOINTER_TO_INT (user_data);
   if (i < text->size) {
     str = text->text[i];
@@ -4170,7 +4170,7 @@ create_preview_table(struct FileDialog *d)
 {
   GtkWidget *view;
   int i;
-  view = columnview_create(NGRAPH_TYPE_TEXT, N_SELECTION_TYPE_NONE);
+  view = columnview_create(N_TYPE_TEXT, N_SELECTION_TYPE_NONE);
   set_widget_font(view, Menulocal.file_preview_font);
   for (i = 0; i < MAX_COLS; i++) {
     char buf[32];

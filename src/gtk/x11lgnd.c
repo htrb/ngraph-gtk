@@ -1031,14 +1031,14 @@ insert_column(GtkWidget *columnview)
   n = g_list_model_get_n_items (G_LIST_MODEL (sel));
   for (i = 0; i < n; i++) {
     if (gtk_selection_model_is_selected (sel, i)) {
-      NgraphPoint *item;
-      item = ngraph_point_new (0, 0);
+      NPoint *item;
+      item = n_point_new (0, 0);
       g_list_store_insert (list, i, item);
       g_object_unref (item);
       return;
     }
   }
-  list_store_append_ngraph_point(list, 0, 0);
+  list_store_append_n_point(list, 0, 0);
 }
 
 static void
@@ -1046,7 +1046,7 @@ point_changed (GtkEditable *label, gpointer user_data)
 {
   GtkListItem *item;
   const char *col, *text;
-  NgraphPoint *point;
+  NPoint *point;
   int val;
   item = GTK_LIST_ITEM (user_data);
   text = gtk_editable_get_text (label);
@@ -1075,7 +1075,7 @@ setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, g
 static void
 bind_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NgraphPoint *item = NGRAPH_POINT(gtk_list_item_get_item (list_item));
+  NPoint *item = N_POINT(gtk_list_item_get_item (list_item));
   char text[20];
   const char *col;
 
@@ -1101,7 +1101,7 @@ static void
 point_row_up (GtkWidget *columnview)
 {
   GListStore *list;
-  NgraphPoint *item;
+  NPoint *item;
   int i;
   list = columnview_get_list (columnview);
   i = columnview_get_active (columnview);
@@ -1119,7 +1119,7 @@ static void
 point_row_down (GtkWidget *columnview)
 {
   GListStore *list;
-  NgraphPoint *item;
+  NPoint *item;
   int i, n;
   list = columnview_get_list (columnview);
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
@@ -1141,7 +1141,7 @@ points_setup(struct LegendDialog *d)
   char *title[] = {"x", "y"};
   int i;
 
-  columnview = columnview_create (NGRAPH_TYPE_POINT, N_SELECTION_TYPE_SINGLE);
+  columnview = columnview_create (N_TYPE_POINT, N_SELECTION_TYPE_SINGLE);
   for (i = 0; i < POINTS_DIMENSION; i++) {
     columnview_create_column(columnview, title[i], G_CALLBACK (setup_point_column), G_CALLBACK (bind_point_column), NULL, title[i], TRUE);
   }

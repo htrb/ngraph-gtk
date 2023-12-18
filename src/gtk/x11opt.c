@@ -417,7 +417,7 @@ PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
     text[1] = fcur->script;
     text[2] = fcur->description;
     text[3] = NULL;
-    list_store_append_ngraph_text(model, text, 0);
+    list_store_append_n_text(model, text, 0);
     fcur = fcur->next;
   }
 }
@@ -890,7 +890,7 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
     text[1] = fcur->fontname;
     text[2] = fcur->alternative;
     text[3] = NULL;
-    list_store_append_ngraph_text(model, text, 0);
+    list_store_append_n_text(model, text, 0);
     fcur = fcur->next;
   }
 }
@@ -910,12 +910,12 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
   struct fontmap *fcur;
-  NgraphText *text;
+  NText *text;
   const char *fontalias;
 
   d = (struct PrefFontDialog *) client_data;
 
-  text = NGRAPH_TEXT (columnview_get_active_item(d->list));
+  text = N_TEXT (columnview_get_active_item(d->list));
 
   if (text == NULL)
     return;
@@ -934,12 +934,12 @@ static void
 PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
-  NgraphText *text;
+  NText *text;
   const char *fontalias;
 
   d = (struct PrefFontDialog *) client_data;
 
-  text = NGRAPH_TEXT (columnview_get_active_item(d->list));
+  text = N_TEXT (columnview_get_active_item(d->list));
   if (text == NULL)
     return;
 

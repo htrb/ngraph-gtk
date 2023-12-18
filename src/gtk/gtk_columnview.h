@@ -10,77 +10,77 @@ enum N_SELECTION_TYPE {
   N_SELECTION_TYPE_NONE,
 };
 
-/* NgraphInst Object */
-#define NGRAPH_TYPE_INST (ngraph_inst_get_type())
-G_DECLARE_FINAL_TYPE (NgraphInst, ngraph_inst, NGRAPH, INST, GObject)
+/* NInst Object */
+#define N_TYPE_INST (n_inst_get_type())
+G_DECLARE_FINAL_TYPE (NInst, n_inst, N, INST, GObject)
 
-typedef struct _NgraphInst NgraphInst;
+typedef struct _NInst NInst;
 
-struct _NgraphInst {
+struct _NInst {
   GObject parent_instance;
   gchar *name;
   struct objlist *obj;
   int id;
 };
 
-NgraphInst *ngraph_inst_new (const gchar *name, int id, struct objlist *obj);
+NInst *n_inst_new (const gchar *name, int id, struct objlist *obj);
 
 
-/* NgraphData Object */
-#define NGRAPH_TYPE_DATA (ngraph_data_get_type())
-G_DECLARE_FINAL_TYPE (NgraphData, ngraph_data, NGRAPH, DATA, GObject)
+/* NData Object */
+#define N_TYPE_DATA (n_data_get_type())
+G_DECLARE_FINAL_TYPE (NData, n_data, N, DATA, GObject)
 
-typedef struct _NgraphData NgraphData;
+typedef struct _NData NData;
 
-struct _NgraphData {
+struct _NData {
   GObject parent_instance;
   int id, line, data;
   double x, y;
 };
 
-NgraphData *ngraph_data_new (int id, int line, double x, double y);
+NData *n_data_new (int id, int line, double x, double y);
 
-/* NgraphPoint Object */
-#define NGRAPH_TYPE_POINT (ngraph_point_get_type())
-G_DECLARE_FINAL_TYPE (NgraphPoint, ngraph_point, NGRAPH, POINT, GObject)
+/* NPoint Object */
+#define N_TYPE_POINT (n_point_get_type())
+G_DECLARE_FINAL_TYPE (NPoint, n_point, N, POINT, GObject)
 
-typedef struct _NgraphPoint NgraphPoint;
+typedef struct _NPoint NPoint;
 
-struct _NgraphPoint {
+struct _NPoint {
   GObject parent_instance;
   int x, y;
 };
 
-NgraphPoint *ngraph_point_new (int x, int y);
+NPoint *n_point_new (int x, int y);
 
 
-/* NgraphArray Object */
-#define NGRAPH_TYPE_ARRAY (ngraph_array_get_type())
-G_DECLARE_FINAL_TYPE (NgraphArray, ngraph_array, NGRAPH, ARRAY, GObject)
+/* NArray Object */
+#define N_TYPE_ARRAY (n_array_get_type())
+G_DECLARE_FINAL_TYPE (NArray, n_array, N, ARRAY, GObject)
 
-typedef struct _NgraphArray NgraphArray;
+typedef struct _NArray NArray;
 
-struct _NgraphArray {
+struct _NArray {
   GObject parent_instance;
   int line;
   struct narray *array;
 };
 
-NgraphArray *ngraph_array_new (int line);
+NArray *n_array_new (int line);
 
-/* NgraphText Object */
-#define NGRAPH_TYPE_TEXT (ngraph_text_get_type())
-G_DECLARE_FINAL_TYPE (NgraphText, ngraph_text, NGRAPH, TEXT, GObject)
+/* NText Object */
+#define N_TYPE_TEXT (n_text_get_type())
+G_DECLARE_FINAL_TYPE (NText, n_text, N, TEXT, GObject)
 
-typedef struct _NgraphText NgraphText;
+typedef struct _NText NText;
 
-struct _NgraphText {
+struct _NText {
   GObject parent_instance;
   gchar **text;
   guint size, attribute;
 };
 
-NgraphText *ngraph_text_new (gchar **text, guint attribute);
+NText *n_text_new (gchar **text, guint attribute);
 
 
 GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);
@@ -91,11 +91,11 @@ void columnview_set_active(GtkWidget *columnview, int active, gboolean scroll);
 int columnview_get_active(GtkWidget *columnview);
 GObject *columnview_get_active_item(GtkWidget *columnview);
 GListStore *columnview_get_list(GtkWidget *columnview);
-NgraphInst *list_store_append_ngraph_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
-NgraphInst *columnview_append_ngraph_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
-NgraphData *list_store_append_ngraph_data(GListStore *store, int id, int line, double x, double y);
-NgraphPoint *list_store_append_ngraph_point(GListStore *store, int x, int y);
-NgraphText *list_store_append_ngraph_text(GListStore *store, gchar **test, guint attribute);
+NInst *list_store_append_n_inst(GListStore *store, const gchar *name, int id, struct objlist *obj);
+NInst *columnview_append_n_inst(GtkWidget *columnview, const gchar *name, int id, struct objlist *obj);
+NData *list_store_append_n_data(GListStore *store, int id, int line, double x, double y);
+NPoint *list_store_append_n_point(GListStore *store, int x, int y);
+NText *list_store_append_n_text(GListStore *store, gchar **test, guint attribute);
 void columnview_select_all(GtkWidget *columnview);
 void columnview_unselect_all(GtkWidget *columnview);
 void columnview_select(GtkWidget *columnview, int i);
