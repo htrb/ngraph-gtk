@@ -1309,8 +1309,8 @@ create_child_func (GObject *item, gpointer user_data)
   id = inst->id;
   list = g_list_store_new (N_TYPE_DATA);
   for (i = 0; i < d->Num; i++) {
-    NData *data;
     if (id == EvalList[i].id) {
+      NData *data;
       data = list_store_append_n_data(list, EvalList[i].id, EvalList[i].line, EvalList[i].x, EvalList[i].y);
       data->data = i;
     }
