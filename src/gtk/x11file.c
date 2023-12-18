@@ -2137,7 +2137,7 @@ move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpo
 }
 
 static int
-sort_by_line (NData *item, gpointer user_data)
+sort_by_line (const NData *item, gpointer user_data)
 {
   return item->line;
 }
