@@ -2119,7 +2119,7 @@ move_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gp
 static void
 move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
-  NData *item = N_DATA(gtk_list_item_get_item (list_item));
+  const NData *item = N_DATA(gtk_list_item_get_item (list_item));
   char buf[64];
 
   switch (GPOINTER_TO_INT (user_data)) {
