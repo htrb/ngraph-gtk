@@ -2149,12 +2149,10 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
   w = gtk_check_button_new_with_mnemonic(_("_Bold"));
-  set_button_icon(w, "format-text-bold");
   d->font_bold = w;
   gtk_box_append(GTK_BOX(btn_box), w);
 
   w = gtk_check_button_new_with_mnemonic(_("_Italic"));
-  set_button_icon(w, "format-text-italic");
   d->font_italic = w;
   gtk_box_append(GTK_BOX(btn_box), w);
 

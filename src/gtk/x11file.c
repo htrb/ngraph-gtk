@@ -731,7 +731,6 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("Select _All"));
-    set_button_icon(w, "edit-select-all");
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->list);
     gtk_box_append(GTK_BOX(hbox), w);
 
@@ -1934,7 +1933,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Save"));
-    set_button_icon(w, "document-save");
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogSave), d);
     gtk_box_append(GTK_BOX(hbox), w);
 
@@ -2203,18 +2201,15 @@ move_tab_create(struct FileDialog *d)
   d->move.y = w;
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
-  set_button_icon(w, "list-add");
   add_widget_to_table(table, w, "", FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
-  set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
   set_sensitivity_by_selected(d->move.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
-  set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->move.list);
 
@@ -2418,18 +2413,15 @@ mask_tab_create(struct FileDialog *d)
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
-  set_button_icon(w, "list-add");
   add_widget_to_table(table, w, "", FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
-  set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
   set_sensitivity_by_selected(d->mask.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
-  set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->mask.list);
 

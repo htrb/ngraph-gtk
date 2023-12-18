@@ -2386,7 +2386,6 @@ create_progress_dialog(const char *title)
   progress_dialog_add_text_view(vbox);
 
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
-  set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
   ProgressButton = btn;
 #if USE_HEADER_BAR

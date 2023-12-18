@@ -728,26 +728,22 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
-    set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Remove"));
-    set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Down"));
-    set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);
     d->down_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Up"));
-    set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);

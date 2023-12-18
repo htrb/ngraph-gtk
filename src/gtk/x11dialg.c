@@ -427,7 +427,6 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = gtk_button_new_with_mnemonic(_("Select _All"));
-    set_button_icon(w, "edit-select-all");
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(columnview_select_all), d->list);
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(d->vbox), hbox);

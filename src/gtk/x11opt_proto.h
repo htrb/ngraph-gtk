@@ -321,33 +321,28 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
-  set_button_icon(w, "list-add");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogAdd)), d);
   gtk_box_append(GTK_BOX(vbox), w);
 
   w = gtk_button_new_with_mnemonic(_("_Preferences"));
-  set_button_icon(w, "preferences-system");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUpdate)), d);
   gtk_box_append(GTK_BOX(vbox), w);
   gtk_widget_set_sensitive(w, FALSE);
   d->update_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
-  set_button_icon(w, "list-remove");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogRemove)), d);
   gtk_box_append(GTK_BOX(vbox), w);
   gtk_widget_set_sensitive(w, FALSE);
   d->del_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Down"));
-  set_button_icon(w, "go-down");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogDown)), d);
   gtk_box_append(GTK_BOX(vbox), w);
   gtk_widget_set_sensitive(w, FALSE);
   d->down_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Up"));
-  set_button_icon(w, "go-up");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUp)), d);
   gtk_box_append(GTK_BOX(vbox), w);
   gtk_widget_set_sensitive(w, FALSE);

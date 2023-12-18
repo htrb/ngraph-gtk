@@ -63,8 +63,6 @@ GtkWidget *create_direction_entry(GtkWidget *table, const char *title, int row);
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
 
-void set_button_icon(GtkWidget *w, const char *icon_name);
-
 void spin_entry_set_val(GtkWidget *entry, int val);
 int spin_entry_get_val(GtkWidget *entry);
 void spin_entry_set_range(GtkWidget *w, int min, int max);

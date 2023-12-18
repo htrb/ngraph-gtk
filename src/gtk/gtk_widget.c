@@ -110,11 +110,6 @@ scrollbar_set_increment(GtkWidget *w, double step, double page)
 }
 
 void
-set_button_icon(GtkWidget *w, const char *icon_name)
-{
-}
-
-void
 set_widget_margin(GtkWidget *w, int margin_pos)
 {
   if (margin_pos & WIDGET_MARGIN_LEFT) {

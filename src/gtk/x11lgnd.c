@@ -1165,7 +1165,6 @@ points_setup(struct LegendDialog *d)
   hbox = gtk_grid_new();
 
   btn = gtk_button_new_with_mnemonic(_("_Add"));
-  set_button_icon(btn, "list-add");
   g_signal_connect_swapped(btn, "clicked", G_CALLBACK(insert_column), columnview);
   gtk_grid_attach(GTK_GRID(hbox), btn, 0, 0, 1, 1);
 
@@ -1928,12 +1927,10 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
 
     btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     w = gtk_check_button_new_with_mnemonic(_("_Bold"));
-    set_button_icon(w, "format-text-bold");
     d->font_bold = w;
     gtk_box_append(GTK_BOX(btn_box), w);
 
     w = gtk_check_button_new_with_mnemonic(_("_Italic"));
-    set_button_icon(w, "format-text-italic");
     d->font_italic = w;
     gtk_box_append(GTK_BOX(btn_box), w);
 
