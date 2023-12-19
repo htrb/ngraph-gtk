@@ -577,15 +577,49 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   gtk_event_controller_set_propagation_phase (ev, GTK_PHASE_CAPTURE);
 }
 
+#define INSTANCE_ID_KEY "n_inst_id"
+
+static void
+item_toggled (GObject *self, n_list_store *item)
+{
+  struct obj_list_data *d;
+  struct objlist *obj;
+  int state, id;
+  const char *field;
+
+  if (item->block_signal) {
+    return;
+  }
+
+  d = item->data;
+  obj = d->obj;
+  field = item->name;
+  id = GPOINTER_TO_INT (g_object_get_data (self, INSTANCE_ID_KEY));
+  if (id < 0) {
+    return;
+  }
+  if (getobj (obj, field, id, 0, NULL, &state) < 0) {
+    return;
+  }
+  state = ! state;
+  menu_save_undo_single (UNDO_TYPE_EDIT, obj->name);
+  putobj (obj, field, id, &state);
+  d->select = id;
+  d->update (d, FALSE, TRUE);
+  set_graph_modified ();
+}
+
 static void
 setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
 {
   GtkWidget *w;
 
+  item->block_signal = TRUE;
   switch (item->type) {
   case G_TYPE_BOOLEAN:
     w = gtk_check_button_new ();
     gtk_list_item_set_child (list_item, w);
+    g_signal_connect (w, "toggled", G_CALLBACK (item_toggled), item);
     break;
   case G_TYPE_OBJECT:
     w = gtk_picture_new ();
