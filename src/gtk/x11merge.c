@@ -46,7 +46,7 @@
 #include "x11commn.h"
 #include "x11view.h"
 
-static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_file (struct objlist *obj, const char *field, int id, GtkWidget *w);
 
 static n_list_store Mlist[] = {
   {" ",          G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -473,11 +473,11 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
 }
 
 static void
-bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_file (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   char *file, *bfile;
 
-  getobj(obj, "file", id, 0, NULL, &file);
+  getobj(obj, field, id, 0, NULL, &file);
   gtk_widget_set_tooltip_text (w, file);
   bfile = getbasename(file);
   if (bfile) {

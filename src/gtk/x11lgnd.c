@@ -65,13 +65,13 @@
 
 #define ARROW_VIEW_SIZE 160
 
-static void bind_path_type (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_path_pos (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_color (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_rect_x (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_rect_y (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_mark (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_text (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_path_type (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_path_pos (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_color (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_rect_x (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_rect_y (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_mark (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_text (struct objlist *obj, const char *field, int id, GtkWidget *w);
 
 static n_list_store Plist[] = {
   {" ",                G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -2486,7 +2486,7 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
 }
 
 static void
-bind_color (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_color (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   GdkPixbuf *pixbuf;
   pixbuf = draw_color_pixbuf(obj, id, OBJ_FIELD_COLOR_TYPE_STROKE, 40);
@@ -2497,7 +2497,7 @@ bind_color (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_path_type (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_path_type (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   char **enumlist;
   int type, interpolation;
@@ -2515,7 +2515,7 @@ bind_path_type (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_path_pos (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_path_pos (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   int n, x0, y0;
   char str[256];
@@ -2538,7 +2538,7 @@ bind_path_pos (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_rect_x (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_rect_x (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   int x1, x2;
   char str[256];
@@ -2554,7 +2554,7 @@ bind_rect_x (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_rect_y (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_rect_y (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   int y1, y2;
   char str[256];
@@ -2631,7 +2631,7 @@ draw_mark_pixbuf(struct objlist *obj, int i)
 }
 
 static void
-bind_mark (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_mark (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   GdkPixbuf *pixbuf;
   pixbuf = draw_mark_pixbuf(obj, id);
@@ -2642,7 +2642,7 @@ bind_mark (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_text (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_text (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   int style, r, g ,b;
   struct fontmap *fmap;

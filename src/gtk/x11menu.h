@@ -214,7 +214,7 @@ enum SubWinType {
 
 struct SubWin;
 
-typedef void (* bind_item_func) (struct objlist *obj, int id, const char *field, GtkWidget *w);
+typedef void (* bind_item_func) (struct objlist *obj, const char *field, int id, GtkWidget *w);
 
 typedef struct _list_store {
   char *title;

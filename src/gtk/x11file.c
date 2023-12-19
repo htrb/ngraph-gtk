@@ -66,9 +66,9 @@
 #include "sourcecompletionwords.h"
 #include "completion_info.h"
 
-static void bind_axis(struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_type(struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_axis(struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_type(struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_file (struct objlist *obj, const char *field, int id, GtkWidget *w);
 
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, FALSE,  "hidden"},
@@ -5969,7 +5969,7 @@ get_plot_info_str(struct objlist *obj, int id, int src)
 }
 
 static void
-bind_axis(struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_axis(struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   char *axis;
   int type;
@@ -5984,7 +5984,7 @@ bind_axis(struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_type(struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_type(struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   GdkPixbuf *pixbuf;
   pixbuf = draw_type_pixbuf(obj, id);
@@ -5995,7 +5995,7 @@ bind_type(struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_file (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_file (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   int src, masked;
   struct narray *mask, *move;

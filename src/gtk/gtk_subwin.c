@@ -624,7 +624,7 @@ bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *
     gtk_widget_set_sensitive (w, ! ival);
   }
   if (item->bind_func) {
-    item->bind_func(inst->obj, inst->id, item->name, w);
+    item->bind_func(inst->obj, item->name, inst->id, w);
     return;
   }
   str = NULL;

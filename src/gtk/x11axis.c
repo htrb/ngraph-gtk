@@ -52,9 +52,9 @@
 #include "x11axis.h"
 #include "x11commn.h"
 
-static void bind_minmax (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_inc (struct objlist *obj, int id, const char *field, GtkWidget *w);
-static void bind_name (struct objlist *obj, int id, const char *field, GtkWidget *w);
+static void bind_minmax (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_inc (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_name (struct objlist *obj, const char *field, int id, GtkWidget *w);
 
 static n_list_store Alist[] = {
   {" ",        G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -3179,7 +3179,7 @@ AxisDelCB(struct obj_list_data *data, int id)
 }
 
 static void
-bind_minmax (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_minmax (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   double min, max, val;
   char buf[256], *math;
@@ -3204,12 +3204,12 @@ bind_minmax (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_inc (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_inc (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   double inc;
   char buf[256], *math;
 
-  getobj(obj, "inc", id, 0, NULL, &inc);
+  getobj(obj, field, id, 0, NULL, &inc);
   gtk_widget_set_halign (w, GTK_ALIGN_END);
   if (inc == 0) {
     gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
@@ -3227,11 +3227,11 @@ bind_inc (struct objlist *obj, int id, const char *field, GtkWidget *w)
 }
 
 static void
-bind_name (struct objlist *obj, int id, const char *field, GtkWidget *w)
+bind_name (struct objlist *obj, const char *field, int id, GtkWidget *w)
 {
   char *group, *math;
 
-  getobj(obj, "group", id, 0, NULL, &group);
+  getobj(obj, field, id, 0, NULL, &group);
   if (group == NULL) {
     gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
     return;
