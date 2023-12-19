@@ -224,7 +224,8 @@ typedef struct _list_store {
   bind_item_func bind_func;
   int min, max, inc, page;
   PangoEllipsizeMode ellipsize;
-  gulong edited_id;
+  struct obj_list_data *data;
+  gboolean block_signal;
 } n_list_store;
 
 struct obj_list_data
