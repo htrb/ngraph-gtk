@@ -577,7 +577,7 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   gtk_event_controller_set_propagation_phase (ev, GTK_PHASE_CAPTURE);
 }
 
-void
+static void
 setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
 {
   GtkWidget *w;
