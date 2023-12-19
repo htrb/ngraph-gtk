@@ -640,44 +640,39 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
   }
 }
 
-void
-bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
+static void
+bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, n_list_store *item)
 {
-  GtkWidget *w;
-  NInst *inst;
   enum ngraph_object_field_type type;
   int ival;
   double dval;
-  char *str, *field, **enumlist, buf[256];
+  char *str, **enumlist, buf[256];
 
-  field = item->name;
-  w = gtk_list_item_get_child (list_item);
-  inst = gtk_list_item_get_item (list_item);
-  getobj (inst->obj, "hidden", inst->id, 0, NULL, &ival);
+  getobj (obj, "hidden", id, 0, NULL, &ival);
   if (strcmp (field, "hidden")) {
     gtk_widget_set_sensitive (w, ! ival);
   }
   if (item->bind_func) {
-    item->bind_func(inst->obj, item->name, inst->id, w);
+    item->bind_func(obj, field, id, w);
     return;
   }
   str = NULL;
-  type = chkobjfieldtype(inst->obj, field);
+  type = chkobjfieldtype(obj, field);
   switch (type){
   case NBOOL:
-    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
-    if (strcmp (item->name, "hidden") == 0) {
+    getobj (obj, field, id, 0, NULL, &ival);
+    if (strcmp (field, "hidden") == 0) {
       ival = ! ival;
     }
     gtk_check_button_set_active(GTK_CHECK_BUTTON (w), ival);
     return;
   case NENUM:
-    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
-    enumlist = (char **) chkobjarglist(inst->obj, field);
+    getobj (obj, field, id, 0, NULL, &ival);
+    enumlist = (char **) chkobjarglist(obj, field);
     str = _(enumlist[ival]);
     break;
   case NINT:
-    getobj (inst->obj, field, inst->id, 0, NULL, &ival);
+    getobj (obj, field, id, 0, NULL, &ival);
     if (item->type == G_TYPE_INT) {
       snprintf (buf, sizeof (buf), "%d", ival);
     } else {
@@ -686,17 +681,30 @@ bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *
     str = buf;
     break;
   case NDOUBLE:
-    getobj (inst->obj, field, inst->id, 0, NULL, &dval);
+    getobj (obj, field, id, 0, NULL, &dval);
     snprintf (buf, sizeof (buf), "%.15g", dval);
     str = buf;
     break;
   case NSTR:
-    getobj (inst->obj, field, inst->id, 0, NULL, &str);
+    getobj (obj, field, id, 0, NULL, &str);
     break;
   default:
     return;
   }
   gtk_label_set_text(GTK_LABEL (w), str);
+}
+
+static void
+bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
+{
+  GtkWidget *w;
+  NInst *inst;
+  w = gtk_list_item_get_child (list_item);
+  inst = gtk_list_item_get_item (list_item);
+  g_object_set_data (G_OBJECT (w), INSTANCE_ID_KEY, GINT_TO_POINTER (inst->id));
+  item->block_signal = TRUE;
+  bind_column_main (w, inst->obj, item->name, inst->id, item);
+  item->block_signal = FALSE;
 }
 
 static struct obj_list_data *
@@ -719,6 +727,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 
   for (i = 0; i < lisu_num; i++) {
     columnview_create_column (lstor, _(list[i].title), G_CALLBACK (setup_column), G_CALLBACK (bind_column), NULL, list + i, list[i].expand);
+    list[i].data = data;
   }
 
   add_event_controller(lstor, data);
