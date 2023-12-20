@@ -23,6 +23,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "gtk_columnview.h"
+#include "gtk_listview.h"
 #include "gtk_widget.h"
 #include "gtk_combo.h"
 
@@ -441,16 +442,9 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
     else
       return FALSE;
     break;
-    /*
   case GDK_KEY_Return:
-    if (state & GDK_SHIFT_MASK) {
-      //      e->state &= ~ GDK_SHIFT_MASK;
-      return FALSE;
-    }
-
     swin_update(d);
     break;
-      */
   case GDK_KEY_BackSpace:
     hidden(d);
     break;
@@ -610,6 +604,186 @@ item_toggled (GObject *self, n_list_store *item)
 }
 
 static void
+select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
+{
+  GtkWidget *popover, *label, *contents;
+  int id;
+  int cur;
+  struct obj_list_data *d;
+  n_list_store *item;
+
+  item = (n_list_store *) user_data;
+  d = item->data;
+  contents = gtk_widget_get_parent (self);
+  popover = gtk_widget_get_parent (contents);
+  label = gtk_widget_get_parent (popover);
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
+  getobj (d->obj, item->name, id, 0, NULL, &cur);
+  if (cur == position) {
+    return;
+  }
+  gtk_popover_popdown(GTK_POPOVER(popover));
+  menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
+  putobj (d->obj, item->name, id, &position);
+  d->select = id;
+  d->update (d, FALSE, TRUE);
+  set_graph_modified ();
+}
+
+static void
+create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
+{
+  GtkWidget *popover, *menu;
+  GtkStringList *list;
+  int i;
+
+  menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
+  gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
+
+  popover = gtk_popover_new();
+  gtk_popover_set_child(GTK_POPOVER (popover), menu);
+
+  list = listview_get_string_list (menu);
+  for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
+    gtk_string_list_append (list, _(enumlist[i]));
+  }
+  gtk_widget_set_parent(popover, parent);
+  gtk_popover_popup (GTK_POPOVER (popover));
+  g_signal_connect (menu, "activate", G_CALLBACK (select_enum_item_cb), item);
+  g_signal_connect_swapped (popover, "closed", G_CALLBACK (gtk_widget_unparent), popover);
+}
+
+static void
+enum_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GtkWidget *parent;
+  n_list_store *item;
+  struct obj_list_data *d;
+  const char **enumlist;
+
+  item = (n_list_store *) user_data;
+  d = item->data;
+  enumlist = (const char **) chkobjarglist(d->obj, item->name);
+  parent = gtk_event_controller_get_widget (self);
+  create_enum_menu(parent, enumlist, item);
+}
+
+static int
+get_integer_from_entry (GtkWidget *entry, const n_list_store *item, int cur)
+{
+  int val;
+  if (item->inc) {
+    double dval;
+    dval = gtk_spin_button_get_value (GTK_SPIN_BUTTON (entry));
+    if (item->type == G_TYPE_DOUBLE) {
+      val = dval * 100;
+    } else {
+      val = dval;
+    }
+  } else {
+    const char *text;
+    char *ptr;
+    text = gtk_editable_get_text (GTK_EDITABLE (entry));
+    val = strtol (text, &ptr, 10);
+    if (text[0] == '\0' || (val == 0 && ptr[0] != '\0')) {
+      val = cur;
+    }
+  }
+  return val;
+}
+
+static void
+set_numeric_item_cb (GtkWidget *self, gpointer user_data)
+{
+  GtkWidget *popover, *label, *contents, *box, *entry;
+  int id;
+  int cur, val;
+  struct obj_list_data *d;
+  n_list_store *item;
+
+  item = (n_list_store *) user_data;
+  d = item->data;
+  box = gtk_widget_get_parent (self);
+  entry = gtk_widget_get_first_child (box);
+  contents = gtk_widget_get_parent (box);
+  popover = gtk_widget_get_parent (contents);
+  label = gtk_widget_get_parent (popover);
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
+  getobj (d->obj, item->name, id, 0, NULL, &cur);
+  gtk_popover_popdown(GTK_POPOVER(popover));
+  val = get_integer_from_entry (entry, item, cur);
+  if (val == cur) {
+    return;
+  }
+  menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
+  putobj (d->obj, item->name, id, &val);
+  d->select = id;
+  d->update (d, FALSE, TRUE);
+  set_graph_modified ();
+}
+
+static void
+create_numeric_input (GtkWidget *parent, n_list_store *item)
+{
+  GtkWidget *popover, *entry, *button, *vbox;
+  struct obj_list_data *d;
+  int val, id;
+
+  d = item->data;
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
+  getobj (d->obj, item->name, id, 0, NULL, &val);
+  if (item->inc) {
+    if (item-> type == G_TYPE_DOUBLE) {
+      entry = gtk_spin_button_new_with_range (item->min / 100.0, item->max / 100.0, item->inc / 100.0);
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val / 100.0);
+      gtk_spin_button_set_digits (GTK_SPIN_BUTTON (entry), 2);
+    } else {
+      entry = gtk_spin_button_new_with_range (item->min, item->max, item->inc);
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val);
+    }
+    gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
+  } else {
+    const char *text;
+    text = gtk_label_get_text (GTK_LABEL (parent));
+    entry = create_text_entry(TRUE, FALSE);
+    gtk_editable_set_text (GTK_EDITABLE (entry), text);
+  }
+  gtk_box_append(GTK_BOX (vbox), entry);
+  button = gtk_button_new_with_mnemonic (_("_Apply"));
+  gtk_widget_set_hexpand (button, FALSE);
+  g_signal_connect (button, "clicked", G_CALLBACK (set_numeric_item_cb), item);
+  gtk_box_append(GTK_BOX (vbox), button);
+
+  popover = gtk_popover_new();
+  gtk_popover_set_child(GTK_POPOVER (popover), vbox);
+
+  gtk_widget_set_parent(popover, parent);
+  gtk_popover_popup (GTK_POPOVER (popover));
+  g_signal_connect_swapped (popover, "closed", G_CALLBACK (gtk_widget_unparent), popover);
+}
+
+static void
+numeric_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GtkWidget *parent;
+  n_list_store *item;
+
+  item = (n_list_store *) user_data;
+  parent = gtk_event_controller_get_widget (self);
+  create_numeric_input(parent, item);
+}
+
+static void
+setup_editing_item (GtkWidget *w, n_list_store *item, GCallback func)
+{
+  GtkEventController *ev;
+  ev = GTK_EVENT_CONTROLLER (gtk_gesture_long_press_new ());
+  gtk_widget_add_controller (w, ev);
+  g_signal_connect (ev, "pressed", G_CALLBACK (func), item);
+}
+
+static void
 setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
 {
   GtkWidget *w;
@@ -618,26 +792,36 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
   switch (item->type) {
   case G_TYPE_BOOLEAN:
     w = gtk_check_button_new ();
-    gtk_list_item_set_child (list_item, w);
     g_signal_connect (w, "toggled", G_CALLBACK (item_toggled), item);
     break;
   case G_TYPE_OBJECT:
     w = gtk_picture_new ();
-    gtk_list_item_set_child (list_item, w);
     gtk_picture_set_content_fit (GTK_PICTURE (w), GTK_CONTENT_FIT_CONTAIN);
+    if (strcmp (item->name, "type") == 0 && item->editable) {
+      setup_editing_item (w, item, G_CALLBACK (enum_cb));
+    }
     break;
   case G_TYPE_INT:
   case G_TYPE_DOUBLE:
     w = gtk_label_new (NULL);
     gtk_widget_set_halign (w, GTK_ALIGN_END);
-    gtk_list_item_set_child (list_item, w);
+    if (item->editable) {
+      setup_editing_item (w, item, G_CALLBACK (numeric_cb));
+    }
+    break;
+  case G_TYPE_ENUM:
+    w = gtk_label_new (NULL);
+    gtk_widget_set_halign (w, GTK_ALIGN_START);
+    if (item->editable) {
+      setup_editing_item (w, item, G_CALLBACK (enum_cb));
+    }
     break;
   default:
     w = gtk_label_new (NULL);
     gtk_widget_set_halign (w, GTK_ALIGN_START);
     gtk_label_set_ellipsize (GTK_LABEL (w), item->ellipsize);
-    gtk_list_item_set_child (list_item, w);
   }
+  gtk_list_item_set_child (list_item, w);
 }
 
 static void
