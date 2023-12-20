@@ -641,7 +641,7 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
 }
 
 static void
-bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, n_list_store *item)
+bind_column_main (struct objlist *obj, const char *field, int id, n_list_store *item, GtkWidget *w)
 {
   enum ngraph_object_field_type type;
   int ival;
@@ -703,7 +703,7 @@ bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *
   inst = gtk_list_item_get_item (list_item);
   g_object_set_data (G_OBJECT (w), INSTANCE_ID_KEY, GINT_TO_POINTER (inst->id));
   item->block_signal = TRUE;
-  bind_column_main (w, inst->obj, item->name, inst->id, item);
+  bind_column_main (inst->obj, item->name, inst->id, item, w);
   item->block_signal = FALSE;
 }
 
