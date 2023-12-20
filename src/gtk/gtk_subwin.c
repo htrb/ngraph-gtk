@@ -695,7 +695,7 @@ get_integer_from_entry (GtkWidget *entry, const n_list_store *item, int cur)
 static void
 set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 {
-  GtkWidget *popover, *label, *contents, *box, *entry;
+  GtkWidget *popover, *label, *contents, *hbox, *vbox, *entry;
   int id;
   int cur, val;
   struct obj_list_data *d;
@@ -703,9 +703,10 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 
   item = (n_list_store *) user_data;
   d = item->data;
-  box = gtk_widget_get_parent (self);
-  entry = gtk_widget_get_first_child (box);
-  contents = gtk_widget_get_parent (box);
+  hbox = gtk_widget_get_parent (self);
+  vbox = gtk_widget_get_parent (hbox);
+  entry = gtk_widget_get_first_child (vbox);
+  contents = gtk_widget_get_parent (vbox);
   popover = gtk_widget_get_parent (contents);
   label = gtk_widget_get_parent (popover);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
@@ -725,7 +726,7 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 static void
 create_numeric_input (GtkWidget *parent, n_list_store *item)
 {
-  GtkWidget *popover, *entry, *button, *vbox;
+  GtkWidget *popover, *entry, *button, *vbox, *hbox;
   struct obj_list_data *d;
   int val, id;
 
@@ -753,7 +754,11 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
   button = gtk_button_new_with_mnemonic (_("_Apply"));
   gtk_widget_set_hexpand (button, FALSE);
   g_signal_connect (button, "clicked", G_CALLBACK (set_numeric_item_cb), item);
-  gtk_box_append(GTK_BOX (vbox), button);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand (hbox, TRUE);
+  gtk_widget_set_halign (hbox, GTK_ALIGN_END);
+  gtk_box_append (GTK_BOX (hbox), button);
+  gtk_box_append(GTK_BOX (vbox), hbox);
 
   popover = gtk_popover_new();
   gtk_popover_set_child(GTK_POPOVER (popover), vbox);
