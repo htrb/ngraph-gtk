@@ -619,10 +619,10 @@ select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
   label = gtk_widget_get_parent (popover);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
   getobj (d->obj, item->name, id, 0, NULL, &cur);
+  gtk_popover_popdown(GTK_POPOVER(popover));
   if (cur == position) {
     return;
   }
-  gtk_popover_popdown(GTK_POPOVER(popover));
   menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
   putobj (d->obj, item->name, id, &position);
   d->select = id;
