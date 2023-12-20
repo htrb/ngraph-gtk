@@ -52,9 +52,9 @@
 #include "x11axis.h"
 #include "x11commn.h"
 
-static void bind_minmax (struct objlist *obj, const char *field, int id, GtkWidget *w);
-static void bind_inc (struct objlist *obj, const char *field, int id, GtkWidget *w);
-static void bind_name (struct objlist *obj, const char *field, int id, GtkWidget *w);
+static void bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void bind_name (GtkWidget *w, struct objlist *obj, const char *field, int id);
 
 static n_list_store Alist[] = {
   {" ",        G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -3179,7 +3179,7 @@ AxisDelCB(struct obj_list_data *data, int id)
 }
 
 static void
-bind_minmax (struct objlist *obj, const char *field, int id, GtkWidget *w)
+bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   double min, max, val;
   char buf[256], *math;
@@ -3204,7 +3204,7 @@ bind_minmax (struct objlist *obj, const char *field, int id, GtkWidget *w)
 }
 
 static void
-bind_inc (struct objlist *obj, const char *field, int id, GtkWidget *w)
+bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   double inc;
   char buf[256], *math;
@@ -3227,7 +3227,7 @@ bind_inc (struct objlist *obj, const char *field, int id, GtkWidget *w)
 }
 
 static void
-bind_name (struct objlist *obj, const char *field, int id, GtkWidget *w)
+bind_name (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char *group, *math;
 

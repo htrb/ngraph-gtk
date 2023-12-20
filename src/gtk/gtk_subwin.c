@@ -653,7 +653,7 @@ bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, 
     gtk_widget_set_sensitive (w, ! ival);
   }
   if (item->bind_func) {
-    item->bind_func(obj, field, id, w);
+    item->bind_func(w, obj, field, id);
     return;
   }
   str = NULL;
