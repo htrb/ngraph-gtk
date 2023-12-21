@@ -13,15 +13,15 @@
 #include "dir_defs.h"
 
 GtkWidget *
-widget_get_grandparent(GtkWidget *w)
+widget_search_type_parent (GtkWidget *w, GType type)
 {
   GtkWidget *parent;
-  parent = gtk_widget_get_parent(w);
-  if (parent == NULL) {
-    return NULL;
+  while ((parent = gtk_widget_get_parent (w))) {
+    if (G_TYPE_CHECK_INSTANCE_TYPE (parent, type)) {
+      return parent;
+    }
   }
-
-  return gtk_widget_get_parent(parent);
+  return NULL;
 }
 
 GtkWidget *

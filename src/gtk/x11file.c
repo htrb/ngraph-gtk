@@ -1764,8 +1764,8 @@ select_fit_item_cb(GtkWidget *list_view, guint position, gpointer user_data)
 
   d = (struct FitDialog *) user_data;
 
-  popover = widget_get_grandparent(list_view);
-  if (G_TYPE_CHECK_INSTANCE_TYPE(popover, GTK_TYPE_POPOVER)) {
+  popover = widget_search_type_parent(list_view, GTK_TYPE_POPOVER);
+  if (popover) {
     gtk_popover_popdown(GTK_POPOVER(popover));
   }
 

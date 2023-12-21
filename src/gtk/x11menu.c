@@ -2190,8 +2190,8 @@ select_recent_item_cb(GtkListView *self, guint position, gpointer user_data)
   list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
   filename = gtk_string_list_get_string (list, position);
 
-  popover = widget_get_grandparent(GTK_WIDGET(self));
-  if (G_TYPE_CHECK_INSTANCE_TYPE(popover, GTK_TYPE_POPOVER)) {
+  popover = widget_search_type_parent(GTK_WIDGET (self), GTK_TYPE_POPOVER);
+  if (popover) {
     gtk_popover_popdown(GTK_POPOVER(popover));
   }
 
