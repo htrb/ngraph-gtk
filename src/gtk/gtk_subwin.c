@@ -711,6 +711,15 @@ get_double_from_entry (GtkWidget *entry, const n_list_store *item, double cur)
   return val;
 }
 
+static GtkWidget *
+get_entry_from_popover (GtkWidget *self)
+{
+  GtkWidget *hbox, *vbox;
+  hbox = gtk_widget_get_parent (self);
+  vbox = gtk_widget_get_parent (hbox);
+  return gtk_widget_get_first_child (vbox);
+}
+
 static void
 set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 {
