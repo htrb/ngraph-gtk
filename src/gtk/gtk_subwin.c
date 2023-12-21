@@ -635,7 +635,7 @@ create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
 {
   GtkWidget *popover, *menu;
   GtkStringList *list;
-  int i;
+  int i, cur, id;
 
   menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
@@ -647,6 +647,9 @@ create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     gtk_string_list_append (list, _(enumlist[i]));
   }
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
+  getobj (item->data->obj, item->name, id, 0, NULL, &cur);
+  gtk_list_view_scroll_to (GTK_LIST_VIEW (menu), cur, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
   gtk_widget_set_parent(popover, parent);
   gtk_popover_popup (GTK_POPOVER (popover));
   g_signal_connect (menu, "activate", G_CALLBACK (select_enum_item_cb), item);
