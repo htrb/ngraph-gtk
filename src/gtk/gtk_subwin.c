@@ -574,6 +574,16 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 #define INSTANCE_ID_KEY "n_inst_id"
 
 static void
+update_obj (struct obj_list_data *d, const char *field, int id, void *val)
+{
+  menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
+  putobj (d->obj, field, id, val);
+  d->select = id;
+  d->update (d, FALSE, TRUE);
+  set_graph_modified ();
+}
+
+static void
 item_toggled (GObject *self, n_list_store *item)
 {
   struct obj_list_data *d;
