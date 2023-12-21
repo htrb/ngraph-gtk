@@ -743,6 +743,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val);
     }
     gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
+    gtk_editable_set_width_chars(GTK_EDITABLE(entry), NUM_ENTRY_WIDTH);
   } else {
     const char *text;
     text = gtk_label_get_text (GTK_LABEL (parent));
