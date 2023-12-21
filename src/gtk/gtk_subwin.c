@@ -721,11 +721,7 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
   if (val == cur) {
     return;
   }
-  menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
-  putobj (d->obj, item->name, id, &val);
-  d->select = id;
-  d->update (d, FALSE, TRUE);
-  set_graph_modified ();
+  update_obj (d, item->name, id, &val);
 }
 
 static void
