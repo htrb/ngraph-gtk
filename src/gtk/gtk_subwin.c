@@ -632,12 +632,23 @@ select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
 }
 
 static void
+check_popover (GtkWidget *parent)
+{
+  GtkWidget *popover;
+  popover = gtk_widget_get_last_child (parent);
+  if (G_TYPE_CHECK_INSTANCE_TYPE (popover, GTK_TYPE_POPOVER)) {
+    gtk_widget_unparent (popover);
+  }
+}
+
+static void
 create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
 {
   GtkWidget *popover, *menu;
   GtkStringList *list;
   int i, cur, id;
 
+  check_popover (parent);
   menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
 
@@ -654,7 +665,7 @@ create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
   gtk_widget_set_parent(popover, parent);
   gtk_popover_popup (GTK_POPOVER (popover));
   g_signal_connect (menu, "activate", G_CALLBACK (select_enum_item_cb), item);
-  g_signal_connect_swapped (popover, "closed", G_CALLBACK (gtk_widget_unparent), popover);
+  g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover, G_CONNECT_SWAPPED);
 }
 
 static void
@@ -676,22 +687,26 @@ static int
 get_integer_from_entry (GtkWidget *entry, const n_list_store *item, int cur)
 {
   int val;
-  if (item->inc) {
-    double dval;
-    dval = gtk_spin_button_get_value (GTK_SPIN_BUTTON (entry));
-    if (item->type == G_TYPE_DOUBLE) {
-      val = dval * 100;
-    } else {
-      val = dval;
-    }
+  double dval;
+  dval = gtk_spin_button_get_value (GTK_SPIN_BUTTON (entry));
+  if (item->type == G_TYPE_DOUBLE) {
+    val = dval * 100;
   } else {
-    const char *text;
-    char *ptr;
-    text = gtk_editable_get_text (GTK_EDITABLE (entry));
-    val = strtol (text, &ptr, 10);
-    if (text[0] == '\0' || (val == 0 && ptr[0] != '\0')) {
-      val = cur;
-    }
+    val = dval;
+  }
+  return val;
+}
+
+static double
+get_double_from_entry (GtkWidget *entry, const n_list_store *item, double cur)
+{
+  const char *text;
+  char *ptr;
+  double val;
+  text = gtk_editable_get_text (GTK_EDITABLE (entry));
+  val = strtod (text, &ptr);
+  if (text[0] == '\0' || (val == 0 && ptr[0] != '\0')) {
+    val = cur;
   }
   return val;
 }
@@ -701,7 +716,6 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 {
   GtkWidget *popover, *label, *hbox, *vbox, *entry;
   int id;
-  int cur, val;
   struct obj_list_data *d;
   n_list_store *item;
 
@@ -713,13 +727,24 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
   popover = gtk_widget_get_ancestor (vbox, GTK_TYPE_POPOVER);
   label = gtk_widget_get_parent (popover);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
-  getobj (d->obj, item->name, id, 0, NULL, &cur);
   gtk_popover_popdown(GTK_POPOVER(popover));
-  val = get_integer_from_entry (entry, item, cur);
-  if (val == cur) {
-    return;
+  if (item->inc) {
+    int cur, val;
+    getobj (d->obj, item->name, id, 0, NULL, &cur);
+    val = get_integer_from_entry (entry, item, cur);
+    if (val == cur) {
+      return;
+    }
+    update_obj (d, item->name, id, &val);
+  } else {
+    double cur, val;
+    getobj (d->obj, item->name, id, 0, NULL, &cur);
+    val = get_double_from_entry (entry, item, cur);
+    if (val == cur) {
+      return;
+    }
+    update_obj (d, item->name, id, &val);
   }
-  update_obj (d, item->name, id, &val);
 }
 
 static void
@@ -727,29 +752,38 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
 {
   GtkWidget *popover, *entry, *button, *vbox, *hbox;
   struct obj_list_data *d;
-  int val, id;
+  int id;
 
+  check_popover (parent);
   d = item->data;
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
-  getobj (d->obj, item->name, id, 0, NULL, &val);
   if (item->inc) {
+    int val;
+    getobj (d->obj, item->name, id, 0, NULL, &val);
     if (item-> type == G_TYPE_DOUBLE) {
       entry = gtk_spin_button_new_with_range (item->min / 100.0, item->max / 100.0, item->inc / 100.0);
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val / 100.0);
       gtk_spin_button_set_digits (GTK_SPIN_BUTTON (entry), 2);
-    } else {
+      if (item->max == 36000) {
+	gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (entry), TRUE);
+      }
+  } else {
       entry = gtk_spin_button_new_with_range (item->min, item->max, item->inc);
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val);
     }
-    gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
     gtk_editable_set_width_chars(GTK_EDITABLE(entry), NUM_ENTRY_WIDTH);
+    spin_button_set_activates_default(entry);
   } else {
-    const char *text;
-    text = gtk_label_get_text (GTK_LABEL (parent));
+    double val;
+    char buf[64];
+    getobj (d->obj, item->name, id, 0, NULL, &val);
+    snprintf (buf, sizeof (buf), "%.15g", val);
     entry = create_text_entry(TRUE, FALSE);
-    gtk_editable_set_text (GTK_EDITABLE (entry), text);
+    gtk_editable_set_text (GTK_EDITABLE (entry), buf);
+    gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   }
+  gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
   gtk_box_append(GTK_BOX (vbox), entry);
   button = gtk_button_new_with_mnemonic (_("_Apply"));
   gtk_widget_set_hexpand (button, FALSE);
@@ -762,10 +796,11 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
 
   popover = gtk_popover_new();
   gtk_popover_set_child(GTK_POPOVER (popover), vbox);
+  gtk_popover_set_default_widget (GTK_POPOVER (popover), button);
 
   gtk_widget_set_parent(popover, parent);
   gtk_popover_popup (GTK_POPOVER (popover));
-  g_signal_connect_swapped (popover, "closed", G_CALLBACK (gtk_widget_unparent), popover);
+  g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover, G_CONNECT_SWAPPED);
 }
 
 static void
@@ -792,6 +827,7 @@ static void
 setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *item)
 {
   GtkWidget *w;
+  int type;
 
   item->block_signal = TRUE;
   switch (item->type) {
@@ -821,6 +857,17 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
       setup_editing_item (w, item, G_CALLBACK (enum_cb));
     }
     break;
+  case G_TYPE_STRING:
+    type = chkobjfieldtype(item->data->obj, item->name);
+    if (type == NDOUBLE) {
+      w = gtk_label_new (NULL);
+      gtk_widget_set_halign (w, GTK_ALIGN_END);
+      if (item->editable) {
+	setup_editing_item (w, item, G_CALLBACK (numeric_cb));
+      }
+      break;
+    }
+    /* fall through */
   default:
     w = gtk_label_new (NULL);
     gtk_widget_set_halign (w, GTK_ALIGN_START);
