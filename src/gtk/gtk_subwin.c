@@ -1163,7 +1163,7 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GC
   popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
 #endif	/* USE_NESTED_SUBMENUS */
   gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
-  widget_set_parent(popup, d->parent->Win);
+  widget_set_parent(popup, d->text);
   if (cb) {
     g_signal_connect(popup, "show", cb, d);
   }
