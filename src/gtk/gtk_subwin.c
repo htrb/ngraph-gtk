@@ -723,17 +723,15 @@ get_entry_from_popover (GtkWidget *self)
 static void
 set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 {
-  GtkWidget *popover, *label, *hbox, *vbox, *entry;
+  GtkWidget *popover, *label, *entry;
   int id;
   struct obj_list_data *d;
   n_list_store *item;
 
   item = (n_list_store *) user_data;
   d = item->data;
-  hbox = gtk_widget_get_parent (self);
-  vbox = gtk_widget_get_parent (hbox);
-  entry = gtk_widget_get_first_child (vbox);
-  popover = gtk_widget_get_ancestor (vbox, GTK_TYPE_POPOVER);
+  entry = get_entry_from_popover (self);
+  popover = gtk_widget_get_ancestor (self, GTK_TYPE_POPOVER);
   label = gtk_widget_get_parent (popover);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
   gtk_popover_popdown(GTK_POPOVER(popover));
