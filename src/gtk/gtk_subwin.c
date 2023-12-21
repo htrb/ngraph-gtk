@@ -768,7 +768,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
       if (item->max == 36000) {
 	gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (entry), TRUE);
       }
-  } else {
+    } else {
       entry = gtk_spin_button_new_with_range (item->min, item->max, item->inc);
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (entry), val);
     }
@@ -779,9 +779,8 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
     char buf[64];
     getobj (d->obj, item->name, id, 0, NULL, &val);
     snprintf (buf, sizeof (buf), "%.15g", val);
-    entry = create_text_entry(TRUE, FALSE);
+    entry = create_text_entry(TRUE, TRUE);
     gtk_editable_set_text (GTK_EDITABLE (entry), buf);
-    gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   }
   gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
   gtk_box_append(GTK_BOX (vbox), entry);
