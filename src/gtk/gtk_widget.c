@@ -13,18 +13,6 @@
 #include "dir_defs.h"
 
 GtkWidget *
-widget_search_type_parent (GtkWidget *w, GType type)
-{
-  GtkWidget *parent;
-  while ((parent = gtk_widget_get_parent (w))) {
-    if (G_TYPE_CHECK_INSTANCE_TYPE (parent, type)) {
-      return parent;
-    }
-  }
-  return NULL;
-}
-
-GtkWidget *
 button_new_with_icon(const char *icon_name, int toggle)
 {
   GtkWidget *img, *button;
