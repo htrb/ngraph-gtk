@@ -606,11 +606,7 @@ item_toggled (GObject *self, n_list_store *item)
     return;
   }
   state = ! state;
-  menu_save_undo_single (UNDO_TYPE_EDIT, obj->name);
-  putobj (obj, field, id, &state);
-  d->select = id;
-  d->update (d, FALSE, TRUE);
-  set_graph_modified ();
+  update_obj (d, field, id, &state);
 }
 
 static void
