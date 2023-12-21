@@ -781,13 +781,12 @@ create_input_common (GtkWidget *parent, GtkWidget *entry, n_list_store *item, GC
 static void
 create_numeric_input (GtkWidget *parent, n_list_store *item)
 {
-  GtkWidget *popover, *entry, *button, *vbox, *hbox;
+  GtkWidget *entry;
   struct obj_list_data *d;
   int id;
 
   check_popover (parent);
   d = item->data;
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
   if (item->inc) {
     int val;
@@ -814,23 +813,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
     gtk_editable_set_text (GTK_EDITABLE (entry), buf);
   }
   gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
-  gtk_box_append(GTK_BOX (vbox), entry);
-  button = gtk_button_new_with_mnemonic (_("_Apply"));
-  gtk_widget_set_hexpand (button, FALSE);
-  g_signal_connect (button, "clicked", G_CALLBACK (set_numeric_item_cb), item);
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_set_hexpand (hbox, TRUE);
-  gtk_widget_set_halign (hbox, GTK_ALIGN_END);
-  gtk_box_append (GTK_BOX (hbox), button);
-  gtk_box_append(GTK_BOX (vbox), hbox);
-
-  popover = gtk_popover_new();
-  gtk_popover_set_child(GTK_POPOVER (popover), vbox);
-  gtk_popover_set_default_widget (GTK_POPOVER (popover), button);
-
-  gtk_widget_set_parent(popover, parent);
-  gtk_popover_popup (GTK_POPOVER (popover));
-  g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover, G_CONNECT_SWAPPED);
+  create_input_common (parent, entry, item, G_CALLBACK (set_numeric_item_cb));
 }
 
 static void
