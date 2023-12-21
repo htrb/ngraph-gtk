@@ -18,8 +18,6 @@ combo_box_create(void)
   return gtk_drop_down_new(G_LIST_MODEL(list), NULL);
 }
 
-#define ENTRY_COMBO_MENU "entry_popover"
-
 static void
 select_item_cb(GtkListView *self, guint position, gpointer user_data)
 {
@@ -63,7 +61,7 @@ get_string_list(GtkWidget *entry)
   GtkSingleSelection *model;
   GtkWidget *popover;
 
-  popover = g_object_get_data(G_OBJECT(entry), ENTRY_COMBO_MENU);
+  popover = gtk_widget_get_last_child (entry);
   list_view = gtk_popover_get_child (GTK_POPOVER (popover));
   model = GTK_SINGLE_SELECTION (gtk_list_view_get_model(GTK_LIST_VIEW (list_view)));
   list = GTK_STRING_LIST (gtk_single_selection_get_model(model));
@@ -84,7 +82,6 @@ combo_box_entry_create(void)
 
   g_signal_connect_swapped(entry, "icon-release", G_CALLBACK(gtk_popover_popup), popover);
   g_signal_connect_swapped(entry, "destroy", G_CALLBACK(gtk_widget_unparent), popover);
-  g_object_set_data(G_OBJECT(entry), ENTRY_COMBO_MENU, popover);
 
   return GTK_WIDGET(entry);
 }
