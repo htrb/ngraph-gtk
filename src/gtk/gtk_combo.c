@@ -76,6 +76,7 @@ combo_box_entry_create(void)
   GtkWidget *popover;
 
   entry = GTK_ENTRY(gtk_entry_new());
+  gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
   gtk_entry_set_icon_from_icon_name (entry, GTK_ENTRY_ICON_SECONDARY, "pan-down-symbolic");
   gtk_entry_set_icon_activatable(entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
   popover = create_popver(entry);
