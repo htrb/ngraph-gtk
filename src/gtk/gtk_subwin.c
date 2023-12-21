@@ -629,11 +629,7 @@ select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
   if (cur == position) {
     return;
   }
-  menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
-  putobj (d->obj, item->name, id, &position);
-  d->select = id;
-  d->update (d, FALSE, TRUE);
-  set_graph_modified ();
+  update_obj (d, item->name, id, &position);
 }
 
 static void
