@@ -3186,7 +3186,6 @@ bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id)
 
   getobj(obj, "min", id, 0, NULL, &min);
   getobj(obj, "max", id, 0, NULL, &max);
-  gtk_widget_set_halign (w, GTK_ALIGN_END);
   if ((min == 0) && (max == 0)) {
     gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
     return;
@@ -3210,7 +3209,6 @@ bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id)
   char buf[256], *math;
 
   getobj(obj, field, id, 0, NULL, &inc);
-  gtk_widget_set_halign (w, GTK_ALIGN_END);
   if (inc == 0) {
     gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
     return;
