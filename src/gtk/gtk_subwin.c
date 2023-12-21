@@ -612,7 +612,7 @@ item_toggled (GObject *self, n_list_store *item)
 static void
 select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
 {
-  GtkWidget *popover, *label, *contents;
+  GtkWidget *popover, *label;
   int id;
   int cur;
   struct obj_list_data *d;
@@ -620,8 +620,7 @@ select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
 
   item = (n_list_store *) user_data;
   d = item->data;
-  contents = gtk_widget_get_parent (self);
-  popover = gtk_widget_get_parent (contents);
+  popover = gtk_widget_get_ancestor (self, GTK_TYPE_POPOVER);
   label = gtk_widget_get_parent (popover);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
   getobj (d->obj, item->name, id, 0, NULL, &cur);
