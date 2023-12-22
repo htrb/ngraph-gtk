@@ -712,29 +712,30 @@ get_double_from_entry (GtkWidget *entry, const n_list_store *item, double cur)
 }
 
 static GtkWidget *
-get_entry_from_popover (GtkWidget *self)
+get_entry_popdown (GtkWidget *self, int *id)
 {
-  GtkWidget *hbox, *vbox;
+  GtkWidget *entry, *popover, *vbox, *hbox, *label;
   hbox = gtk_widget_get_parent (self);
   vbox = gtk_widget_get_parent (hbox);
-  return gtk_widget_get_first_child (vbox);
+  entry =  gtk_widget_get_first_child (vbox);
+  popover = gtk_widget_get_ancestor (vbox, GTK_TYPE_POPOVER);
+  label = gtk_widget_get_parent (popover);
+  *id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
+  gtk_popover_popdown(GTK_POPOVER(popover));
+  return entry;
 }
 
 static void
 set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 {
-  GtkWidget *popover, *label, *entry;
+  GtkWidget *entry;
   int id;
   struct obj_list_data *d;
   n_list_store *item;
 
   item = (n_list_store *) user_data;
   d = item->data;
-  entry = get_entry_from_popover (self);
-  popover = gtk_widget_get_ancestor (self, GTK_TYPE_POPOVER);
-  label = gtk_widget_get_parent (popover);
-  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
-  gtk_popover_popdown(GTK_POPOVER(popover));
+  entry = get_entry_popdown (self, &id);
   if (item->inc) {
     int cur, val;
     getobj (d->obj, item->name, id, 0, NULL, &cur);
