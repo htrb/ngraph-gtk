@@ -5995,6 +5995,22 @@ bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id)
 }
 
 static void
+disconnect_handler (GtkWidget *w, gpointer *item)
+{
+  int num;
+  GListModel *list;
+  GObject *ev;
+
+  list = gtk_widget_observe_controllers (w);
+  num = g_list_model_get_n_items (list);
+  if (num > 0) {
+    ev = g_list_model_get_object (list, 0);
+    g_signal_handlers_disconnect_matched (ev, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
+  }
+  g_object_unref (list);
+}
+
+static void
 bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int src, masked;
