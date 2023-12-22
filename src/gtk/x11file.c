@@ -6046,6 +6046,7 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
   } else {
     char *tmpstr;
     tmpstr = g_strescape(str, "\\");
+    disconnect_handler (w, Flist + 2);
     if (masked) {
       label_set_italic_text (w, tmpstr);
     } else {
