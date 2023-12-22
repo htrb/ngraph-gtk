@@ -76,7 +76,7 @@ static void bind_text (GtkWidget *w, struct objlist *obj, const char *field, int
 static n_list_store Plist[] = {
   {" ",                G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
   {"#",                G_TYPE_INT,     FALSE, FALSE, "id"},
-  {"type",             G_TYPE_PARAM,   TRUE,  FALSE, "type",   bind_path_type},
+  {"type",             G_TYPE_ENUM,    TRUE,  FALSE, "type",   bind_path_type},
   {N_("marker begin"), G_TYPE_ENUM,    TRUE,  FALSE, "marker_begin"},
   {N_("marker end"),   G_TYPE_ENUM,    TRUE,  FALSE, "marker_end"},
   {N_("color"),        G_TYPE_OBJECT,  TRUE,  FALSE, "color",  bind_color},
