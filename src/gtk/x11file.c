@@ -5995,7 +5995,7 @@ bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id)
 }
 
 static void
-disconnect_handler (GtkWidget *w, gpointer *item)
+disconnect_handler (GtkWidget *w, n_list_store *item)
 {
   int num;
   GListModel *list;
