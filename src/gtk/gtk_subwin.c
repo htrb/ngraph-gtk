@@ -829,6 +829,59 @@ numeric_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpoint
 }
 
 static void
+set_string_item_cb (GtkWidget *self, gpointer user_data)
+{
+  GtkWidget *entry;
+  int id;
+  struct obj_list_data *d;
+  n_list_store *item;
+  const char *cur, *text;
+  char *val;
+
+  item = (n_list_store *) user_data;
+  d = item->data;
+  entry = get_entry_popdown (self, &id);
+  getobj (d->obj, item->name, id, 0, NULL, &cur);
+  text = gtk_editable_get_text (GTK_EDITABLE (entry));
+  if (g_strcmp0 (text, cur) == 0) {
+    return;
+  }
+  val = g_strdup (text);
+  update_obj (d, item->name, id, val);
+}
+
+static void
+create_string_input (GtkWidget *parent, n_list_store *item)
+{
+  GtkWidget *entry;
+  struct obj_list_data *d;
+  int id;
+  const char *str;
+
+  check_popover (parent);
+  d = item->data;
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
+  entry = create_text_entry(FALSE, TRUE);
+  gtk_editable_set_width_chars(GTK_EDITABLE(entry), NUM_ENTRY_WIDTH * 4);
+  getobj (d->obj, item->name, id, 0, NULL, &str);
+  if (str) {
+    gtk_editable_set_text (GTK_EDITABLE (entry), str);
+  }
+  create_input_common (parent, entry, item, G_CALLBACK (set_string_item_cb));
+}
+
+static void
+string_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GtkWidget *parent;
+  n_list_store *item;
+
+  item = (n_list_store *) user_data;
+  parent = gtk_event_controller_get_widget (self);
+  create_string_input(parent, item);
+}
+
+static void
 setup_editing_item (GtkWidget *w, n_list_store *item, GCallback func)
 {
   GtkEventController *ev;
@@ -873,15 +926,20 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
     break;
   case G_TYPE_STRING:
     type = chkobjfieldtype(item->data->obj, item->name);
+    w = gtk_label_new (NULL);
     if (type == NDOUBLE) {
-      w = gtk_label_new (NULL);
       gtk_widget_set_halign (w, GTK_ALIGN_END);
       if (item->editable) {
 	setup_editing_item (w, item, G_CALLBACK (numeric_cb));
       }
-      break;
+    } else {
+      gtk_widget_set_halign (w, GTK_ALIGN_START);
+      gtk_label_set_ellipsize (GTK_LABEL (w), item->ellipsize);
+      if (item->editable) {
+	setup_editing_item (w, item, G_CALLBACK (string_cb));
+      }
     }
-    /* fall through */
+    break;
   default:
     w = gtk_label_new (NULL);
     gtk_widget_set_halign (w, GTK_ALIGN_START);
