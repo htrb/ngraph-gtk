@@ -762,6 +762,7 @@ create_input_common (GtkWidget *parent, GtkWidget *entry, n_list_store *item, GC
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX (vbox), entry);
   button = gtk_button_new_with_mnemonic (_("_Apply"));
+  gtk_widget_add_css_class (button, "suggested-action");
   gtk_widget_set_hexpand (button, FALSE);
   g_signal_connect (button, "clicked", func, item);
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
