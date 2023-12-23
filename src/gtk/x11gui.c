@@ -130,9 +130,6 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 
   data = (struct DialogType *) user_data;
 
-  if (data->focus)
-    gtk_widget_grab_focus(data->focus);
-
   if (res_id < 0) {
     switch (res_id) {
     case GTK_RESPONSE_OK:
@@ -253,6 +250,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->menulock = Menulock;
   Menulock = TRUE;
 #endif
+  if (data->focus) {
+    gtk_widget_grab_focus(data->focus);
+  }
   gtk_widget_show(dlg);
   data->win_ptr = get_current_window();
   set_current_window(dlg);
