@@ -65,13 +65,13 @@
 
 #define ARROW_VIEW_SIZE 160
 
-static void bind_path_type (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_path_pos (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_color (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_rect_x (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_rect_y (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_mark (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_path_type (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_path_pos (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_color (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_rect_x (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_rect_y (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_mark (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id);
 
 static n_list_store Plist[] = {
   {" ",                G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -2485,18 +2485,21 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
   return pixbuf;
 }
 
-static void
+static void *
 bind_color (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
   pixbuf = draw_color_pixbuf(obj, id, OBJ_FIELD_COLOR_TYPE_STROKE, 40);
   if (pixbuf) {
-    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
-    g_object_unref(pixbuf);
+    GdkTexture *texture;
+    texture = gdk_texture_new_for_pixbuf (pixbuf);
+    g_object_unref (pixbuf);
+    return texture;
   }
+  return NULL;
 }
 
-static void
+static void *
 bind_path_type (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char **enumlist;
@@ -2507,14 +2510,14 @@ bind_path_type (GtkWidget *w, struct objlist *obj, const char *field, int id)
 
   if (type == 0) {
     enumlist = (char **) chkobjarglist(obj, "type");
-    gtk_label_set_text(GTK_LABEL(w), _(enumlist[0]));
+    return g_strdup (_(enumlist[0]));
   } else {
     enumlist = (char **) chkobjarglist(obj, "interpolation");
-    gtk_label_set_text(GTK_LABEL(w), _(enumlist[interpolation]));
+    return g_strdup (_(enumlist[interpolation]));
   }
 }
 
-static void
+static void *
 bind_path_pos (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int n, x0, y0;
@@ -2532,12 +2535,12 @@ bind_path_pos (GtkWidget *w, struct objlist *obj, const char *field, int id)
     snprintf (str, sizeof (str), "%d", n);
     break;
   default:
-    return;
+    return NULL;
   }
-  gtk_label_set_text(GTK_LABEL (w), str);
+  return g_strdup (str);
 }
 
-static void
+static void *
 bind_rect_x (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int x1, x2;
@@ -2550,10 +2553,10 @@ bind_rect_x (GtkWidget *w, struct objlist *obj, const char *field, int id)
   } else {
     snprintf (str, sizeof (str), "%.2f",  abs(x1 - x2) / 100.0);
   }
-  gtk_label_set_text(GTK_LABEL (w), str);
+  return g_strdup (str);
 }
 
-static void
+static void *
 bind_rect_y (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int y1, y2;
@@ -2566,7 +2569,7 @@ bind_rect_y (GtkWidget *w, struct objlist *obj, const char *field, int id)
   } else {
     snprintf (str, sizeof (str), "%.2f",  abs(y1 - y2) / 100.0);
   }
-  gtk_label_set_text(GTK_LABEL (w), str);
+  return g_strdup (str);
 }
 
 static GdkPixbuf *
@@ -2630,18 +2633,21 @@ draw_mark_pixbuf(struct objlist *obj, int i)
   return pixbuf;
 }
 
-static void
+static void *
 bind_mark (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
   pixbuf = draw_mark_pixbuf(obj, id);
   if (pixbuf) {
-    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
-    g_object_unref(pixbuf);
+    GdkTexture *texture;
+    texture = gdk_texture_new_for_pixbuf (pixbuf);
+    g_object_unref (pixbuf);
+    return texture;
   }
+  return NULL;
 }
 
-static void
+static void *
 bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int style, r, g ,b;
@@ -2651,7 +2657,7 @@ bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
   getobj(obj, field, id, 0, NULL, &str);
   if (str == NULL) {
     gtk_label_set_text(GTK_LABEL (w), NULL);
-    return;
+    return NULL;
   }
 
   getobj(obj, "font", id, 0, NULL, &alias);
@@ -2682,8 +2688,8 @@ bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
 				  ((int) (Menulocal.bg_g * 255)) & 0xff,
 				  ((int) (Menulocal.bg_b * 255)) & 0xff,
 				  str);
-  gtk_label_set_markup(GTK_LABEL (w), text);
-  g_free (text);
+  gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
+  return text;
 }
 
 static void

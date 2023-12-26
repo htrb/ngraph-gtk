@@ -52,9 +52,9 @@
 #include "x11axis.h"
 #include "x11commn.h"
 
-static void bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_name (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_name (GtkWidget *w, struct objlist *obj, const char *field, int id);
 
 static n_list_store Alist[] = {
   {" ",        G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
@@ -3178,7 +3178,7 @@ AxisDelCB(struct obj_list_data *data, int id)
   AxisDel(id);
 }
 
-static void
+static void *
 bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   double min, max, val;
@@ -3187,60 +3187,59 @@ bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id)
   getobj(obj, "min", id, 0, NULL, &min);
   getobj(obj, "max", id, 0, NULL, &max);
   if ((min == 0) && (max == 0)) {
-    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
-    return;
+    return g_strdup (FILL_STRING);
   }
 
   val = (field[2] == 'n') ? min : max;
   getobj(obj, "num_math", id, 0, NULL, &math);
   if (math) {
+    gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
     snprintf(buf, sizeof(buf), "<i>%g</i>", val);
-    gtk_label_set_markup (GTK_LABEL (w), buf);
   } else {
+    gtk_label_set_use_markup (GTK_LABEL (w), FALSE);
     snprintf(buf, sizeof(buf), "%g", val);
-    gtk_label_set_text (GTK_LABEL (w), buf);
   }
+  return g_strdup (buf);
 }
 
-static void
+static void *
 bind_inc (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   double inc;
   char buf[256], *math;
 
+  gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
   getobj(obj, field, id, 0, NULL, &inc);
   if (inc == 0) {
-    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
-    return;
+    return g_strdup (FILL_STRING);
   }
 
   getobj(obj, "num_math", id, 0, NULL, &math);
   if (math) {
     snprintf(buf, sizeof(buf), "<i>%g</i>", inc);
-    gtk_label_set_markup (GTK_LABEL (w), buf);
   } else {
     snprintf(buf, sizeof(buf), "%g", inc);
-    gtk_label_set_text (GTK_LABEL (w), buf);
   }
+  return g_strdup (buf);
 }
 
-static void
+static void *
 bind_name (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char *group, *math;
 
   getobj(obj, field, id, 0, NULL, &group);
+  gtk_label_set_use_markup (GTK_LABEL (w), FALSE);
   if (group == NULL) {
-    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
-    return;
+    return g_strdup (FILL_STRING);
   }
 
   getobj(obj, "num_math", id, 0, NULL, &math);
   if (math) {
-    label_set_italic_text (w, group);
-  } else {
-    gtk_label_set_text (GTK_LABEL (w), group);
+    gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
+    return g_markup_printf_escaped ("<i>%s</i>", group);
   }
+  return g_strdup (group);
 }
 
 static int

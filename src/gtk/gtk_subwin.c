@@ -966,32 +966,17 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
   gtk_list_item_set_child (list_item, w);
 }
 
-static void
-bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, n_list_store *item)
+static char*
+get_field_string (struct objlist *obj, const char *field, int id, int num_type)
 {
   enum ngraph_object_field_type type;
+  char *str, **enumlist, buf[256];
   int ival;
   double dval;
-  char *str, **enumlist, buf[256];
-
-  getobj (obj, "hidden", id, 0, NULL, &ival);
-  if (strcmp (field, "hidden")) {
-    gtk_widget_set_sensitive (w, ! ival);
-  }
-  if (item->bind_func) {
-    item->bind_func(w, obj, field, id);
-    return;
-  }
-  str = NULL;
   type = chkobjfieldtype(obj, field);
   switch (type){
   case NBOOL:
-    getobj (obj, field, id, 0, NULL, &ival);
-    if (strcmp (field, "hidden") == 0) {
-      ival = ! ival;
-    }
-    gtk_check_button_set_active(GTK_CHECK_BUTTON (w), ival);
-    return;
+    return NULL;
   case NENUM:
     getobj (obj, field, id, 0, NULL, &ival);
     enumlist = (char **) chkobjarglist(obj, field);
@@ -999,7 +984,7 @@ bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, 
     break;
   case NINT:
     getobj (obj, field, id, 0, NULL, &ival);
-    if (item->type == G_TYPE_INT) {
+    if (num_type == G_TYPE_INT) {
       snprintf (buf, sizeof (buf), "%d", ival);
     } else {
       snprintf (buf, sizeof (buf), "%.2f", ival / 100.0);
@@ -1015,9 +1000,105 @@ bind_column_main (GtkWidget *w, struct objlist *obj, const char *field, int id, 
     getobj (obj, field, id, 0, NULL, &str);
     break;
   default:
-    return;
+    return NULL;
   }
-  gtk_label_set_text(GTK_LABEL (w), str);
+  return g_strdup (str);
+}
+
+static gboolean
+transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NInst *inst;
+  n_list_store *item;
+  const char *field;
+  char *str;
+
+  inst = N_INST (g_binding_dup_source (binding));
+  item = (n_list_store *) user_data;
+  field = item->name;
+  if (item->bind_func) {
+    GtkWidget *w;
+    w = GTK_WIDGET (g_binding_dup_target (binding));
+    str = item->bind_func(w, inst->obj, field, inst->id);
+    g_object_unref (w);
+  } else {
+    str = get_field_string (inst->obj, field, inst->id, item->type);
+  }
+  g_value_set_string (to_value, str);
+  g_free (str);
+  g_object_unref (inst);
+  return TRUE;
+}
+
+static gboolean
+transform_sensitive (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NInst *inst;
+  int hidden;
+
+  inst = N_INST (g_binding_dup_source (binding));
+  getobj (inst->obj, "hidden", inst->id, 0, NULL, &hidden);
+  g_value_set_boolean (to_value, ! hidden);
+  g_object_unref (inst);
+  return TRUE;
+}
+
+static gboolean
+transform_boolean (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  n_list_store *item;
+  NInst *inst;
+  int active;
+
+  inst = N_INST (g_binding_dup_source (binding));
+  item = (n_list_store *) user_data;
+  getobj (inst->obj, item->name, inst->id, 0, NULL, &active);
+  if (strcmp (item->name, "hidden") == 0) {
+    active = ! active;
+  }
+  g_value_set_boolean (to_value, active);
+  g_object_unref (inst);
+  return TRUE;
+}
+
+static gboolean
+transform_picture (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  n_list_store *item;
+  NInst *inst;
+  GdkPaintable *image;
+
+  item = (n_list_store *) user_data;
+  if (item->bind_func == NULL) {
+    return FALSE;
+  }
+
+  inst = N_INST (g_binding_dup_source (binding));
+  image = item->bind_func (NULL, inst->obj, item->name, inst->id);
+  g_value_set_object (to_value, image);
+  g_object_unref (image);
+  g_object_unref (inst);
+  return TRUE;
+}
+
+static void
+bind_column_main (GtkWidget *w, n_list_store *item, NInst *inst)
+{
+  switch (item->type) {
+  case G_TYPE_BOOLEAN:
+    g_object_bind_property_full (G_OBJECT (inst), "obj", w, "active", G_BINDING_DEFAULT, transform_boolean, NULL, item, NULL);
+    if (strcmp (item->name, "hidden") == 0) {
+      return;
+    }
+    break;
+  case G_TYPE_OBJECT:
+    g_object_bind_property_full (G_OBJECT (inst), "obj", w, "paintable", G_BINDING_DEFAULT, transform_picture, NULL, item, NULL);
+    break;
+  default:
+    g_object_bind_property_full (G_OBJECT (inst), "obj", w, "label", G_BINDING_DEFAULT, transform_label, NULL, item, NULL);
+    break;
+  }
+  g_object_bind_property_full (G_OBJECT (inst), "obj", w, "sensitive", G_BINDING_DEFAULT, transform_sensitive, NULL, item, NULL);
 }
 
 static void
@@ -1028,9 +1109,7 @@ bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *
   w = gtk_list_item_get_child (list_item);
   inst = gtk_list_item_get_item (list_item);
   g_object_set_data (G_OBJECT (w), INSTANCE_ID_KEY, GINT_TO_POINTER (inst->id));
-  item->block_signal = TRUE;
-  bind_column_main (w, inst->obj, item->name, inst->id, item);
-  item->block_signal = FALSE;
+  bind_column_main (w, item, inst);
 }
 
 static struct obj_list_data *

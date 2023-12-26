@@ -66,9 +66,9 @@
 #include "sourcecompletionwords.h"
 #include "completion_info.h"
 
-static void bind_axis(GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id);
-static void bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_axis(GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id);
+static void *bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id);
 
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, FALSE,  "hidden"},
@@ -5968,30 +5968,29 @@ get_plot_info_str(struct objlist *obj, int id, int src)
   return str;
 }
 
-static void
+static void *
 bind_axis(GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char *axis;
   int type;
   type = strcmp (field, "axis_y");
   axis = get_axis_obj_str(obj, id, (type) ? AXIS_X : AXIS_Y);
-  if (axis) {
-    gtk_label_set_text(GTK_LABEL (w), axis);
-    g_free(axis);
-  } else {
-    gtk_label_set_text(GTK_LABEL (w), NULL);
-  }
+  return axis;
 }
 
-static void
+static void *
 bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
+  GdkTexture *texture;
+
   pixbuf = draw_type_pixbuf(obj, id);
-  if (pixbuf) {
-    gtk_picture_set_pixbuf (GTK_PICTURE (w), pixbuf);
-    g_object_unref(pixbuf);
+  if (pixbuf == NULL) {
+    return NULL;
   }
+  texture = gdk_texture_new_for_pixbuf (pixbuf);
+  g_object_unref (pixbuf);
+  return texture;
 }
 
 static void
@@ -6010,20 +6009,21 @@ disconnect_handler (GtkWidget *w, n_list_store *item)
   g_object_unref (list);
 }
 
-static void
+static void *
 bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int src, masked;
   struct narray *mask, *move;
   const char *str;
+  char *rstr;
 
   getobj(obj, "source", id, 0, NULL, &src);
   str = get_plot_info_str(obj, id, src);
   gtk_widget_set_tooltip_text (w, str);
+  gtk_label_set_use_markup (GTK_LABEL (w), FALSE);
 
   if (str == NULL) {
-    gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
-    return;
+    return g_strdup (FILL_STRING);
   }
 
   getobj(obj, "mask", id, 0, NULL, &mask);
@@ -6035,25 +6035,29 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
     bfile = getbasename(str);
     if (bfile) {
       if (masked) {
-	label_set_italic_text (w, bfile);
+	gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
+	rstr = g_markup_printf_escaped ("<i>%s</i>", bfile);
+	g_free(bfile);
+	return rstr;
       } else {
-	gtk_label_set_text (GTK_LABEL (w), bfile);
+	return bfile;
       }
-      g_free(bfile);
     } else {
-      gtk_label_set_text (GTK_LABEL (w), FILL_STRING);
+      return g_strdup (FILL_STRING);
     }
   } else {
     char *tmpstr;
     tmpstr = g_strescape(str, "\\");
     disconnect_handler (w, Flist + 2);
     if (masked) {
-      label_set_italic_text (w, tmpstr);
+      gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
+      rstr = g_markup_printf_escaped ("<i>%s</i>", tmpstr);
+      g_free (tmpstr);
     } else {
-      gtk_label_set_text (GTK_LABEL (w), tmpstr);
+      return tmpstr;
     }
-    g_free (tmpstr);
   }
+  return NULL;
 }
 
 static void
