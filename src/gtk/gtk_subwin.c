@@ -673,6 +673,7 @@ create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
   getobj (item->data->obj, item->name, id, 0, NULL, &cur);
   gtk_list_view_scroll_to (GTK_LIST_VIEW (menu), cur, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
   gtk_widget_set_parent(popover, parent);
+  select_row (parent, id);
   gtk_popover_popup (GTK_POPOVER (popover));
   g_signal_connect (menu, "activate", G_CALLBACK (select_enum_item_cb), item);
   g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover, G_CONNECT_SWAPPED);
