@@ -43,7 +43,6 @@ void set_cell_attribute_source(struct SubWin *d, const char *attr, int target_co
 
 gboolean list_sub_window_must_rebuild(struct obj_list_data *d);
 void list_sub_window_build(struct obj_list_data *d);
-void list_sub_window_set(struct obj_list_data *d);
 
 void list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 void list_sub_window_delete(GSimpleAction *action, GVariant *parameter, gpointer user_data);

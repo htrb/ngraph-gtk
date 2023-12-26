@@ -5529,11 +5529,7 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
   if (d == NULL)
     return;
 
-  if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d);
-  } else {
-    list_sub_window_set(d);
-  }
+  list_sub_window_build(d);
 
   if (! clear && d->select >= 0) {
     columnview_set_active (d->text, d->select, TRUE);

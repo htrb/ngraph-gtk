@@ -1181,23 +1181,26 @@ list_sub_window_must_rebuild(struct obj_list_data *d)
 void
 list_sub_window_build(struct obj_list_data *d)
 {
-  int i, num;
+  int i, num, rnum;
+  GListStore *list;
 
-  num = chkobjlastinst(d->obj);
-  columnview_clear(d->text);
-  for (i = 0; i <= num; i++) {
-    columnview_append_n_inst(d->text, chkobjectname (d->obj), i, d->obj);
+  num = chkobjlastinst(d->obj) + 1;
+  rnum = columnview_get_n_items(d->text);
+  list = columnview_get_list (d->text);
+  if (num > rnum) {
+    const char *name;
+    name = chkobjectname (d->obj);
+    for (i = rnum; i < num; i++) {
+      columnview_append_n_inst(d->text, name, i, d->obj);
+    }
+  } else if (num < rnum) {
+    g_list_store_splice (list, num, rnum - num, NULL, 0);
   }
-}
-
-void
-list_sub_window_set(struct obj_list_data *d)
-{
-  int active;
-  active = columnview_get_active (d->text);
-  list_sub_window_build(d);
-  if (active >= 0) {
-    columnview_set_active (d->text, active, TRUE);
+  for (i = 0; i < num; i++) {
+    NInst *inst;
+    inst = g_list_model_get_item (G_LIST_MODEL (list), i);
+    n_inst_update (inst);
+    g_object_unref (inst);
   }
 }
 
