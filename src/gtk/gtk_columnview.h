@@ -24,6 +24,7 @@ struct _NInst {
 };
 
 NInst *n_inst_new (const gchar *name, int id, struct objlist *obj);
+void n_inst_update (NInst *inst);
 
 
 /* NData Object */

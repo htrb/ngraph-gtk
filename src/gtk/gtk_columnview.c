@@ -85,6 +85,12 @@ n_inst_new (const gchar *name, int id, struct objlist *obj)
   return nobj;
 }
 
+void
+n_inst_update (NInst *inst)
+{
+  g_object_notify (G_OBJECT (inst), "obj");
+}
+
 /* NData Object */
 G_DEFINE_TYPE(NData, n_data, G_TYPE_OBJECT)
 
