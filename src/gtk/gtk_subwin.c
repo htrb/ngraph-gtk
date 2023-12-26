@@ -1167,17 +1167,6 @@ list_sub_window_create(struct SubWin *d, int lisu_num, n_list_store *list)
   return swin;
 }
 
-gboolean
-list_sub_window_must_rebuild(struct obj_list_data *d)
-{
-  int n, num;
-
-  num = chkobjlastinst(d->obj);
-  n = columnview_get_n_items(d->text);
-
-  return (n != num + 1);
-}
-
 void
 list_sub_window_build(struct obj_list_data *d)
 {
