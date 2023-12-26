@@ -24,6 +24,29 @@ selection_model_create(enum N_SELECTION_TYPE selection_type, GListModel *model)
 /* NInst Object */
 G_DEFINE_TYPE(NInst, n_inst, G_TYPE_OBJECT)
 
+enum {
+  INST_PROP_NOBJ = 1,
+  INST_PROP_NUM_PROPERTIES
+};
+
+static void
+n_inst_get_property (GObject    *object,
+		     guint       property_id,
+		     GValue     *value,
+		     GParamSpec *pspec)
+{
+  NInst *self = N_INST (object);
+
+  switch (property_id) {
+  case INST_PROP_NOBJ:
+    g_value_set_pointer (value, self->obj);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
 static void
 n_inst_finalize (GObject *object)
 {
@@ -36,8 +59,12 @@ n_inst_finalize (GObject *object)
 static void
 n_inst_class_init (NInstClass * klass)
 {
+  GParamSpec *pspec;
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   object_class->finalize = n_inst_finalize;
+  object_class->get_property = n_inst_get_property;
+  pspec = g_param_spec_pointer ("obj", NULL, NULL, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, INST_PROP_NOBJ, pspec);
 }
 
 static void
