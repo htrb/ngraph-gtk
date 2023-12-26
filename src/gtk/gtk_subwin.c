@@ -574,6 +574,16 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 #define INSTANCE_ID_KEY "n_inst_id"
 
 static void
+select_row (GtkWidget *w, int id)
+{
+  GtkWidget *columnview;
+  columnview = gtk_widget_get_ancestor (w, GTK_TYPE_COLUMN_VIEW);
+  if (columnview) {
+    columnview_set_active (columnview, id, FALSE);
+  }
+}
+
+static void
 update_obj (struct obj_list_data *d, const char *field, int id, void *val)
 {
   menu_save_undo_single (UNDO_TYPE_EDIT, d->obj->name);
