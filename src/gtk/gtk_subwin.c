@@ -594,21 +594,22 @@ update_obj (struct obj_list_data *d, const char *field, int id, void *val)
 }
 
 static void
-item_toggled (GObject *self, n_list_store *item)
+item_toggled (GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
+  n_list_store *item;
   struct obj_list_data *d;
   struct objlist *obj;
   int state, id;
   const char *field;
+  GtkWidget *w;
 
-  if (item->block_signal) {
-    return;
-  }
-
+  w = gtk_event_controller_get_widget (GTK_EVENT_CONTROLLER (gesture));
+  gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
+  item = (n_list_store *) user_data;
   d = item->data;
   obj = d->obj;
   field = item->name;
-  id = GPOINTER_TO_INT (g_object_get_data (self, INSTANCE_ID_KEY));
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (w), INSTANCE_ID_KEY));
   if (id < 0) {
     return;
   }
@@ -908,12 +909,16 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
 {
   GtkWidget *w;
   int type;
+  GtkGesture *gesture;
 
-  item->block_signal = TRUE;
   switch (item->type) {
   case G_TYPE_BOOLEAN:
     w = gtk_check_button_new ();
-    g_signal_connect (w, "toggled", G_CALLBACK (item_toggled), item);
+    gesture = gtk_gesture_click_new();
+    gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
+    gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+    g_signal_connect(gesture, "released", G_CALLBACK(item_toggled), item);
+    gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER (gesture), GTK_PHASE_CAPTURE);
     break;
   case G_TYPE_OBJECT:
     w = gtk_picture_new ();
