@@ -767,9 +767,10 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
 }
 
 static void
-create_input_common (GtkWidget *parent, GtkWidget *entry, n_list_store *item, GCallback func)
+create_input_common (GtkWidget *parent, GtkWidget *entry, int id, n_list_store *item, GCallback func)
 {
   GtkWidget *popover, *button, *vbox, *hbox;
+  select_row (GTK_WIDGET (parent), id);
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX (vbox), entry);
   button = gtk_button_new_with_mnemonic (_("_Apply"));
@@ -826,7 +827,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
     gtk_editable_set_text (GTK_EDITABLE (entry), buf);
   }
   gtk_editable_set_alignment(GTK_EDITABLE(entry), 1.0);
-  create_input_common (parent, entry, item, G_CALLBACK (set_numeric_item_cb));
+  create_input_common (parent, entry, id, item, G_CALLBACK (set_numeric_item_cb));
 }
 
 static void
@@ -879,7 +880,7 @@ create_string_input (GtkWidget *parent, n_list_store *item)
   if (str) {
     gtk_editable_set_text (GTK_EDITABLE (entry), str);
   }
-  create_input_common (parent, entry, item, G_CALLBACK (set_string_item_cb));
+  create_input_common (parent, entry, id, item, G_CALLBACK (set_string_item_cb));
 }
 
 static void
