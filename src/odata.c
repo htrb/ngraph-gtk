@@ -2289,27 +2289,10 @@ add_basic_func(MathEquation *eq) {
 }
 
 int
-get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis)
+get_axis_id_by_field_str (struct objlist **aobj, char *axis_str)
 {
-  char *field, *axis_str;
   struct narray iarray;
   int anum, id;
-
-  switch (axis) {
-  case AXIS_X:
-    field = "axis_x";
-    break;
-  case AXIS_Y:
-    field = "axis_y";
-    break;
-  case AXIS_REFERENCE:
-    field = "reference";
-    break;
-  default:
-    return - ERRNOAXIS;
-  }
-
-  _getobj(obj, field, inst, &axis_str);
 
   if (axis_str == NULL) {
     return - ERRNOAXIS;
@@ -2330,6 +2313,30 @@ get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis)
   arraydel(&iarray);
 
   return id;
+}
+
+int
+get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis)
+{
+  char *field, *axis_str;
+
+  switch (axis) {
+  case AXIS_X:
+    field = "axis_x";
+    break;
+  case AXIS_Y:
+    field = "axis_y";
+    break;
+  case AXIS_REFERENCE:
+    field = "reference";
+    break;
+  default:
+    return - ERRNOAXIS;
+  }
+
+  _getobj(obj, field, inst, &axis_str);
+
+  return get_axis_id_by_field_str (aobj, axis_str);
 }
 
 struct axis_prm {
