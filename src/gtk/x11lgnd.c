@@ -1972,6 +1972,22 @@ setup_character_map (GtkListItemFactory *factory, GtkListItem *list_item)
   gtk_list_item_set_child (list_item, label);
 }
 
+static void
+bind_char_cb (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *label;
+  gpointer item;
+  const char *string;
+  char *markup;
+
+  label = gtk_list_item_get_child (list_item);
+  item = gtk_list_item_get_item (list_item);
+  string = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
+  markup = g_markup_printf_escaped ("<big>%s</big>", string);
+  gtk_label_set_markup (GTK_LABEL(label), markup);
+  g_free (markup);
+}
+
 static GtkWidget *
 create_character_view(GtkWidget *entry, gchar *data)
 {
@@ -1987,7 +2003,7 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_grid_view_set_max_columns (GTK_GRID_VIEW (icon_view), 100);
   gtk_grid_view_set_single_click_activate (GTK_GRID_VIEW (icon_view), TRUE);
   g_signal_connect (factory, "setup", G_CALLBACK (setup_character_map), NULL);
-  g_signal_connect (factory, "bind", G_CALLBACK (bind_listitem_cb), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_char_cb), NULL);
   g_signal_connect (icon_view, "activate", G_CALLBACK(insert_selcted_char), entry);
 
   for (ptr = data; *ptr; ptr = g_utf8_next_char(ptr)) {
