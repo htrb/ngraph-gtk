@@ -179,8 +179,6 @@ static GActionEntry PopupAction[] =
 typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
 
 
-static void LegendMarkDialogMark(GtkWidget *w, gpointer client_data);
-
 enum LegendType {
   LegendTypePath = 0,
   LegendTypeRect,
@@ -692,12 +690,11 @@ legend_dialog_set_sensitive(struct LegendDialog *d)
 }
 
 static void
-setup_mark_type(struct LegendDialog *d, int id, GtkWidget *type, const char *field, struct MarkDialog *mark)
+setup_mark_type(struct LegendDialog *d, int id, GtkWidget *type, const char *field)
 {
   int a;
   getobj(d->Obj, field, id, 0, NULL, &a);
   button_set_mark_image(type, a);
-  MarkDialog(mark, d->widget, a);
 }
 
 static void
@@ -759,7 +756,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   }
 
   if (d->type) {
-    setup_mark_type(d, id, d->type, "type", &(d->mark));
+    setup_mark_type(d, id, d->type, "type");
   }
 
   if (d->marker_begin) {
@@ -772,11 +769,11 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   }
 
   if (d->mark_type_begin) {
-    setup_mark_type(d, id, d->mark_type_begin, "mark_type_begin", &(d->mark_begin));
+    setup_mark_type(d, id, d->mark_type_begin, "mark_type_begin");
   }
 
   if (d->mark_type_end) {
-    setup_mark_type(d, id, d->mark_type_end, "mark_type_end", &(d->mark_end));
+    setup_mark_type(d, id, d->mark_type_end, "mark_type_end");
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -818,12 +815,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 }
 
 static int
-set_mark_type(struct LegendDialog *d, const char *field, struct MarkDialog *mark)
+set_mark_type(struct LegendDialog *d, const char *field, GtkWidget *mark)
 {
-  int oval;
+  int oval, nval;
   getobj(d->Obj, field, d->Id, 0, NULL, &oval);
-  if (oval != mark->Type) {
-    if (putobj(d->Obj, field, d->Id, &(mark->Type)) == -1) {
+  nval = get_mark_type_from_widget (mark);
+  if (oval != nval) {
+    if (putobj(d->Obj, field, d->Id, &nval) == -1) {
       return 1;
     }
     set_graph_modified();
@@ -935,15 +933,15 @@ legend_dialog_close(GtkWidget *w, void *data)
   }
 
   if (d->type) {
-    set_mark_type(d, "type", &(d->mark));
+    set_mark_type(d, "type", d->type);
   }
 
   if (d->mark_type_begin) {
-    set_mark_type(d, "mark_type_begin", &(d->mark_begin));
+    set_mark_type(d, "mark_type_begin", d->mark_type_begin);
   }
 
   if (d->mark_type_end) {
-    set_mark_type(d, "mark_type_end", &(d->mark_end));
+    set_mark_type(d, "mark_type_end", d->mark_type_end);
   }
 
   if (d->font && d->font_bold && d->font_italic) {
@@ -1409,8 +1407,9 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
   gtk_box_append(GTK_BOX(hbox3), w);
+  mark_popover_new (w, NULL);
   d->mark_type_begin = w;
 
   w = create_marker_type_combo_box("begin", _("Marker begin"));
@@ -1423,7 +1422,8 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
 
   w = gtk_button_new();
   gtk_box_append(GTK_BOX(hbox3), w);
-  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
+  mark_popover_new (w, NULL);
   d->mark_type_end = w;
 
   g_signal_connect_swapped(d->marker_begin, "notify::selected-item", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1810,22 +1810,6 @@ LegendArcDialog(struct LegendDialog *data, struct objlist *obj, int id)
 }
 
 static void
-mark_dialog_response(struct response_callback *cb)
-{
-  button_set_mark_image(GTK_WIDGET(cb->data), ((struct MarkDialog *)cb->dialog)->Type);
-}
-
-static void
-LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
-{
-  struct MarkDialog *d;
-
-  d = (struct MarkDialog *) client_data;
-  response_callback_add(d, mark_dialog_response, NULL, w);
-  DialogExecute(d->parent, d);
-}
-
-static void
 LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct LegendDialog *d;
@@ -1867,7 +1851,8 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new();
     add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark));
+    g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
+    mark_popover_new (w, NULL);
     d->type = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);

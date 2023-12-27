@@ -53,7 +53,6 @@ struct presetting_widgets
   struct widget_info mark_type, mark_size;
   enum JOIN_TYPE join;
   enum MARKER_TYPE marker_begin, marker_end;
-  struct MarkDialog mark, mark_begin, mark_end;
   int fill, stroke, close_path;
 };
 
@@ -334,7 +333,7 @@ void
 presetting_set_obj_field(struct objlist *obj, int id)
 {
   const char *name;
-  int ival, r1, g1, b1, a1, r2, g2, b2, a2, width;
+  int ival, r1, g1, b1, a1, r2, g2, b2, a2, width, mark;
 
   if (obj == NULL) {
     return;
@@ -392,8 +391,10 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "marker_begin", id, &ival);
     ival = Widgets.marker_end;
     putobj(obj, "marker_end", id, &ival);
-    putobj(obj, "mark_type_begin", id, &(Widgets.mark_begin.Type));
-    putobj(obj, "mark_type_end", id, &(Widgets.mark_end.Type));
+    mark = get_mark_type_from_widget (Widgets.mark_type_begin.widget);
+    putobj(obj, "mark_type_begin", id, &mark);
+    mark = get_mark_type_from_widget (Widgets.mark_type_end.widget);
+    putobj(obj, "mark_type_end", id, &mark);
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style.widget);
@@ -426,8 +427,10 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "marker_begin", id, &ival);
     ival = Widgets.marker_end;
     putobj(obj, "marker_end", id, &ival);
-    putobj(obj, "mark_type_begin", id, &(Widgets.mark_begin.Type));
-    putobj(obj, "mark_type_end", id, &(Widgets.mark_end.Type));
+    mark = get_mark_type_from_widget (Widgets.mark_type_begin.widget);
+    putobj(obj, "mark_type_begin", id, &mark);
+    mark = get_mark_type_from_widget (Widgets.mark_type_end.widget);
+    putobj(obj, "mark_type_end", id, &mark);
   } else if (strcmp(name, "mark") == 0) {
     putobj(obj, "width", id, &width);
     putobj(obj, "R", id, &r1);
@@ -440,7 +443,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "A2", id, &a2);
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;
     putobj(obj, "size", id, &ival);
-    putobj(obj, "type", id, &(Widgets.mark.Type));
+    mark = get_mark_type_from_widget (Widgets.mark_type.widget);
+    putobj(obj, "type", id, &mark);
     ival = combo_box_get_active(Widgets.line_style.widget);
     if (ival >= 0) {
       sputobjfield(obj, id, "style", FwLineStyle[ival].list);
@@ -579,14 +583,13 @@ widget_set_marker_type(struct objlist *obj, N_VALUE *inst)
 }
 
 static void
-widget_set_mark_type(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field, struct MarkDialog *d)
+widget_set_mark_type(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field)
 {
   int type;
   if (_getobj(obj, field, inst, &type)) {
     return;
   }
   button_set_mark_image(button, type);
-  d->Type = type;
 }
 
 static void
@@ -741,8 +744,8 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin", &(Widgets.mark_begin));
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end", &(Widgets.mark_end));
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
       widget_set_path_type(obj, inst);
     } else if (obj == rect_obj) {
@@ -763,14 +766,14 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin", &(Widgets.mark_begin));
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end", &(Widgets.mark_end));
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
     } else if (obj == mark_obj) {
       widget_set_line_width(obj, inst);
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, NULL, "2");
-      widget_set_mark_type(obj, inst, Widgets.mark_type.widget, "type", &(Widgets.mark));
+      widget_set_mark_type(obj, inst, Widgets.mark_type.widget, "type");
       widget_set_line_style(obj, inst, "style");
       widget_set_spin_value(obj, inst, Widgets.mark_size.widget, "size");
     }
@@ -1647,6 +1650,12 @@ update_focused_obj_font_style(struct Viewer *d, int num, int style, int apply)
 }
 
 static void
+update_focused_obj_from_notify (GtkWidget *w, GParamSpec *pspec, gpointer user_data)
+{
+  update_focused_obj(w, user_data);
+}
+
+static void
 update_focused_obj(GtkWidget *widget, gpointer user_data)
 {
   int undo, modified, num;
@@ -1849,7 +1858,7 @@ create_line_style_combo_box(void)
     combo_box_append_text(cbox, _(FwLineStyle[j].name));
   }
   combo_box_set_active(cbox, 0);
-  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
+  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj_from_notify), NULL);
   return cbox;
 }
 
@@ -1864,7 +1873,7 @@ create_path_type_combo_box(void)
     combo_box_append_text(cbox, _(intpchar[j]));
   }
   combo_box_set_active(cbox, 0);
-  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
+  g_signal_connect(cbox, "notify::selected", G_CALLBACK(update_focused_obj_from_notify), NULL);
   return cbox;
 }
 
@@ -1881,32 +1890,18 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
 }
 
 static void
-mark_dialog_response(struct response_callback *cb)
+select_mark(GtkWidget *w)
 {
-  if (cb->return_value == IDOK) {
-    GtkWidget *w;
-    struct MarkDialog *d;
-    d = (struct MarkDialog *) cb->dialog;
-    w = GTK_WIDGET(cb->data);
-    button_set_mark_image(w, d->Type);
-    update_focused_obj(w, GINT_TO_POINTER(d->Type));
-  }
+  int type;
+  type = get_mark_type_from_widget (w);
+  update_focused_obj(w, GINT_TO_POINTER(type));
 }
 
 static void
-select_mark(GtkWidget *w, gpointer client_data)
+setup_mark_type(GtkWidget *type)
 {
-  struct MarkDialog *d;
-  d = (struct MarkDialog *) client_data;
-  response_callback_add(d, mark_dialog_response, NULL, w);
-  DialogExecute(d->parent, d);
-}
-
-static void
-setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
-{
+  mark_popover_new (type, select_mark);
   button_set_mark_image(type, 0);
-  MarkDialog(mark, TopLevel, 0);
 }
 
 void
@@ -1957,7 +1952,7 @@ presetting_create_panel(GtkApplication *app)
   set_font_family(w);
   gtk_widget_set_tooltip_text(w, _("Font name"));
   gtk_box_append(GTK_BOX(box), w);
-  g_signal_connect(w, "notify::selected", G_CALLBACK(update_focused_obj), NULL);
+  g_signal_connect(w, "notify::selected", G_CALLBACK(update_focused_obj_from_notify), NULL);
   Widgets.font.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
@@ -1984,8 +1979,8 @@ presetting_create_panel(GtkApplication *app)
   Widgets.path_type.widget = w;
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
-  setup_mark_type(w, &(Widgets.mark));
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
+  setup_mark_type(w);
   gtk_box_append(GTK_BOX(box), w);
   Widgets.mark_type.widget = w;
 
@@ -2036,8 +2031,8 @@ presetting_create_panel(GtkApplication *app)
   button_set_child(Widgets.join_type.widget, Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
-  setup_mark_type(w, &(Widgets.mark_begin));
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
+  setup_mark_type(w);
   gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
   button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(button_box), w);
@@ -2060,8 +2055,8 @@ presetting_create_panel(GtkApplication *app)
   button_set_child(Widgets.marker_type_end.widget, Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
-  setup_mark_type(w, &(Widgets.mark_end));
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
+  setup_mark_type(w);
   gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
   gtk_box_append(GTK_BOX(button_box), w);
   gtk_box_append(GTK_BOX(box), button_box);
@@ -2092,9 +2087,9 @@ presetting_get(struct presettings *setting)
     setting->type = 1;
   }
   setting->join = Widgets.join;
-  setting->mark_type_begin = Widgets.mark_begin.Type;
-  setting->mark_type_end = Widgets.mark_end.Type;
-  setting->mark_type = Widgets.mark.Type;
+  setting->mark_type_begin = get_mark_type_from_widget (Widgets.mark_type_begin.widget);
+  setting->mark_type_end = get_mark_type_from_widget (Widgets.mark_type_end.widget);
+  setting->mark_type = get_mark_type_from_widget (Widgets.mark_type.widget);
   setting->mark_size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;;
   setting->marker_begin = Widgets.marker_begin;
   setting->marker_end = Widgets.marker_end;

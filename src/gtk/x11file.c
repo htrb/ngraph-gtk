@@ -2959,24 +2959,11 @@ math_tab_set_value(void *data)
 }
 
 static void
-MarkDialogCB(GtkWidget *w, gpointer client_data)
+set_mark_number (GtkWidget *w, int type)
 {
-  int i;
-  struct MarkDialog *d;
-
-  d = (struct MarkDialog *) client_data;
-
-  if (! d->cb_respond)
-    return;
-
-  for (i = 0; i < MARK_TYPE_NUM; i++) {
-    if (w == d->toggle[i])
-      break;
-  }
-
-  d->Type = i;
-  d->ret = IDOK;
-  gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
+  char buf[128];
+  snprintf(buf, sizeof(buf), "%02d", type);
+  gtk_widget_set_tooltip_text(w, buf);
 }
 
 void
@@ -2992,60 +2979,129 @@ button_set_mark_image(GtkWidget *w, int type)
   img = gtk_image_new_from_icon_name(buf);
   gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
   gtk_button_set_child(GTK_BUTTON(w), img);
-  snprintf(buf, sizeof(buf), "%02d", type);
-  gtk_widget_set_tooltip_text(w, buf);
+  set_mark_number (w, type);
 }
 
 static void
-MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
+setup_mark (GtkListItemFactory *factory, GtkListItem *list_item)
 {
-  struct MarkDialog *d;
+  GtkWidget *image;
+
+  image = gtk_image_new ();
+  gtk_image_set_icon_size (GTK_IMAGE (image), Menulocal.icon_size);
+  gtk_list_item_set_child (list_item, image);
+}
+
+static void
+bind_mark (GtkListItemFactory *factory, GtkListItem *list_item)
+{
+  GtkWidget *image;
+  GtkStringObject *str;
   int type;
-#define COL 10
 
-  d = (struct MarkDialog *) data;
+  image = gtk_list_item_get_child (list_item);
+  str = gtk_list_item_get_item (list_item);
+  type = gtk_list_item_get_position (list_item);
+  set_mark_number (image, type);
+  g_object_bind_property (str, "string", image, "icon-name", G_BINDING_SYNC_CREATE);
+}
 
-  if (makewidget) {
-    GtkWidget *w, *grid;
-    grid = gtk_grid_new();
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
-    gtk_widget_set_margin_end(grid, 4);
-    gtk_widget_set_margin_start(grid, 4);
-    for (type = 0; type < MARK_TYPE_NUM; type++) {
-      w = gtk_toggle_button_new();
-      button_set_mark_image(w, type);
-      g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
-      d->toggle[type] = w;
-      gtk_grid_attach(GTK_GRID(grid), w, type % COL, type / COL, 1, 1);
-    }
-    gtk_box_append(GTK_BOX(d->vbox), grid);
+int
+get_mark_type_from_widget (GtkWidget *w)
+{
+  const char *icon;
+  int mark;
+  icon = NULL;
+  if (G_TYPE_CHECK_INSTANCE_TYPE (w, GTK_TYPE_BUTTON)) {
+    GtkWidget *image;
+    image = gtk_button_get_child (GTK_BUTTON (w));
+    icon = gtk_image_get_icon_name (GTK_IMAGE (image));
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE (w, GTK_TYPE_IMAGE)) {
+    icon = gtk_image_get_icon_name (GTK_IMAGE (w));
   }
-
-  d->cb_respond = FALSE;
-  for (type = 0; type < MARK_TYPE_NUM; type++) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[type]), FALSE);
+  if (icon == NULL) {
+    return 0;
   }
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[d->Type]), TRUE);
-  d->focus = d->toggle[d->Type];
-  d->cb_respond = TRUE;
+  sscanf(icon, "ngraph_mark%02d-symbolic", &mark);
+  return mark;
 }
 
 static void
-MarkDialogClose(GtkWidget *w, void *data)
+select_mark (GtkGridView *icon_view, guint i, select_mark_func cb)
 {
+  GtkWidget *popover, *parent;
+  GtkStringObject *sobj;
+  const char *str;
+  GtkSelectionModel *model;
+  popover = gtk_widget_get_ancestor (GTK_WIDGET (icon_view), GTK_TYPE_POPOVER);
+  parent = gtk_widget_get_parent (popover);
+  model = gtk_grid_view_get_model (icon_view);
+  sobj = GTK_STRING_OBJECT (g_list_model_get_object (G_LIST_MODEL (model), i));
+  gtk_popover_popdown (GTK_POPOVER (popover));
+  str = gtk_string_object_get_string (sobj);
+  if (G_TYPE_CHECK_INSTANCE_TYPE (parent, GTK_TYPE_BUTTON)) {
+    GtkWidget *image;
+    image = gtk_button_get_child (GTK_BUTTON (parent));
+    gtk_image_set_from_icon_name (GTK_IMAGE (image), str);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE (parent, GTK_TYPE_IMAGE)) {
+    gtk_image_set_from_icon_name (GTK_IMAGE (parent), str);
+  }
+  g_object_unref (sobj);
+
+  if (cb) {
+    cb(parent);
+  }
 }
 
 void
-MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type)
+mark_popover_popup (GtkWidget *w)
 {
-  if (type < 0 || type >= MARK_TYPE_NUM) {
-    type = 0;
+  int mark;
+  GtkWidget *popover, *icon_view;
+  GtkSelectionModel *model;
+
+  mark = get_mark_type_from_widget (w);
+  popover = gtk_widget_get_first_child (w);
+  if (! G_TYPE_CHECK_INSTANCE_TYPE (popover, GTK_TYPE_POPOVER)) {
+    popover = gtk_widget_get_last_child (w);
   }
-  data->SetupWindow = MarkDialogSetup;
-  data->CloseWindow = MarkDialogClose;
-  data->Type = type;
-  data->parent = parent;
+  icon_view = gtk_popover_get_child (GTK_POPOVER (popover));
+  model = gtk_grid_view_get_model (GTK_GRID_VIEW (icon_view));
+  gtk_selection_model_select_item (model, mark, TRUE);
+  gtk_popover_popup (GTK_POPOVER (popover));
+}
+
+GtkWidget *
+mark_popover_new (GtkWidget *parent, select_mark_func cb)
+{
+  GtkWidget *icon_view, *popover;
+  GtkStringList *list;
+  GtkSelectionModel *model;
+  GtkListItemFactory *factory;
+  int type;
+  list = gtk_string_list_new (NULL);
+  model = GTK_SELECTION_MODEL(gtk_single_selection_new (G_LIST_MODEL (list)));
+  factory = gtk_signal_list_item_factory_new();
+  icon_view = gtk_grid_view_new (model, factory);
+  gtk_grid_view_set_max_columns (GTK_GRID_VIEW (icon_view), 10);
+  gtk_grid_view_set_min_columns (GTK_GRID_VIEW (icon_view), 10);
+  gtk_grid_view_set_single_click_activate (GTK_GRID_VIEW (icon_view), TRUE);
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_mark), NULL);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_mark), NULL);
+  g_signal_connect (icon_view, "activate", G_CALLBACK(select_mark), cb);
+
+  for (type = 0; type < MARK_TYPE_NUM; type++) {
+    char buf[128];
+    snprintf(buf, sizeof(buf), "ngraph_mark%02d-symbolic", type);
+    gtk_string_list_append (list, buf);
+  }
+  popover = gtk_popover_new ();
+  gtk_widget_set_vexpand(popover, FALSE);
+  gtk_popover_set_child (GTK_POPOVER (popover), icon_view);
+  gtk_widget_set_parent(popover, parent);
+  g_signal_connect_swapped (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover);
+
+  return popover;
 }
 
 static void
@@ -3083,7 +3139,6 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 
   getobj(d->Obj, "mark_type", id, 0, NULL, &a);
   button_set_mark_image(d->mark_btn, a);
-  MarkDialog(&(d->mark), d->widget, a);
 
   SetWidgetFromObjField(d->size, d->Obj, id, "mark_size");
 
@@ -3149,36 +3204,6 @@ struct file_dialog_mark_data {
   struct FileDialog *d;
   GtkWidget *w;
 };
-
-static void
-file_dialog_mark_response(struct response_callback *cb)
-{
-  struct file_dialog_mark_data *data;
-  struct FileDialog *d;
-  GtkWidget *w;
-  data = (struct file_dialog_mark_data *) cb->data;
-  d = data->d;
-  w = data->w;
-  button_set_mark_image(w, d->mark.Type);
-  g_free(data);
-}
-
-static void
-FileDialogMark(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-  struct file_dialog_mark_data *data;
-
-  d = (struct FileDialog *) client_data;
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    return;
-  }
-  data->d = d;
-  data->w = w;
-  response_callback_add(&d->mark, file_dialog_mark_response, NULL, data);
-  DialogExecute(d->widget, &(d->mark));
-}
 
 struct execute_fit_dialog_data {
   struct objlist *fileobj;
@@ -3695,7 +3720,8 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   w = gtk_button_new();
   add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
   d->mark_btn = w;
-  g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMark), d);
+  mark_popover_new (w, NULL);
+  g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
 
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Curve:"), FALSE, i++);
@@ -4396,13 +4422,15 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static int
 plot_tab_set_value(struct FileDialog *d)
 {
+  int mark;
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return TRUE;
 
   if (SetObjFieldFromWidget(d->curve, d->Obj, d->Id, "interpolation"))
     return TRUE;
 
-  if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
+  mark = get_mark_type_from_widget (d->mark_btn);
+  if (putobj(d->Obj, "mark_type", d->Id, &mark) == -1)
     return TRUE;
 
   if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "mark_size"))

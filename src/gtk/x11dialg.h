@@ -116,15 +116,6 @@ struct DialogType
   DIALOG_PROTOTYPE;
 };
 
-struct MarkDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *toggle[MARK_TYPE_NUM];
-  int Type, cb_respond;
-};
-void MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type);
-
 struct FileMath
 {
   GtkWidget *xsmooth, *x, *ysmooth, *averaging_type, *y, *f, *g, *h, *text_x, *text_y, *text_f, *text_g, *text_h;
@@ -160,7 +151,6 @@ struct FileDialog
   GtkNotebook *tab, *math_tab;
   struct objlist *Obj;
   int Id, source, math_page;
-  struct MarkDialog mark;
   int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, initialized;
   struct FileMath math;
   struct FileLoad load;
@@ -374,7 +364,6 @@ struct LegendDialog
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
-  struct MarkDialog mark, mark_begin, mark_end;
   cairo_surface_t *arrow_pixmap;
 };
 
