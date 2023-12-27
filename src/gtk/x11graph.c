@@ -225,11 +225,10 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Paper:"), FALSE, i++);
     d->paper = w;
-    g_signal_connect(w, "notify::selected", G_CALLBACK(PageDialogPage), d);
-
     for (j = 0; j < PAGELISTNUM; j++) {
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
+    g_signal_connect(w, "notify::selected", G_CALLBACK(PageDialogPage), d);
 
     w = gtk_check_button_new_with_mnemonic(_("_Portrait"));
     group = w;
