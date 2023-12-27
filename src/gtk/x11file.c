@@ -70,20 +70,23 @@ static void *bind_axis(GtkWidget *w, struct objlist *obj, const char *field, int
 static void *bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id);
 static void *bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id);
 
+static int setup_axis_menu (struct objlist *obj, const char *field, int id, GtkStringList *list);
+static int select_axis_menu (struct objlist *obj, const char *field, int id, GtkStringList *list, int sel);
+
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, FALSE,  "hidden"},
   {"#",		G_TYPE_INT,     FALSE, FALSE, "id"},
-  {N_("file/range"),	G_TYPE_STRING, TRUE, TRUE,  "file", bind_file, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {"x   ",	G_TYPE_INT,     TRUE, FALSE,  "x", NULL,  0, 999, 1, 10},
-  {"y   ",	G_TYPE_INT,     TRUE, FALSE,  "y", NULL,  0, 999, 1, 10},
-  {N_("ax"),	G_TYPE_PARAM,   TRUE, FALSE,  "axis_x", bind_axis},
-  {N_("ay"),	G_TYPE_PARAM,   TRUE, FALSE,  "axis_y", bind_axis},
+  {N_("file/range"),	G_TYPE_STRING, TRUE, TRUE,  "file", bind_file, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x   ",	G_TYPE_INT,     TRUE, FALSE,  "x", NULL, NULL, NULL,  0, 999, 1, 10},
+  {"y   ",	G_TYPE_INT,     TRUE, FALSE,  "y", NULL, NULL, NULL,  0, 999, 1, 10},
+  {N_("ax"),	G_TYPE_ENUM,    TRUE, FALSE,  "axis_x", bind_axis, setup_axis_menu, select_axis_menu},
+  {N_("ay"),	G_TYPE_ENUM,    TRUE, FALSE,  "axis_y", bind_axis, setup_axis_menu, select_axis_menu},
   {N_("type"),	G_TYPE_OBJECT,  TRUE, FALSE,  "type",   bind_type},
-  {N_("size"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "mark_size",  NULL, 0,       SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "line_width", NULL, 0,       SPIN_ENTRY_MAX, 10,   100},
-  {N_("skip"),	G_TYPE_INT,     TRUE, FALSE,  "head_skip",  NULL, 0,       INT_MAX,         1,    10},
-  {N_("step"),	G_TYPE_INT,     TRUE, FALSE,  "read_step",  NULL, 1,       INT_MAX,         1,    10},
-  {N_("final"),	G_TYPE_INT,     TRUE, FALSE,  "final_line", NULL, INT_MIN, INT_MAX,    1,    10},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "mark_size",  NULL, NULL, NULL, 0,       SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, FALSE,  "line_width", NULL, NULL, NULL, 0,       SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, FALSE,  "head_skip",  NULL, NULL, NULL, 0,       INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, FALSE,  "read_step",  NULL, NULL, NULL, 1,       INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, FALSE,  "final_line", NULL, NULL, NULL, INT_MIN, INT_MAX,    1,    10},
   {N_("num"), 	G_TYPE_INT,     FALSE, FALSE, "data_num"},
   {"^#",	G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
@@ -5962,6 +5965,47 @@ get_plot_info_str(struct objlist *obj, int id, int src)
   }
 
   return str;
+}
+
+static int
+setup_axis_menu (struct objlist *obj, const char *field, int id, GtkStringList *list)
+{
+  struct objlist *aobj;
+  char *name, *axis;
+  int aid, lastinst, row;
+
+  aobj = getobject("axis");
+  getobj (obj, field, id, 0, NULL, &axis);
+  row = get_axis_id_by_field_str (&aobj, axis);
+  if (row < 0) {
+    row = 0;
+  }
+
+  lastinst = chkobjlastinst(aobj);
+  for (aid = 0; aid <= lastinst; aid++) {
+    getobj(aobj, "group", aid, 0, NULL, &name);
+    gtk_string_list_append (list, name);
+  }
+  return row;
+}
+
+static int
+select_axis_menu (struct objlist *obj, const char *field, int id, GtkStringList *list, int sel)
+{
+  struct objlist *aobj;
+  char *axis;
+  char *str;
+  int row;
+
+  getobj (obj, field, id, 0, NULL, &axis);
+  row = get_axis_id_by_field_str (&aobj, axis);
+  if (row == sel) {
+    return 1;
+  }
+  menu_save_undo_single (UNDO_TYPE_EDIT, obj->name);
+  str = g_strdup_printf ("axis:%d", sel);
+  putobj (obj, field, id, str);
+  return 0;
 }
 
 static void *

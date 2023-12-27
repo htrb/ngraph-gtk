@@ -64,10 +64,10 @@ static n_list_store Alist[] = {
   {N_("max"),  G_TYPE_STRING,  TRUE,  TRUE,  "max", bind_minmax},
   {N_("inc"),  G_TYPE_STRING,  TRUE,  TRUE,  "inc", bind_inc},
   {N_("type"), G_TYPE_ENUM,    TRUE,  FALSE, "type"},
-  {"x",        G_TYPE_DOUBLE,  TRUE,  FALSE, "x",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",        G_TYPE_DOUBLE,  TRUE,  FALSE, "y",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("dir"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "direction",     NULL,        0,          36000, 100, 1500},
-  {N_("len"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "length",     NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"x",        G_TYPE_DOUBLE,  TRUE,  FALSE, "x", NULL, NULL, NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",        G_TYPE_DOUBLE,  TRUE,  FALSE, "y", NULL, NULL, NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("dir"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "direction", NULL, NULL, NULL, 0, 36000, 100, 1500},
+  {N_("len"),  G_TYPE_DOUBLE,  TRUE,  FALSE, "length", NULL, NULL, NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"^#",       G_TYPE_INT,     FALSE, FALSE, "oid"},
 };
 

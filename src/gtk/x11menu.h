@@ -216,6 +216,8 @@ struct SubWin;
 struct obj_list_data;
 
 typedef void * (* bind_item_func) (GtkWidget *w, struct objlist *obj, const char *field, int id);
+typedef int (* setup_enum_func) (struct objlist *obj, const char *field, int id, GtkStringList *list);
+typedef int (* select_enum_func) (struct objlist *obj, const char *field, int id, GtkStringList *list, int sel);
 
 typedef struct _list_store {
   char *title;
@@ -223,10 +225,11 @@ typedef struct _list_store {
   gboolean editable, expand;
   char *name;
   bind_item_func bind_func;
+  setup_enum_func setup_enum_func;
+  select_enum_func select_enum_func;
   int min, max, inc, page;
   PangoEllipsizeMode ellipsize;
   struct obj_list_data *data;
-  gboolean block_signal;
 } n_list_store;
 
 struct obj_list_data

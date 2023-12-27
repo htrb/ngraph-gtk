@@ -636,10 +636,21 @@ select_enum_item_cb (GtkWidget* self, int position, gpointer user_data)
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (label), INSTANCE_ID_KEY));
   getobj (d->obj, item->name, id, 0, NULL, &cur);
   gtk_popover_popdown(GTK_POPOVER(popover));
-  if (cur == position) {
-    return;
+  if (item->select_enum_func) {
+    GtkStringList *list;
+    list = listview_get_string_list (self);
+    if (item->select_enum_func (d->obj, item->name, id, list, position)) {
+      return;
+    }
+    d->select = id;
+    d->update (d, FALSE, TRUE);
+    set_graph_modified ();
+  } else {
+    if (cur == position) {
+      return;
+    }
+    update_obj (d, item->name, id, &position);
   }
-  update_obj (d, item->name, id, &position);
 }
 
 static void
@@ -653,11 +664,11 @@ check_popover (GtkWidget *parent)
 }
 
 static void
-create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
+create_enum_menu(GtkWidget *parent, n_list_store *item)
 {
   GtkWidget *popover, *menu;
   GtkStringList *list;
-  int i, cur, id;
+  int cur, id;
 
   check_popover (parent);
   menu = listview_create(N_SELECTION_TYPE_SINGLE, NULL, NULL, NULL);
@@ -666,12 +677,19 @@ create_enum_menu(GtkWidget *parent, const char **enumlist, n_list_store *item)
   popover = gtk_popover_new();
   gtk_popover_set_child(GTK_POPOVER (popover), menu);
 
-  list = listview_get_string_list (menu);
-  for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
-    gtk_string_list_append (list, _(enumlist[i]));
-  }
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
-  getobj (item->data->obj, item->name, id, 0, NULL, &cur);
+  list = listview_get_string_list (menu);
+  if (item->setup_enum_func) {
+    cur = item->setup_enum_func (item->data->obj, item->name, id, list);
+  } else {
+    int i;
+    const char **enumlist;
+    enumlist = (const char **) chkobjarglist(item->data->obj, item->name);
+    for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
+      gtk_string_list_append (list, _(enumlist[i]));
+    }
+    getobj (item->data->obj, item->name, id, 0, NULL, &cur);
+  }
   gtk_list_view_scroll_to (GTK_LIST_VIEW (menu), cur, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
   gtk_widget_set_parent(popover, parent);
   select_row (parent, id);
@@ -685,14 +703,10 @@ enum_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer 
 {
   GtkWidget *parent;
   n_list_store *item;
-  struct obj_list_data *d;
-  const char **enumlist;
 
   item = (n_list_store *) user_data;
-  d = item->data;
-  enumlist = (const char **) chkobjarglist(d->obj, item->name);
   parent = gtk_event_controller_get_widget (self);
-  create_enum_menu(parent, enumlist, item);
+  create_enum_menu(parent, item);
 }
 
 static int
