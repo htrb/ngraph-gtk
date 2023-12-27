@@ -1384,7 +1384,7 @@ void
 axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
 {
   struct objlist *aobj;
-  char *name, *item;
+  const char *name;
   int default_aid, aid, lastinst, flag, self, selected, row;
   struct narray *array;
 
@@ -1425,12 +1425,10 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
     } else {
       arrayadd(array, &aid);
     }
-    item = g_strdup_printf("%s", name);
-    combo_box_append_text(cbox, item);
+    combo_box_append_text(cbox, name);
     if (aid == default_aid) {
       selected = row;
     }
-    g_free(item);
     row++;
   }
   combo_box_set_active(cbox, selected);
