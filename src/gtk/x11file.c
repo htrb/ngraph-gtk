@@ -2445,19 +2445,15 @@ mask_tab_set_value(struct FileDialog *d)
     mask = NULL;
   }
 
-  list = G_LIST_MODEL (gtk_list_view_get_model (GTK_LIST_VIEW (d->mask.list)));
+  list = G_LIST_MODEL (gtk_column_view_get_model (GTK_COLUMN_VIEW (d->mask.list)));
   n = g_list_model_get_n_items (list);
   for (i = 0; i < n; i++) {
-    GObject *item;
-    const char *str;
-    int a;
-    item = g_list_model_get_object (list, i);
-    str = gtk_string_object_get_string (GTK_STRING_OBJECT (item));
-    if (mask == NULL)
+    NData *item;
+    item = N_DATA (g_list_model_get_object (list, i));
+    if (mask == NULL) {
       mask = arraynew(sizeof(int));
-
-    a = atoi (str);
-    arrayadd(mask, &a);
+    }
+    arrayadd(mask, &item->line);
   }
   putobj(d->Obj, "mask", d->Id, mask);
   set_graph_modified();
