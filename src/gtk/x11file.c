@@ -3027,8 +3027,8 @@ select_mark (GtkGridView *icon_view, guint i, select_mark_func cb)
   parent = gtk_widget_get_parent (popover);
   model = gtk_grid_view_get_model (icon_view);
   sobj = GTK_STRING_OBJECT (g_list_model_get_object (G_LIST_MODEL (model), i));
-  gtk_popover_popdown (GTK_POPOVER (popover));
   str = gtk_string_object_get_string (sobj);
+  gtk_popover_popdown (GTK_POPOVER (popover));
   if (G_TYPE_CHECK_INSTANCE_TYPE (parent, GTK_TYPE_BUTTON)) {
     GtkWidget *image;
     image = gtk_button_get_child (GTK_BUTTON (parent));
@@ -3047,18 +3047,23 @@ void
 mark_popover_popup (GtkWidget *w)
 {
   int mark;
-  GtkWidget *popover, *icon_view;
-  GtkSelectionModel *model;
 
   mark = get_mark_type_from_widget (w);
+  mark_popover_popup_selected (w, mark);
+}
+
+void
+mark_popover_popup_selected (GtkWidget *w, int mark)
+{
+  GtkWidget *popover, *icon_view;
+
   popover = gtk_widget_get_first_child (w);
   if (! G_TYPE_CHECK_INSTANCE_TYPE (popover, GTK_TYPE_POPOVER)) {
     popover = gtk_widget_get_last_child (w);
   }
   icon_view = gtk_popover_get_child (GTK_POPOVER (popover));
-  model = gtk_grid_view_get_model (GTK_GRID_VIEW (icon_view));
-  gtk_selection_model_select_item (model, mark, TRUE);
   gtk_popover_popup (GTK_POPOVER (popover));
+  gtk_grid_view_scroll_to (GTK_GRID_VIEW (icon_view), mark, GTK_LIST_SCROLL_SELECT | GTK_LIST_SCROLL_FOCUS, NULL);
 }
 
 static GtkWidget *
