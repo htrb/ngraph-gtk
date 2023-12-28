@@ -4131,10 +4131,14 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     goto exit;
   }
 
-  columnview_clear (d->comment_table);
   model = columnview_get_list(d->comment_table);
+  nrows = g_list_model_get_n_items (G_LIST_MODEL (model));
+  if (nrows > n) {
+    g_list_store_splice (model, 2, nrows - n, NULL, 0);
+  }
 
   l = 1;
+  max_col = 0;
   for (i = 0; i < n; i++) {
     int m, c, v;
     const char *str;
@@ -4142,6 +4146,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 
     m = arraynum(lines + i);
     m = (m < MAX_COLS) ? m : MAX_COLS;
+    max_col = (max_col <= m) ? m : max_col;
     for (j = 0; j < m; j++) {
       text[j + 1] = arraynget_str(lines + i, j);
     }
@@ -4160,8 +4165,15 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     } else {
       text[0] = "";
     }
-    list_store_append_n_text (model, text, v);
+    if (i < nrows) {
+      NText *tobj;
+      tobj = N_TEXT (g_list_model_get_object (G_LIST_MODEL (model), i));
+      n_text_set_text (tobj, text, v);
+    } else {
+      list_store_append_n_text (model, text, v);
+    }
   }
+  hide_columns (d, max_col + 2);
 
  exit:
   for (i = 0; i < n; i++) {
