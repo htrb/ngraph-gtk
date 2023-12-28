@@ -26,6 +26,8 @@ G_DEFINE_TYPE(NInst, n_inst, G_TYPE_OBJECT)
 
 enum {
   INST_PROP_NOBJ = 1,
+  INST_PROP_ID,
+  INST_PROP_NAME,
   INST_PROP_NUM_PROPERTIES
 };
 
@@ -40,6 +42,12 @@ n_inst_get_property (GObject    *object,
   switch (property_id) {
   case INST_PROP_NOBJ:
     g_value_set_pointer (value, self->obj);
+    break;
+  case INST_PROP_ID:
+    g_value_set_int (value, self->id);
+    break;
+  case INST_PROP_NAME:
+    g_value_set_string (value, self->name);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -65,6 +73,10 @@ n_inst_class_init (NInstClass * klass)
   object_class->get_property = n_inst_get_property;
   pspec = g_param_spec_pointer ("obj", NULL, NULL, G_PARAM_READABLE);
   g_object_class_install_property (object_class, INST_PROP_NOBJ, pspec);
+  pspec = g_param_spec_int ("id", NULL, NULL, -1, G_MAXINT, 0, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, INST_PROP_ID, pspec);
+  pspec = g_param_spec_string ("name", NULL, NULL, NULL, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, INST_PROP_NAME, pspec);
 }
 
 static void
