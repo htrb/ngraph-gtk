@@ -51,4 +51,5 @@ void mark_popover_popup (GtkWidget *w);
 
 typedef void (* select_mark_func) (GtkWidget *w);
 GtkWidget *mark_popover_new (GtkWidget *parent, select_mark_func cb);
+GtkWidget *mark_popover_new_with_callback (GtkWidget *parent, GCallback activate, gpointer user_data);
 int get_mark_type_from_widget (GtkWidget *w);

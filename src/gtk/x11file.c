@@ -3061,8 +3061,8 @@ mark_popover_popup (GtkWidget *w)
   gtk_popover_popup (GTK_POPOVER (popover));
 }
 
-GtkWidget *
-mark_popover_new (GtkWidget *parent, select_mark_func cb)
+static GtkWidget *
+mark_popover_new_full (GtkWidget *parent, select_mark_func cb, GCallback activate, gpointer user_data)
 {
   GtkWidget *icon_view, *popover;
   GtkStringList *list;
@@ -3092,6 +3092,18 @@ mark_popover_new (GtkWidget *parent, select_mark_func cb)
   g_signal_connect_swapped (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover);
 
   return popover;
+}
+
+GtkWidget *
+mark_popover_new_with_callback (GtkWidget *parent, GCallback activate, gpointer user_data)
+{
+  return mark_popover_new_full (parent, NULL, activate, user_data);
+}
+
+GtkWidget *
+mark_popover_new (GtkWidget *parent, select_mark_func cb)
+{
+  return mark_popover_new_full (parent, cb, NULL, NULL);
 }
 
 static void
