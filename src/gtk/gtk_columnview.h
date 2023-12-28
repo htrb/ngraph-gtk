@@ -82,6 +82,7 @@ struct _NText {
 };
 
 NText *n_text_new (gchar **text, guint attribute);
+const char *n_text_get_string (NText *self, guint index);
 
 
 GtkWidget *columnview_create(GType item_type, enum N_SELECTION_TYPE type);

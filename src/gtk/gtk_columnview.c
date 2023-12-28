@@ -326,6 +326,16 @@ n_text_new (gchar **text, guint attribute)
   return nobj;
 }
 
+void
+n_text_set_text (NText *self, char **text, guint attribute)
+{
+  g_strfreev (self->text);
+  self->text = g_strdupv (text);
+  self->size = (text) ? g_strv_length (text) : 0;
+  self->attribute = attribute;
+  g_object_notify (G_OBJECT (self), "text");
+}
+
 
 /* GtkColumnView */
 
