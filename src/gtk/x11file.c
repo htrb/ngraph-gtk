@@ -3078,7 +3078,11 @@ mark_popover_new_full (GtkWidget *parent, select_mark_func cb, GCallback activat
   gtk_grid_view_set_single_click_activate (GTK_GRID_VIEW (icon_view), TRUE);
   g_signal_connect (factory, "setup", G_CALLBACK (setup_mark), NULL);
   g_signal_connect (factory, "bind", G_CALLBACK (bind_mark), NULL);
-  g_signal_connect (icon_view, "activate", G_CALLBACK(select_mark), cb);
+  if (activate) {
+    g_signal_connect (icon_view, "activate", G_CALLBACK(activate), user_data);
+  } else {
+    g_signal_connect (icon_view, "activate", G_CALLBACK(select_mark), cb);
+  }
 
   for (type = 0; type < MARK_TYPE_NUM; type++) {
     char buf[128];
