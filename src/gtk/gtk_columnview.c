@@ -266,6 +266,29 @@ n_array_new (int line)
 /* NText Object */
 G_DEFINE_TYPE(NText, n_text, G_TYPE_OBJECT)
 
+enum {
+  TEXT_PROP_TEXT = 1,
+  TEXT_PROP_NUM_PROPERTIES
+};
+
+static void
+n_text_get_property (GObject    *object,
+		     guint       property_id,
+		     GValue     *value,
+		     GParamSpec *pspec)
+{
+  NText *self = N_TEXT (object);
+
+  switch (property_id) {
+  case TEXT_PROP_TEXT:
+    g_value_set_pointer (value, self->text);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
 static void
 n_text_finalize (GObject *object)
 {
@@ -278,8 +301,12 @@ n_text_finalize (GObject *object)
 static void
 n_text_class_init (NTextClass * klass)
 {
+  GParamSpec *pspec;
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   object_class->finalize = n_text_finalize;
+  object_class->get_property = n_text_get_property;
+  pspec = g_param_spec_pointer ("text", NULL, NULL, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, TEXT_PROP_TEXT, pspec);
 }
 
 static void
