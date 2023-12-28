@@ -106,6 +106,37 @@ n_inst_update (NInst *inst)
 /* NData Object */
 G_DEFINE_TYPE(NData, n_data, G_TYPE_OBJECT)
 
+enum {
+  DATA_PROP_X = 1,
+  DATA_PROP_Y,
+  DATA_PROP_LINE,
+  DATA_PROP_NUM_PROPERTIES
+};
+
+static void
+n_data_get_property (GObject    *object,
+                      guint       property_id,
+                      GValue     *value,
+                      GParamSpec *pspec)
+{
+  NData *self = N_DATA (object);
+
+  switch (property_id) {
+  case DATA_PROP_X:
+    g_value_set_double (value, self->x);
+    break;
+  case DATA_PROP_Y:
+    g_value_set_double (value, self->y);
+    break;
+  case DATA_PROP_LINE:
+    g_value_set_int (value, self->line);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
 static void
 n_data_finalize (GObject *object)
 {
@@ -115,8 +146,16 @@ n_data_finalize (GObject *object)
 static void
 n_data_class_init (NDataClass * klass)
 {
+  GParamSpec *pspec;
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   object_class->finalize = n_data_finalize;
+  object_class->get_property = n_data_get_property;
+  pspec = g_param_spec_double ("x", NULL, NULL, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, DATA_PROP_X, pspec);
+  pspec = g_param_spec_double ("y", NULL, NULL, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, DATA_PROP_Y, pspec);
+  pspec = g_param_spec_int ("line", NULL, NULL, 0, G_MAXINT, 0.0, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, DATA_PROP_LINE, pspec);
 }
 
 static void
