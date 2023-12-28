@@ -1045,25 +1045,32 @@ insert_column(GtkWidget *columnview)
 }
 
 static void
-point_changed (GtkEditable *label, gpointer user_data)
+point_changed (GtkEditableLabel *label, GParamSpec *spec, gpointer user_data)
 {
   GtkListItem *item;
   const char *col, *text;
   NPoint *point;
   int val;
+  gboolean editing;
+  GValue value = G_VALUE_INIT;
+
+  editing = gtk_editable_label_get_editing (label);
+  if (editing) {
+    return;
+  }
+
   item = GTK_LIST_ITEM (user_data);
-  text = gtk_editable_get_text (label);
+  text = gtk_editable_get_text (GTK_EDITABLE (label));
   col = gtk_list_item_get_accessible_label (item);
   if (text == NULL) {
     return;
   }
   val = strtod (text, NULL) * 100;
   point = gtk_list_item_get_item (item);
-  if (col[0] == 'x') {
-    point->x = val;
-  } else {
-    point->y = val;
-  }
+  g_value_init(&value, G_TYPE_INT);
+  g_value_set_int(&value, val);
+  g_object_set_property (G_OBJECT (point), col, &value);
+  g_value_unset (&value);
 }
 
 static void
@@ -1072,7 +1079,7 @@ setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, g
   gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
   gtk_list_item_set_accessible_label (list_item, user_data);
   gtk_list_item_set_child (list_item, label);
-  g_signal_connect (label, "changed", G_CALLBACK (point_changed), list_item);
+  g_signal_connect (label, "notify::editing", G_CALLBACK (point_changed), list_item);
 }
 
 static void
