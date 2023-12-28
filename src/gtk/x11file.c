@@ -624,13 +624,7 @@ set_sensitivity_by_selected(GtkWidget *tree, GtkWidget *btn)
 {
   GtkSelectionModel *sel;
 
-  if (G_TYPE_CHECK_INSTANCE_TYPE(tree, GTK_TYPE_COLUMN_VIEW)) {
-    sel = gtk_column_view_get_model(GTK_COLUMN_VIEW(tree));
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(tree, GTK_TYPE_LIST_VIEW)) {
-    sel = gtk_list_view_get_model(GTK_LIST_VIEW(tree));
-  } else {
-    return;
-  }
+  sel = gtk_column_view_get_model(GTK_COLUMN_VIEW(tree));
   g_signal_connect(sel, "selection-changed", G_CALLBACK(set_btn_sensitivity_selected_cb), btn);
   gtk_widget_set_sensitive(btn, FALSE);
 }
