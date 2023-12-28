@@ -4012,7 +4012,7 @@ static void
 set_headline_table_array(struct FileDialog *d, int max_lines)
 {
   struct array_prm ary;
-  int i, j, l, m, n, skip, step;
+  int i, j, l, m, n, skip, step, nrows;
   char *array;
   GListStore *model;
   char *text[MAX_COLS + 2];
@@ -4030,11 +4030,14 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
     step = 1;
   }
 
-  columnview_clear(d->comment_table);
   model = columnview_get_list (d->comment_table);
+  nrows = g_list_model_get_n_items (G_LIST_MODEL (model));
 
   n = (ary.data_num > max_lines) ? max_lines : ary.data_num;
   m = (ary.col_num < MAX_COLS) ? ary.col_num : MAX_COLS;
+  if (nrows > n) {
+    g_list_store_splice (model, 2, nrows - n, NULL, 0);
+  }
   l = 1;
   for (i = 0; i < n; i++) {
     int v;
@@ -4056,18 +4059,25 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
     } else {
       text[0] = g_strdup ("");
     }
-    list_store_append_n_text(model, text, v);
+    if (i < nrows) {
+      NText *tobj;
+      tobj = N_TEXT (g_list_model_get_object (G_LIST_MODEL (model), i));
+      n_text_set_text (tobj, text, v);
+    } else {
+      list_store_append_n_text (model, text, v);
+    }
     for (j = 0; j < m + 1; j++) {
       g_free (text[j]);
     }
   }
+  hide_columns (d, m + 2);
 }
 
 static void
 set_headline_table(struct FileDialog *d, char *s, int max_lines)
 {
   struct narray *lines;
-  int i, j, l, n, skip, step, csv;
+  int i, j, l, n, skip, step, csv, max_col, nrows;
   const char *tmp, *remark, *po;
   GString *ifs;
   GListStore *model;
