@@ -336,6 +336,15 @@ n_text_set_text (NText *self, char **text, guint attribute)
   g_object_notify (G_OBJECT (self), "text");
 }
 
+const char *
+n_text_get_string (NText *self, guint index)
+{
+  if (index >= self->size) {
+    return NULL;
+  }
+  return self->text[index];
+}
+
 
 /* GtkColumnView */
 

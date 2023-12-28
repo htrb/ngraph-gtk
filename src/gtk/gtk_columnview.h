@@ -82,6 +82,7 @@ struct _NText {
 };
 
 NText *n_text_new (gchar **text, guint attribute);
+void n_text_set_text (NText *self, char **text, guint attribute);
 const char *n_text_get_string (NText *self, guint index);
 
 
