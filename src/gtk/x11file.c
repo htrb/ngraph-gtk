@@ -193,6 +193,7 @@ create_source_view(void)
   g_value_init(&value, G_TYPE_BOOLEAN);
   g_value_set_boolean(&value, TRUE);
   g_object_set_property(G_OBJECT(comp), "select-on-show", &value);
+  g_value_unset (&value);
 
   lm = gtk_source_language_manager_get_default();
   lang = gtk_source_language_manager_get_language(lm, "ngraph-math");
