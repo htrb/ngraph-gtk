@@ -1025,7 +1025,7 @@ get_field_string (struct objlist *obj, const char *field, int id, int num_type)
     break;
   case NDOUBLE:
     getobj (obj, field, id, 0, NULL, &dval);
-    snprintf (buf, sizeof (buf), "%.15g", dval);
+    snprintf (buf, sizeof (buf), DOUBLE_STR_FORMAT, dval);
     str = buf;
     break;
   case NSTR:
