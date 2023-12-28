@@ -22,6 +22,7 @@
 #include "x11view.h"
 #include "x11gui.h"
 #include "x11dialg.h"
+#include "x11file.h"
 #include "gtk_columnview.h"
 #include "gtk_listview.h"
 #include "gtk_widget.h"
@@ -707,6 +708,21 @@ enum_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer 
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
   create_enum_menu(parent, item);
+}
+
+static void
+mark_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GtkWidget *parent;
+  n_list_store *item;
+  int id, cur;
+
+  item = (n_list_store *) user_data;
+  parent = gtk_event_controller_get_widget (self);
+  id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
+  mark_popover_new_with_callback (parent, G_CALLBACK (select_enum_item_cb), item);
+  getobj (item->data->obj, item->name, id, 0, NULL, &cur);
+  mark_popover_popup_selected (parent, cur);
 }
 
 static int
