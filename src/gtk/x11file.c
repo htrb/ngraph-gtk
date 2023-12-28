@@ -3994,6 +3994,21 @@ set_headline_table_header(struct FileDialog *d)
 }
 
 static void
+hide_columns (struct FileDialog *d, int max_col)
+{
+  GListModel *columns;
+  int i;
+
+  columns = gtk_column_view_get_columns (GTK_COLUMN_VIEW (d->comment_table));
+  for (i = 0; i < MAX_COLS; i++) {
+    GtkColumnViewColumn *col;
+    col = GTK_COLUMN_VIEW_COLUMN (g_list_model_get_object (columns, i));
+    gtk_column_view_column_set_visible (col, i < max_col);
+    gtk_column_view_column_set_expand (col, i == max_col - 1);
+  }
+}
+
+static void
 set_headline_table_array(struct FileDialog *d, int max_lines)
 {
   struct array_prm ary;
