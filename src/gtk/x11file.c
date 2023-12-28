@@ -4000,7 +4000,7 @@ hide_columns (struct FileDialog *d, int max_col)
   int i;
 
   columns = gtk_column_view_get_columns (GTK_COLUMN_VIEW (d->comment_table));
-  for (i = 0; i < MAX_COLS + 1; i++) {
+  for (i = 0; i < MAX_COLS; i++) {
     GtkColumnViewColumn *col;
     col = GTK_COLUMN_VIEW_COLUMN (g_list_model_get_object (columns, i));
     gtk_column_view_column_set_visible (col, i < max_col);
