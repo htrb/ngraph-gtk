@@ -636,34 +636,23 @@ set_sensitivity_by_selected(GtkWidget *tree, GtkWidget *btn)
 }
 
 static void
-setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
   GtkWidget *label = gtk_label_new (NULL);
-  gtk_label_set_xalign (GTK_LABEL (label), GPOINTER_TO_INT (user_data) ? 0.0 : 1.0);
-  gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+  int math;
+  math = strcmp (prop, "id");
+  gtk_label_set_xalign (GTK_LABEL (label),  math ? 0.0 : 1.0);
+  if (math) {
+    gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+    gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
+  }
   gtk_list_item_set_child (list_item, label);
 }
 
 static void
-bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   NInst *item = N_INST(gtk_list_item_get_item (list_item));
-
-  if (GPOINTER_TO_INT (user_data)) {
-    const char *str;
-    char *tmpstr = NULL;
-    str = item->name ? item->name : "";
-    if (strchr(str, '\n')) {
-      tmpstr = g_strescape(str, "\\");
-      str = tmpstr;
-    }
-    gtk_label_set_text(GTK_LABEL(label), str);
-    g_free(tmpstr);
-  } else {
-    char text[20];
-
-    snprintf(text, sizeof(text), "%d", item->id);
-    gtk_label_set_text(GTK_LABEL(label), text);
-  }
+  g_object_bind_property (item, prop, label, "label", G_BINDING_SYNC_CREATE);
 }
 
 static char *
@@ -673,7 +662,7 @@ sort_column (NInst *item, gpointer user_data)
 }
 
 static int
-sort_by_id (NInst *item, gpointer user_data)
+sort_by_id (const NInst *item, gpointer user_data)
 {
   return item->id;
 }
@@ -703,9 +692,9 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(vbox), hbox);
 
     w = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_MULTI);
-    col = columnview_create_column(w, _("id"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, GINT_TO_POINTER (0), FALSE);
+    col = columnview_create_column(w, _("id"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, "id", FALSE);
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
-    columnview_create_column(w, _("math"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
+    columnview_create_column(w, _("math"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), "name", TRUE);
 
     g_signal_connect(w, "activate", G_CALLBACK(math_dialog_activated_cb), d);
     d->list = w;
