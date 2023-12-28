@@ -142,6 +142,54 @@ n_data_new (int id, int line, double x, double y)
 /* NPoint Object */
 G_DEFINE_TYPE(NPoint, n_point, G_TYPE_OBJECT)
 
+enum {
+  POINT_PROP_X = 1,
+  POINT_PROP_Y,
+  POINT_PROP_NUM_PROPERTIES
+};
+
+static void
+n_point_get_property (GObject    *object,
+                      guint       property_id,
+                      GValue     *value,
+                      GParamSpec *pspec)
+{
+  NPoint *self = N_POINT (object);
+
+  switch (property_id) {
+  case POINT_PROP_X:
+    g_value_set_int (value, self->x);
+    break;
+  case POINT_PROP_Y:
+    g_value_set_int (value, self->y);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
+static void
+n_point_set_property (GObject      *object,
+                      guint         property_id,
+                      const GValue *value,
+                      GParamSpec   *pspec)
+{
+  NPoint *self = N_POINT (object);
+
+  switch (property_id) {
+  case POINT_PROP_X:
+    self->x = g_value_get_int (value);
+    break;
+  case POINT_PROP_Y:
+    self->y = g_value_get_int (value);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
 static void
 n_point_finalize (GObject *object)
 {
@@ -151,8 +199,15 @@ n_point_finalize (GObject *object)
 static void
 n_point_class_init (NPointClass * klass)
 {
+  GParamSpec *pspec;
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   object_class->finalize = n_point_finalize;
+  object_class->get_property = n_point_get_property;
+  object_class->set_property = n_point_set_property;
+  pspec = g_param_spec_int ("x", NULL, NULL, -G_MAXINT, G_MAXINT, 0, G_PARAM_READABLE | G_PARAM_WRITABLE);
+  g_object_class_install_property (object_class, POINT_PROP_X, pspec);
+  pspec = g_param_spec_int ("y", NULL, NULL, -G_MAXINT, G_MAXINT, 0, G_PARAM_READABLE | G_PARAM_WRITABLE);
+  g_object_class_install_property (object_class, POINT_PROP_Y, pspec);
 }
 
 static void
