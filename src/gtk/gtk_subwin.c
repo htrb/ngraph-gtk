@@ -953,8 +953,10 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
   case G_TYPE_OBJECT:
     w = gtk_picture_new ();
     gtk_picture_set_content_fit (GTK_PICTURE (w), GTK_CONTENT_FIT_CONTAIN);
-    if (strcmp (item->name, "type") == 0 && item->editable) {
+    if (strcmp (item->title, "type") == 0 && item->editable) {
       setup_editing_item (w, item, G_CALLBACK (enum_cb));
+    } else if (strcmp (item->title, "mark") == 0 && item->editable) {
+      setup_editing_item (w, item, G_CALLBACK (mark_cb));
     }
     break;
   case G_TYPE_INT:

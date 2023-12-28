@@ -129,7 +129,7 @@ static n_list_store Alist[] = {
 static n_list_store Mlist[] = {
   {" ",            G_TYPE_BOOLEAN, TRUE,  FALSE, "hidden"},
   {"#",            G_TYPE_INT,     FALSE, FALSE, "id"},
-  {"mark",         G_TYPE_OBJECT,  FALSE, FALSE, "type", bind_mark},
+  {"mark",         G_TYPE_OBJECT,  TRUE,  FALSE, "type", bind_mark},
   {"x",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "x", NULL, NULL, NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE,  TRUE,  "y", NULL, NULL, NULL, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {N_("size"),     G_TYPE_DOUBLE,  TRUE,  TRUE,  "size", NULL, NULL, NULL,             0, SPIN_ENTRY_MAX, 100,  200},
