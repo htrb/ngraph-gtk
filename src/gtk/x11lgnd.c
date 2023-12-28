@@ -1073,25 +1073,34 @@ point_changed (GtkEditableLabel *label, GParamSpec *spec, gpointer user_data)
   g_value_unset (&value);
 }
 
+static gboolean
+transform_text (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  char buf[64];
+  int val;
+
+  val = g_value_get_int (from_value);
+  snprintf (buf, sizeof (buf), "%.2f", val / 100.0);
+  g_value_set_string (to_value, buf);
+  return TRUE;
+}
+
 static void
-setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *col)
+{
   GtkWidget *label = gtk_editable_label_new ("");
   gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
-  gtk_list_item_set_accessible_label (list_item, user_data);
+  gtk_list_item_set_accessible_label (list_item, col);
   gtk_list_item_set_child (list_item, label);
   g_signal_connect (label, "notify::editing", G_CALLBACK (point_changed), list_item);
 }
 
 static void
-bind_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
+bind_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer col)
+{
   GtkWidget *label = gtk_list_item_get_child (list_item);
   NPoint *item = N_POINT(gtk_list_item_get_item (list_item));
-  char text[20];
-  const char *col;
-
-  col =  (const char *) user_data;
-  snprintf(text, sizeof(text), "%.2f", ((col[0] == 'x') ? item->x : item->y) / 100.0);
-  gtk_editable_set_text (GTK_EDITABLE (label), text);
+  g_object_bind_property_full (G_OBJECT (item), col, label, "text", G_BINDING_SYNC_CREATE, transform_text, NULL, col, NULL);
 }
 
 static void
