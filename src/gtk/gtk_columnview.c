@@ -268,6 +268,7 @@ G_DEFINE_TYPE(NText, n_text, G_TYPE_OBJECT)
 
 enum {
   TEXT_PROP_TEXT = 1,
+  TEXT_PROP_ATTRIBUTE,
   TEXT_PROP_NUM_PROPERTIES
 };
 
@@ -282,6 +283,9 @@ n_text_get_property (GObject    *object,
   switch (property_id) {
   case TEXT_PROP_TEXT:
     g_value_set_pointer (value, self->text);
+    break;
+  case TEXT_PROP_ATTRIBUTE:
+    g_value_set_uint (value, self->attribute);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -307,6 +311,8 @@ n_text_class_init (NTextClass * klass)
   object_class->get_property = n_text_get_property;
   pspec = g_param_spec_pointer ("text", NULL, NULL, G_PARAM_READABLE);
   g_object_class_install_property (object_class, TEXT_PROP_TEXT, pspec);
+  pspec = g_param_spec_uint ("attribute", NULL, NULL, 0, G_MAXINT, 0, G_PARAM_READABLE);
+  g_object_class_install_property (object_class, TEXT_PROP_ATTRIBUTE, pspec);
 }
 
 static void
@@ -334,6 +340,7 @@ n_text_set_text (NText *self, char **text, guint attribute)
   self->size = (text) ? g_strv_length (text) : 0;
   self->attribute = attribute;
   g_object_notify (G_OBJECT (self), "text");
+  g_object_notify (G_OBJECT (self), "attribute");
 }
 
 const char *
