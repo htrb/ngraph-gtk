@@ -4192,25 +4192,54 @@ setup_table (GtkListItemFactory *factory, GtkListItem *list_item)
   gtk_list_item_set_child (list_item, label);
 }
 
+static gboolean
+transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NText *text;
+  const char *str;
+  int col;
+
+  col = GPOINTER_TO_INT (user_data);
+  text = N_TEXT (g_binding_dup_source (binding));
+  str = n_text_get_string (text, col);
+  g_value_set_string (to_value, str);
+  g_object_unref (text);
+  return TRUE;
+}
+
+static gboolean
+transform_ellipsize (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NText *text;
+
+  text = N_TEXT (g_binding_dup_source (binding));
+  g_value_set_enum (to_value, text->attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
+  g_object_unref (text);
+  return TRUE;
+}
+
+static gboolean
+transform_sensitive (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NText *text;
+
+  text = N_TEXT (g_binding_dup_source (binding));
+  g_value_set_boolean (to_value, text->attribute);
+  g_object_unref (text);
+  return TRUE;
+}
+
 static void
 bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
-  GtkLabel *label;
+  GtkWidget *label;
   NText *text;
-  const char *str;
-  guint i;
 
-  label = GTK_LABEL (gtk_list_item_get_child (list_item));
+  label = gtk_list_item_get_child (list_item);
   text = N_TEXT (gtk_list_item_get_item (list_item));
-  i = GPOINTER_TO_INT (user_data);
-  if (i < text->size) {
-    str = text->text[i];
-  } else {
-    str = "";
-  }
-  gtk_label_set_ellipsize (label, text->attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
-  gtk_widget_set_sensitive (GTK_WIDGET (label), text->attribute);
-  gtk_label_set_text(label, str);
+  g_object_bind_property_full (G_OBJECT (text), "text", label, "label", G_BINDING_SYNC_CREATE, transform_label, NULL, user_data, NULL);
+  g_object_bind_property_full (G_OBJECT (text), "text", label, "ellipsize", G_BINDING_SYNC_CREATE, transform_ellipsize, NULL, NULL, NULL);
+  g_object_bind_property_full (G_OBJECT (text), "text", label, "sensitive", G_BINDING_SYNC_CREATE, transform_sensitive, NULL, NULL, NULL);
 }
 
 static GtkWidget *
