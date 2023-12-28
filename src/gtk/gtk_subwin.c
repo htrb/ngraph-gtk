@@ -853,7 +853,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
     double val;
     char buf[64];
     getobj (d->obj, item->name, id, 0, NULL, &val);
-    snprintf (buf, sizeof (buf), "%.15g", val);
+    snprintf (buf, sizeof (buf), DOUBLE_STR_FORMAT, val);
     entry = create_text_entry(TRUE, TRUE);
     gtk_editable_set_text (GTK_EDITABLE (entry), buf);
   }
