@@ -4210,22 +4210,10 @@ transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, 
 static gboolean
 transform_ellipsize (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
 {
-  NText *text;
+  int attribute;
 
-  text = N_TEXT (g_binding_dup_source (binding));
-  g_value_set_enum (to_value, text->attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
-  g_object_unref (text);
-  return TRUE;
-}
-
-static gboolean
-transform_sensitive (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
-{
-  NText *text;
-
-  text = N_TEXT (g_binding_dup_source (binding));
-  g_value_set_boolean (to_value, text->attribute);
-  g_object_unref (text);
+  attribute = g_value_get_uint (from_value);
+  g_value_set_enum (to_value, attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
   return TRUE;
 }
 
@@ -4238,8 +4226,8 @@ bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_d
   label = gtk_list_item_get_child (list_item);
   text = N_TEXT (gtk_list_item_get_item (list_item));
   g_object_bind_property_full (G_OBJECT (text), "text", label, "label", G_BINDING_SYNC_CREATE, transform_label, NULL, user_data, NULL);
-  g_object_bind_property_full (G_OBJECT (text), "text", label, "ellipsize", G_BINDING_SYNC_CREATE, transform_ellipsize, NULL, NULL, NULL);
-  g_object_bind_property_full (G_OBJECT (text), "text", label, "sensitive", G_BINDING_SYNC_CREATE, transform_sensitive, NULL, NULL, NULL);
+  g_object_bind_property_full (G_OBJECT (text), "attribute", label, "ellipsize", G_BINDING_SYNC_CREATE, transform_ellipsize, NULL, NULL, NULL);
+  g_object_bind_property (G_OBJECT (text), "attribute", label, "sensitive", G_BINDING_SYNC_CREATE);
 }
 
 static GtkWidget *
