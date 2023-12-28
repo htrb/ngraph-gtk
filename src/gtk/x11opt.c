@@ -1093,8 +1093,6 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
   int i, n;
   GValue value = G_VALUE_INIT;
 
-  g_value_init(&value, G_TYPE_BOOLEAN);
-  g_value_set_boolean(&value, TRUE);
   palette = &(d->tmp_palette);
   n = arraynum(palette);
   if (n < 1) {
@@ -1104,6 +1102,8 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
   if (btns == NULL) {
     return NULL;
   }
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&value, TRUE);
   colors = arraydata(palette);
   bbox = NULL;
   for (i = 0; i < n; i++) {
@@ -1122,6 +1122,7 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
   if (bbox) {
     gtk_box_append(GTK_BOX(box), bbox);
   }
+  g_value_unset (&value);
   return btns;
 }
 
