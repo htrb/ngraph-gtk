@@ -1615,12 +1615,9 @@ set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
 }
 
 static void
-FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
+FitDialogSetSensitivity(struct FitDialog *d)
 {
-  struct FitDialog *d;
   int type, through, deriv, dim;
-
-  d = (struct FitDialog *) user_data;
 
   type = combo_box_get_active(d->type);
   through = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->through_point));
@@ -1732,12 +1729,6 @@ create_user_fit_frame(struct FitDialog *d)
   gtk_frame_set_child(GTK_FRAME(w), vbox);
 
   return w;
-}
-
-static void
-fit_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
-{
-  FitDialogSetSensitivity(w, user_data);
 }
 
 static void
@@ -1931,10 +1922,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
 
 
-    g_signal_connect(d->dim, "notify::selected", G_CALLBACK(fit_type_notify), d);
-    g_signal_connect(d->type, "notify::selected", G_CALLBACK(fit_type_notify), d);
-    g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
-    g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
+    g_signal_connect_swapped(d->dim, "notify::selected", G_CALLBACK(FitDialogSetSensitivity), d);
+    g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(FitDialogSetSensitivity), d);
+    g_signal_connect_swapped(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
+    g_signal_connect_swapped(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
   }
 
   FitDialogSetupItem(wi, d, d->Id);
