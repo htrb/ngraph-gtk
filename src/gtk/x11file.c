@@ -143,6 +143,8 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
+static void FitDialogSetSensitivity(struct FitDialog *d);
+
 static void
 add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider *provider)
 {
@@ -865,6 +867,7 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
     SetWidgetFromObjField(d->p[i], d->Obj, id, p);
     SetWidgetFromObjField(d->d[i], d->Obj, id, dd);
   }
+  FitDialogSetSensitivity (d);
 }
 
 static char *
