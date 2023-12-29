@@ -255,10 +255,8 @@ grid_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-grid_copy_clicked(GtkButton *btn, gpointer user_data)
+grid_copy_clicked(struct GridDialog *d)
 {
-  struct GridDialog *d;
-  d = (struct GridDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, GridCB, grid_copy_click_response, d);
 }
 
@@ -1314,10 +1312,8 @@ scale_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+scale_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, scale_tab_copy_click_response, d);
 }
 
@@ -1464,10 +1460,8 @@ baseline_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+baseline_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, baseline_tab_copy_click_response, d);
 }
 
@@ -1639,10 +1633,8 @@ gauge_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+gauge_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, gauge_tab_copy_click_response, d);
 }
 
@@ -1890,10 +1882,8 @@ numbering_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+numbering_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, numbering_tab_copy_click_response, d);
 }
 
@@ -2112,10 +2102,8 @@ font_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+font_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, font_tab_copy_click_response, d);
 }
 
@@ -2234,10 +2222,8 @@ position_tab_copy_click_response(int sel, gpointer user_data)
 }
 
 static void
-position_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+position_tab_copy_clicked(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, position_tab_copy_click_response, d);
 }
 

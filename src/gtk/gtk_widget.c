@@ -271,7 +271,7 @@ add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *ob
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   w = gtk_button_new_with_mnemonic(_("_Copy Settings"));
   g_signal_connect(w, "map", G_CALLBACK(set_sensitivity_by_check_instance), obj_name);
-  g_signal_connect(w, "clicked", cb, d);
+  g_signal_connect_swapped(w, "clicked", cb, d);
   gtk_box_append(GTK_BOX(hbox), w);
   gtk_box_append(GTK_BOX(parent_box), hbox);
 

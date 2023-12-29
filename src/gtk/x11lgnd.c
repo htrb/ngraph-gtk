@@ -1002,10 +1002,8 @@ legend_copy_clicked_response(int sel, gpointer user_data)
 }
 
 static void
-legend_copy_clicked(GtkButton *btn, gpointer user_data)
+legend_copy_clicked(struct LegendDialog *d)
 {
-  struct LegendDialog *d;
-  d = (struct LegendDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, d->prop_cb, legend_copy_clicked_response, d);
 }
 

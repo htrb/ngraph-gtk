@@ -114,10 +114,8 @@ parameter_dialog_copy_response(int sel, gpointer user_data)
 }
 
 static void
-ParameterDialogCopy(GtkButton *btn, gpointer user_data)
+ParameterDialogCopy(struct ParameterDialog *d)
 {
-  struct ParameterDialog *d;
-  d = (struct ParameterDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, ParameterCB, parameter_dialog_copy_response, d);
 }
 

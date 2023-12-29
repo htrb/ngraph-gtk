@@ -899,10 +899,8 @@ fit_dialog_copy_response(int sel, gpointer user_data)
 }
 
 static void
-FitDialogCopy(GtkButton *btn, gpointer user_data)
+FitDialogCopy(struct FitDialog *d)
 {
-  struct FitDialog *d;
-  d = (struct FitDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FitCB, fit_dialog_copy_response, d);
 }
 
@@ -2081,10 +2079,8 @@ move_tab_copy_response(int sel, gpointer user_data)
 }
 
 static void
-move_tab_copy(GtkButton *btn, gpointer user_data)
+move_tab_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, move_tab_copy_response, d);
 }
 
@@ -2340,10 +2336,8 @@ mask_tab_copy_response(int sel, gpointer user_data)
 }
 
 static void
-mask_tab_copy(GtkButton *btn, gpointer user_data)
+mask_tab_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, mask_tab_copy_response, d);
 }
 
@@ -2517,10 +2511,8 @@ load_tab_copy_response(int sel, gpointer user_data)
 }
 
 static void
-load_tab_copy(GtkButton *btn, gpointer user_data)
+load_tab_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, load_tab_copy_response, d);
 }
 
@@ -2711,10 +2703,8 @@ math_tab_copy_response(int sel, gpointer user_data)
 }
 
 static void
-math_tab_copy(GtkButton *btn, gpointer user_data)
+math_tab_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, math_tab_copy_response, d);
 }
 
@@ -3414,10 +3404,8 @@ plot_tab_copy_response(int sel, gpointer user_data)
 }
 
 static void
-plot_tab_copy(GtkButton *btn, gpointer user_data)
+plot_tab_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, plot_tab_copy_response, d);
 }
 
@@ -3689,10 +3677,8 @@ file_settings_copy_response(int sel, gpointer user_data)
 }
 
 static void
-file_settings_copy(GtkButton *btn, gpointer user_data)
+file_settings_copy(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, file_settings_copy_response, d);
 }
 

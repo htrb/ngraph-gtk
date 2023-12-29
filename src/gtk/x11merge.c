@@ -112,10 +112,8 @@ merge_dialog_copy_response(int sel, gpointer user_data)
 }
 
 static void
-MergeDialogCopy(GtkButton *btn, gpointer user_data)
+MergeDialogCopy(struct MergeDialog *d)
 {
-  struct MergeDialog *d;
-  d = (struct MergeDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, MergeFileCB, merge_dialog_copy_response, d);
 }
 
