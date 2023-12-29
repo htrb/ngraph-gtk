@@ -2103,24 +2103,27 @@ move_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gp
   gtk_list_item_set_child (list_item, label);
 }
 
-static void
-move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
-  GtkWidget *label = gtk_list_item_get_child (list_item);
-  const NData *item = N_DATA(gtk_list_item_get_item (list_item));
+static gboolean
+transform_double (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  double val;
   char buf[64];
 
-  switch (GPOINTER_TO_INT (user_data)) {
-  case 'L':
-    snprintf(buf, sizeof(buf), "%d", item->line);
-    break;
-  case 'X':
-    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, item->x);
-    break;
-  case 'Y':
-    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, item->y);
-    break;
+  val = g_value_get_double (from_value);
+  snprintf (buf, sizeof (buf), DOUBLE_STR_FORMAT, val);
+  g_value_set_string (to_value, buf);
+  return TRUE;
+}
+
+static void
+move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
+  GtkWidget *label = gtk_list_item_get_child (list_item);
+  GObject *item = gtk_list_item_get_item (list_item);
+  if (prop[0] == 'l') {
+    g_object_bind_property (item, prop, label, "label", G_BINDING_SYNC_CREATE);
+  } else {
+    g_object_bind_property_full (item, prop, label, "label", G_BINDING_SYNC_CREATE, transform_double, NULL, NULL, NULL);
   }
-  gtk_label_set_text(GTK_LABEL(label), buf);
 }
 
 static int
@@ -2158,11 +2161,11 @@ move_tab_create(struct FileDialog *d)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   w = columnview_create(N_TYPE_DATA, N_SELECTION_TYPE_MULTI);
-  col = columnview_create_column(w, _("Line No."), G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('L'), FALSE);
+  col = columnview_create_column(w, _("Line No."), G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, "line", FALSE);
   columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_line), NULL);
-  col = columnview_create_column(w, "X", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('X'), FALSE);
+  col = columnview_create_column(w, "X", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, "x", TRUE);
   columnview_set_numeric_sorter(col, G_TYPE_DOUBLE, G_CALLBACK(sort_by_data), GINT_TO_POINTER('X'));
-  col = columnview_create_column(w, "Y", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, GINT_TO_POINTER ('Y'), TRUE);
+  col = columnview_create_column(w, "Y", G_CALLBACK(move_setup_column), G_CALLBACK(move_bind_column), NULL, "y", TRUE);
   columnview_set_numeric_sorter(col, G_TYPE_DOUBLE, G_CALLBACK(sort_by_data), GINT_TO_POINTER('Y'));
 
   d->move.list = w;
