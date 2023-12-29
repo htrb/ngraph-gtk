@@ -2003,16 +2003,13 @@ move_tab_setup_item(struct FileDialog *d, int id)
 }
 
 static void
-FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
+FileMoveDialogAdd(struct FileDialog *d)
 {
-  struct FileDialog *d;
   int a;
   double x, y;
   const char *buf;
   char *endptr;
   GListStore *list;
-
-  d = (struct FileDialog *) client_data;
 
   a = spin_entry_get_val(d->move.line);
 
@@ -2062,12 +2059,12 @@ move_tab_copy(struct FileDialog *d)
   CopyClick(d->widget, d->Obj, d->Id, FileCB, move_tab_copy_response, d);
 }
 
-void
+static void
 spin_button_set_activates_signal(GtkWidget *w, GCallback cb, gpointer user_data)
 {
   GtkEditable *editable;
   editable = gtk_editable_get_delegate(GTK_EDITABLE(w));
-  g_signal_connect(editable, "activate", cb, user_data);
+  g_signal_connect_swapped(editable, "activate", cb, user_data);
 }
 
 static void
@@ -2155,18 +2152,18 @@ move_tab_create(struct FileDialog *d)
   d->move.line = w;
 
   w = create_text_entry(TRUE, FALSE);
-  g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
+  g_signal_connect_swapped(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
   add_widget_to_table(table, w, "_X:", FALSE, i++);
   d->move.x = w;
 
   w = create_text_entry(TRUE, FALSE);
-  g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
+  g_signal_connect_swapped(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
   add_widget_to_table(table, w, "_Y:", FALSE, i++);
   d->move.y = w;
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
   add_widget_to_table(table, w, "", FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
   add_widget_to_table(table, w, NULL, FALSE, i++);
@@ -2288,13 +2285,10 @@ mask_tab_setup_item(struct FileDialog *d, int id)
 }
 
 static void
-FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
+FileMaskDialogAdd(struct FileDialog *d)
 {
-  struct FileDialog *d;
   int a;
   GListStore *list;
-
-  d = (struct FileDialog *) client_data;
 
   list = columnview_get_list(d->mask.list);
   a = spin_entry_get_val(d->mask.line);
@@ -2371,7 +2365,7 @@ mask_tab_create(struct FileDialog *d)
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
   add_widget_to_table(table, w, "", FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
   add_widget_to_table(table, w, NULL, FALSE, i++);
