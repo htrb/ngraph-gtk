@@ -553,17 +553,14 @@ math_dialog_list_respone(struct response_callback *cb)
 }
 
 static void
-MathDialogList(GtkButton *w, gpointer client_data)
+MathDialogList(struct MathDialog *d)
 {
-  struct MathDialog *d;
   int a, i;
   guint64 n;
   char *field = NULL, *buf;
   GtkSelectionModel *gsel;
   struct math_dialog_list_data *res_data;
   GtkBitset *selected;
-
-  d = (struct MathDialog *) client_data;
 
   gsel = gtk_column_view_get_model(GTK_COLUMN_VIEW(d->list));
   selected = gtk_selection_model_get_selection (gsel);
@@ -604,7 +601,7 @@ math_dialog_activated_cb(GtkColumnView *view, guint pos, gpointer user_data)
   struct MathDialog *d;
 
   d = (struct MathDialog *) user_data;
-  MathDialogList(NULL, d);
+  MathDialogList(d);
 }
 
 static void
@@ -724,7 +721,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
-    g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(MathDialogList), d);
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(vbox), hbox);
     set_sensitivity_by_selected(d->list, w);
@@ -1302,12 +1299,8 @@ fit_dialog_save_response(struct response_callback *cb)
 }
 
 static void
-FitDialogSave(GtkWidget *w, gpointer client_data)
+FitDialogSave(struct FitDialog *d)
 {
-  struct FitDialog *d;
-
-  d = (struct FitDialog *) client_data;
-
   if (!FitDialogLoadConfig(d, FALSE))
     return;
 
@@ -1370,16 +1363,13 @@ check_fit_func(GtkEditable *w, gpointer client_data)
 }
 
 static void
-FitDialogResult(GtkWidget *w, gpointer client_data)
+FitDialogResult(struct FitDialog *d)
 {
-  struct FitDialog *d;
   double derror, correlation, coe[FIT_PARM_NUM];
   char *equation, *math;
   N_VALUE *inst;
   int i, j, dim, dimension, type, num;
   GString *buf;
-
-  d = (struct FitDialog *) client_data;
 
   if ((inst = chkobjinst(d->Obj, d->Id)) == NULL)
     return;
@@ -1579,11 +1569,8 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
 }
 
 static void
-FitDialogDraw(GtkWidget *w, gpointer client_data)
+FitDialogDraw(struct FitDialog *d)
 {
-  struct FitDialog *d;
-
-  d = (struct FitDialog *) client_data;
   if (!FitDialogApply(d->widget, d))
     return;
   FitDialogSetupItem(d->widget, d, d->Id);
@@ -1912,17 +1899,17 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Save"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogSave), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FitDialogSave), d);
     gtk_box_append(GTK_BOX(hbox), w);
 
 
     w = gtk_button_new_with_mnemonic(_("_Draw"));
     gtk_box_append(GTK_BOX(hbox), w);
-    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogDraw), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FitDialogDraw), d);
 
     w = gtk_button_new_with_mnemonic(_("_Result"));
     gtk_box_append(GTK_BOX(hbox), w);
-    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FitDialogResult), d);
 
 
     g_signal_connect_swapped(d->dim, "notify::selected", G_CALLBACK(FitDialogSetSensitivity), d);
@@ -2052,11 +2039,8 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 }
 
 static void
-FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
+FileMoveDialogRemove(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) client_data;
-
   columnview_remove_selected(d->move.list);
   d->move.changed = TRUE;
 }
@@ -2186,7 +2170,7 @@ move_tab_create(struct FileDialog *d)
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
   add_widget_to_table(table, w, NULL, FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
   set_sensitivity_by_selected(d->move.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
@@ -2337,11 +2321,8 @@ mask_tab_copy(struct FileDialog *d)
 
 
 static void
-FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
+FileMaskDialogRemove(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) client_data;
-
   columnview_remove_selected(d->mask.list);
   d->mask.changed = TRUE;
 }
@@ -2394,7 +2375,7 @@ mask_tab_create(struct FileDialog *d)
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
   add_widget_to_table(table, w, NULL, FALSE, i++);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
   set_sensitivity_by_selected(d->mask.list, w);
 
   w = gtk_button_new_with_mnemonic(_("Select _All"));
@@ -3380,11 +3361,9 @@ fit_dialog_fit_response(int ret, gpointer user_data)
 }
 
 static void
-FileDialogFit(GtkWidget *w, gpointer client_data)
+FileDialogFit(struct FileDialog *d)
 {
-  struct FileDialog *d;
-  d = (struct FileDialog *) client_data;
-  show_fit_dialog(d->Obj, d->Id, d->widget, fit_dialog_fit_response, client_data);
+  show_fit_dialog(d->Obj, d->Id, d->widget, fit_dialog_fit_response, d);
 }
 
 static void
@@ -3419,11 +3398,8 @@ copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
 }
 
 static void
-FileDialogOption(GtkWidget *w, gpointer client_data)
+FileDialogOption(struct FileDialog *d)
 {
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
   exeobj(d->Obj, "load_settings", d->Id, 0, NULL);
   FileDialogSetupItem(d->widget, d);
 }
@@ -3453,12 +3429,9 @@ edit_file(const char *file)
 }
 
 static void
-FileDialogEdit(GtkWidget *w, gpointer client_data)
+FileDialogEdit(struct FileDialog *d)
 {
-  struct FileDialog *d;
   const char *file;
-
-  d = (struct FileDialog *) client_data;
 
   if (Menulocal.editor == NULL)
     return;
@@ -4269,11 +4242,11 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_append(GTK_BOX(hbox), w);
     d->load_settings = w;
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogOption), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogOption), d);
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
     gtk_box_append(GTK_BOX(hbox), w);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogEdit), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogEdit), d);
 
 
     gtk_box_append(GTK_BOX(d->vbox), hbox);
@@ -4322,7 +4295,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
 
   line = Menulocal.data_head_lines;
@@ -4390,7 +4363,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
 
   FileDialogSetupItem(wi, d);
@@ -4449,7 +4422,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
 
   FileDialogSetupItem(wi, d);
