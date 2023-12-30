@@ -3750,17 +3750,17 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
     row++;
   }
 
-  w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
-  add_widget_to_table(table, w, _("_X axis:"), FALSE, row);
-  d->xaxis = w;
-  row++;
-
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Y column:"), FALSE, row);
     d->ycol = w;
     row++;
   }
+
+  w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
+  add_widget_to_table(table, w, _("_X axis:"), FALSE, row);
+  d->xaxis = w;
+  row++;
 
   w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
   add_widget_to_table(table, w, _("_Y axis:"), FALSE, row);
