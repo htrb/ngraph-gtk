@@ -985,6 +985,7 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
     } else {
       gtk_widget_set_halign (w, GTK_ALIGN_START);
       gtk_label_set_ellipsize (GTK_LABEL (w), item->ellipsize);
+      gtk_label_set_single_line_mode (GTK_LABEL (w), TRUE);
       if (item->editable) {
 	setup_editing_item (w, item, G_CALLBACK (string_cb));
       }
