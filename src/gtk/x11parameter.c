@@ -451,7 +451,7 @@ parameter_add_response(struct response_callback *cb)
 }
 
 void
-CmParameterAdd(void *w, gpointer client_data)
+CmParameterAdd(void)
 {
   int id, undo;
   struct obj_list_data *d;
@@ -496,7 +496,7 @@ parameter_delete_response(struct response_callback *cb)
 }
 
 void
-CmParameterDelete(void *w, gpointer client_data)
+CmParameterDelete(void)
 {
   struct narray *farray;
   struct obj_list_data *d;
@@ -605,7 +605,7 @@ cm_parameter_update_response(struct response_callback *cb)
 }
 
 void
-CmParameterUpdate(void *w, gpointer client_data)
+CmParameterUpdate(void)
 {
   struct narray *farray;
   struct obj_list_data *d;

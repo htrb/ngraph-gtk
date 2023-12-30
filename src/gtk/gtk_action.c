@@ -452,19 +452,19 @@ DataMathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 static void
 ParameterAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmParameterAdd(NULL, NULL);
+  CmParameterAdd();
 }
 
 static void
 ParameterPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmParameterUpdate(NULL, NULL);
+  CmParameterUpdate();
 }
 
 static void
 ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmParameterDelete(NULL, NULL);
+  CmParameterDelete();
 }
 
 static void
