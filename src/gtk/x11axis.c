@@ -555,11 +555,8 @@ SectionDialogSetupItem(GtkWidget *w, struct SectionDialog *d)
 }
 
 static void
-SectionDialogAxisX(GtkWidget *w, gpointer client_data)
+SectionDialogAxisX(struct SectionDialog *d)
 {
-  struct SectionDialog *d;
-
-  d = (struct SectionDialog *) client_data;
   if (d->IDX >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDX, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -567,11 +564,8 @@ SectionDialogAxisX(GtkWidget *w, gpointer client_data)
 }
 
 static void
-SectionDialogAxisY(GtkWidget *w, gpointer client_data)
+SectionDialogAxisY(struct SectionDialog *d)
 {
-  struct SectionDialog *d;
-
-  d = (struct SectionDialog *) client_data;
   if (d->IDY >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDY, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -579,11 +573,8 @@ SectionDialogAxisY(GtkWidget *w, gpointer client_data)
 }
 
 static void
-SectionDialogAxisU(GtkWidget *w, gpointer client_data)
+SectionDialogAxisU(struct SectionDialog *d)
 {
-  struct SectionDialog *d;
-
-  d = (struct SectionDialog *) client_data;
   if (d->IDU >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDU, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -591,11 +582,8 @@ SectionDialogAxisU(GtkWidget *w, gpointer client_data)
 }
 
 static void
-SectionDialogAxisR(GtkWidget *w, gpointer client_data)
+SectionDialogAxisR(struct SectionDialog *d)
 {
-  struct SectionDialog *d;
-
-  d = (struct SectionDialog *) client_data;
   if (d->IDR >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDR, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -656,12 +644,10 @@ section_dialog_grid_response(struct response_callback *cb)
 }
 
 static void
-SectionDialogGrid(GtkWidget *w, gpointer client_data)
+SectionDialogGrid(struct SectionDialog *d)
 {
-  struct SectionDialog *d;
   int oidx, oidy, create = FALSE, undo = -1;
 
-  d = (struct SectionDialog *) client_data;
   if (d->IDG == -1) {
     undo = axis_save_undo(UNDO_TYPE_DUMMY);
     if ((d->IDG = newobj(d->Obj2)) >= 0) {
@@ -737,7 +723,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisX), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(SectionDialogAxisX), d);
     d->xaxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -751,7 +737,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisY), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(SectionDialogAxisY), d);
     d->yaxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -764,7 +750,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_U axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisU), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(SectionDialogAxisU), d);
     d->uaxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -777,7 +763,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_R axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisR), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(SectionDialogAxisR), d);
     d->raxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -790,7 +776,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Grid"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogGrid), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(SectionDialogGrid), d);
     d->grid = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -889,11 +875,8 @@ CrossDialogSetupItem(GtkWidget *w, struct CrossDialog *d)
 }
 
 static void
-CrossDialogAxisX(GtkWidget *w, gpointer client_data)
+CrossDialogAxisX(struct CrossDialog *d)
 {
-  struct CrossDialog *d;
-
-  d = (struct CrossDialog *) client_data;
   if (d->IDX >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDX, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -901,11 +884,8 @@ CrossDialogAxisX(GtkWidget *w, gpointer client_data)
 }
 
 static void
-CrossDialogAxisY(GtkWidget *w, gpointer client_data)
+CrossDialogAxisY(struct CrossDialog *d)
 {
-  struct CrossDialog *d;
-
-  d = (struct CrossDialog *) client_data;
   if (d->IDY >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, d->IDY, -1);
     DialogExecute(d->widget, &DlgAxis);
@@ -955,7 +935,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisX), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(CrossDialogAxisX), d);
     d->xaxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -968,7 +948,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
-    g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisY), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(CrossDialogAxisY), d);
     d->yaxis = w;
     gtk_box_append(GTK_BOX(vbox), w);
 
@@ -1157,11 +1137,8 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 }
 
 static void
-AxisDialogClear(GtkWidget *w, gpointer client_data)
+AxisDialogClear(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
-
-  d = (struct AxisDialog *) client_data;
   combo_box_entry_set_text(d->min, "0");
   combo_box_entry_set_text(d->max, "0");
   combo_box_entry_set_text(d->inc, "0");
@@ -1250,14 +1227,11 @@ axis_dialog_file_response(struct response_callback *cb)
 }
 
 static void
-AxisDialogFile(GtkWidget *w, gpointer client_data)
+AxisDialogFile(struct AxisDialog *d)
 {
-  struct AxisDialog *d;
   struct objlist *fobj;
   struct narray *farray;
   struct axis_dialog_file_data *data;
-
-  d = (struct AxisDialog *) client_data;
 
   fobj = chkobject("data");
   if (fobj == NULL)
@@ -1342,11 +1316,11 @@ scale_tab_create(struct AxisDialog *d)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
 
   w = gtk_button_new_with_mnemonic(_("_Clear"));
-  g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(AxisDialogClear), d);
   gtk_box_append(GTK_BOX(hbox), w);
 
   w = gtk_button_new_with_mnemonic(_("_Data"));
-  g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogFile), d);
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(AxisDialogFile), d);
   g_signal_connect(w, "map", G_CALLBACK(file_button_show), NULL);
   gtk_box_append(GTK_BOX(hbox), w);
 
