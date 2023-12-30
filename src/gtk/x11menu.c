@@ -1093,7 +1093,7 @@ term_signal_handler(int sig)
 static gboolean
 CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  CmGraphQuit(NULL, user_data);
+  CmGraphQuit();
 
   return TRUE;
 }
@@ -2614,11 +2614,11 @@ initial_draw(gpointer user_data)
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
       LoadNgpFile(file, FALSE, NULL, NULL);
     } else {
-      CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+      CmViewerDraw(FALSE);
     }
     g_free(file);
   } else {
-    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+    CmViewerDraw(FALSE);
   }
 }
 
@@ -3036,19 +3036,17 @@ script_exec_main(gpointer user_data)
 }
 
 void
-script_exec(GtkWidget *w, gpointer client_data)
+script_exec(struct script *fcur)
 {
   char *name, *option, *s, mes[256];
   int len;
   struct narray *sarray;
-  struct script *fcur;
 
-  if (Menulock || Globallock || client_data == NULL) {
+  if (Menulock || Globallock) {
     return;
   }
 
-  fcur = (struct script *) client_data;
-  if (fcur->script == NULL)
+  if (fcur == NULL || fcur->script == NULL)
     return;
 
   name = g_strdup(fcur->script);

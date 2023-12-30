@@ -637,7 +637,7 @@ previewer_cb(gpointer user_data)
 }
 
 void
-CmOutputViewerB(void *wi, gpointer client_data)
+CmOutputViewerB(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1101,15 +1101,15 @@ CmOutputEMF(int type)
 #endif
 
 void
-CmOutputPrinterB(void *wi, gpointer client_data)
+CmOutputPrinterB(void)
 {
   CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG, NULL, NULL);
 }
 
 void
-CmOutputMenu(void *wi, gpointer client_data)
+CmOutputMenu(int menu_id)
 {
-  switch (GPOINTER_TO_INT(client_data)) {
+  switch (menu_id) {
   case MenuIdOutputGRAFile:
     CmPrintGRAFile();
     break;
@@ -1121,12 +1121,12 @@ CmOutputMenu(void *wi, gpointer client_data)
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputCairoEMFFile:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
-    CmOutputImage(GPOINTER_TO_INT(client_data));
+    CmOutputImage(menu_id);
     break;
 #if WINDOWS
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFClipboard:
-    CmOutputEMF(GPOINTER_TO_INT(client_data));
+    CmOutputEMF(menu_id);
     break;
 #endif
   }

@@ -31,16 +31,16 @@ void CmAxisAddFrame(GSimpleAction *action, GVariant *parameter, gpointer client_
 void CmAxisAddSection(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 void CmAxisAddCross(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 void CmAxisAddSingle(GSimpleAction *action, GVariant *parameter, gpointer client_data);
-void CmAxisUpdate(void *w, gpointer client_data);
-void CmAxisDel(void *w, gpointer client_data);
-void CmAxisZoom(void *w, gpointer client_data);
-void CmAxisClear(void *w, gpointer client_data);
-void CmAxisScaleUndo(void *w, gpointer client_data);
+void CmAxisUpdate(void);
+void CmAxisDel(void);
+void CmAxisZoom(void);
+void CmAxisClear(void);
+void CmAxisScaleUndo(void);
 
-void CmAxisGridNew(void *w, gpointer client_data);
-void CmAxisGridDel(void *w, gpointer client_data);
-void CmAxisGridUpdate(void *w, gpointer client_data);
-void CmOptionGridDef(void *w, gpointer client_data);
+void CmAxisGridNew(void);
+void CmAxisGridDel(void);
+void CmAxisGridUpdate(void);
+void CmOptionGridDef(void);
 
 GtkWidget *create_axis_list(struct SubWin *d);
 

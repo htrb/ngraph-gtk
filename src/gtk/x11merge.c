@@ -318,7 +318,7 @@ merge_close_response(struct response_callback *cb)
 }
 
 void
-CmMergeClose(void *w, gpointer client_data)
+CmMergeClose(void)
 {
   struct narray *farray;
   struct objlist *obj;
@@ -414,7 +414,7 @@ merge_update_response(struct response_callback *cb)
 }
 
 void
-CmMergeUpdate(void *w, gpointer client_data)
+CmMergeUpdate(void)
 {
   struct narray *farray;
   struct objlist *obj;

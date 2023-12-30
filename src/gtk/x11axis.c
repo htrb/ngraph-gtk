@@ -502,7 +502,7 @@ option_grid_def_response(struct response_callback *cb)
 }
 
 void
-CmOptionGridDef(void *w, gpointer client_data)
+CmOptionGridDef(void)
 {
   struct objlist *obj;
   int id;
@@ -2694,7 +2694,7 @@ axis_del_response(struct response_callback *cb)
 }
 
 void
-CmAxisDel(void *w, gpointer client_data)
+CmAxisDel(void)
 {
   struct objlist *obj;
 
@@ -2745,7 +2745,7 @@ axis_update_response(struct response_callback *cb)
 }
 
 void
-CmAxisUpdate(void *w, gpointer client_data)
+CmAxisUpdate(void)
 {
   struct objlist *obj;
 
@@ -2844,7 +2844,7 @@ axis_zoom_response(struct response_callback *cb)
 }
 
 void
-CmAxisZoom(void *w, gpointer client_data)
+CmAxisZoom(void)
 {
   struct objlist *obj;
 
@@ -2914,7 +2914,7 @@ axis_clear_response(struct response_callback *cb)
 }
 
 void
-CmAxisClear(void *w, gpointer client_data)
+CmAxisClear(void)
 {
   struct narray *farray;
   struct objlist *obj;
@@ -2956,7 +2956,7 @@ axis_grid_new_response(struct response_callback *cb)
 }
 
 void
-CmAxisGridNew(void *w, gpointer client_data)
+CmAxisGridNew(void)
 {
   struct objlist *obj;
   int id, undo;
@@ -3000,7 +3000,7 @@ axis_grid_del_response(struct response_callback *cb)
 }
 
 void
-CmAxisGridDel(void *w, gpointer client_data)
+CmAxisGridDel(void)
 {
   struct narray *farray;
   struct objlist *obj;
@@ -3084,7 +3084,7 @@ axis_grid_update_response(struct response_callback *cb)
 }
 
 void
-CmAxisGridUpdate(void *w, gpointer client_data)
+CmAxisGridUpdate(void)
 {
   struct narray *farray;
   struct objlist *obj;
@@ -3260,7 +3260,7 @@ axis_scale_undo_response(struct response_callback *cb)
 }
 
 void
-CmAxisScaleUndo(void *w, gpointer client_data)
+CmAxisScaleUndo(void)
 {
   struct objlist *obj;
   struct narray *farray;

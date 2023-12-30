@@ -4811,8 +4811,7 @@ range_add_response(struct response_callback *cb)
 }
 
 void
-CmRangeAdd
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+CmRangeAdd (GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int id, val, undo;
   struct objlist *obj;
@@ -4967,7 +4966,7 @@ file_close_response(struct response_callback *cb)
 }
 
 void
-CmFileClose(void *w, gpointer client_data)
+CmFileClose(void)
 {
   struct narray *farray;
   struct objlist *obj;
@@ -5142,7 +5141,7 @@ file_update_response(struct response_callback *cb)
 }
 
 void
-CmFileUpdate(void *w, gpointer client_data)
+CmFileUpdate(void)
 {
   struct objlist *obj;
   struct narray *farray;
@@ -5210,7 +5209,7 @@ file_edit_response(struct response_callback *cb)
 }
 
 void
-CmFileEdit(void *w, gpointer client_data)
+CmFileEdit(void)
 {
   struct objlist *obj;
   int last;
@@ -5268,7 +5267,7 @@ option_file_def_response(struct response_callback *cb)
 }
 
 void
-CmOptionFileDef(void *w, gpointer client_data)
+CmOptionFileDef(void)
 {
   struct objlist *obj;
   int id;
@@ -6144,7 +6143,7 @@ file_math_response(struct response_callback *cb)
 }
 
 void
-CmFileMath(void *w, gpointer client_data)
+CmFileMath(void)
 {
   struct objlist *obj;
   int undo;
@@ -6373,7 +6372,7 @@ file_save_data_response(int ret, gpointer user_data)
 }
 
 void
-CmFileSaveData(void *w, gpointer client_data)
+CmFileSaveData(void)
 {
   struct narray *farray;
 

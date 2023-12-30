@@ -24,16 +24,16 @@
 
 void LegendWinUpdate(char **objects, int clear, int draw);
 
-void CmLineUpdate(void *w, gpointer client_data);
-void CmLineDel(void *w, gpointer client_data);
-void CmRectUpdate(void *w, gpointer client_data);
-void CmRectDel(void *w, gpointer client_data);
-void CmArcUpdate(void *w, gpointer client_data);
-void CmArcDel(void *w, gpointer client_data);
-void CmMarkUpdate(void *w, gpointer client_data);
-void CmMarkDel(void *w, gpointer client_data);
-void CmTextUpdate(void *w, gpointer client_data);
-void CmTextDel(void *w, gpointer client_data);
+void CmLineUpdate(void);
+void CmLineDel(void);
+void CmRectUpdate(void);
+void CmRectDel(void);
+void CmArcUpdate(void);
+void CmArcDel(void);
+void CmMarkUpdate(void);
+void CmMarkDel(void);
+void CmTextUpdate(void);
+void CmTextDel(void);
 
 GtkWidget *create_path_list(struct SubWin *d);
 GtkWidget *create_rect_list(struct SubWin *d);
@@ -41,4 +41,4 @@ GtkWidget *create_arc_list(struct SubWin *d);
 GtkWidget *create_mark_list(struct SubWin *d);
 GtkWidget *create_text_list(struct SubWin *d);
 
-void CmOptionTextDef(void *w, gpointer client_data);
+void CmOptionTextDef(void);

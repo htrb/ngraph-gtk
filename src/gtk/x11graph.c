@@ -1155,12 +1155,12 @@ CmGraphNewMenu_response(int ret, gpointer user_data)
 }
 
 void
-CmGraphNewMenu(void *w, gpointer client_data)
+CmGraphNewMenu(int menu_id)
 {
   if (Menulock || Globallock)
     return;
 
-  CheckSave(CmGraphNewMenu_response, client_data);
+  CheckSave(CmGraphNewMenu_response, GINT_TO_POINTER (menu_id));
 }
 
 static void
@@ -1200,7 +1200,7 @@ CmGraphLoad_response(int ret, gpointer user_data)
 }
 
 void
-CmGraphLoad(void *w, gpointer client_data)
+CmGraphLoad(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1209,7 +1209,7 @@ CmGraphLoad(void *w, gpointer client_data)
 }
 
 void
-CmGraphSave(void *w, gpointer client_data)
+CmGraphSave(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1217,7 +1217,7 @@ CmGraphSave(void *w, gpointer client_data)
 }
 
 void
-CmGraphOverWrite(void *w, gpointer client_data)
+CmGraphOverWrite(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1234,7 +1234,7 @@ CmGraphSwitch_response(struct response_callback *cb)
 }
 
 void
-CmGraphSwitch(void *w, gpointer client_data)
+CmGraphSwitch(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1276,13 +1276,13 @@ GraphPage(int new_graph, struct graph_page_data *data)
 }
 
 void
-CmGraphPage(void *w, gpointer client_data)
+CmGraphPage(int new_graph)
 {
-  GraphPage(GPOINTER_TO_INT(client_data), NULL);
+  GraphPage(new_graph, NULL);
 }
 
 void
-CmGraphDirectory(void *w, gpointer client_data)
+CmGraphDirectory(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1329,7 +1329,7 @@ graph_shell_main(gpointer user_data)
 }
 
 void
-CmGraphShell(void *w, gpointer client_data)
+CmGraphShell(void)
 {
   if (Menulock || Globallock) {
     return;
@@ -1341,7 +1341,7 @@ CmGraphShell(void *w, gpointer client_data)
 }
 
 void
-CmGraphQuit(void *w, gpointer client_data)
+CmGraphQuit(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1364,7 +1364,7 @@ chdir_to_ngp(const char *fname)
 }
 
 void
-CmHelpAbout(void *w, gpointer client_data)
+CmHelpAbout(void)
 {
   struct objlist *obj;
   char *web, *copyright;
@@ -1431,7 +1431,7 @@ CmHelpDemo_response(int ret, gpointer client_data)
 }
 
 void
-CmHelpDemo(void *w, gpointer client_data)
+CmHelpDemo(void)
 {
   struct objlist *obj;
   char *data_dir;
@@ -1453,7 +1453,7 @@ CmHelpDemo(void *w, gpointer client_data)
 }
 
 void
-CmHelpHelp(void *w, gpointer client_data)
+CmHelpHelp(void)
 {
   char *cmd;
 

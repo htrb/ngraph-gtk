@@ -23,18 +23,18 @@
 
 #ifndef X11GRAPH_HEADER
 
-void CmGraphQuit(void *w, gpointer client_data);
-void CmGraphNewMenu(void *w, gpointer client_data);
-void CmGraphLoad(void *w, gpointer client_data);
-void CmGraphSave(void *w, gpointer client_data);
-void CmGraphOverWrite(void *w, gpointer client_data);
-void CmGraphShell(void *w, gpointer client_data);
-void CmGraphDirectory(void *w, gpointer client_data);
-void CmHelpHelp(void *w, gpointer client_data);
-void CmHelpAbout(void *w, gpointer client_data);
-void CmHelpDemo(void *w, gpointer client_data);
-void CmGraphSwitch(void *w, gpointer client_data);
-void CmGraphPage(void *w, gpointer client_data);
+void CmGraphQuit(void);
+void CmGraphNewMenu(int menu_id);
+void CmGraphLoad(void);
+void CmGraphSave(void);
+void CmGraphOverWrite(void);
+void CmGraphShell(void);
+void CmGraphDirectory(void);
+void CmHelpHelp(void);
+void CmHelpAbout(void);
+void CmHelpDemo(void);
+void CmGraphSwitch(void);
+void CmGraphPage(int new_graph);
 int chdir_to_ngp(const char *fname);
 
 int set_paper_type(int w, int h);

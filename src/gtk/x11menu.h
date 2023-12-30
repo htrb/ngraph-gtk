@@ -26,6 +26,7 @@
 
 #include "common.h"
 #include "ogra2cairo.h"
+#include "ox11menu.h"
 
 #define N2GTK_RULER_METRIC(v) ((v) / 100.0 * 72.0 / 25.4 * 10)
 
@@ -362,7 +363,7 @@ void create_addin_menu(void);
 void create_recent_data_menu(void);
 void set_pointer_mode(int id);
 void set_toggle_action_widget_state(int id, int state);
-void script_exec(GtkWidget *w, gpointer client_data);
+void script_exec(struct script *fcur);
 int toggle_view(int type, int state);
 void show_recent_dialog(int type);
 int menu_save_undo(enum MENU_UNDO_TYPE type, char **obj);

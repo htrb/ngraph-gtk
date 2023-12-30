@@ -18,153 +18,153 @@
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmHelpHelp(NULL, NULL);
+  CmHelpHelp();
 }
 
 static void
 about_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmHelpAbout(NULL, NULL);
+  CmHelpAbout();
 }
 
 static void
 demo_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmHelpDemo(NULL, NULL);
+  CmHelpDemo();
 }
 
 static void
 quit_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphQuit(NULL, NULL);
+  CmGraphQuit();
 }
 
 static void
 GraphNewFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphNewMenu(NULL, GINT_TO_POINTER(MenuIdGraphNewFrame));
+  CmGraphNewMenu(MenuIdGraphNewFrame);
 }
 
 static void
 GraphNewSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphNewMenu(NULL, GINT_TO_POINTER(MenuIdGraphNewSection));
+  CmGraphNewMenu(MenuIdGraphNewSection);
 }
 
 static void
 GraphNewCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphNewMenu(NULL, GINT_TO_POINTER(MenuIdGraphNewCross));
+  CmGraphNewMenu(MenuIdGraphNewCross);
 }
 
 static void
 GraphNewClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphNewMenu(NULL, GINT_TO_POINTER(MenuIdGraphAllClear));
+  CmGraphNewMenu(MenuIdGraphAllClear);
 }
 
 static void
 GraphLoadAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphLoad(NULL, NULL);
+  CmGraphLoad();
 }
 
 static void
 GraphSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphOverWrite(NULL, NULL);
+  CmGraphOverWrite();
 }
 
 static void
 GraphSaveAsAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphSave(NULL, NULL);
+  CmGraphSave();
 }
 
 static void
 GraphExportGRAAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputGRAFile));
+  CmOutputMenu(MenuIdOutputGRAFile);
 }
 
 static void
 GraphExportPSAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputPSFile));
+  CmOutputMenu(MenuIdOutputPSFile);
 }
 
 static void
 GraphExportEPSAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputEPSFile));
+  CmOutputMenu(MenuIdOutputEPSFile);
 }
 
 static void
 GraphExportPDFAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputPDFFile));
+  CmOutputMenu(MenuIdOutputPDFFile);
 }
 
 static void
 GraphExportSVGAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputSVGFile));
+  CmOutputMenu(MenuIdOutputSVGFile);
 }
 
 static void
 GraphExportPNGAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputPNGFile));
+  CmOutputMenu(MenuIdOutputPNGFile);
 }
 
 #if WINDOWS
 static void
 GraphExportEMFAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputEMFFile));
+  CmOutputMenu(MenuIdOutputEMFFile);
 }
 
 static void
 GraphExportEMFClipboardAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputEMFClipboard));
+  CmOutputMenu(MenuIdOutputEMFClipboard);
 }
 #endif
 
 static void
 GraphDrawOrderAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphSwitch(NULL, NULL);
+  CmGraphSwitch();
 }
 
 static void
 GraphPageSetupAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphPage(NULL, GINT_TO_POINTER(FALSE));
+  CmGraphPage(FALSE);
 }
 
 static void
 GraphPrintPreviewAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputViewerB(NULL, NULL);
+  CmOutputViewerB();
 }
 
 static void
 GraphPrintAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOutputPrinterB(NULL, NULL);
+  CmOutputPrinterB();
 }
 
 static void
 GraphCurrentDirectoryAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphDirectory(NULL, NULL);
+  CmGraphDirectory();
 }
 
 static void
 GraphShellAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphShell(NULL, NULL);
+  CmGraphShell();
 }
 
 static void
@@ -190,150 +190,151 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
     fcur = fcur->next;
   }
 
-  script_exec(NULL, fcur);
+  script_exec(fcur);
 }
 
 static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRedo));
+  CmEditMenuCB(MenuIdEditRedo);
 }
 
 static void
 EditUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditUndo));
+  CmEditMenuCB(MenuIdEditUndo);
 }
 
 static void
 EditCutAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditCut));
+  CmEditMenuCB(MenuIdEditCut);
 }
 
 static void
 EditCopyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditCopy));
+  CmEditMenuCB(MenuIdEditCopy);
 }
 
 static void
 EditPasteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditPaste));
+  CmEditMenuCB(MenuIdEditPaste);
 }
 
 static void
 EditDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditDelete));
+  CmEditMenuCB(MenuIdEditDelete);
 }
 
 static void
 EditDuplicateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditDuplicate));
+  CmEditMenuCB(MenuIdEditDuplicate);
 }
 
 static void
 EditSelectAllAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditSelectAll));
+  CmEditMenuCB(MenuIdEditSelectAll);
 }
 
 static void
 EditOrderTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderTop));
+  CmEditMenuCB(MenuIdEditOrderTop);
 }
 
 static void
 EditOrderUpAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderUp));
+  CmEditMenuCB(MenuIdEditOrderUp);
 }
 
 static void
 EditOrderDownAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderDown));
+  CmEditMenuCB(MenuIdEditOrderDown);
 }
 
 static void
 EditOrderBottomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderBottom));}
+  CmEditMenuCB(MenuIdEditOrderBottom);
+}
 
 static void
 EditAlignLeftAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignLeft));
+  CmEditMenuCB(MenuIdAlignLeft);
 }
 
 static void
 EditAlignVCenterAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignVCenter));
+  CmEditMenuCB(MenuIdAlignVCenter);
 }
 
 static void
 EditAlignRightAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignRight));
+  CmEditMenuCB(MenuIdAlignRight);
 }
 
 static void
 EditAlignTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignTop));
+  CmEditMenuCB(MenuIdAlignTop);
 }
 
 static void
 EditAlignHCenterAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignHCenter));
+  CmEditMenuCB(MenuIdAlignHCenter);
 }
 
 static void
 EditAlignBottomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdAlignBottom));
+  CmEditMenuCB(MenuIdAlignBottom);
 }
 
 static void
 EditRotateCWAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRotateCW));
+  CmEditMenuCB(MenuIdEditRotateCW);
 }
 
 static void
 EditRotateCCWAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRotateCCW));
+  CmEditMenuCB(MenuIdEditRotateCCW);
 }
 
 static void
 EditFlipHAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditFlipHorizontally));
+  CmEditMenuCB(MenuIdEditFlipHorizontally);
 }
 
 static void
 EditFlipVAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditFlipVertically));
+  CmEditMenuCB(MenuIdEditFlipVertically);
 }
 
 static void
 ViewDrawDirectAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  CmViewerDraw(FALSE);
 }
 
 static void
 ViewDrawAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
+  CmViewerDraw(TRUE);
 }
 
 static void
@@ -422,31 +423,31 @@ DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 static void
 DataPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmFileUpdate(NULL, NULL);
+  CmFileUpdate();
 }
 
 static void
 DataCloseAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmFileClose(NULL, NULL);
+  CmFileClose();
 }
 
 static void
 DataEditAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmFileEdit(NULL, NULL);
+  CmFileEdit();
 }
 
 static void
 DataSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmFileSaveData(NULL, NULL);
+  CmFileSaveData();
 }
 
 static void
 DataMathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmFileMath(NULL, NULL);
+  CmFileMath();
 }
 
 static void
@@ -494,109 +495,109 @@ AxisAddSingleAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 static void
 AxisPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisUpdate(NULL, NULL);
+  CmAxisUpdate();
 }
 
 static void
 AxisDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisDel(NULL, NULL);
+  CmAxisDel();
 }
 
 static void
 AxisScaleZoomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisZoom(NULL, NULL);
+  CmAxisZoom();
 }
 
 static void
 AxisScaleClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisClear(NULL, NULL);
+  CmAxisClear();
 }
 
 static void
 AxisScaleUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisScaleUndo(NULL, NULL);
+  CmAxisScaleUndo();
 }
 
 static void
 AxisGridNewAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisGridNew(NULL, NULL);
+  CmAxisGridNew();
 }
 
 static void
 AxisGridPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisGridUpdate(NULL, NULL);
+  CmAxisGridUpdate();
 }
 
 static void
 AxisGridDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisGridDel(NULL, NULL);
+  CmAxisGridDel();
 }
 
 static void
 LegendPathPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmLineUpdate(NULL, NULL);
+  CmLineUpdate();
 }
 
 static void
 LegendPathDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmLineDel(NULL, NULL);
+  CmLineDel();
 }
 
 static void
 LegendRectanglePropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmRectUpdate(NULL, NULL);
+  CmRectUpdate();
 }
 
 static void
 LegendRectangleDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmRectDel(NULL, NULL);
+  CmRectDel();
 }
 
 static void
 LegendArcPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmArcUpdate(NULL, NULL);
+  CmArcUpdate();
 }
 
 static void
 LegendArcDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmArcDel(NULL, NULL);
+  CmArcDel();
 }
 
 static void
 LegendMarkPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmMarkUpdate(NULL, NULL);
+  CmMarkUpdate();
 }
 
 static void
 LegendMarkDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmMarkDel(NULL, NULL);
+  CmMarkDel();
 }
 
 static void
 LegendTextPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmTextUpdate(NULL, NULL);
+  CmTextUpdate();
 }
 
 static void
 LegendTextDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmTextDel(NULL, NULL);
+  CmTextDel();
 }
 
 static void
@@ -608,79 +609,79 @@ MergeAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 static void
 MergePropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmMergeUpdate(NULL, NULL);
+  CmMergeUpdate();
 }
 
 static void
 MergeCloseAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmMergeClose(NULL, NULL);
+  CmMergeClose();
 }
 
 static void
 PreferenceViewerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionViewer(NULL, NULL);
+  CmOptionViewer();
 }
 
 static void
 PreferenceExternalViewerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionExtViewer(NULL, NULL);
+  CmOptionExtViewer();
 }
 
 static void
 PreferenceFontAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionPrefFont(NULL, NULL);
+  CmOptionPrefFont();
 }
 
 static void
 PreferenceAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionScript(NULL, NULL);
+  CmOptionScript();
 }
 
 static void
 PreferenceMiscAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionMisc(NULL, NULL);
+  CmOptionMisc();
 }
 
 static void
 PreferenceSaveSettingAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionSaveDefault(NULL, NULL);
+  CmOptionSaveDefault();
 }
 
 static void
 PreferenceSaveGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionSaveNgp(NULL, NULL);
+  CmOptionSaveNgp();
 }
 
 static void
 PreferenceDataDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionFileDef(NULL, NULL);
+  CmOptionFileDef();
 }
 
 static void
 PreferenceTextDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionTextDef(NULL, NULL);
+  CmOptionTextDef();
 }
 
 static void
 PreferenceGridDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmOptionGridDef(NULL, NULL);
+  CmOptionGridDef();
 }
 
 static void
 PopupUpdateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  ViewerUpdateCB(NULL, NULL);
+  ViewerUpdateCB();
 }
 
 static GActionEntry AppEntries[] =

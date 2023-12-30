@@ -6316,7 +6316,7 @@ ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, 
     set_pointer_mode(PointerModeDefault);
     goto EXIT_PROPAGATE;
   case GDK_KEY_space:
-    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+    CmViewerDraw(FALSE);
     return TRUE;
   case GDK_KEY_Page_Up:
     range_increment_deceleration(0, -SCROLL_INC * 4, d);
@@ -7117,14 +7117,10 @@ viewer_draw_finalize(gpointer user_data)
 }
 
 void
-CmViewerDraw(void *w, gpointer client_data)
+CmViewerDraw(int select_file)
 {
-  int select_file;
-
   if (Menulock || Globallock)
     return;
-
-  select_file = GPOINTER_TO_INT(client_data);
 
   Draw(select_file, viewer_draw_finalize, NULL);
 }
@@ -7734,7 +7730,7 @@ ViewCross(int state)
 }
 
 void
-ViewerUpdateCB(void *w, gpointer client_data)
+ViewerUpdateCB(void)
 {
   ViewUpdate();
 }
@@ -7749,12 +7745,12 @@ CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble
 }
 
 void
-CmEditMenuCB(void *w, gpointer client_data)
+CmEditMenuCB(int menu_id)
 {
   if (Menulock || Globallock)
     return;
 
-  switch (GPOINTER_TO_INT(client_data)) {
+  switch (menu_id) {
   case MenuIdEditRedo:
     menu_redo();
     break;

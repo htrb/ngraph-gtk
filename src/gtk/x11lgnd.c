@@ -2169,61 +2169,61 @@ LegendTextDefDialog(struct LegendDialog *data,
 }
 
 void
-CmLineDel(void *w, gpointer client_data)
+CmLineDel(void)
 {
   legend_menu_delete_object("path", LegendLineCB);
 }
 
 void
-CmLineUpdate(void *w, gpointer client_data)
+CmLineUpdate(void)
 {
   legend_menu_update_object("path", LegendLineCB, &DlgLegendArrow, LegendArrowDialog);
 }
 
 void
-CmRectDel(void *w, gpointer client_data)
+CmRectDel(void)
 {
   legend_menu_delete_object("rectangle", LegendRectCB);
 }
 
 void
-CmRectUpdate(void *w, gpointer client_data)
+CmRectUpdate(void)
 {
   legend_menu_update_object("rectangle", LegendRectCB, &DlgLegendRect, LegendRectDialog);
 }
 
 void
-CmArcDel(void *w, gpointer client_data)
+CmArcDel(void)
 {
   legend_menu_delete_object("arc", LegendArcCB);
 }
 
 void
-CmArcUpdate(void *w, gpointer client_data)
+CmArcUpdate(void)
 {
   legend_menu_update_object("arc", LegendArcCB, &DlgLegendArc, LegendArcDialog);
 }
 
 void
-CmMarkDel(void *w, gpointer client_data)
+CmMarkDel(void)
 {
   legend_menu_delete_object("mark", LegendMarkCB);
 }
 
 void
-CmMarkUpdate(void *w, gpointer client_data)
+CmMarkUpdate(void)
 {
   legend_menu_update_object("mark", LegendMarkCB, &DlgLegendMark, LegendMarkDialog);
 }
 
 void
-CmTextDel(void *w, gpointer client_data)
+CmTextDel(void)
 {
   legend_menu_delete_object("text", LegendTextCB);
 }
 
 void
-CmTextUpdate(void *w, gpointer client_data)
+CmTextUpdate(void)
 {
   legend_menu_update_object("text", LegendTextCB, &DlgLegendText, LegendTextDialog);
 }
@@ -2257,7 +2257,7 @@ option_text_def_dialog_response(struct response_callback *cb)
 }
 
 void
-CmOptionTextDef(void *w, gpointer client_data)
+CmOptionTextDef(void)
 {
   struct objlist *obj;
   int id;

@@ -21,10 +21,10 @@
  *
  */
 
-void CmOptionViewer(void *w, gpointer client_data);
-void CmOptionExtViewer(void *w, gpointer client_data);
-void CmOptionPrefFont(void *w, gpointer client_data);
-void CmOptionScript(void *w, gpointer client_datavoid);
-void CmOptionMisc(void *w, gpointer client_data);
-void CmOptionSaveDefault(void *w, gpointer client_data);
-void CmOptionSaveNgp(void *w, gpointer client_data);
+void CmOptionViewer(void);
+void CmOptionExtViewer(void);
+void CmOptionPrefFont(void);
+void CmOptionScript(void);
+void CmOptionMisc(void);
+void CmOptionSaveDefault(void);
+void CmOptionSaveNgp(void);

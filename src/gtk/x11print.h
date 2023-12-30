@@ -26,6 +26,6 @@
 #define PRINT_SHOW_DIALOG_DIALOG  2
 
 void CmOutputPrinter(int select_file, int show_dialog, response_cb cb, gpointer user_data);
-void CmOutputMenu(void *w, gpointer client_data);
-void CmOutputViewerB(void *w, gpointer client_data);
-void CmOutputPrinterB(void *wi, gpointer client_data);
+void CmOutputMenu(int menu_id);
+void CmOutputViewerB(void);
+void CmOutputPrinterB(void);

@@ -1832,7 +1832,7 @@ CmOptionSaveNgp_response(int ret, gpointer user_data)
 }
 
 void
-CmOptionSaveNgp(void *w, gpointer client_data)
+CmOptionSaveNgp(void)
 {
   char *ngpfile;
   int i, path;
@@ -1873,7 +1873,7 @@ CmOptionSaveNgp(void *w, gpointer client_data)
 }
 
 void
-CmOptionViewer(void *w, gpointer client_data)
+CmOptionViewer(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1882,7 +1882,7 @@ CmOptionViewer(void *w, gpointer client_data)
 }
 
 void
-CmOptionExtViewer(void *w, gpointer client_data)
+CmOptionExtViewer(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1891,7 +1891,7 @@ CmOptionExtViewer(void *w, gpointer client_data)
 }
 
 void
-CmOptionPrefFont(void *w, gpointer client_data)
+CmOptionPrefFont(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1900,7 +1900,7 @@ CmOptionPrefFont(void *w, gpointer client_data)
 }
 
 void
-CmOptionScript(void *w, gpointer client_datavoid)
+CmOptionScript(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1909,7 +1909,7 @@ CmOptionScript(void *w, gpointer client_datavoid)
 }
 
 void
-CmOptionMisc(void *w, gpointer client_data)
+CmOptionMisc(void)
 {
   if (Menulock || Globallock)
     return;
@@ -1918,7 +1918,7 @@ CmOptionMisc(void *w, gpointer client_data)
 }
 
 void
-CmOptionSaveDefault(void *w, gpointer client_data)
+CmOptionSaveDefault(void)
 {
   if (Menulock || Globallock)
     return;
