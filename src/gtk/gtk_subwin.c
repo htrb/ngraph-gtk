@@ -667,7 +667,7 @@ check_popover (GtkWidget *parent)
 static void
 create_enum_menu(GtkWidget *parent, n_list_store *item)
 {
-  GtkWidget *popover, *menu;
+  GtkWidget *popover, *menu, *swin;
   GtkStringList *list;
   int cur, id;
 
@@ -676,7 +676,13 @@ create_enum_menu(GtkWidget *parent, n_list_store *item)
   gtk_list_view_set_single_click_activate (GTK_LIST_VIEW (menu), TRUE);
 
   popover = gtk_popover_new();
-  gtk_popover_set_child(GTK_POPOVER (popover), menu);
+  swin = gtk_scrolled_window_new ();
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_propagate_natural_width (GTK_SCROLLED_WINDOW (swin), TRUE);
+  gtk_scrolled_window_set_propagate_natural_height (GTK_SCROLLED_WINDOW (swin), TRUE);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), menu);
+
+  gtk_popover_set_child(GTK_POPOVER (popover), swin);
 
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
   list = listview_get_string_list (menu);
