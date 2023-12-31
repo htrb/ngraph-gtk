@@ -1213,7 +1213,7 @@ CmGraphSave(void)
 {
   if (Menulock || Globallock)
     return;
-  GraphSave(FALSE);
+  GraphSave(FALSE, NULL, NULL);
 }
 
 void
@@ -1221,7 +1221,7 @@ CmGraphOverWrite(void)
 {
   if (Menulock || Globallock)
     return;
-  GraphSave(TRUE);
+  GraphSave(TRUE, NULL, NULL);
 }
 
 static void

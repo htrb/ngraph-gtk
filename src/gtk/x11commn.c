@@ -1347,8 +1347,10 @@ struct GraphSave_data
 static void
 graph_save_response(char *file, gpointer user_data)
 {
+  struct GraphSave_data *data;
   char *prev_wd, *current_wd;
-  prev_wd = (char *) user_data;
+  data = (struct GraphSave_data *) user_data;
+  prev_wd = data->prev_wd;
   current_wd = ngetcwd();
   if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
     g_free(prev_wd);
@@ -1360,10 +1362,14 @@ graph_save_response(char *file, gpointer user_data)
   g_free(file);
   g_free(current_wd);
   g_free(prev_wd);
+  if (data->cb) {
+    data->cb(IDOK, data->data);
+  }
+  g_free (data);
 }
 
 int
-GraphSave(int overwrite)
+GraphSave(int overwrite, response_cb cb, gpointer user_data)
 {
   char *initfil;
 
@@ -1374,16 +1380,22 @@ GraphSave(int overwrite)
     overwrite = FALSE;
   }
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
-    char *prev_wd;
     int chd;
+    struct GraphSave_data *data;
+    data = g_malloc0 (sizeof (*data));
+    data->cb = cb;
+    data->data = user_data;
     initfil = (initfil) ? initfil : "untitled.ngp";
-    prev_wd = ngetcwd();
+    data->prev_wd = ngetcwd();
     chd = Menulocal.changedirectory;
     nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
                      &(Menulocal.graphloaddir), initfil, chd,
-                     graph_save_response, prev_wd);
+                     graph_save_response, data);
   } else {
     GraphSaveSub(initfil, NULL, NULL);
+    if (cb) {
+      cb(IDOK, user_data);
+    }
   }
   return IDOK;
 }
@@ -1849,19 +1861,16 @@ static void
 CheckSave_response(int ret, gpointer user_data)
 {
   struct CheckSave_data *data;
-  response_cb cb;
   int r = TRUE;
 
   data = (struct CheckSave_data *) user_data;
-  cb = data->cb;
   if (ret == IDYES) {
-    if (GraphSave(TRUE) == IDCANCEL) {
-      r = FALSE;
-    }
+    GraphSave(TRUE, CheckSave_response_response, user_data);
+    return;
   } else if (ret != IDNO) {
     r = FALSE;
   }
-  cb(r, data->data);
+  data->cb(r, data->data);
   g_free(data);
 }
 

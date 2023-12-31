@@ -43,7 +43,7 @@ void LoadNgpFile(const char *File, int console, const char *option, const char *
 void CheckSave(response_cb cb, gpointer user_data);
 void CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified);
 int SaveDrawrable(const char *name, int storedata, int storemerge, int save_decimalsign);
-int GraphSave(int overwrite);
+int GraphSave(int overwrite, response_cb cb, gpointer user_data);
 void DeleteDrawable(void);
 void FileAutoScale(void);
 void AddDataFileList(const char *file);
