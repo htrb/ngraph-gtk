@@ -1337,6 +1337,13 @@ GraphSaveSub(const char *file, const char *prev_wd, const char *current_wd)
   get_save_opt(save_data_data);
 }
 
+struct GraphSave_data 
+{
+  char *prev_wd;
+  response_cb cb;
+  gpointer data;
+};
+
 static void
 graph_save_response(char *file, gpointer user_data)
 {
@@ -1823,6 +1830,20 @@ struct CheckSave_data {
   response_cb cb;
   gpointer data;
 };
+
+static void
+CheckSave_response_response (int ret, gpointer user_data)
+{
+  struct CheckSave_data *data;
+  int r = TRUE;
+
+  data = (struct CheckSave_data *) user_data;
+  if (ret == IDCANCEL) {
+    r = FALSE;
+  }
+  data->cb(r, data->data);
+  g_free(data);
+}
 
 static void
 CheckSave_response(int ret, gpointer user_data)
