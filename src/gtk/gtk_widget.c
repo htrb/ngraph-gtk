@@ -726,6 +726,12 @@ create_spin_entry_type(enum SPIN_BUTTON_TYPE type,
     inc = 1;
     numeric = TRUE;
     break;
+  case SPIN_BUTTON_TYPE_ALPHA:
+    min = 0;
+    max = 255;
+    inc = 1;
+    numeric = TRUE;
+    break;
   default:
     type = SPIN_BUTTON_TYPE_CUSTOM;
     min = INT_MIN;
