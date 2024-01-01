@@ -147,8 +147,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, FALSE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
-
     break;
   case MenuIdOutputPDFFile:
     set_widget_visibility_with_label(d->dpi, FALSE);
@@ -156,7 +154,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {
@@ -171,7 +168,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputCairoEMFFile:
@@ -457,6 +453,7 @@ output_printer(int select_file, int show_dialog)
   struct print_obj pobj;
   GtkPaperSize *paper_size;
   GtkPageSetup *page_setup;
+  int use_opacity;
 
   FileAutoScale();
   AdjustAxis();
@@ -473,7 +470,8 @@ output_printer(int select_file, int show_dialog)
   if (g2wid < 0)
     return;
 
-  putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
+  use_opacity = TRUE;
+  putobj(g2wobj, "use_opacity", g2wid, &use_opacity);
 
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
@@ -666,6 +664,7 @@ CmOutputViewerB(void)
     int id, g2wid, g2woid, c;
     N_VALUE *g2winst;
     struct previewer_data *data;
+    int use_opacity;
 
     if ((graobj = chkobject("gra")) == NULL)
       return;
@@ -688,7 +687,8 @@ CmOutputViewerB(void)
     putobj(g2wobj, "BG", g2wid, &c);
     c = Menulocal.bg_b * 255.0;
     putobj(g2wobj, "BB", g2wid, &c);
-    putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
+    use_opacity = TRUE;
+    putobj(g2wobj, "use_opacity", g2wid, &use_opacity);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2gtk", g2woid);
     data = g_malloc0(sizeof(*data));
@@ -872,9 +872,12 @@ output_image(int type, char *file)
   id = newobj(graobj);
   putobj(g2wobj, "file", g2wid, file);
 
+  use_opacity = TRUE;
   switch (type) {
   case MenuIdOutputPSFile:
   case MenuIdOutputEPSFile:
+    use_opacity = DlgImageOut.UseOpacity;
+    /* fall through */
   case MenuIdOutputSVGFile:
   case MenuIdOutputPDFFile:
 #ifdef CAIRO_HAS_WIN32_SURFACE
@@ -886,7 +889,7 @@ output_image(int type, char *file)
     break;
   }
 
-  putobj(g2wobj, "use_opacity", g2wid, &DlgImageOut.UseOpacity);
+  putobj(g2wobj, "use_opacity", g2wid, &use_opacity);
   putobj(g2wobj, "dpi", g2wid, &DlgImageOut.Dpi);
   putobj(g2wobj, "format", g2wid, &DlgImageOut.Version);
 

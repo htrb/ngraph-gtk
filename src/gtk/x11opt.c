@@ -1046,7 +1046,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
     gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
   }
 
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->select_data), Menulocal.select_data);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
@@ -1312,10 +1311,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->directory = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->use_opacity = w;
-
     w = gtk_check_button_new_with_mnemonic(_("_Show select data dialog on exporting"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->select_data = w;
@@ -1468,9 +1463,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   }
 
   set_font(&Menulocal.file_preview_font, d->file_preview_font);
-
-  Menulocal.use_opacity = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_opacity));
-  putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   Menulocal.select_data = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->select_data));
   Menulocal.use_custom_palette = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_custom_palette));

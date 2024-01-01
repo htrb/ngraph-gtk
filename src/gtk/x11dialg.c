@@ -1472,16 +1472,12 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
 
   snprintf(buf, sizeof(buf), "%sA%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &a);
-  if (! Menulocal.use_opacity) {
-    a = 255;
-  }
 
   color.red = r / 255.0;
   color.green = g / 255.0;
   color.blue = b / 255.0;
-  color.alpha = a / 255.0;
+  color.alpha = 1.0;
 
-  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(w), Menulocal.use_opacity);
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
 
   snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
@@ -1520,7 +1516,6 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   char buf[64];
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &color);
-  a = (Menulocal.use_opacity) ? (color.alpha * 255) : 0xff;
   r = color.red * 255;
   g = color.green * 255;
   b = color.blue * 255;
