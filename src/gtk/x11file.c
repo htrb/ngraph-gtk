@@ -3113,8 +3113,8 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 
   SetWidgetFromObjField(d->clip, d->Obj, id, "data_clip");
 
-  set_color(d->col1, d->Obj, id, NULL);
-  set_color2(d->col2, d->Obj, id);
+  set_color(d->col1, d->alpha1, d->Obj, id, NULL);
+  set_color2(d->col2, d->alpha2, d->Obj, id);
 
   FileDialogType(d->type, d);
 }
@@ -3684,9 +3684,17 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Color 1:"), FALSE, i++);
   d->col1 = w;
 
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Alpha 1:"), FALSE, i++);
+  d->alpha1 = w;
+
   w = create_color_button(parent);
   add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
   d->col2 = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Alpha 2:"), FALSE, i++);
+  d->alpha2 = w;
 
   gtk_box_append(GTK_BOX(hbox), table);
 
@@ -4454,10 +4462,10 @@ plot_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
     return TRUE;
 
-  if (putobj_color(d->col1, d->Obj, d->Id, NULL))
+  if (putobj_color(d->col1, d->alpha1, d->Obj, d->Id, NULL))
     return TRUE;
 
-  if (putobj_color2(d->col2, d->Obj, d->Id))
+  if (putobj_color2(d->col2, d->alpha2, d->Obj, d->Id))
     return TRUE;
 
   return 0;

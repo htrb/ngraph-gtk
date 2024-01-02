@@ -81,7 +81,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
 
-  set_stroke_color(d->color, d->Obj, id);
+  set_stroke_color(d->color, d->alpha, d->Obj, id);
 
   n = d->Dir;
   if (n >= 0 && n < LEGEND_DIRECTION_NUM) {
@@ -421,6 +421,10 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
     d->color = w;
 
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+    add_widget_to_table(table, w, _("_Alpha:"), FALSE, i++);
+    d->alpha = w;
+
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, DIV_MAX, 1);
     set_scale_mark(w, GTK_POS_BOTTOM, 20, 20);
     gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
@@ -517,7 +521,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
     return;
 
-  if (putobj_stroke_color(d->color, d->Obj, d->Id))
+  if (putobj_stroke_color(d->color, d->alpha, d->Obj, d->Id))
     return;
 
   switch (d->Dir) {

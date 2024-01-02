@@ -800,16 +800,16 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     set_font(d, id);
 
   if (d->color)
-    set_color(d->color, d->Obj, id, NULL);
+    set_color(d->color, d->alpha, d->Obj, id, NULL);
 
   if (d->color2)
-    set_color2(d->color2, d->Obj, id);
+    set_color2(d->color2, d->alpha2, d->Obj, id);
 
   if (d->stroke_color)
-    set_stroke_color(d->stroke_color, d->Obj, id);
+    set_stroke_color(d->stroke_color, d->stroke_alpha, d->Obj, id);
 
   if (d->fill_color)
-    set_fill_color(d->fill_color, d->Obj, id);
+    set_fill_color(d->fill_color, d->fill_alpha, d->Obj, id);
 
   legend_dialog_set_sensitive(d);
 }
@@ -976,16 +976,16 @@ legend_dialog_close(GtkWidget *w, void *data)
     }
   }
 
-  if (d->stroke_color && putobj_stroke_color(d->stroke_color, d->Obj, d->Id))
+  if (d->stroke_color && d->stroke_alpha && putobj_stroke_color(d->stroke_color, d->stroke_alpha, d->Obj, d->Id))
     return;
 
-  if (d->fill_color && putobj_fill_color(d->fill_color, d->Obj, d->Id))
+  if (d->fill_color && d->fill_alpha && putobj_fill_color(d->fill_color, d->fill_alpha, d->Obj, d->Id))
     return;
 
-  if (d->color && putobj_color(d->color, d->Obj, d->Id, NULL))
+  if (d->color && d->alpha && putobj_color(d->color, d->alpha, d->Obj, d->Id, NULL))
     return;
 
-  if (d->color2 && putobj_color2(d->color2, d->Obj, d->Id))
+  if (d->color2 && d->alpha2 && putobj_color2(d->color2, d->alpha2, d->Obj, d->Id))
     return;
 
   d->ret = ret;
@@ -1278,6 +1278,40 @@ stroke_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
 }
 
 static void
+alpha_setup_common (const char *title, GtkWidget *table, GtkWidget **aw, int i)
+{
+  GtkWidget *w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  *aw = w;
+  add_widget_to_table(table, w, _(title), FALSE, i);
+}
+
+static void
+alpha_setup (struct LegendDialog *d, GtkWidget *table, int i)
+{
+  alpha_setup_common ("_Alpha:", table, &d->alpha, i);
+}
+
+static void
+alpha2_setup (struct LegendDialog *d, GtkWidget *table, int i)
+{
+  alpha_setup_common ("_Alpha2:", table, &d->alpha2, i);
+}
+
+static void
+stroke_alpha_setup (struct LegendDialog *d, GtkWidget *table, int i)
+{
+  alpha_setup_common ("_Alpha:", table, &d->stroke_alpha, i);
+}
+
+static void
+fill_alpha_setup (struct LegendDialog *d, GtkWidget *table, int i)
+{
+  alpha_setup_common ("_Alpha:", table, &d->fill_alpha, i);
+}
+
+static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
@@ -1548,6 +1582,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     join_setup(d, table, i++);
 
     stroke_color_setup(d, table, i++);
+    stroke_alpha_setup(d, table, i++);
 
     gtk_box_append(GTK_BOX(hbox2), table);
 
@@ -1571,6 +1606,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("fill _Rule:"), FALSE, i++);
 
     fill_color_setup(d, table, i++);
+    fill_alpha_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
     g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1653,6 +1689,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     stroke_color_setup(d, table, i++);
+    stroke_alpha_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1668,6 +1705,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     fill_color_setup(d, table, i++);
+    fill_alpha_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
     g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1773,6 +1811,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     miter_setup(d, table, i++);
     join_setup(d, table, i++);
     stroke_color_setup(d, table, i++);
+    stroke_alpha_setup(d, table, i++);
 
     gtk_box_append(GTK_BOX(hbox2), table);
 
@@ -1792,6 +1831,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     fill_color_setup(d, table, i++);
+    fill_alpha_setup(d, table, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Fill"));
     g_signal_connect_swapped(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1874,7 +1914,9 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->size = w;
 
     color_setup(d, table, i++);
+    alpha_setup(d, table, i++);
     color2_setup(d, table, i++);
+    alpha2_setup(d, table, i++);
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_child(GTK_FRAME(frame), table);
@@ -1941,6 +1983,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
     add_widget_to_table(table, btn_box, "", FALSE, i++);
 
     color_setup(d, table, i++);
+    alpha_setup(d, table, i++);
   } else {
     d->font = NULL;
     d->font_bold = NULL;

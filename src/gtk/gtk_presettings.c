@@ -17,6 +17,8 @@
 #include "x11gui.h"
 #include "x11file.h"
 
+#define USE_OPACITY 0
+
 #define SETTING_PANEL_MARGIN 4
 #define LINE_WIDTH_ICON_NUM 7
 #define LINE_STYLE_ICON_NUM 7
@@ -233,11 +235,15 @@ get_rgba(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, in
   putobj(obj, "stroke_R", id, &r1);
   putobj(obj, "stroke_G", id, &g1);
   putobj(obj, "stroke_B", id, &b1);
+#if USE_OPACITY
   putobj(obj, "stroke_A", id, &a1);
+#endif
   putobj(obj, "fill_R", id, &r2);
   putobj(obj, "fill_G", id, &g2);
   putobj(obj, "fill_B", id, &b2);
+#if USE_OPACITY
   putobj(obj, "fill_A", id, &a2);
+#endif
 }
 
 static void
@@ -295,7 +301,9 @@ set_text_obj(struct objlist *obj, int id)
   putobj(obj, "R", id, &r);
   putobj(obj, "G", id, &g);
   putobj(obj, "B", id, &b);
+#if USE_OPACITY
   putobj(obj, "A", id, &a);
+#endif
   pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
   putobj(obj, "pt", id, &pt);
 }
@@ -356,15 +364,21 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "R", id, &r1);
     putobj(obj, "G", id, &g1);
     putobj(obj, "B", id, &b1);
+#if USE_OPACITY
     putobj(obj, "A", id, &a1);
+#endif
     putobj(obj, "gauge_R", id, &r1);
     putobj(obj, "gauge_G", id, &g1);
     putobj(obj, "gauge_B", id, &b1);
+#if USE_OPACITY
     putobj(obj, "gauge_A", id, &a1);
+#endif
     putobj(obj, "num_R", id, &r1);
     putobj(obj, "num_G", id, &g1);
     putobj(obj, "num_B", id, &b1);
+#if USE_OPACITY
     putobj(obj, "num_A", id, &a1);
+#endif
     set_font_style(obj, id, "num_font_style");
     set_font(obj, id, "num_font");
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
@@ -436,11 +450,15 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "R", id, &r1);
     putobj(obj, "G", id, &g1);
     putobj(obj, "B", id, &b1);
+#if USE_OPACITY
     putobj(obj, "A", id, &a1);
+#endif
     putobj(obj, "R2", id, &r2);
     putobj(obj, "G2", id, &g2);
     putobj(obj, "B2", id, &b2);
+#if USE_OPACITY
     putobj(obj, "A2", id, &a2);
+#endif
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;
     putobj(obj, "size", id, &ival);
     mark = get_mark_type_from_widget (Widgets.mark_type.widget);
@@ -559,7 +577,11 @@ widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, con
   gcolor.red   = color[0] / 255.0;
   gcolor.green = color[1] / 255.0;
   gcolor.blue  = color[2] / 255.0;
+#if USE_OPACITY
   gcolor.alpha = color[3] / 255.0;
+#else
+  gcolor.alpha = 1.0;
+#endif
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(button), &gcolor);
 }
 
@@ -1379,13 +1401,17 @@ update_focused_obj_color2(GtkWidget *widget, struct Viewer *d, int num)
       _putobj(obj, "fill_R", inst, &r);
       _putobj(obj, "fill_G", inst, &g);
       _putobj(obj, "fill_B", inst, &b);
+#if USE_OPACITY
       _putobj(obj, "fill_A", inst, &a);
+#endif
       modified = TRUE;          /* really modified */
     } else if (obj == mark_obj) {
       _putobj(obj, "R2", inst, &r);
       _putobj(obj, "G2", inst, &g);
       _putobj(obj, "B2", inst, &b);
+#if USE_OPACITY
       _putobj(obj, "A2", inst, &a);
+#endif
       modified = TRUE;          /* really modified */
     }
   }

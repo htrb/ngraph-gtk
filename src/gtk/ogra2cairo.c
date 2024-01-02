@@ -557,7 +557,7 @@ gra2cairo_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   local->region = NULL;
   local->font_style = GRA_FONT_STYLE_NORMAL;
   local->symbol = FALSE;
-  local->use_opacity = FALSE;
+  local->use_opacity = TRUE;
 
   Instance++;
 

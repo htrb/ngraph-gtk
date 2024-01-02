@@ -123,7 +123,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   vlabel = get_mnemonic_label(d->version);
 
   gtk_label_set_text(GTK_LABEL(vlabel), "");
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), FALSE);
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -132,10 +131,12 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     for (i = 0; PsVersion[i]; i++) {
       combo_box_append_text(d->version, PsVersion[i]);
     }
-    set_widget_visibility_with_label(d->dpi, FALSE);
+    set_widget_visibility_with_label(d->dpi, TRUE);
     set_widget_visibility_with_label(d->version, TRUE);
+    set_widget_visibility_with_label(d->use_opacity, TRUE);
     gtk_widget_set_visible(d->t2p, TRUE);
 
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), FALSE);
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_PostScript Version:"));
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
@@ -144,13 +145,16 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   case MenuIdOutputPNGFile:
     set_widget_visibility_with_label(d->dpi, TRUE);
     set_widget_visibility_with_label(d->version, FALSE);
+    set_widget_visibility_with_label(d->use_opacity, FALSE);
     gtk_widget_set_visible(d->t2p, FALSE);
 
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), TRUE);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
     break;
   case MenuIdOutputPDFFile:
     set_widget_visibility_with_label(d->dpi, FALSE);
     set_widget_visibility_with_label(d->version, FALSE);
+    set_widget_visibility_with_label(d->use_opacity, FALSE);
     gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
@@ -162,6 +166,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 
     set_widget_visibility_with_label(d->dpi, FALSE);
     set_widget_visibility_with_label(d->version, TRUE);
+    set_widget_visibility_with_label(d->use_opacity, FALSE);
     gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_SVG Version:"));
@@ -173,6 +178,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   case MenuIdOutputCairoEMFFile:
     set_widget_visibility_with_label(d->dpi, TRUE);
     set_widget_visibility_with_label(d->version, FALSE);
+    set_widget_visibility_with_label(d->use_opacity, FALSE);
     gtk_widget_set_visible(d->t2p, FALSE);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.emf_dpi);
     break;
@@ -189,7 +195,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 static void
 OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w;
+  GtkWidget *w, *box;
   struct OutputImageDialog *d;
   char *title;
 
@@ -208,6 +214,9 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     spin_button_set_activates_default(w);
     d->dpi = w;
     item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
+
+    box = gtk_widget_get_parent (d->dpi);
+    g_object_bind_property (d->use_opacity, "active", box, "sensitive", G_BINDING_SYNC_CREATE);
 
     w = combo_box_create();
     d->version = w;
@@ -842,7 +851,7 @@ static void
 output_image(int type, char *file)
 {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
+  int id, g2wid, g2woid, use_opacity;
   N_VALUE *g2winst;
   struct gra_out_data *data;
 

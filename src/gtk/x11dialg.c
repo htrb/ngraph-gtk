@@ -1455,7 +1455,7 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 }
 
 static void
-_set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
+_set_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkRGBA color;
   int r, g, b, a;
@@ -1479,37 +1479,38 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
   color.alpha = 1.0;
 
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (aw), a);
 
   snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
   gtk_widget_set_tooltip_text(w, buf);
 }
 
 void
-set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix)
+set_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix)
 {
-  _set_color(w, obj, id, prefix, NULL);
+  _set_color(w, aw, obj, id, prefix, NULL);
 }
 
 void
-set_color2(GtkWidget *w, struct objlist *obj, int id)
+set_color2(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  _set_color(w, obj, id, NULL, "2");
+  _set_color(w, aw, obj, id, NULL, "2");
 }
 
 void
-set_fill_color(GtkWidget *w, struct objlist *obj, int id)
+set_fill_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  _set_color(w, obj, id, "fill_", NULL);
+  _set_color(w, aw, obj, id, "fill_", NULL);
 }
 
 void
-set_stroke_color(GtkWidget *w, struct objlist *obj, int id)
+set_stroke_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  _set_color(w, obj, id, "stroke_", NULL);
+  _set_color(w, aw, obj, id, "stroke_", NULL);
 }
 
 static int
-_putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
+_putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkRGBA color;
   int r, g, b, a, o;
@@ -1519,6 +1520,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   r = color.red * 255;
   g = color.green * 255;
   b = color.blue * 255;
+  a = gtk_spin_button_get_value (GTK_SPIN_BUTTON (aw));
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
 
@@ -1562,25 +1564,25 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
 }
 
 int
-putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix)
+putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix)
 {
-  return _putobj_color(w, obj, id, prefix, NULL);
+  return _putobj_color(w, aw, obj, id, prefix, NULL);
 }
 
 int
-putobj_color2(GtkWidget *w, struct objlist *obj, int id)
+putobj_color2(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  return _putobj_color(w, obj, id, NULL, "2");
+  return _putobj_color(w, aw, obj, id, NULL, "2");
 }
 
 int
-putobj_fill_color(GtkWidget *w, struct objlist *obj, int id)
+putobj_fill_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  return _putobj_color(w, obj, id, "fill_", NULL);
+  return _putobj_color(w, aw, obj, id, "fill_", NULL);
 }
 
 int
-putobj_stroke_color(GtkWidget *w, struct objlist *obj, int id)
+putobj_stroke_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 {
-  return _putobj_color(w, obj, id, "stroke_", NULL);
+  return _putobj_color(w, aw, obj, id, "stroke_", NULL);
 }

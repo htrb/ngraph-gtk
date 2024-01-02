@@ -240,8 +240,8 @@ GridDialogSetupItem(struct GridDialog *d, int id)
   SetWidgetFromObjField(d->background, d->Obj, id, "background");
   bg_button_toggled(GTK_CHECK_BUTTON(d->background), d);
 
-  set_color(d->color, d->Obj, id, NULL);
-  set_color(d->bcolor, d->Obj, id, "B");
+  set_color(d->color, d->alpha, d->Obj, id, NULL);
+  set_color(d->bcolor, d->balpha, d->Obj, id, "B");
 }
 
 static void
@@ -343,6 +343,10 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     add_widget_to_table(table, w, _("_Color:"), FALSE, j++);
     d->color = w;
 
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+    add_widget_to_table(table, w, _("_Alpha:"), FALSE, j++);
+    d->alpha = w;
+
     w = gtk_check_button_new_with_mnemonic(_("_Background"));
     add_widget_to_table(table, w, NULL, FALSE, j++);
     g_signal_connect(w, "toggled", G_CALLBACK(bg_button_toggled), d);
@@ -351,6 +355,10 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     w = create_color_button(wi);
     add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
     d->bcolor = w;
+
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+    add_widget_to_table(table, w, _("_Alpha:"), FALSE, j++);
+    d->balpha = w;
 
     frame = gtk_frame_new(_("Color"));
     gtk_widget_set_hexpand(frame, TRUE);
@@ -428,10 +436,10 @@ GridDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->background, d->Obj, d->Id, "background"))
     return;
 
-  if (putobj_color(d->color, d->Obj, d->Id, NULL))
+  if (putobj_color(d->color, d->alpha, d->Obj, d->Id, NULL))
     return;
 
-  if (putobj_color(d->bcolor, d->Obj, d->Id, "B"))
+  if (putobj_color(d->bcolor, d->balpha, d->Obj, d->Id, "B"))
     return;
 
   d->ret = ret;
@@ -1389,7 +1397,7 @@ baseline_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->wavewid, axis->Obj, axis->Id, "wave_width"))
     return 1;
 
-  if (putobj_color(d->color, axis->Obj, axis->Id, NULL))
+  if (putobj_color(d->color, d->alpha, axis->Obj, axis->Id, NULL))
     return 1;
 
   return 0;
@@ -1420,7 +1428,7 @@ baseline_tab_setup_item(struct AxisDialog *axis, int id)
 
   SetWidgetFromObjField(d->wavewid, axis->Obj, id, "wave_width");
 
-  set_color(d->color, axis->Obj, id, NULL);
+  set_color(d->color, d->alpha, axis->Obj, id, NULL);
 }
 
 static void
@@ -1469,6 +1477,10 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Alpha:"), FALSE, i++);
+  d->alpha = w;
 
   frame = gtk_frame_new(_("Baseline"));
   gtk_frame_set_child(GTK_FRAME(frame), table);
@@ -1561,7 +1573,7 @@ gauge_tab_set_value(struct AxisDialog *axis)
       return 1;
   }
 
-  if (putobj_color(d->color, axis->Obj, axis->Id, "gauge_"))
+  if (putobj_color(d->color, d->alpha, axis->Obj, axis->Id, "gauge_"))
     return 1;
 
   return 0;
@@ -1593,7 +1605,7 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
     SetWidgetFromObjField(d->length[i], axis->Obj, id, length);
   }
 
-  set_color(d->color, axis->Obj, id, "gauge_");
+  set_color(d->color, d->alpha, axis->Obj, id, "gauge_");
 }
 
 static void
@@ -1656,6 +1668,10 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, 4, j++);
   d->color = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Alpha:"), FALSE, j++);
+  d->alpha = w;
 
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
     snprintf(buf, sizeof(buf), _("_Width %d:"), i + 1);
@@ -2014,7 +2030,7 @@ font_tab_set_value(struct AxisDialog *axis)
 
   SetObjFieldFromFontList(d->font, axis->Obj, axis->Id, "num_font");
 
-  if (putobj_color(d->color, axis->Obj, axis->Id, "num_"))
+  if (putobj_color(d->color, d->alpha, axis->Obj, axis->Id, "num_"))
     return 1;
 
   style = 0;
@@ -2052,7 +2068,7 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
 
   SetWidgetFromObjField(d->script, axis->Obj, id, "num_script_size");
 
-  set_color(d->color, axis->Obj, id, "num_");
+  set_color(d->color, d->alpha, axis->Obj, id, "num_");
 
   compatible = SetFontListFromObj(d->font, axis->Obj, id, "num_font");
 
@@ -2123,6 +2139,10 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Alpha:"), FALSE, i++);
+  d->alpha = w;
 
   frame = gtk_frame_new(_("Font"));
   gtk_widget_set_vexpand(frame, TRUE);
