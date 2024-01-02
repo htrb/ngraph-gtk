@@ -2008,7 +2008,7 @@ FileMoveDialogAdd(struct FileDialog *d)
   int a;
   double x, y;
   const char *buf;
-  char *endptr;
+  int ecode;
   GListStore *list;
 
   a = spin_entry_get_val(d->move.line);
@@ -2016,15 +2016,15 @@ FileMoveDialogAdd(struct FileDialog *d)
   buf = gtk_editable_get_text(GTK_EDITABLE(d->move.x));
   if (buf[0] == '\0') return;
 
-  x = strtod(buf, &endptr);
-  if (x != x || x == HUGE_VAL || x == - HUGE_VAL || endptr[0] != '\0')
+  ecode = str_calc(buf, &x, NULL, NULL);
+  if (ecode || x == HUGE_VAL || x == - HUGE_VAL)
     return;
 
   buf = gtk_editable_get_text(GTK_EDITABLE(d->move.y));
   if (buf[0] == '\0') return;
 
-  y = strtod(buf, &endptr);
-  if (y != y || y == HUGE_VAL || y == - HUGE_VAL || endptr[0] != '\0')
+  ecode = str_calc(buf, &y, NULL, NULL);
+  if (ecode || y == HUGE_VAL || y == - HUGE_VAL)
     return;
 
   list = columnview_get_list (d->move.list);
