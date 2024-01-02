@@ -749,11 +749,11 @@ static double
 get_double_from_entry (GtkWidget *entry, const n_list_store *item, double cur)
 {
   const char *text;
-  char *ptr;
+  int ecode;
   double val;
   text = gtk_editable_get_text (GTK_EDITABLE (entry));
-  val = strtod (text, &ptr);
-  if (text[0] == '\0' || (val == 0 && ptr[0] != '\0')) {
+  ecode = str_calc(text, &val, NULL, NULL);
+  if (ecode) {
     val = cur;
   }
   return val;
