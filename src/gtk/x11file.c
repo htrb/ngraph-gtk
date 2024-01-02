@@ -685,7 +685,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(vbox), hbox);
 
     w = columnview_create(N_TYPE_INST, N_SELECTION_TYPE_MULTI);
-    col = columnview_create_column(w, _("id"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, "id", FALSE);
+    col = columnview_create_column(w, "id", G_CALLBACK(setup_column), G_CALLBACK(bind_column), NULL, "id", FALSE);
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(w, _("math"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), "name", TRUE);
 
