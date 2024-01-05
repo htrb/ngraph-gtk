@@ -59,7 +59,6 @@ enum MenuID {
   MenuIdOutputPSFile,
   MenuIdOutputEPSFile,
   MenuIdOutputPNGFile,
-  MenuIdOutputCairoEMFFile,
   MenuIdOutputEMFFile,
   MenuIdOutputEMFClipboard,
   MenuIdOutputPDFFile,

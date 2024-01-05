@@ -96,14 +96,14 @@ gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
 #ifdef CAIRO_HAS_WIN32_SURFACE
 static cairo_surface_t *
-open_emf(int dpi, const char *fname)
+open_emf(int dpi)
 {
   HDC hdc;
   cairo_surface_t *surface;
   XFORM xform = {1, 0, 0, 1, 0, 0};
   int disp_dpi;
 
-  hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
+  hdc = CreateEnhMetaFile(NULL, NULL, NULL, NULL);
   if (hdc == NULL) {
     return NULL;
   }
@@ -120,7 +120,7 @@ open_emf(int dpi, const char *fname)
 }
 
 static int
-close_emf(cairo_surface_t *surface)
+close_emf(cairo_surface_t *surface, const char *fname)
 {
   HDC hdc;
   HENHMETAFILE emf;
@@ -138,6 +138,21 @@ close_emf(cairo_surface_t *surface)
   if (emf == NULL) {
     return 1;
   }
+  if (fname) {
+    HENHMETAFILE emf2;
+    emf2 = CopyEnhMetaFile(emf, fname);
+    if (emf2) {
+      DeleteEnhMetaFile(emf2);
+      r = 0;
+    }
+  } else {
+    if (OpenClipboard(NULL)) {
+      EmptyClipboard();
+      SetClipboardData(CF_ENHMETAFILE, emf);
+      CloseClipboard();
+      r = 0;
+    }
+  }
   DeleteEnhMetaFile(emf);
   /* DeleteDC() is called in the cairo library */
   return r;
@@ -153,16 +168,28 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
   int format, dpi, r;
   struct gra2cairo_local *local;
 
-  fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
+  _getobj(obj, "format", inst, &format);
 
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  if (format != TYPE_EMF && fname == NULL) {
+      return NULL;
+  }
+#else
   if (fname == NULL) {
-    *err = CAIRO_STATUS_NO_MEMORY;
     return NULL;
+  }
+#endif
+
+  if (fname) {
+    fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
+    if (fname == NULL) {
+      *err = CAIRO_STATUS_NO_MEMORY;
+      return NULL;
+    }
   }
 
   *err = 0;
 
-  _getobj(obj, "format", inst, &format);
   _getobj(obj, "dpi", inst, &dpi);
   _getobj(obj, "_local", inst, &local);
 
@@ -206,7 +233,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case TYPE_EMF:
-    ps = open_emf(dpi, fname);
+    ps = open_emf(dpi);
     if (ps == NULL) {
       g_free(fname);
       return NULL;
@@ -256,8 +283,6 @@ init_cairo(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, in
   int t2p, r;
 
   _getobj(obj, "file", inst, &fname);
-  if (fname == NULL)
-    return CAIRO_STATUS_NULL_POINTER;
 
   cairo = create_cairo(obj, inst, fname, w, h, &r);
 
@@ -330,9 +355,9 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       case TYPE_EMF:
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
-	r = close_emf(surface);
+        _getobj(obj, "file", inst, &fname);
+	r = close_emf(surface, fname);
 	if (r) {
-	  _getobj(obj, "file", inst, &fname);
 	  error2(obj, CAIRO_STATUS_WRITE_ERROR + 100, fname);
 	  return 1;
 	}
