@@ -936,16 +936,7 @@ CmOutputImage_response(char *file, gpointer user_data)
   int type;
   struct output_image_data *data;
 
-  if (file == NULL) {
-    return;
-  }
-
   type = GPOINTER_TO_INT(user_data);
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    g_free(file);
-    return;
-  }
 #if WINDOWS
   if (type == MenuIdOutputEMFFile ||
       type == MenuIdOutputEMFPlusFile ||
@@ -954,6 +945,14 @@ CmOutputImage_response(char *file, gpointer user_data)
     return;
   }
 #endif
+  if (file == NULL) {
+    return;
+  }
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    g_free(file);
+    return;
+  }
   data->type= type;
   data->file = file;
   OutputImageDialog(&DlgImageOut, type);
