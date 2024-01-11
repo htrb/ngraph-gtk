@@ -79,7 +79,8 @@
 	  <item>
             <attribute name="label" translatable="yes">EM_F+ file</attribute>
 	    <attribute name="action">app.GraphExportEMFPlusAction</attribute>
-	    <item>
+	  </item>
+	  <item>
             <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
 	    <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
 	  </item>
@@ -731,6 +732,10 @@
 	<item>
           <attribute name="label" translatable="yes">E_MF file</attribute>
 	  <attribute name="action">app.GraphExportEMFAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">EM_F+ file</attribute>
+	  <attribute name="action">app.GraphExportEMFPlusAction</attribute>
 	</item>
 	<item>
           <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
