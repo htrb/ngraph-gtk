@@ -68,7 +68,7 @@ struct print_obj {
 
 static GtkPrintSettings *PrintSettings = NULL;
 #if WINDOWS
-static void output_emf(char *file);
+static void output_emf(int type, char *file);
 #endif
 
 static void
@@ -128,7 +128,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   gtk_label_set_text(GTK_LABEL(vlabel), "");
 
   combo_box_clear(d->version);
-  set_widget_visibility_with_label(d->use_cairo, FALSE);
   switch (d->DlgType) {
   case MenuIdOutputPSFile:
   case MenuIdOutputEPSFile:
@@ -178,18 +177,6 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
     break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputEMFFile:
-  case MenuIdOutputEMFClipboard:
-    set_widget_visibility_with_label(d->dpi, TRUE);
-    set_widget_visibility_with_label(d->version, FALSE);
-    set_widget_visibility_with_label(d->use_opacity, FALSE);
-    set_widget_visibility_with_label(d->use_cairo, TRUE);
-    gtk_widget_set_visible(d->t2p, FALSE);
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_cairo), FALSE);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.emf_dpi);
-    break;
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
@@ -214,10 +201,6 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
     d->use_opacity = w;
-    gtk_box_append(GTK_BOX(d->vbox), w);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Use cairo"));
-    d->use_cairo = w;
     gtk_box_append(GTK_BOX(d->vbox), w);
 
     w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
@@ -250,12 +233,6 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   case MenuIdOutputSVGFile:
     title = N_("Cairo SVG Output");
     break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputEMFFile:
-  case MenuIdOutputEMFClipboard:
-    title = N_("Cairo EMF Output");
-    break;
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
     title = NULL; /* not reachable */
   }
@@ -277,7 +254,6 @@ OutputImageDialogClose(GtkWidget *w, void *data)
 
   d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
   d->UseOpacity = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_opacity));
-  d->UseCairo = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_cairo));
 
   switch (d->DlgType) {
   case MenuIdOutputPSFile:
@@ -312,16 +288,6 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     d->Version = TYPE_PNG;
     Menulocal.png_dpi = d->Dpi;
     break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputEMFFile:
-  case MenuIdOutputEMFClipboard:
-    d->Version = TYPE_EMF;
-    if (d->UseCairo) {
-      d->text2path = TRUE;
-    }
-    Menulocal.emf_dpi = d->Dpi;
-    break;
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
   case MenuIdOutputPDFFile:
     d->text2path = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->t2p));
     d->Version = TYPE_PDF;
@@ -860,7 +826,7 @@ CmPrintGRAFile(void)
 
 struct output_image_data
 {
-  int type, text2path, use_cairo;
+  int type, text2path;
   char *file;
 };
 
@@ -873,22 +839,11 @@ output_image(struct output_image_data *d)
   struct gra_out_data *data;
   int type, text2path;
   char *file;
-#if WINDOWS
-  int use_cairo;
-  use_cairo = d->use_cairo;
-#endif
 
   type = d->type;
   file = d->file;
   text2path = d->text2path;
   g_free (d);
-
-#if WINDOWS
-  if ((type == MenuIdOutputEMFFile || type == MenuIdOutputEMFClipboard) && ! d->use_cairo){
-    output_emf(file);
-    return;
-  }
-#endif
 
   FileAutoScale();
   AdjustAxis();
@@ -926,9 +881,6 @@ output_image(struct output_image_data *d)
   case MenuIdOutputPDFFile:
     putobj(g2wobj, "text2path", g2wid, &text2path);
     break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputEMFFile:
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
   case MenuIdOutputPNGFile:
     break;
   }
@@ -994,6 +946,14 @@ CmOutputImage_response(char *file, gpointer user_data)
     g_free(file);
     return;
   }
+#if WINDOWS
+  if (type == MenuIdOutputEMFFile ||
+      type == MenuIdOutputEMFPlusFile ||
+      type == MenuIdOutputEMFClipboard) {
+    output_emf(type, file);
+    return;
+  }
+#endif
   data->type= type;
   data->file = file;
   OutputImageDialog(&DlgImageOut, type);
@@ -1033,6 +993,7 @@ CmOutputImage(int type)
     ext_str = "svg";
     break;
 #if WINDOWS
+  case MenuIdOutputEMFPlusFile:
   case MenuIdOutputEMFFile:
     title = "Save as Windows Enhanced Metafile (EMF)";
     ext_str = "emf";
@@ -1057,12 +1018,29 @@ CmOutputImage(int type)
 
 #if WINDOWS
 static void
-output_emf(char *file)
+output_emf(int type, char *file)
 {
   N_VALUE *g2winst;
   int id, g2wid, g2woid;
   struct objlist *graobj, *g2wobj;
   struct gra_out_data *data;
+  char *objname;
+
+  switch (type) {
+  case MenuIdOutputEMFPlusFile:
+    objname = "gra2emfplus";
+    if (file == NULL) {
+      return;
+    }
+    break;
+  case MenuIdOutputEMFFile:
+  case MenuIdOutputEMFClipboard:
+    objname = "gra2emf";
+    break;
+  default:
+    g_free(file);
+    return;
+  }
 
   FileAutoScale();
   AdjustAxis();
@@ -1073,7 +1051,7 @@ output_emf(char *file)
     return;
   }
 
-  g2wobj = chkobject("gra2emf");
+  g2wobj = chkobject(objname);
   if (g2wobj == NULL) {
     g_free(file);
     return;
@@ -1089,7 +1067,7 @@ output_emf(char *file)
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   id = newobj(graobj);
   putobj(g2wobj, "file", g2wid, file);
-  init_graobj(graobj, id, "gra2emf", g2woid);
+  init_graobj(graobj, id, objname, g2woid);
   data = create_gra_out_data(graobj, id, g2wobj, g2wid);
   draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
 
@@ -1116,6 +1094,7 @@ CmOutputMenu(int menu_id)
   case MenuIdOutputSVGFile:
 #if WINDOWS
   case MenuIdOutputEMFFile:
+  case MenuIdOutputEMFPlusFile:
   case MenuIdOutputEMFClipboard:
 #endif
     CmOutputImage(menu_id);

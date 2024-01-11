@@ -578,8 +578,8 @@ struct OutputImageDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *version, *t2p, *dpi, *use_opacity, *use_cairo;
-  int Version, text2path, Dpi, DlgType, UseOpacity, UseCairo;
+  GtkWidget *version, *t2p, *dpi, *use_opacity;
+  int Version, text2path, Dpi, DlgType, UseOpacity;
 };
 
 

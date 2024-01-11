@@ -114,9 +114,6 @@ struct menulocal
   int focus_frame_type, select_data;
   int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos;
   int file_tab, axis_tab, merge_tab, path_tab, rectangle_tab, arc_tab, mark_tab, text_tab, parameter_tab;
-#ifdef WINDOWS
-  int emf_dpi;
-#endif
   int png_dpi, ps_version, svg_version;
   struct character_map_list *char_map;
   int use_custom_palette;
