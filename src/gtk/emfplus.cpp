@@ -15,7 +15,6 @@ struct gdiobj {
   Metafile *metafile;
   Pen *pen;
   SolidBrush *brush;
-  double ofst_x, ofst_y;
   double scale;
   ULONG_PTR gdiplusToken;
   GraphicsState state;
@@ -297,8 +296,6 @@ emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
   h = abs (y2 - y1) / 100.0;
   gdi->graphics->ResetClip ();
   gdi->graphics->SetClip (Rect(x, y, w, h), CombineModeReplace);
-  gdi->ofst_x = x;
-  gdi->ofst_y = y;
   gdi->graphics->TranslateTransform (x, y);
 }
 #endif
