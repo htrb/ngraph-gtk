@@ -938,9 +938,10 @@ CmOutputImage_response(char *file, gpointer user_data)
 
   type = GPOINTER_TO_INT(user_data);
 #if WINDOWS
-  if (type == MenuIdOutputEMFFile ||
-      type == MenuIdOutputEMFPlusFile ||
-      type == MenuIdOutputEMFClipboard) {
+  switch (type) {
+  case MenuIdOutputEMFFile:
+  case MenuIdOutputEMFPlusFile:
+  case MenuIdOutputEMFClipboard:
     output_emf(type, file);
     return;
   }
