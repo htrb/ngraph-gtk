@@ -295,7 +295,7 @@ emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
   w = abs (x2 - x1) / 100.0;
   h = abs (y2 - y1) / 100.0;
   gdi->graphics->ResetClip ();
-  gdi->graphics->SetClip (Rect(x, y, w, h), CombineModeReplace);
+  gdi->graphics->SetClip (RectF(x, y, w, h), CombineModeReplace);
   gdi->graphics->TranslateTransform (x, y);
 }
 #endif
