@@ -289,7 +289,7 @@ emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
 {
   double x, y, w, h;
   gdi->graphics->Restore(gdi->state);
-  gdi->state = gdi->graphics->Save(gdi->state);
+  gdi->state = gdi->graphics->Save();
   x = ((x1 < x2) ? x1 : x2) / 100.0;
   y = ((y1 < y2) ? y1 : y2) / 100.0;
   w = abs (x2 - x1) / 100.0;
