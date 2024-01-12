@@ -210,7 +210,7 @@ gra2emfplus_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   case 'I':
     _getobj(obj, "file", inst, &fname);
     utext = g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
-    local->gdi = emfplus_init(utext, cpar[3] - cpar[1], cpar[4] - cpar[2], cpar[5]);
+    local->gdi = emfplus_init(utext, cpar[1], cpar[2], cpar[3], cpar[4], cpar[5]);
     g_free (utext);
     break;
   case '%': case 'X': case 'Z':

@@ -22,7 +22,7 @@ struct gdiobj {
 
 #define EMF_PAGE_SCALE 0.579
 struct gdiobj *
-emfplus_init (const wchar_t *filename, int width, int height, int iscale)
+emfplus_init (const wchar_t *filename, int margin_left, int margin_top, int width, int height, int iscale)
 {
   double scale;
   ULONG_PTR gdiplusToken;
@@ -42,6 +42,7 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
   graphics->SetSmoothingMode(SmoothingModeHighQuality);
   graphics->SetTextRenderingHint(TextRenderingHintAntiAlias);
 
+  graphics->TranslateTransform (margin_left / 100.0, margin_top / 100.0);
   scale = iscale / 10000.0;
   graphics->ScaleTransform (scale, scale);
 
