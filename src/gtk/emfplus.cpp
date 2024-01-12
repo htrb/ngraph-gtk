@@ -18,6 +18,7 @@ struct gdiobj {
   double ofst_x, ofst_y;
   double scale;
   ULONG_PTR gdiplusToken;
+  GraphicsState state;
 };
 
 #define EMF_PAGE_SCALE 0.579
@@ -56,6 +57,7 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
   gdi->hdc = hDC;
   gdi->gdiplusToken = gdiplusToken;
   gdi->scale = scale;
+  gdi->state = graphics->Save();
 
   return gdi;
 }
@@ -74,6 +76,7 @@ emfplus_finalize (struct gdiobj *gdi)
   }
 
   gdi->graphics->Flush(FlushIntentionSync);
+  graphics->Restore(gdi->state);
   delete gdi->brush;
   delete gdi->pen;
   delete gdi->graphics;
@@ -115,13 +118,12 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   x = *px / 100.0;
   y = *py / 100.0;
 
+  GraphicsState state = gdi->graphics->Save();
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = h * ascent / (ascent + descent);
   gdi->graphics->DrawString (text, -1, &font, pointF, pStringFormat, gdi->brush);
-  gdi->graphics->ResetTransform ();
-  gdi->graphics->ScaleTransform (gdi->scale, gdi->scale);
-  gdi->graphics->TranslateTransform (gdi->ofst_x, gdi->ofst_y);
+  gdi->graphics->Restore(state);
   a = M_PI * fontinfo->dir / 18000.0;
   x -= w * cos (a);
   y += w * sin (a);
@@ -287,8 +289,8 @@ void
 emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
 {
   double x, y, w, h;
-  gdi->graphics->ResetTransform ();
-  gdi->graphics->ScaleTransform (gdi->scale, gdi->scale);
+  graphics->Restore(gdi->state);
+  gdi->state = graphics->Save(gdi->state);
   x = ((x1 < x2) ? x1 : x2) / 100.0;
   y = ((y1 < y2) ? y1 : y2) / 100.0;
   w = abs (x2 - x1) / 100.0;
