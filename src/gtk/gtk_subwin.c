@@ -705,12 +705,27 @@ create_enum_menu(GtkWidget *parent, n_list_store *item)
   g_signal_connect_object (parent, "destroy", G_CALLBACK (gtk_widget_unparent), popover, G_CONNECT_SWAPPED);
 }
 
+#if WINDOWS
+static int
+check_button (GtkEventController *self)
+{
+  guint button;
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(self));
+  return button != 3;
+}
+#endif
+
 static void
 enum_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
 
+#if WINDOWS
+  if (check_button (self)) {
+    return;
+  }
+#endif
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
   create_enum_menu(parent, item);
@@ -723,6 +738,11 @@ mark_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer 
   n_list_store *item;
   int id, cur;
 
+#if WINDOWS
+  if (check_button (self)) {
+    return;
+  }
+#endif
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
   id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (parent), INSTANCE_ID_KEY));
@@ -873,6 +893,11 @@ numeric_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpoint
   GtkWidget *parent;
   n_list_store *item;
 
+#if WINDOWS
+  if (check_button (self)) {
+    return;
+  }
+#endif
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
   create_numeric_input(parent, item);
@@ -926,6 +951,11 @@ string_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointe
   GtkWidget *parent;
   n_list_store *item;
 
+#if WINDOWS
+  if (check_button (self)) {
+    return;
+  }
+#endif
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
   create_string_input(parent, item);
@@ -935,7 +965,11 @@ static void
 setup_editing_item (GtkWidget *w, n_list_store *item, GCallback func)
 {
   GtkEventController *ev;
+#if WINDOWS
+  ev = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+#else
   ev = GTK_EVENT_CONTROLLER (gtk_gesture_long_press_new ());
+#endif
   gtk_widget_add_controller (w, ev);
   g_signal_connect (ev, "pressed", G_CALLBACK (func), item);
 }
