@@ -75,7 +75,7 @@ emfplus_finalize (struct gdiobj *gdi)
   }
 
   gdi->graphics->Flush(FlushIntentionSync);
-  graphics->Restore(gdi->state);
+  gdi->graphics->Restore(gdi->state);
   delete gdi->brush;
   delete gdi->pen;
   delete gdi->graphics;
@@ -288,7 +288,7 @@ void
 emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
 {
   double x, y, w, h;
-  graphics->Restore(gdi->state);
+  gdi->graphics->Restore(gdi->state);
   gdi->state = graphics->Save(gdi->state);
   x = ((x1 < x2) ? x1 : x2) / 100.0;
   y = ((y1 < y2) ? y1 : y2) / 100.0;
