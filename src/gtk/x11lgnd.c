@@ -1443,7 +1443,6 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
     gtk_string_list_append (list, img_file);
   }
   combo_box_set_active (cbox, 1);
-  gtk_widget_set_name(cbox, "MarkerType");
   gtk_widget_set_tooltip_text(cbox, tooltip);
   return cbox;
 }
