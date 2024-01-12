@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk" version="4.0"/>
   <menu id="menubar">
     <submenu>
       <attribute name="label" translatable="yes">_Graph</attribute>
@@ -712,6 +713,436 @@
       <item>
 	<attribute name="label" translatable="yes">_Save data</attribute>
 	<attribute name="action">app.DataSaveAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="data-popup-menu">
+    <section>
+      <submenu>
+	<attribute name="label" translatable="yes">_Add</attribute>
+	<item>
+	  <attribute name="label" translatable="yes">_File</attribute>
+	  <attribute name="action">app.dataAddFileAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Range</attribute>
+	  <attribute name="action">app.dataAddRangeAction</attribute>
+	</item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.dataDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">duplicate _Behind</attribute>
+	<attribute name="action">app.dataDuplicateBefindAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.dataDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Draw</attribute>
+	<attribute name="action">app.dataDrawAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.dataUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.dataInstanceNameAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Edit</attribute>
+	<attribute name="action">app.dataEditAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.dataOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.dataOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.dataOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.dataOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="axis-popup-menu">
+    <section>
+      <submenu>
+	<attribute name="label" translatable="yes">_Add</attribute>
+	<item>
+	  <attribute name="label" translatable="yes">_Frame graph</attribute>
+	  <attribute name="action">app.axisAddFrameGraphAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Section graph</attribute>
+	  <attribute name="action">app.axisAddSectionGraphAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Cross graph</attribute>
+	  <attribute name="action">app.axisAddCrossGraphAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">Single _Axis</attribute>
+	  <attribute name="action">app.axisAddSingleGraphAction</attribute>
+	</item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.axisDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.axisDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.axisFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.axisFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Clear</attribute>
+	<attribute name="action">app.axisClearAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.axisUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.axisInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.axisOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.axisOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.axisOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.axisOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="path-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.pathDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.pathDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.pathFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.pathFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.pathUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.pathInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.pathOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.pathOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.pathOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.pathOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="rectangle-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.rectangleDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.rectangleDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.rectangleFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.rectangleFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.rectangleUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.rectangleInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.rectangleOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.rectangleOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.rectangleOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.rectangleOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="arc-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.arcDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.arcDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.arcFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.arcFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.arcUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.arcInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.arcOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.arcOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.arcOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.arcOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="mark-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.markDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.markDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.markFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.markFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.markUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.markInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.markOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.markOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.markOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.markOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="text-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.textDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.textDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.textFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.textFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.textUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.textInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.textOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.textOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.textOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.textOrderBottomAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="merge-popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Add</attribute>
+	<attribute name="action">app.mergeAddAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.mergeDuplicateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.mergeDeleteAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Focus</attribute>
+	<attribute name="action">app.mergeFocusAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">focus _All</attribute>
+	<attribute name="action">app.mergeFocusAllAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.mergeUpdateAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Instance name</attribute>
+	<attribute name="action">app.mergeInstanceNameAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.mergeOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.mergeOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.mergeOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.mergeOrderBottomAction</attribute>
       </item>
     </section>
   </menu>
