@@ -1506,7 +1506,6 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->arrowwid = w;
 
   frame = gtk_frame_new(_("Arrow"));
-  gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
   gtk_box_append(GTK_BOX(vbox), frame);
