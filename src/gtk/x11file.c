@@ -3074,6 +3074,8 @@ file_setup_item(struct FileDialog *d, int id)
   }
   axis_combo_box_setup(d->xaxis, d->Obj, id, "axis_x");
   axis_combo_box_setup(d->yaxis, d->Obj, id, "axis_y");
+
+  SetWidgetFromObjField(d->clip, d->Obj, id, "data_clip");
 }
 
 static void
@@ -3110,8 +3112,6 @@ plot_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->join, d->Obj, id, "line_join");
 
   SetWidgetFromObjField(d->miter, d->Obj, id, "line_miter_limit");
-
-  SetWidgetFromObjField(d->clip, d->Obj, id, "data_clip");
 
   set_color(d->col1, d->alpha1, d->Obj, id, NULL);
   set_color2(d->col2, d->alpha2, d->Obj, id);
@@ -3653,7 +3653,7 @@ selct_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
 static GtkWidget *
 plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 {
-  GtkWidget *table, *hbox, *w, *vbox;
+  GtkWidget *table, *hbox, *w, *vbox, *frame;
   int i;
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -3679,7 +3679,13 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   d->fit_table = table;
   d->fit_row = i;
 
-  i++;
+  frame = gtk_frame_new(_("Type"));
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_box_append(GTK_BOX(hbox), frame);
+
+  table = gtk_grid_new();
+
+  i = 0;
   w = create_color_button(parent);
   add_widget_to_table(table, w, _("_Color 1:"), FALSE, i++);
   d->col1 = w;
@@ -3696,7 +3702,9 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Alpha 2:"), FALSE, i++);
   d->alpha2 = w;
 
-  gtk_box_append(GTK_BOX(hbox), table);
+  frame = gtk_frame_new(_("Color"));
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_box_append(GTK_BOX(hbox), frame);
 
   table = gtk_grid_new();
 
@@ -3722,11 +3730,9 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
   d->join = w;
 
-  w = gtk_check_button_new_with_mnemonic(_("_Clip"));
-  add_widget_to_table(table, w, NULL, FALSE, i++);
-  d->clip = w;
-
-  gtk_box_append(GTK_BOX(hbox), table);
+  frame = gtk_frame_new(_("Line"));
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_box_append(GTK_BOX(hbox), frame);
 
   w = gtk_frame_new(NULL);
   gtk_frame_set_child(GTK_FRAME(w), hbox);
@@ -3773,6 +3779,11 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
   add_widget_to_table(table, w, _("_Y axis:"), FALSE, row);
   d->yaxis = w;
+  row++;
+
+  w = gtk_check_button_new_with_mnemonic(_("_Clip"));
+  add_widget_to_table(table, w, NULL, FALSE, row);
+  d->clip = w;
 
   hbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
@@ -4460,9 +4471,6 @@ plot_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "line_miter_limit"))
     return TRUE;
 
-  if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
-    return TRUE;
-
   if (putobj_color(d->col1, d->alpha1, d->Obj, d->Id, NULL))
     return TRUE;
 
@@ -4499,6 +4507,9 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     return TRUE;
 
   if (SetObjAxisFieldFromWidget(d->yaxis, d->Obj, d->Id, "axis_y"))
+    return TRUE;
+
+  if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
     return TRUE;
 
   if (plot_tab_set_value(d)) {
