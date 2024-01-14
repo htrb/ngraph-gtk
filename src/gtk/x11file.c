@@ -4279,6 +4279,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->comment_table = view;
 
     view = create_text_view_with_line_number(&d->comment_view);
+    set_source_style(d->comment_view);
     label = gtk_label_new_with_mnemonic(_("_Plain"));
     gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
 
