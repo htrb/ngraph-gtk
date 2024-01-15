@@ -97,6 +97,24 @@ emfplus_line (struct gdiobj *gdi, int ix1, int iy1, int ix2, int iy2)
   gdi->graphics->DrawLine(gdi->pen, x1, y1, x2, y2);
 }
 
+// Surrogate pairs, combined strings and ligatures are not considered.
+static void
+draw_test (struct gdiobj *gdi, PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
+{
+  double space;
+
+  space =  ispace / 72.0 * 25.4 / 100.0;
+  for (int i = 0; text[i]; i++) {
+    RectF boundingBox;
+    gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
+    gdi->graphics->DrawString (text + i, 1, font, pointF, pStringFormat, gdi->brush);
+    pointF.X = boundingBox.GetRight();
+    if (text[i + 1]) {
+      pointF.X += space;
+    }
+  }
+}
+
 void
 emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const wchar_t *text)
 {
@@ -109,7 +127,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   double x, y, w, h, a;
 
   gdi->graphics->MeasureString (text, -1, &font, pointF, pStringFormat, &boundingBox);
-  w = boundingBox.GetLeft () - boundingBox.GetRight ();
+  w = boundingBox.GetRight () - boundingBox.GetLeft ();
   h = boundingBox.GetTop () - boundingBox.GetBottom ();
   int descent, ascent;
   descent = fontfamily.GetCellDescent (fontinfo->style);
@@ -121,11 +139,16 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = h * ascent / (ascent + descent);
-  gdi->graphics->DrawString (text, -1, &font, pointF, pStringFormat, gdi->brush);
+  if (fontinfo->space) {
+    draw_test (gdi, pointF, &font, pStringFormat, fontinfo->space, text);
+    w = pointF.X;
+  } else {
+    gdi->graphics->DrawString (text, -1, &font, pointF, pStringFormat, gdi->brush);
+  }
   gdi->graphics->Restore(state);
   a = M_PI * fontinfo->dir / 18000.0;
-  x -= w * cos (a);
-  y += w * sin (a);
+  x += w * cos (a);
+  y -= w * sin (a);
   *px = x * 100;
   *py = y * 100;
 }
