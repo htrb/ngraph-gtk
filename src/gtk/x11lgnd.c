@@ -2806,8 +2806,11 @@ static void *
 bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int style, r, g ,b;
+  char *text, *str, *alias;
+#if ! WINDOWS
   struct fontmap *fmap;
-  char *text, *str, *font, *alias;
+  char *font;
+#endif
 
   getobj(obj, field, id, 0, NULL, &str);
   if (str == NULL) {
@@ -2815,6 +2818,7 @@ bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
     return NULL;
   }
 
+#if ! WINDOWS
   getobj(obj, "font", id, 0, NULL, &alias);
   fmap = gra2cairo_get_fontmap(alias);
   if (fmap && fmap->fontname) {
@@ -2822,20 +2826,25 @@ bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
   } else {
     font = "Sans";
   }
+#endif
 
   getobj(obj, "style", id, 0, NULL, &style);
   getobj(obj, "R", id, 0, NULL, &r);
   getobj(obj, "G", id, 0, NULL, &g);
   getobj(obj, "B", id, 0, NULL, &b);
   text = g_markup_printf_escaped ("<span"
+#if ! WINDOWS
 				  " face=\"%s\""
+#endif
 				  " style=\"%s\""
 				  " weight=\"%s\""
 				  " fgcolor=\"#%02x%02x%02x\""
 				  " bgcolor=\"#%02x%02x%02x\">"
 				  "%s"
 				  "</span>",
+#if ! WINDOWS
 				  font,
+#endif
 				  (style & GRA_FONT_STYLE_ITALIC) ? "italic" : "normal",
 				  (style & GRA_FONT_STYLE_BOLD) ? "bold" : "normal",
 				  r, g, b,
