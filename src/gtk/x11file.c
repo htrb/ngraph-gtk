@@ -3719,10 +3719,6 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   d->width = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  add_widget_to_table(table, w, _("_Size:"), FALSE, i++);
-  d->size = w;
-
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
   d->miter = w;
 
@@ -3730,9 +3726,25 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
   d->join = w;
 
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+
   frame = gtk_frame_new(_("Line"));
   gtk_frame_set_child(GTK_FRAME(frame), table);
-  gtk_box_append(GTK_BOX(hbox), frame);
+  gtk_box_append(GTK_BOX(vbox), frame);
+
+  table = gtk_grid_new();
+
+  i = 0;
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Size:"), FALSE, i++);
+  d->size = w;
+
+  frame = gtk_frame_new(_("Size"));
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_widget_set_vexpand(frame, TRUE);
+  gtk_box_append(GTK_BOX(vbox), frame);
+
+  gtk_box_append(GTK_BOX(hbox), vbox);
 
   w = gtk_frame_new(NULL);
   gtk_frame_set_child(GTK_FRAME(w), hbox);
