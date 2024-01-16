@@ -42,3 +42,5 @@ GtkWidget *create_mark_list(struct SubWin *d);
 GtkWidget *create_text_list(struct SubWin *d);
 
 void CmOptionTextDef(void);
+
+GtkWidget *create_marker_type_combo_box(const char *postfix, const char *tooltip);

@@ -1423,7 +1423,7 @@ bind_mark_item (GtkListItemFactory *factory, GtkListItem *list_item)
   gtk_image_set_from_icon_name (GTK_IMAGE (image), icon);
 }
 
-static GtkWidget *
+GtkWidget *
 create_marker_type_combo_box(const char *postfix, const char *tooltip)
 {
   GtkWidget *cbox;
