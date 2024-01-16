@@ -16,6 +16,7 @@
 #include "x11dialg.h"
 #include "x11gui.h"
 #include "x11file.h"
+#include "x11lgnd.h"
 
 #define USE_OPACITY 0
 
@@ -27,7 +28,6 @@
 #define DEFAULT_JOIN_STR  "'miter'"
 
 #define DEFAULT_MARKER_TYPE MARKER_TYPE_NONE
-#define DEFAULT_MARKER_STR  "'none'"
 
 #define DEFAULT_STROKE_FILL_TYPE 1
 #define STROKE_FILL_ICON_NUM 8
@@ -45,9 +45,7 @@ struct presetting_widgets
   struct widget_info join_type;
   char *join_icon[JOIN_TYPE_NUM];
   struct widget_info marker_type_begin;
-  char *marker_begin_icon[MARKER_TYPE_NUM];
   struct widget_info marker_type_end;
-  char *marker_end_icon[MARKER_TYPE_NUM];
   struct widget_info mark_type_begin, mark_type_end;
   struct widget_info stroke_fill;
   char *stroke_fill_icon[STROKE_FILL_ICON_NUM];
@@ -98,17 +96,17 @@ JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 }
 
 static void
-MarkerTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+marker_type_begin_selected(void)
 {
-  Widgets.marker_begin = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_begin.widget, Widgets.marker_begin_icon);
+  Widgets.marker_begin = combo_box_get_active (Widgets.marker_type_begin.widget);
   gtk_widget_set_sensitive(Widgets.mark_type_begin.widget, Widgets.marker_begin == MARKER_TYPE_MARK);
   update_focused_obj(Widgets.marker_type_begin.widget, GINT_TO_POINTER(Widgets.marker_begin));
 }
 
 static void
-MarkerTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+marker_type_end_selected(void)
 {
-  Widgets.marker_end = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_end.widget, Widgets.marker_end_icon);
+  Widgets.marker_end = combo_box_get_active(Widgets.marker_type_end.widget);
   gtk_widget_set_sensitive(Widgets.mark_type_end.widget, Widgets.marker_end == MARKER_TYPE_MARK);
   update_focused_obj(Widgets.marker_type_end.widget, GINT_TO_POINTER(Widgets.marker_end));
 }
@@ -167,8 +165,6 @@ StrokeFillStrokeAction_activated(GSimpleAction *action, GVariant *parameter, gpo
 
 static GActionEntry ToolMenuEntries[] = {
   {"JoinTypeAction",            NULL, "s",  DEFAULT_JOIN_STR,  JoinTypeAction_activated},
-  {"MarkerTypeBeginAction",     NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeBeginAction_activated},
-  {"MarkerTypeEndAction",       NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeEndAction_activated},
   {"StrokeFillStrokeAction",    NULL, NULL, "true",            StrokeFillStrokeAction_activated},
   {"StrokeFillFillAction",      NULL, NULL, "false",           StrokeFillFillAction_activated},
   {"StrokeFillClosePathAction", NULL, NULL, "false",           StrokeFillClosePathAction_activated},
@@ -189,25 +185,9 @@ create_images_sub(const char *prefix, char **item, char **icon)
 }
 
 static void
-create_marker_images_sub(const char *postfix, char **item, char **icon)
-{
-  int i;
-  char *img;
-  char img_file[256];
-
-  for (i = 0; item[i]; i++) {
-    snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", item[i], postfix);
-    img = g_strdup(img_file);
-    icon[i] = img;
-  }
-}
-
-static void
 create_images(struct presetting_widgets *widgets)
 {
   int i;
-  create_marker_images_sub("begin", marker_type_char, widgets->marker_begin_icon);
-  create_marker_images_sub("end", marker_type_char, widgets->marker_end_icon);
   create_images_sub("join", joinchar, widgets->join_icon);
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
     char *img;
@@ -588,13 +568,21 @@ widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, con
 static void
 widget_set_marker_type_begin(struct objlist *obj, N_VALUE *inst)
 {
-  set_radio_action(obj, inst, "marker_begin", marker_type_char, "MarkerTypeBeginAction");
+  int type;
+  if (_getobj(obj, "marker_begin", inst, &type)) {
+    return;
+  }
+  combo_box_set_active (Widgets.marker_type_begin.widget, type);
 }
 
 static void
 widget_set_marker_type_end(struct objlist *obj, N_VALUE *inst)
 {
-  set_radio_action(obj, inst, "marker_end", marker_type_char, "MarkerTypeEndAction");
+  int type;
+  if (_getobj(obj, "marker_end", inst, &type)) {
+    return;
+  }
+  combo_box_set_active (Widgets.marker_type_end.widget, type);
 }
 
 static void
@@ -2064,21 +2052,23 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_append(GTK_BOX(button_box), w);
   Widgets.mark_type_begin.widget = w;
 
-  w = create_menu_button(builder, "marker-type-begin-menu", _("Marker begin"));
+  w = create_marker_type_combo_box("begin", _("Marker begin"));
   gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
   gtk_box_append(GTK_BOX(button_box), w);
   gtk_box_append(GTK_BOX(box), button_box);
   Widgets.marker_type_begin.widget = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
-  button_set_child(Widgets.marker_type_begin.widget,  Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+  combo_box_set_active (w, Widgets.marker_begin);
+  g_signal_connect(Widgets.marker_type_begin.widget, "notify::selected-item", marker_type_begin_selected, NULL);
 
-  w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
+  w = create_marker_type_combo_box("end", _("Marker end"));
   gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
   button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(button_box), w);
   Widgets.marker_type_end.widget = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
-  button_set_child(Widgets.marker_type_end.widget, Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+  combo_box_set_active (w, Widgets.marker_end);
+  g_signal_connect(Widgets.marker_type_end.widget, "notify::selected-item", marker_type_end_selected, NULL);
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
