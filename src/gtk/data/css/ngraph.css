@@ -20,6 +20,16 @@ menubutton.markerbutton > button {
     border-bottom-right-radius:  0;
 }
 
+dropdown.menutoolbutton > button {
+    border-top-left-radius:     0;
+    border-bottom-left-radius:  0;
+}
+
+dropdown.markerbutton > button {
+    border-top-right-radius:     0;
+    border-bottom-right-radius:  0;
+}
+
 frame.ruler {
     border-radius: 0;
 }
