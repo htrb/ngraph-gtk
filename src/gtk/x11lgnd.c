@@ -1454,20 +1454,24 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   w = gtk_button_new();
+  gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
   g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
   gtk_box_append(GTK_BOX(hbox3), w);
   mark_popover_new (w, NULL);
   d->mark_type_begin = w;
 
   w = create_marker_type_combo_box("begin", _("Marker begin"));
+  gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
   gtk_box_append(GTK_BOX(hbox3), w);
   d->marker_begin = w;
 
   w = create_marker_type_combo_box("end", _("Marker end"));
+  gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
   gtk_box_append(GTK_BOX(hbox3), w);
   d->marker_end = w;
 
   w = gtk_button_new();
+  gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
   gtk_box_append(GTK_BOX(hbox3), w);
   g_signal_connect(w, "clicked", G_CALLBACK(mark_popover_popup), NULL);
   mark_popover_new (w, NULL);
