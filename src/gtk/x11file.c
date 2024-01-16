@@ -2986,6 +2986,7 @@ select_mark (GtkGridView *icon_view, guint i, select_mark_func cb)
   } else if (G_TYPE_CHECK_INSTANCE_TYPE (parent, GTK_TYPE_IMAGE)) {
     gtk_image_set_from_icon_name (GTK_IMAGE (parent), str);
   }
+  set_mark_number (parent, i);
   g_object_unref (sobj);
 
   if (cb) {
