@@ -62,6 +62,7 @@ enum MenuID {
   MenuIdOutputEMFFile,
   MenuIdOutputEMFPlusFile,
   MenuIdOutputEMFClipboard,
+  MenuIdOutputEMFPlusClipboard,
   MenuIdOutputPDFFile,
   MenuIdOutputSVGFile,
   MenuIdToggleSidebar,
