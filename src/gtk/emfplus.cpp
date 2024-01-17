@@ -20,6 +20,36 @@ struct gdiobj {
   GraphicsState state;
 };
 
+static WCHAR *
+get_temp_filename (void)
+{
+  DWORD dwRetVal = 0;
+  UINT uRetVal   = 0;
+
+  WCHAR *lpTempFileName;
+  WCHAR lpTempPathBuffer[MAX_PATH + 1];
+
+  dwRetVal = GetTempPathw(sizeof (lpTempPathBuffer), lpTempPathBuffer);
+  if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
+    return NULL;
+  }
+
+  lpTempFileName = malloc (sizeof (*lpTempFileName) * (MAX_PATH + 1));
+  of (lpTempFileName == NULL) {
+    return NULL;
+  }
+
+  uRetVal = GetTempFileNamew(lpTempPathBuffer, // directory for tmp files
+                             TEXT("NGP"),      // temp file name prefix
+                             0,                // create unique name
+                             lpTempFileName);  // buffer for name
+  if (uRetVal == 0) {
+    free (lpTempFileName);
+    return NULL;
+  }
+  return lpTempFileName;
+}
+
 #define EMF_PAGE_SCALE 0.579
 struct gdiobj *
 emfplus_init (const wchar_t *filename, int width, int height, int iscale)
