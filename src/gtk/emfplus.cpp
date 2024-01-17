@@ -18,6 +18,7 @@ struct gdiobj {
   double scale;
   ULONG_PTR gdiplusToken;
   GraphicsState state;
+  WCHAR *tmp_file;
 };
 
 static WCHAR *
@@ -63,7 +64,21 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
   Graphics *g = new Graphics(bitmap);
   HDC hDC = g->GetHDC();
   RectF rect(0, 0, width * EMF_PAGE_SCALE / 100.0, height * EMF_PAGE_SCALE / 100.0);
-  Metafile *metafile = new Metafile(filename, hDC, rect, MetafileFrameUnitMillimeter, EmfTypeEmfPlusOnly, NULL);
+  WCHAR *tmp_file;
+  Metafile *metafile;
+  if (filename == NULL) {
+    tmp_file = get_temp_filename ();
+    if (tmp_file == NULL) {
+      delete g;
+      delete bitmap;
+      GdiplusShutdown(gdiplusToken);
+      return NULL;
+    }
+    metafile = new Metafile(tmp_file, hDC, rect, MetafileFrameUnitMillimeter, EmfTypeEmfPlusOnly, NULL);
+  } else {
+    tmp_file = NULL;
+    metafile = new Metafile(filename, hDC, rect, MetafileFrameUnitMillimeter, EmfTypeEmfPlusOnly, NULL);
+  }
   Graphics *graphics = new Graphics(metafile);
   Pen *pen = new Pen(Color(255, 0, 0, 0));
   SolidBrush *brush = new SolidBrush(Color(255, 0, 0, 0));
@@ -87,6 +102,7 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
   gdi->gdiplusToken = gdiplusToken;
   gdi->scale = scale;
   gdi->state = graphics->Save();
+  gdi->tmp_file = tmp_file;
 
   return gdi;
 }
@@ -125,6 +141,10 @@ emfplus_finalize (struct gdiobj *gdi)
   delete gdi->bitmap_graphics;
   delete gdi->bitmap;
   GdiplusShutdown(gdi->gdiplusToken);
+  if (gdi->tmp_file) {
+    set_clipboard (gdi->tmp_file);
+    free (gdi->tmp_file);
+  }
   delete gdi;
 }
 
