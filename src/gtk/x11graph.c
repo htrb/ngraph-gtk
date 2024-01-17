@@ -859,7 +859,7 @@ on_open_response(GtkDialog *dialog, int response, gpointer user_data)
 }
 
 static void
-folder_chooser_button_clicked(GtkButton *self, gpointer user_data)
+folder_chooser_button_clicked(GtkWidget *self, gpointer user_data)
 {
   GtkWidget *dialog;
   struct folder_chooser_data *data;
@@ -872,7 +872,12 @@ folder_chooser_button_clicked(GtkButton *self, gpointer user_data)
 				       _("_Open"), GTK_RESPONSE_ACCEPT,
 				       NULL);
   gtk_file_chooser_set_create_folders(GTK_FILE_CHOOSER(dialog), TRUE);
-  // gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dialog), file, NULL);
+  if (data->folder) {
+    GFile *folder;
+    folder = g_file_new_for_path (data->folder);
+    gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), folder, NULL);
+    g_object_unref (folder);
+  }
   gtk_widget_show (dialog);
   g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), user_data);
 }
