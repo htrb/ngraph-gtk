@@ -942,6 +942,7 @@ CmOutputImage_response(char *file, gpointer user_data)
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFPlusFile:
   case MenuIdOutputEMFClipboard:
+  case MenuIdOutputEMFPlusClipboard:
     output_emf(type, file);
     return;
   }
@@ -999,6 +1000,7 @@ CmOutputImage(int type)
     ext_str = "emf";
     break;
   case MenuIdOutputEMFClipboard:
+  case MenuIdOutputEMFPlusClipboard:
     CmOutputImage_response(NULL, GINT_TO_POINTER (type));
     return;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
@@ -1028,10 +1030,8 @@ output_emf(int type, char *file)
 
   switch (type) {
   case MenuIdOutputEMFPlusFile:
+  case MenuIdOutputEMFPlusClipboard:
     objname = "gra2emfplus";
-    if (file == NULL) {
-      return;
-    }
     break;
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFClipboard:
@@ -1096,6 +1096,7 @@ CmOutputMenu(int menu_id)
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFPlusFile:
   case MenuIdOutputEMFClipboard:
+  case MenuIdOutputEMFPlusClipboard:
 #endif
     CmOutputImage(menu_id);
     break;
