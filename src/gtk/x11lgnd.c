@@ -2810,10 +2810,10 @@ static void *
 bind_text (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int style, r, g ,b;
-  char *text, *str, *alias;
+  char *text, *str;
 #if ! WINDOWS
   struct fontmap *fmap;
-  char *font;
+  char *font, *alias;
 #endif
 
   getobj(obj, field, id, 0, NULL, &str);
