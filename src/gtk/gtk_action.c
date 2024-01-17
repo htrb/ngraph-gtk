@@ -720,7 +720,7 @@ static GActionEntry AppEntries[] =
   { "GraphExportEMFAction", GraphExportEMFAction_activated, NULL, NULL, NULL },
   { "GraphExportEMFPlusAction", GraphExportEMFPlusAction_activated, NULL, NULL, NULL },
   { "GraphExportEMFClipboardAction", GraphExportEMFClipboardAction_activated, NULL, NULL, NULL },
-  { "GraphExportEMFPlusClipboardAction", GraphExportEMFClipboardAction_activated, NULL, NULL, NULL },
+  { "GraphExportEMFPlusClipboardAction", GraphExportEMFPlusClipboardAction_activated, NULL, NULL, NULL },
 #endif
   { "GraphDrawOrderAction", GraphDrawOrderAction_activated, NULL, NULL, NULL },
   { "GraphPageSetupAction", GraphPageSetupAction_activated, NULL, NULL, NULL },
