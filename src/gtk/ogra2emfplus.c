@@ -209,7 +209,11 @@ gra2emfplus_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   switch (code) {
   case 'I':
     _getobj(obj, "file", inst, &fname);
-    utext = g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
+    if (fname) {
+      utext = g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
+    } else {
+      utext = NULL;
+    }
     local->gdi = emfplus_init(utext, cpar[3], cpar[4], cpar[5]);
     g_free (utext);
     break;
