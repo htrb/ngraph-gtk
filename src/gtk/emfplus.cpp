@@ -143,6 +143,7 @@ emfplus_finalize (struct gdiobj *gdi)
   GdiplusShutdown(gdi->gdiplusToken);
   if (gdi->tmp_file) {
     set_clipboard (gdi->tmp_file);
+    DeleteFileW (gdi->tmp_file);
     free (gdi->tmp_file);
   }
   delete gdi;
