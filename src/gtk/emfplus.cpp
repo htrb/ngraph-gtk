@@ -97,6 +97,18 @@ emfplus_flush (struct gdiobj *gdi)
   gdi->graphics->Flush(FlushIntentionSync);
 }
 
+static void
+set_clipboard (const WCHAR *file)
+{
+  Metafile metaFile (file);
+  IntPtr hMetaFile = metaFile.GetHenhmetafile();
+  if (OpenClipboard(NULL)) {
+    EmptyClipboard();
+    SetClipboardData(CF_ENHMETAFILE,hMetaFile);
+    CloseClipboard();
+  }
+}
+
 void
 emfplus_finalize (struct gdiobj *gdi)
 {
