@@ -135,6 +135,12 @@ GraphExportEMFClipboardAction_activated(GSimpleAction *action, GVariant *paramet
 {
   CmOutputMenu(MenuIdOutputEMFClipboard);
 }
+
+static void
+GraphExportEMFPlusClipboardAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmOutputMenu(MenuIdOutputEMFPlusClipboard);
+}
 #endif
 
 static void
@@ -714,6 +720,7 @@ static GActionEntry AppEntries[] =
   { "GraphExportEMFAction", GraphExportEMFAction_activated, NULL, NULL, NULL },
   { "GraphExportEMFPlusAction", GraphExportEMFPlusAction_activated, NULL, NULL, NULL },
   { "GraphExportEMFClipboardAction", GraphExportEMFClipboardAction_activated, NULL, NULL, NULL },
+  { "GraphExportEMFPlusClipboardAction", GraphExportEMFClipboardAction_activated, NULL, NULL, NULL },
 #endif
   { "GraphDrawOrderAction", GraphDrawOrderAction_activated, NULL, NULL, NULL },
   { "GraphPageSetupAction", GraphPageSetupAction_activated, NULL, NULL, NULL },
