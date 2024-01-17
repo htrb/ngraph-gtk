@@ -30,22 +30,22 @@ get_temp_filename (void)
   WCHAR *lpTempFileName;
   WCHAR lpTempPathBuffer[MAX_PATH + 1];
 
-  dwRetVal = GetTempPathw(sizeof (lpTempPathBuffer), lpTempPathBuffer);
+  dwRetVal = GetTempPathW(MAX_PATH, lpTempPathBuffer);
   if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
     return NULL;
   }
 
-  lpTempFileName = malloc (sizeof (*lpTempFileName) * (MAX_PATH + 1));
-  of (lpTempFileName == NULL) {
+  lpTempFileName = new WCHAR[MAX_PATH + 1];
+  if (lpTempFileName == NULL) {
     return NULL;
   }
 
-  uRetVal = GetTempFileNamew(lpTempPathBuffer, // directory for tmp files
-                             TEXT("NGP"),      // temp file name prefix
+  uRetVal = GetTempFileNameW(lpTempPathBuffer, // directory for tmp files
+                             L"NGP",           // temp file name prefix
                              0,                // create unique name
                              lpTempFileName);  // buffer for name
   if (uRetVal == 0) {
-    free (lpTempFileName);
+    delete[] lpTempFileName;
     return NULL;
   }
   return lpTempFileName;
@@ -117,10 +117,10 @@ static void
 set_clipboard (const WCHAR *file)
 {
   Metafile metaFile (file);
-  IntPtr hMetaFile = metaFile.GetHenhmetafile();
+  HENHMETAFILE hMetaFile = metaFile.GetHENHMETAFILE();
   if (OpenClipboard(NULL)) {
     EmptyClipboard();
-    SetClipboardData(CF_ENHMETAFILE,hMetaFile);
+    SetClipboardData(CF_ENHMETAFILE, hMetaFile);
     CloseClipboard();
   }
 }
@@ -140,12 +140,12 @@ emfplus_finalize (struct gdiobj *gdi)
   delete gdi->metafile;
   delete gdi->bitmap_graphics;
   delete gdi->bitmap;
-  GdiplusShutdown(gdi->gdiplusToken);
   if (gdi->tmp_file) {
     set_clipboard (gdi->tmp_file);
     DeleteFileW (gdi->tmp_file);
-    free (gdi->tmp_file);
+    delete[] gdi->tmp_file;
   }
+  GdiplusShutdown(gdi->gdiplusToken);
   delete gdi;
 }
 
