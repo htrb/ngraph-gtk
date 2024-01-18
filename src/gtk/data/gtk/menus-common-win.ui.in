@@ -49,49 +49,49 @@
       <section>
 	<submenu>
 	  <section>
-	  <attribute name="label" translatable="yes">_Export image</attribute>
-	  <item>
-            <attribute name="label" translatable="yes">_GRA file</attribute>
-	    <attribute name="action">app.GraphExportGRAAction</attribute>
-	  </item>
-	  <item>
-	    <attribute name="label" translatable="yes">_PS file</attribute>
-	    <attribute name="action">app.GraphExportPSAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">_EPS file</attribute>
-	    <attribute name="action">app.GraphExportEPSAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">P_DF file</attribute>
-	    <attribute name="action">app.GraphExportPDFAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">_SVG file</attribute>
-	    <attribute name="action">app.GraphExportSVGAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">P_NG file</attribute>
-	    <attribute name="action">app.GraphExportPNGAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">E_MF file</attribute>
-	    <attribute name="action">app.GraphExportEMFAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">EM_F+ file</attribute>
-	    <attribute name="action">app.GraphExportEMFPlusAction</attribute>
-	  </item>
+	    <attribute name="label" translatable="yes">_Export image</attribute>
+	    <item>
+              <attribute name="label" translatable="yes">_GRA file</attribute>
+	      <attribute name="action">app.GraphExportGRAAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_PS file</attribute>
+	      <attribute name="action">app.GraphExportPSAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_EPS file</attribute>
+	      <attribute name="action">app.GraphExportEPSAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">P_DF file</attribute>
+	      <attribute name="action">app.GraphExportPDFAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_SVG file</attribute>
+	      <attribute name="action">app.GraphExportSVGAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">P_NG file</attribute>
+	      <attribute name="action">app.GraphExportPNGAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">E_MF file</attribute>
+	      <attribute name="action">app.GraphExportEMFAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">EM_F+ file</attribute>
+	      <attribute name="action">app.GraphExportEMFPlusAction</attribute>
+	    </item>
 	  </section>
 	  <section>
-	  <item>
-            <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
-	    <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
-	  </item>
-	  <item>
-            <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
-	    <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
-	  </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
+	      <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
+	      <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
+	    </item>
 	  </section>
 	</submenu>
       </section>
@@ -714,49 +714,49 @@
     <section>
       <submenu>
 	<section>
-	<attribute name="label" translatable="yes">_Export image</attribute>
-	<item>
-          <attribute name="label" translatable="yes">_GRA file</attribute>
-	  <attribute name="action">app.GraphExportGRAAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_PS file</attribute>
-	  <attribute name="action">app.GraphExportPSAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">_EPS file</attribute>
-	  <attribute name="action">app.GraphExportEPSAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">P_DF file</attribute>
-	  <attribute name="action">app.GraphExportPDFAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">_SVG file</attribute>
-	  <attribute name="action">app.GraphExportSVGAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">P_NG file</attribute>
-	  <attribute name="action">app.GraphExportPNGAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">E_MF file</attribute>
-	  <attribute name="action">app.GraphExportEMFAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">EM_F+ file</attribute>
-	  <attribute name="action">app.GraphExportEMFPlusAction</attribute>
-	</item>
+	  <attribute name="label" translatable="yes">_Export image</attribute>
+	  <item>
+            <attribute name="label" translatable="yes">_GRA file</attribute>
+	    <attribute name="action">app.GraphExportGRAAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">_PS file</attribute>
+	    <attribute name="action">app.GraphExportPSAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_EPS file</attribute>
+	    <attribute name="action">app.GraphExportEPSAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">P_DF file</attribute>
+	    <attribute name="action">app.GraphExportPDFAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_SVG file</attribute>
+	    <attribute name="action">app.GraphExportSVGAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">P_NG file</attribute>
+	    <attribute name="action">app.GraphExportPNGAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">E_MF file</attribute>
+	    <attribute name="action">app.GraphExportEMFAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">EM_F+ file</attribute>
+	    <attribute name="action">app.GraphExportEMFPlusAction</attribute>
+	  </item>
 	</section>
 	<section>
-	<item>
-          <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
-	  <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
-	</item>
-	<item>
-          <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
-	  <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
-	</item>
+	  <item>
+            <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
+	    <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
+	    <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
+	  </item>
 	</section>
       </submenu>
     </section>
