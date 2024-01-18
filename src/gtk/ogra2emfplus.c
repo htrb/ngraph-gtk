@@ -214,7 +214,7 @@ gra2emfplus_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
     } else {
       utext = NULL;
     }
-    local->gdi = emfplus_init(utext, cpar[3], cpar[4], cpar[5]);
+    local->gdi = emfplus_init(utext, cpar[5]);
     g_free (utext);
     break;
   case '%': case 'X': case 'Z':

@@ -8,6 +8,10 @@
 
 using namespace Gdiplus;
 
+#define UNIT_FACTOR (2540.0 / 72.0) // 72 DPI
+#define UNIT_CONV(v) ((v) / UNIT_FACTOR)
+#define UNIT_RCONV(v) ((v) * UNIT_FACTOR)
+
 struct gdiobj {
   Bitmap *bitmap;
   Graphics *bitmap_graphics, *graphics;
@@ -51,9 +55,8 @@ get_temp_filename (void)
   return lpTempFileName;
 }
 
-#define EMF_PAGE_SCALE 0.579
 struct gdiobj *
-emfplus_init (const wchar_t *filename, int width, int height, int iscale)
+emfplus_init (const wchar_t *filename, int iscale)
 {
   double scale;
   ULONG_PTR gdiplusToken;
@@ -63,7 +66,6 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
   Bitmap *bitmap = new Bitmap(1, 1);
   Graphics *g = new Graphics(bitmap);
   HDC hDC = g->GetHDC();
-  RectF rect(0, 0, width * EMF_PAGE_SCALE / 100.0, height * EMF_PAGE_SCALE / 100.0);
   WCHAR *tmp_file;
   Metafile *metafile;
   if (filename == NULL) {
@@ -74,16 +76,16 @@ emfplus_init (const wchar_t *filename, int width, int height, int iscale)
       GdiplusShutdown(gdiplusToken);
       return NULL;
     }
-    metafile = new Metafile(tmp_file, hDC, rect, MetafileFrameUnitMillimeter, EmfTypeEmfPlusOnly, NULL);
+    metafile = new Metafile(tmp_file, hDC, EmfTypeEmfPlusOnly, NULL);
   } else {
     tmp_file = NULL;
-    metafile = new Metafile(filename, hDC, rect, MetafileFrameUnitMillimeter, EmfTypeEmfPlusOnly, NULL);
+    metafile = new Metafile(filename, hDC, EmfTypeEmfPlusOnly, NULL);
   }
   Graphics *graphics = new Graphics(metafile);
   Pen *pen = new Pen(Color(255, 0, 0, 0));
   SolidBrush *brush = new SolidBrush(Color(255, 0, 0, 0));
 
-  graphics->SetPageUnit (UnitMillimeter);
+  graphics->SetPageUnit (UnitPixel);
   graphics->SetSmoothingMode(SmoothingModeHighQuality);
   graphics->SetTextRenderingHint(TextRenderingHintAntiAlias);
 
@@ -153,10 +155,10 @@ void
 emfplus_line (struct gdiobj *gdi, int ix1, int iy1, int ix2, int iy2)
 {
   REAL x1, x2, y1, y2;
-  x1 = ix1 / 100.0;
-  x2 = ix2 / 100.0;
-  y1 = iy1 / 100.0;
-  y2 = iy2 / 100.0;
+  x1 = UNIT_CONV (ix1);
+  x2 = UNIT_CONV (ix2);
+  y1 = UNIT_CONV (iy1);
+  y2 = UNIT_CONV (iy2);
   gdi->graphics->DrawLine(gdi->pen, x1, y1, x2, y2);
 }
 
@@ -166,7 +168,7 @@ draw_test (struct gdiobj *gdi, PointF &pointF, Font *font, const StringFormat* p
 {
   double space;
 
-  space =  ispace / 72.0 * 25.4 / 100.0;
+  space =  UNIT_CONV (ispace / 72.0 * 25.4);
   for (int i = 0; text[i]; i++) {
     RectF boundingBox;
     gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
@@ -184,7 +186,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   LOGFONTW id_font;
   PointF pointF (0, 0);
   FontFamily fontfamily (fontinfo->font);
-  Font font (&fontfamily, fontinfo->size / 100.0, fontinfo->style, UnitPoint);
+  Font font (&fontfamily, fontinfo->size / 100.0, fontinfo->style, UnitPixel);
   RectF boundingBox;
   const StringFormat* pStringFormat = StringFormat::GenericTypographic();
   double x, y, w, h, a;
@@ -195,8 +197,8 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   int descent, ascent;
   descent = fontfamily.GetCellDescent (fontinfo->style);
   ascent = fontfamily.GetCellAscent (fontinfo->style);
-  x = *px / 100.0;
-  y = *py / 100.0;
+  x = UNIT_CONV (*px);
+  y = UNIT_CONV (*py);
 
   GraphicsState state = gdi->graphics->Save();
   gdi->graphics->TranslateTransform (x, y);
@@ -212,8 +214,8 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   a = M_PI * fontinfo->dir / 18000.0;
   x += w * cos (a);
   y -= w * sin (a);
-  *px = x * 100;
-  *py = y * 100;
+  *px = UNIT_RCONV (x);
+  *py = UNIT_RCONV (y);
 }
 
 void
@@ -245,7 +247,7 @@ emfplus_line_attribte (struct gdiobj *gdi, int width, int cap, int join, int mit
     break;
   }
 
-  gdi->pen->SetWidth (width / 100.0);
+  gdi->pen->SetWidth (UNIT_CONV (width));
   gdi->pen->SetEndCap (endCap);
   gdi->pen->SetStartCap (endCap);
   gdi->pen->SetLineJoin (lineJoin);
@@ -274,10 +276,10 @@ void
 emfplus_rectangle (struct gdiobj *gdi, int x1, int y1, int x2, int y2, int fill)
 {
   REAL x, y, w, h;
-  x = ((x1 < x2) ? x1 : x2) / 100.0;
-  y = ((y1 < y2) ? y1 : y2) / 100.0;
-  w = abs (x2 - x1) / 100.0;
-  h = abs (y2 - y1) / 100.0;
+  x = UNIT_CONV ((x1 < x2) ? x1 : x2);
+  y = UNIT_CONV ((y1 < y2) ? y1 : y2);
+  w = UNIT_CONV (abs (x2 - x1));
+  h = UNIT_CONV (abs (y2 - y1));
   if (fill) {
     gdi->graphics->FillRectangle (gdi->brush, x, y, w, h);
   } else {
@@ -294,8 +296,8 @@ emfplus_polygon (struct gdiobj *gdi, int n, const int *xy, int fill)
 {
   PointF points[n];
   for (int i = 0; i < n; i++) {
-    points[i].X = xy[i * 2] / 100.0;
-    points[i].Y = xy[i * 2 + 1] / 100.0;
+    points[i].X = UNIT_CONV (xy[i * 2]);
+    points[i].Y = UNIT_CONV (xy[i * 2 + 1]);
   }
   switch (fill) {
   case 0:
@@ -315,8 +317,8 @@ emfplus_lines (struct gdiobj *gdi, int n, const int *xy)
 {
   PointF points[n];
   for (int i = 0; i < n; i++) {
-    points[i].X = xy[i * 2] / 100.0;
-    points[i].Y = xy[i * 2 + 1] / 100.0;
+    points[i].X = UNIT_CONV (xy[i * 2]);
+    points[i].Y = UNIT_CONV (xy[i * 2 + 1]);
   }
   gdi->graphics->DrawLines (gdi->pen, points, n);
 }
@@ -331,10 +333,10 @@ emfplus_arc (struct gdiobj *gdi, int ix, int iy, int iw, int ih, int start, int 
     return;
   }
 
-  x = (ix - iw) / 100.0;
-  y = (iy - ih) / 100.0;
-  h = ih / 50.0;
-  w = iw / 50.0;
+  x = UNIT_CONV (ix - iw);
+  y = UNIT_CONV (iy - ih);
+  h = UNIT_CONV (ih) * 2.0;
+  w = UNIT_CONV (iw) * 2.0;
   if (angle % 36000 == 0) {
     if (style == 1 || style == 2) {
       gdi->graphics->FillEllipse(gdi->brush, x, y, w, h);
@@ -376,10 +378,10 @@ emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
   double x, y, w, h;
   gdi->graphics->Restore(gdi->state);
   gdi->state = gdi->graphics->Save();
-  x = ((x1 < x2) ? x1 : x2) / 100.0;
-  y = ((y1 < y2) ? y1 : y2) / 100.0;
-  w = abs (x2 - x1) / 100.0;
-  h = abs (y2 - y1) / 100.0;
+  x = UNIT_CONV ((x1 < x2) ? x1 : x2);
+  y = UNIT_CONV ((y1 < y2) ? y1 : y2);
+  w = UNIT_CONV (abs (x2 - x1));
+  h = UNIT_CONV (abs (y2 - y1));
   gdi->graphics->ResetClip ();
   gdi->graphics->SetClip (RectF(x, y, w, h), CombineModeReplace);
   gdi->graphics->TranslateTransform (x, y);
