@@ -48,6 +48,7 @@
       </section>
       <section>
 	<submenu>
+	  <section>
 	  <attribute name="label" translatable="yes">_Export image</attribute>
 	  <item>
             <attribute name="label" translatable="yes">_GRA file</attribute>
@@ -81,6 +82,8 @@
             <attribute name="label" translatable="yes">EM_F+ file</attribute>
 	    <attribute name="action">app.GraphExportEMFPlusAction</attribute>
 	  </item>
+	  </section>
+	  <section>
 	  <item>
             <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
 	    <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
@@ -89,6 +92,7 @@
             <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
 	    <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
 	  </item>
+	  </section>
 	</submenu>
       </section>
       <section>
@@ -709,6 +713,7 @@
     </section>
     <section>
       <submenu>
+	<section>
 	<attribute name="label" translatable="yes">_Export image</attribute>
 	<item>
           <attribute name="label" translatable="yes">_GRA file</attribute>
@@ -742,6 +747,8 @@
           <attribute name="label" translatable="yes">EM_F+ file</attribute>
 	  <attribute name="action">app.GraphExportEMFPlusAction</attribute>
 	</item>
+	</section>
+	<section>
 	<item>
           <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
 	  <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
@@ -750,6 +757,7 @@
           <attribute name="label" translatable="yes">_Clipboard (EMF+)</attribute>
 	  <attribute name="action">app.GraphExportEMFPlusClipboardAction</attribute>
 	</item>
+	</section>
       </submenu>
     </section>
     <section>
