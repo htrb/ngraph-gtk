@@ -18,7 +18,7 @@ extern "C" {
 
   struct gdiobj;
 
-  struct gdiobj *emfplus_init (const wchar_t *filename, int iscale);
+  struct gdiobj *emfplus_init (const wchar_t *filename);
   void emfplus_finalize (struct gdiobj *gdi);
   void emfplus_flush (struct gdiobj *gdi);
   void emfplus_line (struct gdiobj *gdi, int x1, int y1, int x2, int y2);

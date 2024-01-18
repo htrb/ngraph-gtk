@@ -21,7 +21,6 @@ struct gdiobj {
   SolidBrush *brush;
   double scale;
   ULONG_PTR gdiplusToken;
-  GraphicsState state;
   WCHAR *tmp_file;
 };
 
@@ -56,7 +55,7 @@ get_temp_filename (void)
 }
 
 struct gdiobj *
-emfplus_init (const wchar_t *filename, int iscale)
+emfplus_init (const wchar_t *filename)
 {
   double scale;
   ULONG_PTR gdiplusToken;
@@ -89,9 +88,6 @@ emfplus_init (const wchar_t *filename, int iscale)
   graphics->SetSmoothingMode(SmoothingModeHighQuality);
   graphics->SetTextRenderingHint(TextRenderingHintAntiAlias);
 
-  scale = iscale / 10000.0;
-  graphics->ScaleTransform (scale, scale);
-
   struct gdiobj *gdi = new struct gdiobj;
 
   gdi->bitmap = bitmap;
@@ -103,7 +99,6 @@ emfplus_init (const wchar_t *filename, int iscale)
   gdi->hdc = hDC;
   gdi->gdiplusToken = gdiplusToken;
   gdi->scale = scale;
-  gdi->state = graphics->Save();
   gdi->tmp_file = tmp_file;
 
   return gdi;
@@ -135,7 +130,6 @@ emfplus_finalize (struct gdiobj *gdi)
   }
 
   gdi->graphics->Flush(FlushIntentionSync);
-  gdi->graphics->Restore(gdi->state);
   delete gdi->brush;
   delete gdi->pen;
   delete gdi->graphics;
@@ -376,8 +370,7 @@ void
 emfplus_clip (struct gdiobj *gdi, int x1, int y1, int x2, int y2)
 {
   double x, y, w, h;
-  gdi->graphics->Restore(gdi->state);
-  gdi->state = gdi->graphics->Save();
+  gdi->graphics->ResetTransform ();
   x = UNIT_CONV ((x1 < x2) ? x1 : x2);
   y = UNIT_CONV ((y1 < y2) ? y1 : y2);
   w = UNIT_CONV (abs (x2 - x1));
