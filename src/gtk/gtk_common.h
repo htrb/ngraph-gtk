@@ -14,7 +14,7 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
-#if WINDOWS || OSX
+#if OSX
 #define USE_HEADER_BAR 0
 #else
 #define USE_HEADER_BAR 1
