@@ -706,7 +706,7 @@ create_enum_menu(GtkWidget *parent, n_list_store *item)
 }
 
 static void
-enum_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+enum_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
