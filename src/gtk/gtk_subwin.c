@@ -717,7 +717,7 @@ enum_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 }
 
 static void
-mark_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+mark_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
