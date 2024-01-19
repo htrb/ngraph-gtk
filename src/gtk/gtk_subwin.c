@@ -921,7 +921,7 @@ create_string_input (GtkWidget *parent, n_list_store *item)
 }
 
 static void
-string_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+string_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
