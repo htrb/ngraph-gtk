@@ -20,7 +20,6 @@ struct gdiobj {
   Metafile *metafile;
   Pen *pen;
   SolidBrush *brush;
-  double scale;
   ULONG_PTR gdiplusToken;
   WCHAR *tmp_file;
 };
@@ -58,7 +57,6 @@ get_temp_filename (void)
 struct gdiobj *
 emfplus_init (const wchar_t *filename)
 {
-  double scale;
   ULONG_PTR gdiplusToken;
   GdiplusStartupInput gdiplusStartupInput;
   GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
@@ -99,7 +97,6 @@ emfplus_init (const wchar_t *filename)
   gdi->graphics = graphics;
   gdi->hdc = hDC;
   gdi->gdiplusToken = gdiplusToken;
-  gdi->scale = scale;
   gdi->tmp_file = tmp_file;
 
   return gdi;
