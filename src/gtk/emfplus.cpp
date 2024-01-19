@@ -8,7 +8,8 @@
 
 using namespace Gdiplus;
 
-#define UNIT_FACTOR (2540.0 / 72.0) // 72 DPI
+#define DPI 360.0
+#define UNIT_FACTOR (2540.0 / DPI)
 #define UNIT_CONV(v) ((v) / UNIT_FACTOR)
 #define UNIT_RCONV(v) ((v) * UNIT_FACTOR)
 
@@ -180,7 +181,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   LOGFONTW id_font;
   PointF pointF (0, 0);
   FontFamily fontfamily (fontinfo->font);
-  Font font (&fontfamily, fontinfo->size / 100.0, fontinfo->style, UnitPixel);
+  Font font (&fontfamily, fontinfo->size / 100.0 / 72.0 * DPI, fontinfo->style, UnitPixel);
   RectF boundingBox;
   const StringFormat* pStringFormat = StringFormat::GenericTypographic();
   double x, y, w, h, a;
