@@ -48,8 +48,8 @@
       </section>
       <section>
 	<submenu>
+	  <attribute name="label" translatable="yes">_Export image</attribute>
 	  <section>
-	    <attribute name="label" translatable="yes">_Export image</attribute>
 	    <item>
               <attribute name="label" translatable="yes">_GRA file</attribute>
 	      <attribute name="action">app.GraphExportGRAAction</attribute>
@@ -713,8 +713,8 @@
     </section>
     <section>
       <submenu>
+	<attribute name="label" translatable="yes">_Export image</attribute>
 	<section>
-	  <attribute name="label" translatable="yes">_Export image</attribute>
 	  <item>
             <attribute name="label" translatable="yes">_GRA file</attribute>
 	    <attribute name="action">app.GraphExportGRAAction</attribute>
