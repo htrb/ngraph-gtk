@@ -868,7 +868,7 @@ create_numeric_input (GtkWidget *parent, n_list_store *item)
 }
 
 static void
-numeric_cb (GtkEventController *self, gint n_press, gdouble x, gdouble y, gpointer user_data)
+numeric_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
