@@ -892,7 +892,7 @@ output_image(struct output_image_data *d)
   init_graobj(graobj, id, "gra2cairofile", g2woid);
 
   data = create_gra_out_data(graobj, id, g2wobj, g2wid);
-  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
+  draw_gra(graobj, id, _("Making image file."), TRUE, gra_out_cb, data);
 }
 
 static void
