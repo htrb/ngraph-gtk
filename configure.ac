@@ -33,7 +33,6 @@ AC_MSG_CHECKING([for native OSX])
 case "$host" in
   *-apple-darwin*)
     os_osx=yes
-    PKG_CHECK_MODULES(MAC_INTEGRATION, [gtk-mac-integration-gtk3])
     ;;
   *)
     os_osx=no
