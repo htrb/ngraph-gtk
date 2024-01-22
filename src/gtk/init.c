@@ -779,7 +779,7 @@ set_dir_defs(char *app)
 
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
   if (app_contents) {
-    app_path = = g_getenv("GTK_PATH");
+    app_path = g_getenv("GTK_PATH");
     BINDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
     LIBDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
     DOCDIR = g_strdup_printf("%s/%s", app_path, "share/doc/ngraph-gtk");
