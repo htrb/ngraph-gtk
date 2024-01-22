@@ -195,7 +195,6 @@ else
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
 endif
-endif
 
 uidir = data/gtk
 data/ngraphui.resources.xml: $(UI_RESOURCES_SOURCE)

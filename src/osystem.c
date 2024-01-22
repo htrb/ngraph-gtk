@@ -474,7 +474,7 @@ get_plugin_name(const char *name)
   sysobj = getobject("system");
   getobj(sysobj, "plugin_dir", 0, 0, NULL, &plugin_path);
 
-  module_file = g_module_build_path(plugin_path, name);
+  module_file = g_strdup_printf("%s/%s", plugin_path, name);
 
   return module_file;
 }
