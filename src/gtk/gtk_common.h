@@ -14,11 +14,7 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
-#if OSX
-#define USE_HEADER_BAR 0
-#else
 #define USE_HEADER_BAR 1
-#endif
 
 #define USE_ENTRY_COMPLETION (! GTK_CHECK_VERSION(4, 0, 0))
 
