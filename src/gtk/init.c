@@ -775,6 +775,7 @@ static int
 set_dir_defs(char *app)
 {
   const char *app_contents;
+  char *app_path;
 
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
   if (app_contents) {
@@ -789,7 +790,7 @@ set_dir_defs(char *app)
     NLOCALEDIR = g_strdup_printf("%s/%s", app_path, "share/locale");
     g_free(bin_path);
   } else {
-    char *app_path, *bin_path;
+    char *bin_path;
     app_path = g_find_program_in_path (app);
     bin_path = g_path_get_dirname(app_path);
     g_free(app_path);
