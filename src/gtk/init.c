@@ -788,7 +788,6 @@ set_dir_defs(char *app)
     ADDINDIR = g_strdup_printf("%s/%s", app_path, "share/ngraph-gtk/addin");
     CONFDIR = g_strdup_printf("%s/%s", app_path, "etc/ngraph-gtk");
     NLOCALEDIR = g_strdup_printf("%s/%s", app_path, "share/locale");
-    g_free(bin_path);
   } else {
     char *bin_path;
     app_path = g_find_program_in_path (app);
