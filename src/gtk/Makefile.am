@@ -156,11 +156,10 @@ NGRAPH_ICONS = data/icons/32x32/actions/ngraph_align_b.png		\
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common-win.ui.in	\
-	data/gtk/menus-common.ui.osx data/gtk/menus-appmenu.ui		\
-	data/gtk/help-overlay.ui data/gtk/menus-tool.ui			\
-	create_completion_info.rb completion_info_functions.txt		\
-	completion_info_constants.txt data/ngraphui.resources.xml.in	\
-	data/ngraphui.resources.xml.osx $(NGRAPH_ICONS)
+	data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui		\
+	data/gtk/menus-tool.ui create_completion_info.rb		\
+	completion_info_functions.txt completion_info_constants.txt	\
+	data/ngraphui.resources.xml.in $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
@@ -192,11 +191,6 @@ libngraph_cflags =
 if OS_WIN32
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common-win.ui.in
-else
-if OS_OSX
-UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.osx
-MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.osx
-libngraph_cflags += $(MAC_INTEGRATION_CFLAGS)
 else
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
