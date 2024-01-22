@@ -774,37 +774,24 @@ get_libexec_dir(const char *app_path)
 static int
 set_dir_defs(char *app)
 {
-  const char *app_contents;
-  app_contents = g_getenv("NGRAPH_APP_CONTENTS");
-  if (app_contents) {
-    const char *app_path;
-    app_path = g_getenv("GTK_PATH");
-    BINDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
-    LIBDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
-    DOCDIR = g_strdup_printf("%s/%s", app_path, "share/doc/ngraph-gtk");
-    PLUGINDIR = g_strdup_printf("%s/%s", app_path, "lib/ngraph-gtk/plugins");
-    NDATADIR = g_strdup_printf("%s/%s", app_path, "share/ngraph-gtk");
-    ADDINDIR = g_strdup_printf("%s/%s", app_path, "share/ngraph-gtk/addin");
-    CONFDIR = g_strdup_printf("%s/%s", app_path, "etc/ngraph-gtk");
-    NLOCALEDIR = g_strdup_printf("%s/%s", app_path, "share/locale");
-  } else {
-    char  *app_path, *bin_path;
-    app_path = g_find_program_in_path (app);
-    bin_path = g_path_get_dirname(app_path);
-    g_free(app_path);
-    app_path = bin_path;
-    LIBDIR = get_libexec_dir(app_path);
-    BINDIR = NULL;
-    DOCDIR = g_strdup (_DOCDIR);
-    PLUGINDIR = g_strdup (_PLUGINDIR);
-    NDATADIR = g_strdup (_NDATADIR);
-    ADDINDIR = g_strdup (_ADDINDIR);
-    CONFDIR = g_strdup (_CONFDIR);
-    NLOCALEDIR = g_strdup (LOCALEDIR);
-    g_free(app_path);
-    bin_path = g_path_get_dirname(app_path);
-    g_free(app_path);
-  }
+  char  *app_path, *bin_path;
+
+  app_path = g_find_program_in_path (app);
+  bin_path = g_path_get_dirname(app_path);
+  g_free(app_path);
+  app_path = bin_path;
+  LIBDIR = get_libexec_dir(app_path);
+  BINDIR = NULL;
+  DOCDIR = g_strdup (_DOCDIR);
+  PLUGINDIR = g_strdup (_PLUGINDIR);
+  NDATADIR = g_strdup (_NDATADIR);
+  ADDINDIR = g_strdup (_ADDINDIR);
+  CONFDIR = g_strdup (_CONFDIR);
+  NLOCALEDIR = g_strdup (LOCALEDIR);
+  g_free(app_path);
+  bin_path = g_path_get_dirname(app_path);
+  g_free(app_path);
+
   return 0;
 }
 #else
@@ -883,28 +870,6 @@ n_application_ready(void)
 {
 }
 
-#if OSX
-static void
-osx_open_file(GApplication* self, gpointer files, gint n_files, gchar* hint, gpointer user_data)
-{
-  char *dir, *path;
-  if (n_files < 1) {
-    return;
-  }
-  path = g_file_get_path (files + 0);
-  if (path == NULL) {
-    return;
-  }
-  dir = getdirname(path);
-  if (dir) {
-    nchdir(dir);
-    g_free(dir);
-  }
-  LoadNgpFile(path, FALSE, "-f", NULL);
-  g_free (path);
-}
-#endif
-
 GtkApplication *
 n_get_gtk_application(void)
 {
@@ -974,11 +939,6 @@ n_initialize(int *argc, char ***argv)
   }
   set_prgname(*argc, *argv);  /* this is necessary to use GtkRecentManager */
   g_set_application_name(AppName);
-#if OSX
-  if (GtkApp) {
-    g_signal_connect(GtkApp, "open", G_CALLBACK(osx_open_file), NULL);
-  }
-#endif
 
   if (init_cmd_tbl()) {
     exit(1);
