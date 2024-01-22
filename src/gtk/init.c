@@ -789,8 +789,6 @@ set_dir_defs(char *app)
   CONFDIR = g_strdup (_CONFDIR);
   NLOCALEDIR = g_strdup (LOCALEDIR);
   g_free(app_path);
-  bin_path = g_path_get_dirname(app_path);
-  g_free(app_path);
 
   return 0;
 }
