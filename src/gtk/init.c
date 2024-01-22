@@ -775,10 +775,9 @@ static int
 set_dir_defs(char *app)
 {
   const char *app_contents;
-  char *app_path;
-
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
   if (app_contents) {
+    const char *app_path;
     app_path = g_getenv("GTK_PATH");
     BINDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
     LIBDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
@@ -789,7 +788,7 @@ set_dir_defs(char *app)
     CONFDIR = g_strdup_printf("%s/%s", app_path, "etc/ngraph-gtk");
     NLOCALEDIR = g_strdup_printf("%s/%s", app_path, "share/locale");
   } else {
-    char *bin_path;
+    char  *app_path, *bin_path;
     app_path = g_find_program_in_path (app);
     bin_path = g_path_get_dirname(app_path);
     g_free(app_path);
