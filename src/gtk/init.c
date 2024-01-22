@@ -37,13 +37,6 @@
 #include <locale.h>
 #include <signal.h>
 
-#if OSX
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-#include <gtkosxapplication.h>
-static GtkosxApplication *GtkMacIntegration = NULL;
-#endif
-#endif
-
 char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *NLOCALEDIR, *BINDIR;
 
 #include "dir_defs.h"
@@ -782,35 +775,37 @@ static int
 set_dir_defs(char *app)
 {
   const char *app_contents;
-  char *app_path, *bin_path;
 
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
-  app_path = gtkosx_application_get_resource_path();
   if (app_contents) {
-    bin_path = gtkosx_application_get_executable_path();
-    LIBDIR = g_path_get_dirname(bin_path);
+    app_path = = g_getenv("GTK_PATH");
+    BINDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
+    LIBDIR = g_strdup_printf("%s/%s", app_contents, "MacOS");;
+    DOCDIR = g_strdup_printf("%s/%s", app_path, "share/doc/ngraph-gtk");
+    PLUGINDIR = g_strdup_printf("%s/%s", app_path, "lib/ngraph-gtk/plugins");
+    NDATADIR = g_strdup_printf("%s/%s", app_path, "share/ngraph-gtk");
+    ADDINDIR = g_strdup_printf("%s/%s", app_path, "share/ngraph-gtk/addin");
+    CONFDIR = g_strdup_printf("%s/%s", app_path, "etc/ngraph-gtk");
+    NLOCALEDIR = g_strdup_printf("%s/%s", app_path, "share/locale");
     g_free(bin_path);
   } else {
+    char *app_path, *bin_path;
+    app_path = g_find_program_in_path (app);
     bin_path = g_path_get_dirname(app_path);
     g_free(app_path);
     app_path = bin_path;
     LIBDIR = get_libexec_dir(app_path);
+    BINDIR = NULL;
+    DOCDIR = g_strdup (_DOCDIR);
+    PLUGINDIR = g_strdup (_PLUGINDIR);
+    NDATADIR = g_strdup (_NDATADIR);
+    ADDINDIR = g_strdup (_ADDINDIR);
+    CONFDIR = g_strdup (_CONFDIR);
+    NLOCALEDIR = g_strdup (LOCALEDIR);
+    g_free(app_path);
+    bin_path = g_path_get_dirname(app_path);
+    g_free(app_path);
   }
-
-  if (app_path == NULL) {
-    return 1;
-  }
-
-  BINDIR = NULL;
-  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
-  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
-  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
-  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
-  NLOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
-
-  g_free(app_path);
-
   return 0;
 }
 #else
@@ -887,35 +882,27 @@ load_css(void)
 void
 n_application_ready(void)
 {
-#if OSX
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (GtkMacIntegration) {
-    gtkosx_application_ready(GtkMacIntegration);
-  }
-#endif
-#endif
 }
 
 #if OSX
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean
-osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
+static void
+osx_open_file(GApplication* self, gpointer files, gint n_files, gchar* hint, gpointer user_data)
 {
-  char *dir;
+  char *dir, *path;
+  if (n_files < 1) {
+    return;
+  }
+  path = g_file_get_path (files + 0);
   if (path == NULL) {
-    return TRUE;
+    return;
   }
   dir = getdirname(path);
   if (dir) {
     nchdir(dir);
     g_free(dir);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   LoadNgpFile(path, FALSE, "-f", NULL);
-#else
-  LoadNgpFile(path, FALSE, "-f");
-#endif
-  return TRUE;
+  g_free (path);
 }
 
 static void
@@ -929,7 +916,6 @@ create_app_menu(GtkApplication *app)
   gtk_application_set_app_menu(app, G_MENU_MODEL(app_menu));
   g_object_unref(builder);
 }
-#endif
 #endif
 
 GtkApplication *
@@ -1002,13 +988,10 @@ n_initialize(int *argc, char ***argv)
   set_prgname(*argc, *argv);  /* this is necessary to use GtkRecentManager */
   g_set_application_name(AppName);
 #if OSX
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GtkMacIntegration = gtkosx_application_get();
-  g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
-  if (OpenDisplay) {
+  if (GtkApp) {
+    g_signal_connect(GtkApp, "open", G_CALLBACK(osx_open_file), NULL);
     create_app_menu(GtkApp);
   }
-#endif
 #endif
 
   if (init_cmd_tbl()) {
