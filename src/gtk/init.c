@@ -903,18 +903,6 @@ osx_open_file(GApplication* self, gpointer files, gint n_files, gchar* hint, gpo
   LoadNgpFile(path, FALSE, "-f", NULL);
   g_free (path);
 }
-
-static void
-create_app_menu(GtkApplication *app)
-{
-  GtkBuilder *builder;
-  GObject *app_menu;
-  /* only for remove "Settings" menu item */
-  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-appmenu.ui");
-  app_menu = gtk_builder_get_object(builder, "app-menu");
-  gtk_application_set_app_menu(app, G_MENU_MODEL(app_menu));
-  g_object_unref(builder);
-}
 #endif
 
 GtkApplication *
@@ -989,7 +977,6 @@ n_initialize(int *argc, char ***argv)
 #if OSX
   if (GtkApp) {
     g_signal_connect(GtkApp, "open", G_CALLBACK(osx_open_file), NULL);
-    create_app_menu(GtkApp);
   }
 #endif
 
