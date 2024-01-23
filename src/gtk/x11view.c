@@ -970,6 +970,8 @@ text_dropped_response(struct response_callback *cb)
   PaintLock = FALSE;
 }
 
+#define SET_RAW_TEXT 1
+
 static int
 text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
@@ -977,13 +979,19 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   char *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
   struct objlist *obj;
-  int id, x1, y1, i, j, l;
+  int id, x1, y1, l;
+#if ! SET_RAW_TEXT
+  int i, j;
+#endif
 
   obj = chkobject("text");
 
   if (obj == NULL)
     return 1;
 
+#if SET_RAW_TEXT
+  ptr = g_strdup (str);
+#else
   l = strlen(str);
   ptr = g_malloc(l * 2 + 1);
 
@@ -1011,6 +1019,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     }
   }
   ptr[j] = '\0';
+#endif
 
   d->undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
   id = newobj(obj);
@@ -1028,6 +1037,10 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
   _putobj(obj, "text", inst, ptr);
+#if SET_RAW_TEXT
+  l = TRUE;
+  _putobj(obj, "raw", inst, &l);
+#endif
 
   PaintLock= TRUE;
 
