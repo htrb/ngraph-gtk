@@ -515,7 +515,7 @@ static void
 CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct CopyDialog *d;
-  int i, a;
+  int i;
 
   d = (struct CopyDialog *) data;
   if (makewidget) {
@@ -553,6 +553,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (chkobjlastinst(d->Obj) == 0) {
     columnview_set_active (d->list, 0, TRUE);
   } else if (d->Id >= 0) {
+    int a;
     a = search_id(d->list, d->Id);
     if (a >= 0) {
       columnview_set_active (d->list, a, TRUE);
