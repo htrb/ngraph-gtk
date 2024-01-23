@@ -318,19 +318,19 @@ multi_list_default_cb(GtkWidget *view, guint pos, gpointer user_data)
 static int
 search_id(GtkWidget *columnview, int id)
 {
-  GListStore *list;
+  GListModel *list;
   int n, i;
   NInst *ni;
 
-  list = columnview_get_list(columnview);
+  list = G_LIST_MODEL (gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview)));
   if (list == NULL) {
     return -1;
   }
 
-  n = g_list_model_get_n_items (G_LIST_MODEL (list));
+  n = g_list_model_get_n_items (list);
   for (i = 0; i < n; i++) {
     int target_id;
-    ni = g_list_model_get_item (G_LIST_MODEL (list), i);
+    ni = g_list_model_get_item (list, i);
     target_id = ni->id;
     g_object_unref (ni);
     if (target_id == id) {
