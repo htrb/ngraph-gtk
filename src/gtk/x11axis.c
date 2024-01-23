@@ -473,24 +473,10 @@ GridDefDialogClose_response(int ret, struct objlist *obj, int id, int modified)
 }
 
 static void
-GridDefDialogClose(GtkWidget *w, void *data)
-{
-  struct GridDialog *d;
-  GridDialogClose(w, data);
-
-  d = (struct GridDialog *) data;
-  if (d->ret == IDOK) {
-    CheckIniFile(GridDefDialogClose_response, d->Obj, d->Id, d->modified);
-  } else {
-    GridDefDialogClose_response(FALSE, d->Obj, d->Id, d->modified);
-  }
-}
-
-static void
 GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
 {
   data->SetupWindow = GridDefDialogSetup;
-  data->CloseWindow = GridDefDialogClose;
+  data->CloseWindow = GridDialogClose;
   data->Obj = obj;
   data->Id = id;
 }
