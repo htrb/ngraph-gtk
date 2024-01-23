@@ -2072,6 +2072,7 @@ set_file_hidden_response(struct response_callback *cb)
       putobj(fobj, "hidden", i, &a);
     }
     num = arraynum(farray);
+    arraysort_int(farray);
     array = arraydata(farray);
     a = FALSE;
     for (i = 0; i < num; i++) {
