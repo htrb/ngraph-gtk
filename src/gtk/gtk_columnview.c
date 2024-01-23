@@ -603,7 +603,6 @@ columnview_select(GtkWidget *columnview, int i)
   GtkSelectionModel *selection;
 
   selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
-  gtk_selection_model_unselect_all (selection);
   gtk_selection_model_select_item (selection, i, FALSE);
 }
 
