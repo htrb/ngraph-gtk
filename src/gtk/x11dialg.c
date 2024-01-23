@@ -380,7 +380,7 @@ static void
 SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SelectDialog *d;
-  int i, *seldata, selnum, a;
+  int i, *seldata, selnum;
 
   d = (struct SelectDialog *) data;
 
@@ -441,6 +441,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     columnview_unselect_all(d->list);
     for (i = 0; i < selnum; i++) {
+      int a;
       a = search_id(d->list, seldata[i]);
       if (a >= 0) {
 	columnview_select(d->list, a);
