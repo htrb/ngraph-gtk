@@ -761,26 +761,28 @@ get_libexec_dir(const char *app_path)
 {
   char *libdir;
   GStatBuf buf;
-  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk4");
   g_stat(libdir, &buf);
   if (S_ISDIR(buf.st_mode)) {
     return libdir;
   }
   g_free(libdir);
-  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "opt/ngraph-gtk/libexec/ngraph-gtk");
+  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "opt/ngraph-gtk/libexec/ngraph-gtk4");
   return libdir;
 }
 
 static int
 set_dir_defs(char *app)
 {
-  char  *app_path, *bin_path;
+  char  *app_path, *bin_path, *pkg_path;
 
   app_path = g_find_program_in_path (app);
   bin_path = g_path_get_dirname(app_path);
   g_free(app_path);
-  app_path = bin_path;
-  LIBDIR = get_libexec_dir(app_path);
+  pkg_path = g_path_get_dirname(bin_path);
+  g_free(bin_path);
+  LIBDIR = get_libexec_dir(pkg_path);
+  g_free(pkg_path);
   BINDIR = NULL;
   DOCDIR = g_strdup (_DOCDIR);
   PLUGINDIR = g_strdup (_PLUGINDIR);
@@ -788,7 +790,6 @@ set_dir_defs(char *app)
   ADDINDIR = g_strdup (_ADDINDIR);
   CONFDIR = g_strdup (_CONFDIR);
   NLOCALEDIR = g_strdup (LOCALEDIR);
-  g_free(app_path);
 
   return 0;
 }
