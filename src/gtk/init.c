@@ -767,7 +767,7 @@ get_libexec_dir(const char *app_path)
     return libdir;
   }
   g_free(libdir);
-  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "opt/ngraph-gtk4/libexec/ngraph-gtk");
+  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "opt/ngraph-gtk/libexec/ngraph-gtk");
   return libdir;
 }
 
