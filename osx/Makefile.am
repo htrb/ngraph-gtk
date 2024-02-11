@@ -9,7 +9,7 @@ ICONSET = ngraph.iconset/icon_128x128.png	\
           ngraph.iconset/icon_512x512.png	\
           ngraph.iconset/icon_512x512@2x.png
 
-EXTRA_DIST = Info-ngraph-gtk.plist.in ngraph-gtk.bundle ngraph-launcher.sh $(ICONSET)
+EXTRA_DIST = $(ICONSET)
 
 if OS_OSX
 ngraph.icns: $(ICONSET)

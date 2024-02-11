@@ -191,7 +191,6 @@ AC_CONFIG_FILES([Makefile \
 		 gtksourceview/Makefile \
 		 mingw/Makefile \
 		 osx/Makefile \
-		 osx/Info-ngraph-gtk.plist \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
 		 icons/scalable/apps/Makefile \
