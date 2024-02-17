@@ -56,6 +56,14 @@
 
 #define COMMENT_BUF_SIZE 1024
 
+struct GraphSave_data
+{
+  int storedata, storemerge, path;
+  char *file, *current_wd, *prev_wd;
+  response_cb cb;
+  gpointer data;
+};
+
 static GtkWidget *ProgressDialog = NULL;
 #define PROGRESSBAR_N 2
 static GtkProgressBar *ProgressBar[PROGRESSBAR_N];
@@ -67,6 +75,7 @@ static void ToFullPath(void);
 static void ToBasename(void);
 static void ToRalativePath(void);
 static void ProgressDialogFinalize(void);
+static void GraphSave_response(int ret, struct GraphSave_data *d);
 
 void
 OpenGRA(void)
@@ -1193,25 +1202,18 @@ SaveDrawrable(const char *name, int storedata, int storemerge, int save_decimals
   return error;
 }
 
-struct graph_save_data
-{
-  int storedata, storemerge, path;
-  char *file, *current_wd;
-  response_cb cb;
-};
-
 static void
 get_save_opt_response(struct response_callback *cb)
 {
   struct objlist *fobj, *mobj;
   int fnum, mnum, path;
   int i;
-  struct graph_save_data *save_data_data;
+  struct GraphSave_data *save_data;
 
-  save_data_data = (struct graph_save_data *) cb->data;
+  save_data = (struct GraphSave_data *) cb->data;
 
   if (cb->return_value != IDOK) {
-    save_data_data->cb(cb->return_value, save_data_data);
+    GraphSave_response(cb->return_value, save_data);
     return;
   }
 
@@ -1229,14 +1231,14 @@ get_save_opt_response(struct response_callback *cb)
   for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, &path);
   }
-  save_data_data->path = path;
-  save_data_data->storedata = DlgSave.SaveData;
-  save_data_data->storemerge = DlgSave.SaveMerge;
-  save_data_data->cb(cb->return_value, save_data_data);
+  save_data->path = path;
+  save_data->storedata = DlgSave.SaveData;
+  save_data->storemerge = DlgSave.SaveMerge;
+  GraphSave_response(cb->return_value, save_data);
 }
 
 static void
-get_save_opt(struct graph_save_data *save_data)
+get_save_opt(struct GraphSave_data *save_data)
 {
   int fnum, mnum, i, src;
   struct objlist *fobj, *mobj;
@@ -1249,7 +1251,7 @@ get_save_opt(struct graph_save_data *save_data)
 
   /* there are no instances of data and merge objects */
   if (fnum < 1 && mnum < 1) {
-    save_data->cb(IDOK, save_data);
+    GraphSave_response(IDOK, save_data);
     return;
   }
 
@@ -1261,7 +1263,7 @@ get_save_opt(struct graph_save_data *save_data)
     }
   }
   if (fnum > 0 && mnum < 1 && i == fnum) {
-    save_data->cb(IDOK, save_data);
+    GraphSave_response(IDOK, save_data);
     return;
   }
 
@@ -1272,20 +1274,29 @@ get_save_opt(struct graph_save_data *save_data)
 }
 
 static void
-GraphSave_free(gpointer user_data)
+GraphSave_free(struct GraphSave_data *data)
 {
-  struct graph_save_data *data;
-  data = (struct graph_save_data *) user_data;
   g_free(data->file);
   g_free(data->current_wd);
+  g_free(data->prev_wd);
+  g_free(data);
 }
 
 static void
-GraphSave_response(int ret, gpointer user_data)
+check_graph_save_data_callback (int ret, struct GraphSave_data *save_data)
 {
-  struct graph_save_data *d;
-  d = (struct graph_save_data *) user_data;
+  if (save_data == NULL) {
+    return;
+  }
+  if (save_data->cb == NULL) {
+    return;
+  }
+  save_data->cb (ret, save_data->data);
+}
 
+static void
+GraphSave_response(int ret, struct GraphSave_data *d)
+{
   if (ret == IDOK) {
     char mes[256];
     snprintf(mes, sizeof(mes), _("Saving `%.128s'."), d->file);
@@ -1313,36 +1324,29 @@ GraphSave_response(int ret, gpointer user_data)
   if (d->current_wd && nchdir(d->current_wd)) {
     ErrorMessage();
   }
+  check_graph_save_data_callback (IDOK, d);
   GraphSave_free(d);
 }
 
 static void
-GraphSaveSub(const char *file, const char *prev_wd, const char *current_wd)
+GraphSaveSub(struct GraphSave_data *data)
 {
-  struct graph_save_data *save_data_data;
+  char *prev_wd;
+  char *file;
+  file = data->file;
   if (file == NULL) {
+    if (data->cb) {
+      data->cb(IDCANCEL, data->data);
+    }
+    GraphSave_free(data);
     return;
   }
+  prev_wd = data->prev_wd;
   if (prev_wd && nchdir(prev_wd)) {
     ErrorMessage();
   }
-
-  save_data_data = g_malloc0(sizeof(*save_data_data));
-  if (save_data_data == NULL) {
-    return;
-  }
-  save_data_data->file = g_strdup(file);
-  save_data_data->current_wd = g_strdup(current_wd);
-  save_data_data->cb = GraphSave_response;
-  get_save_opt(save_data_data);
+  get_save_opt(data);
 }
-
-struct GraphSave_data 
-{
-  char *prev_wd;
-  response_cb cb;
-  gpointer data;
-};
 
 static void
 graph_save_response(char *file, gpointer user_data)
@@ -1357,22 +1361,23 @@ graph_save_response(char *file, gpointer user_data)
     g_free(current_wd);
     prev_wd = NULL;
     current_wd = NULL;
+    data->prev_wd = NULL;
   }
-  GraphSaveSub(file, prev_wd, current_wd);
-  g_free(file);
-  g_free(current_wd);
-  g_free(prev_wd);
-  if (data->cb) {
-    data->cb(IDOK, data->data);
-  }
-  g_free (data);
+  data->current_wd = current_wd;
+  data->file = file;
+  GraphSaveSub(data);
 }
 
 int
 GraphSave(int overwrite, response_cb cb, gpointer user_data)
 {
-  char *initfil;
+  struct GraphSave_data *data;
+  const char *initfil;
 
+  data = g_malloc0 (sizeof (*data));
+  data->cb = cb;
+  data->data = user_data;
+  data->prev_wd = NULL;
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
   } else {
@@ -1381,10 +1386,6 @@ GraphSave(int overwrite, response_cb cb, gpointer user_data)
   }
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     int chd;
-    struct GraphSave_data *data;
-    data = g_malloc0 (sizeof (*data));
-    data->cb = cb;
-    data->data = user_data;
     initfil = (initfil) ? initfil : "untitled.ngp";
     data->prev_wd = ngetcwd();
     chd = Menulocal.changedirectory;
@@ -1392,10 +1393,8 @@ GraphSave(int overwrite, response_cb cb, gpointer user_data)
                      &(Menulocal.graphloaddir), initfil, chd,
                      graph_save_response, data);
   } else {
-    GraphSaveSub(initfil, NULL, NULL);
-    if (cb) {
-      cb(IDOK, user_data);
-    }
+    data->file = g_strdup (initfil);
+    GraphSaveSub(data);
   }
   return IDOK;
 }
