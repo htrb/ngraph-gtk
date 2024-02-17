@@ -2536,8 +2536,6 @@ CmAxisNewFrame(int use_presettings, response_cb cb)
   data->cb = cb;
   response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
-  SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
-		idg, FALSE);
 }
 
 void
