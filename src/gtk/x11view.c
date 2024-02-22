@@ -2394,7 +2394,7 @@ Trimming(int x1, int y1, int x2, int y2)
   data->x2 = x2;
   data->y1 = y1;
   data->y2 = y2;
-  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, farray, NULL);
   response_callback_add(&DlgSelect, trimming_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
 }

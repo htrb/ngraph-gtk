@@ -5011,7 +5011,7 @@ CmFileClose(void)
   if (chkobjlastinst(obj) == -1)
     return;
   farray = arraynew(sizeof(int));
-  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, farray, NULL);
   response_callback_add(&DlgSelect, file_close_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -5195,7 +5195,7 @@ CmFileUpdate(void)
     update_file_obj_multi(obj, farray, FALSE, file_update_response_response, farray);
   } else {
     farray = arraynew(sizeof(int));
-    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, farray, NULL);
     response_callback_add(&DlgSelect, file_update_response, NULL, farray);
     DialogExecute(TopLevel, &DlgSelect);
   }

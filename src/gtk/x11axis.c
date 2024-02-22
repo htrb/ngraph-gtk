@@ -1238,7 +1238,7 @@ AxisDialogFile(struct AxisDialog *d)
   if (farray == NULL)
     return;
 
-  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, farray, NULL);
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
@@ -2842,7 +2842,7 @@ axis_zoom_response(struct response_callback *cb)
   data->zoom = DlgZoom.zoom / 10000.0;;
   data->farray = farray;
   data->obj = obj;
-  SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, farray, NULL);
   response_callback_add(&DlgSelect, axis_zoom_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -2932,7 +2932,7 @@ CmAxisClear(void)
   farray = arraynew(sizeof(int));
   if (farray == NULL)
     return;
-  SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, farray, NULL);
   response_callback_add(&DlgSelect, axis_clear_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -3018,7 +3018,7 @@ CmAxisGridDel(void)
   farray = arraynew(sizeof(int));
   if (farray == NULL)
     return;
-  SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, farray, NULL);
   response_callback_add(&DlgSelect, axis_grid_del_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -3102,7 +3102,7 @@ CmAxisGridUpdate(void)
   farray = arraynew(sizeof(int));
   if (farray == NULL)
     return;
-  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, farray, NULL);
   response_callback_add(&DlgSelect, axis_grid_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -3282,7 +3282,7 @@ CmAxisScaleUndo(void)
   if (farray == NULL)
     return;
 
-  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, farray, NULL);
   response_callback_add(&DlgSelect, axis_scale_undo_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }

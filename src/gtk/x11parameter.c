@@ -515,7 +515,7 @@ CmParameterDelete(void)
 
   }
 
-  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, farray, NULL);
   response_callback_add(&DlgSelect, parameter_delete_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -624,7 +624,7 @@ CmParameterUpdate(void)
 
   }
 
-  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) farray, NULL);
+  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, farray, NULL);
   response_callback_add(&DlgSelect, cm_parameter_update_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
