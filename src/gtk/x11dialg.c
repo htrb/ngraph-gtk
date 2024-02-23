@@ -346,6 +346,7 @@ setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointe
   GtkWidget *label = gtk_label_new (NULL);
   gtk_label_set_xalign (GTK_LABEL (label), GPOINTER_TO_INT (user_data) ? 0.0 : 1.0);
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+  gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_list_item_set_child (list_item, label);
 }
 
