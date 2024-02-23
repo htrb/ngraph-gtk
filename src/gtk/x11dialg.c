@@ -420,7 +420,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     char *s;
     s = d->cb(d->Obj, i);
     if (s) {
-      columnview_append_n_inst(d->list, CHK_STR(s), i, d->Obj);
+      columnview_append_n_inst(d->list, s, i, d->Obj);
       g_free(s);
     }
   }
