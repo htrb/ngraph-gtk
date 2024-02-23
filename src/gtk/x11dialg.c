@@ -484,6 +484,7 @@ SelectDialogClose(GtkWidget *w, void *data)
     }
     d->ret = IDOK;
   }
+  arraysort_int (d->sel);
 }
 
 void
