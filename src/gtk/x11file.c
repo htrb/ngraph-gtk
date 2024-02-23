@@ -6136,6 +6136,7 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
   if (src == DATA_SOURCE_FILE) {
     char *bfile;
     bfile = getbasename(str);
+    gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_NONE);
     if (bfile) {
       if (masked) {
 	gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
@@ -6150,12 +6151,14 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
     }
   } else {
     char *tmpstr;
-    tmpstr = g_strescape(str, "\\");
+    tmpstr = g_strdup(str);
     disconnect_handler (w, Flist + 2);
+    gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
     if (masked) {
       gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
       rstr = g_markup_printf_escaped ("<i>%s</i>", tmpstr);
       g_free (tmpstr);
+      return rstr;
     } else {
       return tmpstr;
     }
