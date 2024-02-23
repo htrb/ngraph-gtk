@@ -302,7 +302,7 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     int i, j;
 
     if (instance) {
-      gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+      dialog_add_delete_button((struct DialogType *) d);
     }
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 

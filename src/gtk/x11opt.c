@@ -464,7 +464,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefScriptDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
+    dialog_add_save_button((struct DialogType *) d);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
@@ -976,7 +976,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct PrefFontDialog *) data;
   if (makewidget) {
     GtkWidget *vbox;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
+    dialog_add_save_button((struct DialogType *) d);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
@@ -1193,7 +1193,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *hbox2, *vbox2, *frame, *table;
     int i, j;
     arrayinit(&(d->tmp_palette), sizeof(GdkRGBA));
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
+    dialog_add_save_button((struct DialogType *) d);
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1537,7 +1537,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *table;
     int i;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
+    dialog_add_save_button((struct DialogType *) d);
 
     table = gtk_grid_new();
 
@@ -1644,7 +1644,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *table;
     int i, j;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
+    dialog_add_save_button((struct DialogType *) d);
 
     table = gtk_grid_new();
 

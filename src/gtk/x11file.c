@@ -763,9 +763,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FitSaveDialog *) data;
   if (makewidget) {
     GtkWidget *w, *hbox;
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   _("_Delete"), IDDELETE,
-			   NULL);
+    dialog_add_delete_button((struct DialogType *) d);
 
     w = combo_box_entry_create();
     combo_box_entry_set_width(w, 20);
@@ -1800,7 +1798,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *hbox, *hbox2, *vbox, *frame, *table;
     int i;
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     table = gtk_grid_new();
 
@@ -4257,7 +4255,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *w, *hbox, *view, *label;
-    d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
+    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -4351,7 +4349,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *w, *hbox, *view, *label, *swin;
-    d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
+    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -4414,7 +4412,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *table, *label;
     int i;
-    d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
+    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
 
     table = gtk_grid_new();
 

@@ -1541,7 +1541,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i;
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -1657,7 +1657,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i;
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -1756,7 +1756,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i;
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -1881,7 +1881,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i;
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -2126,7 +2126,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i;
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    dialog_add_delete_button((struct DialogType *) d);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 

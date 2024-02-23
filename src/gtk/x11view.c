@@ -113,9 +113,6 @@ static struct evaltype EvalList[EVAL_NUM_MAX];
 static GListStore *EvalListRoot = NULL;
 static struct narray SelList;
 
-#define IDEVMASK        101
-#define IDEVMOVE        102
-
 static void ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data);
 static void ViewerEvRealize(GtkWidget *w, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
@@ -1347,10 +1344,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     int i, n;
     GtkWidget *w, *swin, *hbox;
     GtkSelectionModel *model;
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   _("_Mask"), IDEVMASK,
-			   _("_Move"), IDEVMOVE,
-			   NULL);
+    dialog_add_move_button ((struct DialogType *) d);
 
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);

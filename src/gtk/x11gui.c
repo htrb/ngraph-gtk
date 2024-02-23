@@ -176,14 +176,144 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 static gboolean
 dialog_close_request(GtkWindow* window, gpointer user_data)
 {
-  gtk_dialog_response(GTK_DIALOG(window), GTK_RESPONSE_CANCEL);
+  dialog_response (GTK_WIDGET (window), IDCANCEL, user_data);
+  return TRUE;
+}
+
+static void
+dialog_response_ok (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDOK, user_data);
+}
+
+static void
+dialog_response_cancel (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDCANCEL, user_data);
+}
+
+static void
+dialog_response_all (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDSALL, user_data);
+}
+
+GtkWidget *
+dialog_add_all_button (struct DialogType *data)
+{
+  GtkWidget *btn, *headerbar;
+  headerbar = gtk_window_get_titlebar (GTK_WINDOW (data->widget));
+  btn = gtk_button_new_with_mnemonic (_("_All"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_all), data);
+  return btn;
+}
+
+static void
+dialog_response_delete (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDDELETE, user_data);
+}
+
+GtkWidget *
+dialog_add_delete_button (struct DialogType *data)
+{
+  GtkWidget *btn, *headerbar;
+  headerbar = gtk_window_get_titlebar (GTK_WINDOW (data->widget));
+  btn = gtk_button_new_with_mnemonic (_("_Delete"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_delete), data);
+  return btn;
+}
+
+static void
+dialog_response_apply_all (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDFAPPLY, user_data);
+}
+
+GtkWidget *
+dialog_add_apply_all_button (struct DialogType *data)
+{
+  GtkWidget *btn, *headerbar;
+  headerbar = gtk_window_get_titlebar (GTK_WINDOW (data->widget));
+  btn = gtk_button_new_with_mnemonic (_("_Apply all"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_apply_all), data);
+  return btn;
+}
+
+static void
+dialog_response_save (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDFAPPLY, user_data);
+}
+
+GtkWidget *
+dialog_add_save_button (struct DialogType *data)
+{
+  GtkWidget *btn, *headerbar;
+  headerbar = gtk_window_get_titlebar (GTK_WINDOW (data->widget));
+  btn = gtk_button_new_with_mnemonic (_("_Save"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_save), data);
+  return btn;
+}
+
+static void
+dialog_response_mask (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDEVMASK, user_data);
+}
+
+static void
+dialog_response_move (GtkWidget *btn, gpointer user_data)
+{
+  GtkWidget *dlg;
+  dlg = gtk_widget_get_ancestor (btn, GTK_TYPE_WINDOW);
+  dialog_response (dlg, IDEVMOVE, user_data);
+}
+
+GtkWidget *
+dialog_add_move_button (struct DialogType *data)
+{
+  GtkWidget *btn, *headerbar;
+  headerbar = gtk_window_get_titlebar (GTK_WINDOW (data->widget));
+  btn = gtk_button_new_with_mnemonic (_("_Mask"));
+  gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_mask), data);
+
+  btn = gtk_button_new_with_mnemonic (_("_Move"));
+  gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btn);
+  g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_move), data);
+  return btn;
+}
+
+static gboolean
+dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
+{
+  gtk_window_close (GTK_WINDOW (widget));
   return TRUE;
 }
 
 void
 DialogExecute(GtkWidget *parent, void *dialog)
 {
-  GtkWidget *dlg;
+  GtkWidget *dlg, *parent_window;
   struct DialogType *data;
 
   data = (struct DialogType *) dialog;
@@ -203,46 +333,52 @@ DialogExecute(GtkWidget *parent, void *dialog)
   }
 
   if (data->widget == NULL) {
-    dlg = gtk_dialog_new_with_buttons(_(data->resource),
-				      GTK_WINDOW(parent),
-#if USE_HEADER_BAR
-				      GTK_DIALOG_USE_HEADER_BAR |
-#endif
-				      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				      _("_Cancel"), GTK_RESPONSE_CANCEL,
-				      NULL);
+    GtkWidgetClass *widget_class;
+    GObjectClass *class;
+    GtkWidget *headerbar;
+    GtkWidget *btn;
+    dlg = gtk_window_new();
 
-    gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
-
-    /* must be implemented */
-    g_signal_connect(dlg, "response", G_CALLBACK(dialog_response), data);
-    g_signal_connect(dlg, "close_request", G_CALLBACK(dialog_close_request), data);
+    g_signal_connect(dlg, "close-request", G_CALLBACK(dialog_close_request), data);
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
 
     data->parent = parent;
     data->widget = dlg;
-    data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(data->vbox), GTK_ORIENTATION_VERTICAL);
+    data->vbox = GTK_BOX(gtk_box_new (GTK_ORIENTATION_VERTICAL, 0));
+    headerbar = gtk_header_bar_new();
+    gtk_header_bar_set_decoration_layout (GTK_HEADER_BAR (headerbar), "");
+    gtk_window_set_titlebar (GTK_WINDOW (dlg), headerbar);
+    gtk_window_set_child (GTK_WINDOW (dlg), GTK_WIDGET (data->vbox));
     data->show_cancel = TRUE;
     data->ok_button = _("_OK");
 
     data->SetupWindow(dlg, data, TRUE);
-    gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
+    btn = gtk_button_new_with_mnemonic (data->ok_button);
+    gtk_window_set_default_widget (GTK_WINDOW (dlg), btn);
 
-    if (! data->show_cancel) {
-      GtkWidget *btn;
-      btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_CANCEL);
-      gtk_widget_hide(btn);
+    g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_ok), data);
+    gtk_widget_add_css_class (btn, "suggested-action");
+    gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), btn);
+
+    if (data->show_cancel) {
+      btn = gtk_button_new_with_mnemonic (_("_Cancel"));
+      g_signal_connect (btn, "clicked", G_CALLBACK (dialog_response_cancel), data);
+      gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), btn);
     }
 
-    gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+    gtk_window_set_resizable (GTK_WINDOW (dlg), TRUE);
+    parent_window = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (parent_window));
+    gtk_window_set_modal (GTK_WINDOW (dlg), TRUE);
+    class = G_OBJECT_GET_CLASS(dlg);
+    widget_class = GTK_WIDGET_CLASS (class);
+    gtk_widget_class_add_binding (widget_class, GDK_KEY_Escape, 0, dialog_escape, NULL);
   } else {
     dlg = data->widget;
     data->SetupWindow(dlg, data, FALSE);
   }
 
   gtk_widget_hide(dlg);
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   data->widget = dlg;
   data->ret = IDLOOP;
 

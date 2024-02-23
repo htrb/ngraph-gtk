@@ -24,6 +24,8 @@
 #ifndef GTK_GUI_HEADER
 #define GTK_GUI_HEADER
 
+#include "x11dialg.h"
+
 #define RESPONS_OK 1
 #define RESPONS_YESNOCANCEL 2
 #define RESPONS_YESNO 3
@@ -51,6 +53,8 @@
 #define IDCLOSE  106
 #define IDSALL     201
 #define IDCOPYALL  202
+#define IDEVMASK   301
+#define IDEVMOVE   302
 
 #define DPI_MAX 2540
 #define DEFAULT_DPI 70
@@ -59,6 +63,11 @@ typedef struct _tpoint {
   int x, y;
 } TPoint;
 
+GtkWidget *dialog_add_all_button (struct DialogType *data);
+GtkWidget *dialog_add_delete_button (struct DialogType *data);
+GtkWidget *dialog_add_apply_all_button (struct DialogType *data);
+GtkWidget *dialog_add_save_button (struct DialogType *data);
+GtkWidget *dialog_add_move_button (struct DialogType *data);
 void dialog_wait(int *wait);
 void DialogExecute(GtkWidget *parent, void *dialog);
 void markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);

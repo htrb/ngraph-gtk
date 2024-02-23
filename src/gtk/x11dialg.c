@@ -400,7 +400,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_All"), IDSALL);
+    dialog_add_all_button((struct DialogType *) d);
 
     w = gtk_frame_new(NULL);
     gtk_frame_set_child(GTK_FRAME(w), swin);
