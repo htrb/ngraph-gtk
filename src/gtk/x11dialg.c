@@ -496,7 +496,6 @@ SelectDialog(struct SelectDialog *data,
   data->CloseWindow = SelectDialogClose;
   data->Obj = obj;
   data->cb = callback;
-  arrayinit(array, sizeof(int));
   data->sel = array;
   data->isel = iarray;
   data->title = title;
