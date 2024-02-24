@@ -14,15 +14,13 @@
 
 static int HistSize;
 
-GtkEntryCompletion *
-entry_completion_create(void)
+static GtkEntryCompletion *
+entry_completion_create(GtkTreeModel *model)
 {
-  GtkListStore *list;
   GtkEntryCompletion *comp;
 
-  list = gtk_list_store_new(1, G_TYPE_STRING);
   comp = gtk_entry_completion_new();
-  gtk_entry_completion_set_model(comp, GTK_TREE_MODEL(list));
+  gtk_entry_completion_set_model(comp, model);
   gtk_entry_completion_set_inline_completion(comp, FALSE);
   gtk_entry_completion_set_popup_completion(comp, TRUE);
   gtk_entry_completion_set_popup_set_width(comp, TRUE);
@@ -33,12 +31,15 @@ entry_completion_create(void)
 }
 
 void
-entry_completion_set_entry(GtkEntryCompletion *comp, GtkWidget *entry)
+entry_completion_set_entry(GtkTreeModel *model, GtkWidget *entry)
 {
-  if (comp == NULL || entry == NULL) {
+  GtkEntryCompletion *comp;
+
+  if (model == NULL || entry == NULL) {
     return;
   }
 
+  comp = entry_completion_create(model);
   gtk_entry_set_completion(GTK_ENTRY(entry), comp);
 }
 
@@ -91,12 +92,9 @@ add_completion(GtkListStore *list, FILE *fp)
 }
 
 int
-entry_completion_save(GtkEntryCompletion *comp, char *file, int size)
+entry_completion_save(GtkTreeModel *model, char *file, int size)
 {
   FILE *fp;
-  GtkTreeModel *model;
-
-  model = gtk_entry_completion_get_model(comp);
 
   if (model == NULL)
     return 1;
@@ -112,23 +110,23 @@ entry_completion_save(GtkEntryCompletion *comp, char *file, int size)
   return 0;
 }
 
-int
-entry_completion_load(GtkEntryCompletion *comp, char *file, int size)
+GtkTreeModel *
+entry_completion_load(char *file, int size)
 {
   FILE *fp;
   int i;
   GtkTreeModel *model;
+  GtkListStore *list;
 
-  model = gtk_entry_completion_get_model(comp);
+  list = gtk_list_store_new (1, G_TYPE_STRING);
+  g_object_ref (list);
 
-  if (model == NULL)
-    return 1;
-
-  gtk_list_store_clear(GTK_LIST_STORE(model));
+  model = GTK_TREE_MODEL (list);
 
   fp = nfopen(file, "r");
-  if (fp == NULL)
-    return 1;
+  if (fp == NULL) {
+    return model;
+  }
 
   for (i = 0; i < size; i++) {
     if (add_completion(GTK_LIST_STORE(model), fp))
@@ -136,27 +134,22 @@ entry_completion_load(GtkEntryCompletion *comp, char *file, int size)
   }
 
   fclose(fp);
-  return 0;
+  return model;
 }
 
 void
-entry_completion_append(GtkEntryCompletion *comp, const char *str)
+entry_completion_append(GtkTreeModel *model, const char *str)
 {
   gboolean found;
-  GtkTreeModel *model;
   GtkTreeIter iter;
   char *v = NULL;
 
-  if (comp == NULL || str == NULL || strlen(str) == 0)
+  if (model == NULL || str == NULL || strlen(str) == 0)
     return;
 
   if (strchr(str, '\n')) {
     return;
   }
-
-  model = gtk_entry_completion_get_model(comp);
-  if (model == NULL)
-    return;
 
   found = gtk_tree_model_get_iter_first(model, &iter);
   while (found) {

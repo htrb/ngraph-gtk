@@ -2150,6 +2150,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
     w = create_text_entry(FALSE, TRUE);
     add_widget_to_table(table, w, _("_Text:"), TRUE, i++);
+    entry_completion_set_entry(NgraphApp.legend_text_list, w);
     d->text = w;
 
     legend_dialog_setup_sub(d, table, i++, TRUE);
@@ -2167,7 +2168,6 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->prop_cb = LegendTextCB;
   }
   legend_dialog_setup_item(wi, d, d->Id);
-  entry_completion_set_entry(NgraphApp.legend_text_list, d->text);
   d->focus = d->text;
 }
 

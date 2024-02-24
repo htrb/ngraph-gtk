@@ -1758,23 +1758,25 @@ setupwindow(GtkApplication *app)
   create_object_tabs();
 }
 
-static void
-load_hist_file(GtkEntryCompletion *list, char *home, char *name)
+static GtkTreeModel *
+load_hist_file(char *home, char *name)
 {
   char *filename;
+  GtkTreeModel *model;
 
   filename = g_strdup_printf("%s/%s", home, name);
-  entry_completion_load(list, filename, Menulocal.hist_size);
+  model = entry_completion_load(filename, Menulocal.hist_size);
   g_free(filename);
+  return model;
 }
 
 static void
-save_hist_file(GtkEntryCompletion *list, char *home, char *name)
+save_hist_file(GtkTreeModel *model, char *home, char *name)
 {
   char *filename;
 
   filename = g_strdup_printf("%s/%s", home, name);
-  entry_completion_save(list, filename, Menulocal.hist_size);
+  entry_completion_save(model, filename, Menulocal.hist_size);
   g_free(filename);
 }
 
@@ -1783,21 +1785,15 @@ load_hist(void)
 {
   char *home;
 
-  NgraphApp.legend_text_list = entry_completion_create();
-  NgraphApp.x_math_list = entry_completion_create();
-  NgraphApp.y_math_list = entry_completion_create();
-  NgraphApp.func_list = entry_completion_create();
-  NgraphApp.fit_list = entry_completion_create();
-
   home = get_home();
   if (home == NULL)
     return;
 
-  load_hist_file(NgraphApp.legend_text_list, home, TEXT_HISTORY);
-  load_hist_file(NgraphApp.x_math_list, home, MATH_X_HISTORY);
-  load_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
-  load_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
-  load_hist_file(NgraphApp.fit_list, home, FIT_HISTORY);
+  NgraphApp.legend_text_list = load_hist_file(home, TEXT_HISTORY);
+  NgraphApp.x_math_list = load_hist_file(home, MATH_X_HISTORY);
+  NgraphApp.y_math_list = load_hist_file(home, MATH_Y_HISTORY);
+  NgraphApp.func_list = load_hist_file(home, FUNCTION_HISTORY);
+  NgraphApp.fit_list = load_hist_file(home, FIT_HISTORY);
 }
 
 static void

@@ -271,7 +271,7 @@ struct NgraphApp
   GtkWidget *Message, *Message_pos, *Message_extra;
   gint Message1;
   GtkRecentManager *recent_manager;
-  GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
+  GtkTreeModel *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;

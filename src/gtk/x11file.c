@@ -99,7 +99,6 @@ static void file_copy_popup_func(GSimpleAction *action, GVariant *parameter, gpo
 static void file_edit_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 static void file_draw_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
-static void func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data);
 
 static GActionEntry Popup_list[] =
 {
@@ -304,7 +303,6 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
-#if USE_ENTRY_COMPLETIONf
   switch (d->Mode) {
   case TYPE_MATH_X:
     entry_completion_set_entry(NgraphApp.x_math_list, d->list);
@@ -318,7 +316,6 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     entry_completion_set_entry(NgraphApp.func_list, d->list);
     break;
   }
-#endif
 
   set_source_style(d->text);
   gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
@@ -1649,15 +1646,6 @@ FitDialogSetSensitivity(struct FitDialog *d)
   }
 }
 
-static void
-add_focus_in_event(GtkWidget *w, gpointer user_data)
-{
-  GtkEventController *ev;
-  ev = gtk_event_controller_focus_new();
-  g_signal_connect(ev, "enter", G_CALLBACK(func_entry_focused), user_data);
-  gtk_widget_add_controller(w, ev);
-}
-
 static GtkWidget *
 create_user_fit_frame(struct FitDialog *d)
 {
@@ -1671,7 +1659,7 @@ create_user_fit_frame(struct FitDialog *d)
   j = 0;
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
-  add_focus_in_event(w, NgraphApp.fit_list);
+  entry_completion_set_entry(NgraphApp.fit_list, w);
   g_signal_connect(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
@@ -1698,7 +1686,7 @@ create_user_fit_frame(struct FitDialog *d)
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
-    add_focus_in_event(w, NgraphApp.fit_list);
+    entry_completion_set_entry(NgraphApp.fit_list, w);
     add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
     d->d[i] = w;
   }
@@ -2650,8 +2638,6 @@ math_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->math.h, d->Obj, id, "func_h");
   copy_entry_to_text_all(d);
 
-  entry_completion_set_entry(NgraphApp.x_math_list, d->math.x);
-  entry_completion_set_entry(NgraphApp.y_math_list, d->math.y);
   set_source_style(d->math.text_x);
   set_source_style(d->math.text_y);
   set_source_style(d->math.text_f);
@@ -2673,19 +2659,6 @@ static void
 math_tab_copy(struct FileDialog *d)
 {
   CopyClick(d->widget, d->Obj, d->Id, FileCB, math_tab_copy_response, d);
-}
-
-static void
-func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
-{
-#if USE_ENTRY_COMPLETIONf
-  GtkEntryCompletion *compl;
-  GtkWidget *w;
-
-  compl = GTK_ENTRY_COMPLETION(user_data);
-  w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(ev));
-  entry_completion_set_entry(compl, w);
-#endif
 }
 
 static GtkWidget *
@@ -2753,24 +2726,26 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
 
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_X math:"), TRUE, i++);
+  entry_completion_set_entry(NgraphApp.x_math_list, w);
   d->math.x = w;
 
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_Y math:"), TRUE, i++);
+  entry_completion_set_entry(NgraphApp.y_math_list, w);
   d->math.y = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_focus_in_event(w, NgraphApp.func_list);
+  entry_completion_set_entry(NgraphApp.func_list, w);
   add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
   d->math.f = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_focus_in_event(w, NgraphApp.func_list);
+  entry_completion_set_entry(NgraphApp.func_list, w);
   add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
   d->math.g = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_focus_in_event(w, NgraphApp.func_list);
+  entry_completion_set_entry(NgraphApp.func_list, w);
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
