@@ -928,6 +928,18 @@ arraylast_int(struct narray *array)
 }
 
 int
+arraypop_int(struct narray *array)
+{
+  int last;
+
+  last = arraylast_int(array);
+  if (array->num > 0) {
+    array->num--;
+  }
+  return last;
+}
+
+int
 array_find_int(struct narray *array, int number)
 {
   int *data, n, i;
