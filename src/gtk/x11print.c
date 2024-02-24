@@ -1069,7 +1069,7 @@ output_emf(int type, char *file)
   putobj(g2wobj, "file", g2wid, file);
   init_graobj(graobj, id, objname, g2woid);
   data = create_gra_out_data(graobj, id, g2wobj, g2wid);
-  draw_gra(graobj, id, _("Making image file"), TRUE, gra_out_cb, data);
+  draw_gra(graobj, id, _("Making image file."), TRUE, gra_out_cb, data);
 }
 #endif
 
