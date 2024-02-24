@@ -321,15 +321,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->lockstate = DnDLock;
   DnDLock = TRUE;
 
-  if (data->widget && (data->parent != parent)) {
-#if 1
-    gtk_window_set_transient_for(GTK_WINDOW(data->widget), GTK_WINDOW(parent));
-    data->parent = parent;
-#else
-    gtk_widget_destroy(data->widget);
-    reset_event();
+  if (data->widget) {
+    gtk_window_destroy (GTK_WINDOW (data->widget));
     data->widget = NULL;
-#endif
   }
 
   if (data->widget == NULL) {
@@ -378,8 +372,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->SetupWindow(dlg, data, FALSE);
   }
 
-  gtk_widget_hide(dlg);
-  data->widget = dlg;
   data->ret = IDLOOP;
 
 #if OSX
@@ -389,9 +381,13 @@ DialogExecute(GtkWidget *parent, void *dialog)
   if (data->focus) {
     gtk_widget_grab_focus(data->focus);
   }
-  gtk_widget_show(dlg);
   data->win_ptr = get_current_window();
   set_current_window(dlg);
+#if 1
+  g_idle_add_once ((GSourceOnceFunc) gtk_widget_show, dlg);
+#else
+  gtk_widget_show (dlg);
+#endif
 }
 
 void
