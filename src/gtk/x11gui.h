@@ -63,11 +63,12 @@ typedef struct _tpoint {
   int x, y;
 } TPoint;
 
+void dialog_response(gint res_id, struct DialogType *data);
 GtkWidget *dialog_add_all_button (struct DialogType *data);
 GtkWidget *dialog_add_delete_button (struct DialogType *data);
 GtkWidget *dialog_add_apply_all_button (struct DialogType *data);
 GtkWidget *dialog_add_save_button (struct DialogType *data);
-GtkWidget *dialog_add_move_button (struct DialogType *data);
+void dialog_add_move_button (struct DialogType *data);
 void dialog_wait(int *wait);
 void DialogExecute(GtkWidget *parent, void *dialog);
 void markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);

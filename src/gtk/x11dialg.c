@@ -310,9 +310,7 @@ response_callback_add(void *dialog, response_callback_func cb, response_callback
 static void
 multi_list_default_cb(GtkWidget *view, guint pos, gpointer user_data)
 {
-  struct SelectDialog *d;
-  d = (struct SelectDialog *) user_data;
-  gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
+  dialog_response(IDOK, user_data);
 }
 
 static int
@@ -506,10 +504,7 @@ SelectDialog(struct SelectDialog *data,
 static void
 single_list_default_cb(GtkColumnView *view, guint pos, gpointer user_data)
 {
-  struct CopyDialog *d;
-
-  d = (struct CopyDialog *) user_data;
-  gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
+  dialog_response(GTK_RESPONSE_OK, user_data);
 }
 
 static void
