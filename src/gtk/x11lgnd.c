@@ -212,7 +212,6 @@ struct legend_menu_update_data
   struct narray *array;
   struct objlist *obj;
   struct LegendDialog *dialog;
-  int i;
 };
 
 static  void
@@ -234,17 +233,21 @@ legend_menu_update_object_response2(struct response_callback *cb)
   struct objlist *obj;
   LEGEND_DIALOG_SETUP setup;
   struct LegendDialog *dialog;
-  int i, num, *data;
+  int id, num;
 
   ldata = (struct legend_menu_update_data *) cb->data;
   obj = ldata->obj;
   array = ldata->array;
   setup = ldata->setup;
   dialog = ldata->dialog;
-  i = ldata->i;
+
+  if (cb->return_value == IDDELETE) {
+    delobj(obj, dialog->Id);
+    set_graph_modified();
+  }
 
   num = arraynum(array);
-  if (i >= num -1) {
+  if (num < 1) {
     char *objs[2];
     objs[0] = obj->name;
     objs[1] = NULL;
@@ -252,22 +255,13 @@ legend_menu_update_object_response2(struct response_callback *cb)
     return;
   }
 
-  data = arraydata(array);
-  setup(dialog, obj, data[i]);
-  if (cb->return_value == IDDELETE) {
-    int j;
-    delobj(obj, data[i]);
-    set_graph_modified();
-    for (j = i + 1; j < num; j++) {
-      data[j]--;
-    }
-  }
+  id = arraypop_int (array);
+  setup(dialog, obj, id);
   ldata2 = g_memdup2(ldata, sizeof(*ldata));
   if (ldata2 == NULL) {
     return;
   }
   ldata->array = NULL;
-  ldata2->i += 1;
   response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
   DialogExecute(TopLevel, dialog);
 }
@@ -280,30 +274,27 @@ legend_menu_update_object_response(struct response_callback *cb)
   struct objlist *obj;
   LEGEND_DIALOG_SETUP setup;
   struct LegendDialog *dialog;
-  int i;
 
   ldata = (struct legend_menu_update_data *) cb->data;
   obj = ldata->obj;
   array = ldata->array;
   setup = ldata->setup;
   dialog = ldata->dialog;
-  i = ldata->i;
   if (cb->return_value == IDOK) {
     int num;
 
     num = arraynum(array);
     if (num > 0) {
       struct legend_menu_update_data *ldata2;
-      int *data;
+      int id;
       menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-      data = arraydata(array);
+      id = arraypop_int (array);
       ldata2 = g_memdup2(ldata, sizeof(*ldata));
       if (ldata2 == NULL) {
         return;
       }
       ldata->array = NULL;
-      ldata2->i = i + 1;
-      setup(dialog, obj, data[i]);
+      setup(dialog, obj, id);
       response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
       DialogExecute(TopLevel, dialog);
     }
@@ -325,7 +316,6 @@ legend_menu_update_data_new(struct objlist *obj, struct LegendDialog *dialog, LE
   data->array = array;
   data->obj = obj;
   data->setup = setup;
-  data->i = 0;
   return data;
 }
 
