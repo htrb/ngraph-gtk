@@ -47,12 +47,8 @@
 #define IDNO     4
 #define IDDELETE 101
 #define IDFAPPLY 102
-#define IDCOPY   103
-#define IDLOAD   104
 #define IDSAVE   105
-#define IDCLOSE  106
 #define IDSALL     201
-#define IDCOPYALL  202
 #define IDEVMASK   301
 #define IDEVMOVE   302
 
