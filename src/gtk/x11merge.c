@@ -340,37 +340,38 @@ CmMergeClose(void)
 
 struct merge_update_data
 {
-  int i, num, modified;
+  int undo, modified;
   struct narray *farray;
 };
 
 static void
 merge_update_response_response(struct response_callback *cb)
 {
-  int num, *array;
+  int num, id;
   struct merge_update_data *data;
   struct narray *farray;
 
   data = (struct merge_update_data *) cb->data;
-  data->i++;
-  num = data->num;
   farray = data->farray;
 
   if (cb->return_value != IDCANCEL) {
     data->modified = TRUE;
   }
 
-  if (data->i >= num) {
+  num = arraynum (farray);
+  if (num < 1) {
     if (data->modified) {
       MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    } else if (data->undo >= 0) {
+      menu_undo_internal(data->undo);
     }
     arrayfree(farray);
     g_free(data);
     return;
   }
 
-  array = arraydata(farray);
-  MergeDialog(NgraphApp.MergeWin.data.data, array[data->i], -1);
+  id = arraypop_int (farray);
+  MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
   response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
 }
@@ -381,7 +382,7 @@ merge_update_response(struct response_callback *cb)
   struct SelectDialog *d;
   struct narray *farray;
   struct objlist *obj;
-  int *array, num;
+  int id, num;
   struct merge_update_data *data;
   d = (struct SelectDialog *) cb->dialog;
   farray = d->sel;
@@ -392,8 +393,9 @@ merge_update_response(struct response_callback *cb)
   }
 
   num = arraynum(farray);
-  if (num > 0) {
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  if (num < 1) {
+    arrayfree(farray);
+    return;
   }
 
   data = g_malloc0(sizeof(*data));
@@ -402,13 +404,12 @@ merge_update_response(struct response_callback *cb)
     return;
   }
 
-  data->i = 0;
-  data->num = num;
   data->farray = farray;
   data->modified = FALSE;
+  data->undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
 
-  array = arraydata(farray);
-  MergeDialog(NgraphApp.MergeWin.data.data, array[0], -1);
+  id = arraypop_int (farray);
+  MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
   response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
 }
