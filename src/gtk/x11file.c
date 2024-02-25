@@ -4995,23 +4995,26 @@ CmFileClose(void)
 }
 
 static void
-update_file_obj_multi_response_all(struct objlist *obj, int *array, int top, int num, int id0, int new_file)
+update_file_obj_multi_response_all(struct objlist *obj, struct narray *array, int id0, int new_file)
 {
-  int i;
-  for (i = top; i < num; i++) {
-    copy_file_obj_field(obj, array[i], array[id0], FALSE);
+  int i, num, *data;
+  num = arraynum (array);
+  data = arraydata (array);
+  for (i = 0; i < num; i++) {
+    copy_file_obj_field(obj, data[i], id0, FALSE);
     if (new_file) {
       char *name = NULL;
-      getobj(obj, "file", array[i], 0, NULL, &name);
+      getobj(obj, "file", data[i], 0, NULL, &name);
       AddDataFileList(name);
     }
   }
 }
 
 struct update_file_obj_multi_data {
-  int i, num, *array, modified, undo, new_file;
+  int modified, undo, new_file;
   struct obj_list_data *data;
   struct objlist *obj;
+  struct narray *array;
   response_cb cb;
   gpointer user_data;
 };
@@ -5019,15 +5022,14 @@ struct update_file_obj_multi_data {
 static void
 update_file_obj_multi_response(struct response_callback *cb)
 {
-  int i, j, num, *array, id0, ret, undo, new_file;
+  int num, id0, ret, undo, new_file;
   char *name;
   struct obj_list_data *data;
   struct objlist *obj;
   struct update_file_obj_multi_data *rdata;
+  struct narray *array;
 
   rdata = (struct update_file_obj_multi_data *) cb->data;
-  i = rdata->i;
-  num = rdata->num;
   array = rdata->array;
   new_file = rdata->new_file;
   undo = rdata->undo;
@@ -5038,24 +5040,21 @@ update_file_obj_multi_response(struct response_callback *cb)
   if (ret == IDCANCEL && new_file) {
     ret = IDDELETE;
   }
+  id0 = ((struct FileDialog *) cb->dialog)->Id;
   switch (ret) {
   case IDDELETE:
-    delete_file_obj(data, array[i]);
+    delete_file_obj(data, id0);
     rdata->modified = TRUE;
     if (! new_file) {
       set_graph_modified();
     }
-    for (j = i + 1; j < num; j++) {
-      array[j]--;
-    }
     menu_delete_undo(undo);
     break;
   case IDFAPPLY:
-    id0 = i;
     /* fall-through */
   case IDOK:
     if (new_file) {
-      getobj(obj, "file", array[i], 0, NULL, &name);
+      getobj(obj, "file", id0, 0, NULL, &name);
       AddDataFileList(name);
     }
     menu_delete_undo(undo);
@@ -5066,14 +5065,16 @@ update_file_obj_multi_response(struct response_callback *cb)
     break;
   }
   if (ret == IDFAPPLY) {
-    update_file_obj_multi_response_all(obj, array, i + 1, num, id0, new_file);
+    update_file_obj_multi_response_all(obj, array, id0, new_file);
     rdata->cb(rdata->modified, rdata->user_data);
+    g_free(rdata);
     return;
   }
-  i++;
-  if (i < num) {
-    FileDialog(data, array[i], i < num - 1);
-    rdata->i = i;
+  num = arraynum (array);
+  if (num > 0) {
+    int id;
+    id = arraypop_int (array);
+    FileDialog(data, id, 0 < num - 1);
     cb->data = NULL;
     rdata->undo = data_save_undo(UNDO_TYPE_DUMMY);
     response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
@@ -5087,7 +5088,7 @@ update_file_obj_multi_response(struct response_callback *cb)
 void
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, response_cb cb, gpointer user_data)
 {
-  int num, *array, undo;
+  int id, num, undo;
   struct obj_list_data *data;
   struct update_file_obj_multi_data *rdata;
 
@@ -5096,8 +5097,6 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
     call_cb(0, cb, user_data);
     return;
   }
-
-  array = arraydata(farray);
 
   data_save_undo(UNDO_TYPE_EDIT);
   data = NgraphApp.FileWin.data.data;
@@ -5110,9 +5109,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
 
   undo = data_save_undo(UNDO_TYPE_DUMMY);
 
-  rdata->i = 0;
-  rdata->num = num;
-  rdata->array = array;
+  rdata->array = farray;
   rdata->modified = FALSE;
   rdata->undo = undo;
   rdata->new_file = new_file;
@@ -5121,7 +5118,8 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   rdata->cb = cb;
   rdata->user_data = user_data;
 
-  FileDialog(data, array[0], 0 < num - 1);
+  id = arraypop_int (farray);
+  FileDialog(data, id, 0 < num - 1);
   response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
   DialogExecute(TopLevel, data->dialog);
 }
