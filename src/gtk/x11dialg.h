@@ -147,7 +147,7 @@ struct FileDialog
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2, *alpha1, *alpha2, *math_input_tab,
     *clip, *style, *size, *miter, *join, *min, *max, *div,
-    *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
+    *comment_box, *file_box, *fit_table, *width, *comment_view, *comment_table;
   GtkNotebook *tab, *math_tab;
   struct objlist *Obj;
   int Id, source, math_page;

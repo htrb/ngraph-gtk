@@ -3131,7 +3131,6 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
     g_free(valstr);
   }
 
-  gtk_widget_set_sensitive(d->apply_all, d->multi_open);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
@@ -4230,7 +4229,9 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *w, *hbox, *view, *label;
-    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
+    if (d->multi_open) {
+      dialog_add_apply_all_button((struct DialogType *) d);
+    }
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -4324,7 +4325,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *w, *hbox, *view, *label, *swin;
-    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
+    if (d->multi_open) {
+      dialog_add_apply_all_button((struct DialogType *) d);
+    }
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -4387,7 +4390,9 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *table, *label;
     int i;
-    d->apply_all = dialog_add_apply_all_button((struct DialogType *) d);
+    if (d->multi_open) {
+      dialog_add_apply_all_button((struct DialogType *) d);
+    }
 
     table = gtk_grid_new();
 
