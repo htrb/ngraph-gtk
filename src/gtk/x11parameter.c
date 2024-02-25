@@ -532,21 +532,21 @@ struct parameter_update_data
 {
   struct obj_list_data *d;
   struct narray *farray;
-  int i, num, undo, modified;
+  int undo, modified;
 };
 
 static void
 cm_parameter_update_response_response(struct response_callback *cb)
 {
   struct narray *farray;
-  int *array;
+  int num, id;
   struct parameter_update_data *data;
 
   data = (struct parameter_update_data *) cb->data;
   farray = data->farray;
 
-  data->i++;
-  if (data->i >= data->num) {
+  num = arraynum (farray);
+  if (num < 1) {
     if (data->modified) {
       update_parameter(data->d);
     } else if (data->undo >= 0) {
@@ -560,8 +560,8 @@ cm_parameter_update_response_response(struct response_callback *cb)
   if (cb->return_value == IDOK) {
     data->modified = TRUE;
   }
-  array = arraydata(farray);
-  ParameterDialog(data->d, array[data->i], -1);
+  id = arraypop_int (farray);
+  ParameterDialog(data->d, id, -1);
   response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgParameter);
 }
@@ -571,8 +571,9 @@ cm_parameter_update_response(struct response_callback *cb)
 {
   struct obj_list_data *d;
   struct narray *farray;
-  int num, *array;
+  int num;
   struct parameter_update_data *data;
+  int id;
 
   farray = (struct narray *) cb->data;
   d = NgraphApp.ParameterWin.data.data;
@@ -592,14 +593,12 @@ cm_parameter_update_response(struct response_callback *cb)
   }
 
   data->modified = FALSE;
-  data->num = num;
   data->farray = farray;
   data->d = d;
-  data->i = 0;
   data->undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
 
-  array = arraydata(farray);
-  ParameterDialog(d, array[0], -1);
+  id = arraypop_int (farray);
+  ParameterDialog(d, id, -1);
   response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgParameter);
 }
