@@ -3023,38 +3023,29 @@ CmAxisGridDel(void)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-struct axis_grid_update_data {
-  int i, num;
-  struct narray *farray;
-};
-
 static void
 axis_grid_update_update_response(struct response_callback *cb)
 {
-  struct axis_grid_update_data *data;
+  struct narray *farray;
   struct GridDialog *d;
   struct objlist *obj;
-  int *array;
-  data = cb->data;
-  array = arraydata(data->farray);
+  int num;
+  farray = cb->data;
   d = (struct GridDialog *) cb->dialog;
   obj = d->Obj;
   if (cb->return_value == IDDELETE) {
-    int j;
-    delobj(obj, array[data->i]);
+    delobj(obj, d->Id);
     set_graph_modified();
-    for (j = data->i + 1; j < data->num; j++) {
-      array[j]--;
-    }
   }
-  data->i++;
-  if (data->i >= data->num) {
+  num = arraynum (farray);
+  if (num < 1) {
     update_viewer_axisgrid();
-    arrayfree(data->farray);
-    g_clear_pointer(&cb->data, g_free);
+    arrayfree(farray);
   } else {
-    GridDialog(&DlgGrid, obj, array[data->i]);
-    response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
+    int id;
+    id = arraypop_int (farray);
+    GridDialog(&DlgGrid, obj, id);
+    response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, farray);
     DialogExecute(TopLevel, &DlgGrid);
   }
 }
@@ -3065,26 +3056,25 @@ axis_grid_update_response(struct response_callback *cb)
   struct SelectDialog *d;
   struct objlist *obj;
   struct narray *farray;
+  int id, num;
 
   d = (struct SelectDialog *) cb->dialog;
   obj = d->Obj;
   farray = d->sel;
-  if (cb->return_value == IDOK) {
-    int *array, num;
-    struct axis_grid_update_data *data;
-    num = arraynum(farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
-    }
-    array = arraydata(farray);
-    data = g_malloc0(sizeof(*data));
-    data->num = num;
-    data->i = 0;
-    data->farray = farray;
-    GridDialog(&DlgGrid, obj, array[0]);
-    response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
-    DialogExecute(TopLevel, &DlgGrid);
+  if (cb->return_value != IDOK) {
+    arrayfree (farray);
+    return;
   }
+  num = arraynum(farray);
+  if (num < 1) {
+    arrayfree (farray);
+    return;
+  }
+  menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
+  id = arraypop_int (farray);
+  GridDialog(&DlgGrid, obj, id);
+  response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, farray);
+  DialogExecute(TopLevel, &DlgGrid);
 }
 
 void
