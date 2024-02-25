@@ -1708,7 +1708,7 @@ LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
   data->cwd = g_strdup(cwd);
 
   response_callback_add(&DlgLoad, LoadNgpFile_response, NULL, data);
-  LoadDialog(&DlgLoad);
+  LoadDialog(&DlgLoad, file);
   DialogExecute(TopLevel, &DlgLoad);
 }
 

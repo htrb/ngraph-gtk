@@ -996,6 +996,8 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_append(GTK_BOX(d->vbox), vbox);
   }
+  gtk_window_set_title(GTK_WINDOW(wi), d->file);
+  g_clear_pointer (&d->file, g_free);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->expand_file), d->expand);
   combo_box_set_active(d->load_path, d->loadpath);
   folder_chooser_button_set_folder(d->dir, d->exdir);
@@ -1022,11 +1024,12 @@ LoadDialogClose(GtkWidget *w, void *data)
 }
 
 void
-LoadDialog(struct LoadDialog *data)
+LoadDialog(struct LoadDialog *data, const char *file)
 {
   data->SetupWindow = LoadDialogSetup;
   data->CloseWindow = LoadDialogClose;
   data->expand = Menulocal.expand;
+  data->file = getbasename(file);
   if (data->exdir) {
     g_free(data->exdir);
   }

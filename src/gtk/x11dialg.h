@@ -431,11 +431,11 @@ struct LoadDialog
   /****** local member *******/
   GtkWidget *expand_file, *load_path, *dir;
   int expand;
-  char *exdir;
+  char *exdir, *file;
   int loadpath;
   int Id;
 };
-void LoadDialog(struct LoadDialog *data);
+void LoadDialog(struct LoadDialog *data, const char *file);
 
 struct SaveDialog
 {
