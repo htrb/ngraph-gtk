@@ -217,7 +217,10 @@ dialog_response_delete (struct DialogType *data)
 GtkWidget *
 dialog_add_delete_button (struct DialogType *data)
 {
-  return dialog_add_button (data, _("_Delete"), dialog_response_delete);
+  GtkWidget *btn;
+  btn = dialog_add_button (data, _("_Delete"), dialog_response_delete);
+  gtk_widget_add_css_class (btn, "destructive-action");
+  return btn;
 }
 
 static void
