@@ -285,13 +285,16 @@ DialogExecute(GtkWidget *parent, void *dialog)
 {
   GtkWidget *dlg, *parent_window;
   struct DialogType *data;
+  int w, h;
 
   data = (struct DialogType *) dialog;
 
   data->lockstate = DnDLock;
   DnDLock = TRUE;
 
+  w = h = 0;
   if (data->widget) {
+    gtk_window_get_default_size (GTK_WINDOW (data->widget), &w, &h);
     gtk_window_destroy (GTK_WINDOW (data->widget));
     data->widget = NULL;
   }
@@ -336,6 +339,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
     class = G_OBJECT_GET_CLASS(dlg);
     widget_class = GTK_WIDGET_CLASS (class);
     gtk_widget_class_add_binding (widget_class, GDK_KEY_Escape, 0, dialog_escape, NULL);
+    if (w && h) {
+      gtk_window_set_default_size (GTK_WINDOW (data->widget), w, h);
+    }
   } else {
     dlg = data->widget;
     data->SetupWindow(dlg, data, FALSE);
