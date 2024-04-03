@@ -13,19 +13,19 @@ MO_FILES="gtk30.mo ngraph-gtk.mo"
 
 VERSION=`basename $ARCHIVE '.tar.gz' | sed -e 's/ngraph-gtk-//'`
 
-BINFILES="libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll
-libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-8.dll
-libfontconfig-1.dll libfreetype-6.dll libgdk_pixbuf-2.0-0.dll
-libgdk-3-0.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll
-libgobject-2.0-0.dll libgraphite2.dll libgsl-27.dll libgslcblas-0.dll
-libgtk-3-0.dll libharfbuzz-0.dll libiconv-2.dll libintl-8.dll
-libpango-1.0-0.dll libfribidi-0.dll libgtksourceview-4-0.dll
-libpangocairo-1.0-0.dll libbrotlidec.dll libbrotlicommon.dll
+BINFILES=" libatk-1.0-0.dll libbrotlicommon.dll libbrotlidec.dll
+libbz2-1.dll libcairo-2.dll libcairo-gobject-2.dll libdatrie-1.dll
+libepoxy-0.dll libexpat-1.dll libffi-8.dll libfontconfig-1.dll
+libfreetype-6.dll libfribidi-0.dll libgdk-3-0.dll
+libgdk_pixbuf-2.0-0.dll libgio-2.0-0.dll libglib-2.0-0.dll
+libgmodule-2.0-0.dll libgobject-2.0-0.dll libgraphite2.dll
+libgsl-27.dll libgslcblas-0.dll libgtk-3-0.dll
+libgtksourceview-4-0.dll libharfbuzz-0.dll libiconv-2.dll
+libintl-8.dll liblzma-5.dll libpango-1.0-0.dll libpangocairo-1.0-0.dll
 libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre2-8-0.dll
-libpixman-1-0.dll libpng16-16.dll libtermcap-0.dll
-libwinpthread-1.dll zlib1.dll liblzma-5.dll libthai-0.dll
-libdatrie-1.dll libreadline8.dll libpdcurses.dll librsvg-2-2.dll
-libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
+libpdcurses.dll libpixman-1-0.dll libpng16-16.dll libreadline8.dll
+librsvg-2-2.dll libtermcap-0.dll libthai-0.dll libwinpthread-1.dll
+libxml2-2.dll zlib1.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
 
 BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe libstdc++-6.dll"
 BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe libstdc++-6.dll"
