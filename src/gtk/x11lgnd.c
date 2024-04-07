@@ -1922,9 +1922,6 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   legend_dialog_setup_item(wi, d, d->Id);
-
-  if (makewidget)
-    d->widget = NULL;
 }
 
 void
