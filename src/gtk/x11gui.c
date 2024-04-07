@@ -280,24 +280,29 @@ dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
   return TRUE;
 }
 
+#define DESTROY_DIALOG 1
 void
 DialogExecute(GtkWidget *parent, void *dialog)
 {
   GtkWidget *dlg, *parent_window;
   struct DialogType *data;
+#if DESTROY_DIALOG
   int w, h;
+#endif
 
   data = (struct DialogType *) dialog;
 
   data->lockstate = DnDLock;
   DnDLock = TRUE;
 
+#if DESTROY_DIALOG
   w = h = 0;
   if (data->widget) {
     gtk_window_get_default_size (GTK_WINDOW (data->widget), &w, &h);
     gtk_window_destroy (GTK_WINDOW (data->widget));
     data->widget = NULL;
   }
+#endif
 
   if (data->widget == NULL) {
     GtkWidgetClass *widget_class;
@@ -339,9 +344,11 @@ DialogExecute(GtkWidget *parent, void *dialog)
     class = G_OBJECT_GET_CLASS(dlg);
     widget_class = GTK_WIDGET_CLASS (class);
     gtk_widget_class_add_binding (widget_class, GDK_KEY_Escape, 0, dialog_escape, NULL);
+#if DESTROY_DIALOG
     if (w && h) {
       gtk_window_set_default_size (GTK_WINDOW (data->widget), w, h);
     }
+#endif
   } else {
     dlg = data->widget;
     data->SetupWindow(dlg, data, FALSE);
