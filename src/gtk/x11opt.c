@@ -607,7 +607,7 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 
   g_signal_connect(dialog, "response", G_CALLBACK(FontSettingDialogAddAlternative_response), d);
   gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-  gtk_widget_show(dialog);
+  gtk_window_present(GTK_WINDOW (dialog));
 }
 
 static void
