@@ -2513,7 +2513,7 @@ create_toplevel_window(void)
   initdialog();
 
   setup_toolbar(TopLevel);
-  gtk_widget_show(GTK_WIDGET(TopLevel));
+  gtk_window_present(GTK_WINDOW(TopLevel));
   setupwindow(GtkApp);
   add_accelerator(GtkApp, accelerator, G_N_ELEMENTS(accelerator));
   create_addin_menu();
@@ -2521,7 +2521,7 @@ create_toplevel_window(void)
   NgraphApp.FileName = NULL;
   NgraphApp.Viewer.Mode = PointB;
 
-  gtk_widget_show(GTK_WIDGET(TopLevel));
+  gtk_window_present(GTK_WINDOW(TopLevel));
   ViewerWinSetup();
 
   if (create_cursor())
