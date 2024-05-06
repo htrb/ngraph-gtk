@@ -625,7 +625,7 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
   data->buttons = buttons;
   data->res_btn = res_btn;
   g_signal_connect(dlg, "response", G_CALLBACK(input_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 struct radio_dialog_data {
@@ -740,7 +740,7 @@ radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   data->anum = anum;
   data->btn_ary = btn_ary;
   g_signal_connect(dlg, "response", G_CALLBACK(radio_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 static int
@@ -818,7 +818,7 @@ button_dialog(GtkWidget *parent, const char *title, const char *caption, struct 
   data->cb = cb;
   data->data = user_data;
   g_signal_connect(dlg, "response", G_CALLBACK(button_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 struct combo_dialog_data {
@@ -913,7 +913,7 @@ combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   data->buttons = buttons;
   data->data = user_data;
   g_signal_connect(dlg, "response", G_CALLBACK(combo_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 static void
@@ -996,7 +996,7 @@ combo_entry_dialog(GtkWidget *parent, const char *title, const char *caption, st
   data->buttons = buttons;
   data->data = user_data;
   g_signal_connect(dlg, "response", G_CALLBACK(combo_entry_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 struct spin_dialog_data {
@@ -1095,7 +1095,7 @@ spin_dialog(GtkWidget *parent, const char *title, const char *caption, double mi
   data->buttons = buttons;
   data->res_btn = res_btn;
   g_signal_connect(dlg, "response", G_CALLBACK(spin_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 struct check_dialog_data {
@@ -1193,7 +1193,7 @@ check_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
   data->buttons = buttons;
   data->res_btn = res_btn;
   g_signal_connect(dlg, "response", G_CALLBACK(check_dialog_response), data);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 #define FILE_CHOOSER_OPTION_CHDIR "chdir"
@@ -1435,7 +1435,7 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     g_free(fname);
   }
 
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 static void
