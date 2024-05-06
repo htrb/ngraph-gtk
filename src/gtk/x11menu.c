@@ -1068,7 +1068,7 @@ main_loop_quit_cb(gpointer client_data)
 static void
 main_loop_quit(void)
 {
-  gtk_widget_hide(TopLevel);
+  gtk_widget_set_visible(TopLevel, FALSE);
   g_idle_add_once(main_loop_quit_cb, NULL);
 }
 
