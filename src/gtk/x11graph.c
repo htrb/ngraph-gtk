@@ -878,7 +878,7 @@ folder_chooser_button_clicked(GtkWidget *self, gpointer user_data)
     gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), folder, NULL);
     g_object_unref (folder);
   }
-  gtk_widget_show (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
   g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), user_data);
 }
 
