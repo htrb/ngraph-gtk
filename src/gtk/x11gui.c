@@ -151,7 +151,7 @@ dialog_response(gint res_id, struct DialogType *data)
   //  gtk_widget_destroy(dlg);
   //  data->widget = NULL;
   set_current_window(data->win_ptr);
-  gtk_widget_hide(dlg);
+  gtk_widget_set_visible(dlg, FALSE);
 
   DnDLock = data->lockstate;
 
