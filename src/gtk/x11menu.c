@@ -1607,7 +1607,7 @@ create_object_tabs(void)
 
   set_pane_position();
   if (Menulocal.sidebar) {
-    gtk_widget_show(NgraphApp.Viewer.side_pane1);
+    gtk_widget_set_visible(NgraphApp.Viewer.side_pane1, TRUE);
   }
 }
 
