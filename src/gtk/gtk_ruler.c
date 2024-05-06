@@ -217,8 +217,10 @@ nruler_make_pixmap(Nruler *ruler, GtkWidget *widget, GtkWidget *parent)
     return;
   }
 
-  gtk_widget_get_allocation(widget, &allocation);
-  gtk_widget_get_allocation(parent, &parent_allocation);
+  allocation.width = gtk_widget_get_width (widget);
+  allocation.height = gtk_widget_get_height (widget);
+  parent_allocation.width = gtk_widget_get_width (parent);
+  parent_allocation.height = gtk_widget_get_height (parent);
 
   if (ruler->orientation == GTK_ORIENTATION_HORIZONTAL) {
     ruler->length = parent_allocation.width;
