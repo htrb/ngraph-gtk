@@ -282,7 +282,8 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
     return;
   }
 
-  gtk_widget_get_allocation(widget, &allocation);
+  allocation.width = gtk_widget_get_width (widget);
+  allocation.height = gtk_widget_get_height (widget);
 
   layout = gtk_widget_create_pango_layout(widget, "012456789");
   fs = pango_font_description_new();
