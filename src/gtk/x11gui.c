@@ -366,9 +366,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->win_ptr = get_current_window();
   set_current_window(dlg);
 #if 1
-  g_idle_add_once ((GSourceOnceFunc) gtk_widget_show, dlg);
+  g_idle_add_once ((GSourceOnceFunc) gtk_window_present, dlg);
 #else
-  gtk_widget_show (dlg);
+  gtk_window_present (GTK_WINDOW (dlg));
 #endif
 }
 
