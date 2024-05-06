@@ -1180,7 +1180,7 @@ edit_custom_palette(GtkWidget *w, gpointer data)
   d->palette = btns;
   gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
   g_signal_connect(dialog, "response", G_CALLBACK(edit_custom_palette_dialog_response), d);
-  gtk_widget_show(dialog);
+  gtk_window_present(GTK_WINDOW (dialog));
 }
 
 static void
