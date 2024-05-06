@@ -2628,7 +2628,7 @@ application(char *file)
     if (gtk_widget_is_visible(TopLevel)) {
       return 1;
     }
-    gtk_widget_show(TopLevel);
+    gtk_window_present(GTK_WINDOW (TopLevel));
     OpenGC();
     OpenGRA();
   } else {
