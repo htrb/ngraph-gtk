@@ -463,7 +463,8 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr)
   GtkAllocation allocation;
   GdkRGBA fg;
 
-  gtk_widget_get_allocation(widget, &allocation);
+  allocation.width = gtk_widget_get_width (widget);
+  allocation.height = gtk_widget_get_height (widget);
 
   if (! gtk_widget_is_drawable(widget)) {
     return;
