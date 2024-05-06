@@ -45,8 +45,6 @@ typedef struct _Nruler {
   double lower, upper, position;
   double save_l, save_u;
   GtkWidget *widget, *parent;
-  GtkStyleContext *saved_style;
-  GdkRGBA saved_fg;
 } Nruler;
 
 struct _NrulerMetric
@@ -71,7 +69,7 @@ static void nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer use
 static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
-static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
+static void nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg);
 
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
@@ -104,7 +102,6 @@ nruler_new(GtkOrientation orientation)
   ruler->orientation = orientation;
   ruler->widget = w;
   ruler->parent = frame;
-  ruler->saved_style = NULL;
 
   g_object_set_data(G_OBJECT(frame), RULER_DATA_KEY, ruler);
 
@@ -271,8 +268,7 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   PangoRectangle logical_rect, ink_rect;
   PangoFontDescription *fs;
   GtkAllocation allocation;
-  GdkRGBA fg;
-  GtkStyleContext *context;
+  GdkRGBA fg, bg;
 
   if (! gtk_widget_is_drawable(widget)) {
     return;
@@ -295,10 +291,11 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 
   digit_height = PANGO_PIXELS(ink_rect.height) + 2;
 
-  context = nruler_get_color(ruler, &fg);
+  nruler_get_color(ruler, &fg, &bg);
   cr = cairo_create(ruler->backing_store);
-  gtk_render_background(context, cr,
-			0, 0, allocation.width, allocation.height);
+  gdk_cairo_set_source_rgba(cr, &bg);
+  cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
+  cairo_fill (cr);
   gdk_cairo_set_source_rgba(cr, &fg);
 
   if (ruler->orientation == GTK_ORIENTATION_HORIZONTAL) {
@@ -426,32 +423,18 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 }
 
 static void
-style_changed(GtkWidget *w, GtkCssStyleChange *change)
+nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg)
 {
-  Nruler *ruler;
+  static GdkRGBA white = {0.9, 0.9, 0.9, 1.0}, black = {0.2, 0.2, 0.2, 1.0};
+  GdkRGBA theme;
 
-  ruler = g_object_get_data(G_OBJECT(w), RULER_DATA_KEY);
-  if (ruler) {
-    gtk_style_context_get_color(ruler->saved_style, &ruler->saved_fg);
-    ruler->save_l = ruler->lower + 1; /* to draw ticks automatically */
+  gtk_widget_get_color(ruler->widget, &theme);
+  if (fg) {
+    *fg = (theme.red > 0.8) ? white : black;
   }
-}
-
-static GtkStyleContext *
-nruler_get_color(Nruler *ruler, GdkRGBA *fg)
-{
-  if (ruler->saved_style == NULL) {
-    ruler->saved_style = gtk_widget_get_style_context(TopLevel);
-    gtk_style_context_get_color(ruler->saved_style, &ruler->saved_fg);
-    GTK_WIDGET_GET_CLASS(ruler->parent)->css_changed = style_changed;
+  if (bg) {
+    *bg = (theme.red > 0.8) ? black : white;
   }
-
-  if (fg == NULL) {
-    return ruler->saved_style;
-  }
-
-  *fg = ruler->saved_fg;
-  return ruler->saved_style;
 }
 
 static void
@@ -509,7 +492,7 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr)
     y = nround((ruler->position - ruler->lower) * increment) - bs_height / 2 - ruler->ofst;
   }
 
-  nruler_get_color(ruler, &fg);
+  nruler_get_color(ruler, &fg, NULL);
   gdk_cairo_set_source_rgba(cr, &fg);
 
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
