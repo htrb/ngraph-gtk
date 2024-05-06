@@ -2463,7 +2463,7 @@ progress_dialog_set_text(gpointer user_data)
     return;
   }
 
-  gtk_widget_show(ProgressFrame);
+  gtk_widget_set_visible(ProgressFrame, TRUE);
 
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
   gtk_text_buffer_get_end_iter(buf, &iter);
