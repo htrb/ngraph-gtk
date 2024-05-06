@@ -2510,8 +2510,8 @@ ProgressDialogCreate(char *title, progress_func update, progress_func finalize, 
   ProgressDialogData->finalize = finalize;
   ProgressDialogData->finish = FALSE;
   create_progress_dialog(title);
-  gtk_widget_show(ProgressDialog);
-  gtk_widget_hide(ProgressFrame);
+  gtk_window_present(GTK_WINDOW(ProgressDialog));
+  gtk_widget_set_visible(ProgressFrame, FALSE);
   gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_Stop"));
   ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);
 
