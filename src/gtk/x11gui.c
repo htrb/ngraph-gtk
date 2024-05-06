@@ -102,7 +102,7 @@ ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
     g_signal_connect(dlg, "response", cb, user_data);
   }
   gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
-  gtk_widget_show(dlg);
+  gtk_window_present(GTK_WINDOW (dlg));
 }
 
 static void
