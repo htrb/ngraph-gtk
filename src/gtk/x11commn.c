@@ -2525,7 +2525,7 @@ ProgressDialogFinalize(void)
   if (TopLevel == NULL)
     return;
 
-  gtk_widget_hide(ProgressDialog);
+  gtk_widget_set_visible(ProgressDialog, FALSE);
   NSetCursor(SaveCursor);
   set_progress_func(NULL);
 
