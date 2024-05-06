@@ -443,7 +443,6 @@ gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   if (local->mainwin == NULL)
     return 1;
 
-  gtk_widget_show(local->mainwin);
   gtk_window_present(GTK_WINDOW(local->mainwin));
 
   if (main_loop_is_running()) {
