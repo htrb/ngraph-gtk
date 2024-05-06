@@ -2384,7 +2384,7 @@ create_progress_dialog(const char *title)
     GtkTextBuffer *buf;
     buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
     gtk_text_buffer_set_text(buf, "", -1);
-    gtk_widget_hide(ProgressDialog);
+    gtk_widget_set_visible(ProgressDialog, FALSE);
 
     ProgressDialogSetTitle(title);
     show_progress(0, "", 0);
