@@ -1479,6 +1479,13 @@ update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointe
   d = (struct Viewer *) user_data;
 
   if (! d->drag_prm.active) {
+    TPoint point;
+    GdkModifierType state;
+
+    state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+    point.x = d->drag_prm.mx + offset_x;
+    point.y = d->drag_prm.my + offset_y;
+    ViewerEvMouseMove(state, &point, d);
     return;
   }
 
