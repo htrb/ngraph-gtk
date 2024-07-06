@@ -1501,6 +1501,7 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
   case LegendB:
   case AxisB:
   case ZoomB:
+    NSetCursor(get_mouse_cursor_type(d, start_x, start_y));
     cursor = get_mouse_cursor_type(d, start_x, start_y);
     d->drag_prm.active = (cursor == GDK_LEFT_PTR);
     break;
