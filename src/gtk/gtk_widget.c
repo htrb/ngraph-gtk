@@ -954,7 +954,7 @@ set_widget_font(GtkWidget *w, const char *font)
     return;
   }
 
-  gtk_css_provider_load_from_data(css_provider, css_str, -1);
+  gtk_css_provider_load_from_string(css_provider, css_str);
   g_free(css_str);
   gtk_style_context_add_provider(gtk_widget_get_style_context(w),
 				 GTK_STYLE_PROVIDER(css_provider),
