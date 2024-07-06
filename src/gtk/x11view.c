@@ -1509,6 +1509,8 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
   }
   d->drag_prm.x = scrollbar_get_value(d->HScroll);
   d->drag_prm.y = scrollbar_get_value(d->VScroll);
+  d->drag_prm.mx = start_x;
+  d->drag_prm.my = start_y;
 }
 
 static void
