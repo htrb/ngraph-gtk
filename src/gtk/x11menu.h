@@ -163,7 +163,7 @@ struct ZoomPrm {
 struct DragPrm {
   int x, y;
   int active;
-  double vx, vy;
+  double vx, vy, mx, my;
 };
 
 struct DecelerationPrm
