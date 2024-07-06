@@ -1526,10 +1526,16 @@ end_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer use
 static void
 long_press_cb(GtkGesture *gesture, gdouble x, gdouble y, gpointer user_data)
 {
-  GdkEventSequence *sequence;
+  struct Viewer *d;
+  TPoint point;
+  GdkModifierType state;
 
-  sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
-  gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
+  state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+  d = (struct Viewer *) user_data;
+  d->drag_prm.active = FALSE;
+  point.x = x;
+  point.y = y;
+  ViewerEvLButtonDown(state, &point, d);
 }
 
 static void
