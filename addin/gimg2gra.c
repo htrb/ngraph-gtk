@@ -127,7 +127,7 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
     print_error_exit(error->message);
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
-  w = gtk_picture_new_for_pixbuf(pixbuf);
+  w = gtk_picture_new_for_filename(img_file);
   gtk_picture_set_can_shrink(GTK_PICTURE(w), FALSE);
 #if GTK_CHECK_VERSION(4, 8, 0)
   gtk_picture_set_content_fit(GTK_PICTURE(w), GTK_CONTENT_FIT_SCALE_DOWN);
