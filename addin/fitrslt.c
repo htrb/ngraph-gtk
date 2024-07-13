@@ -803,7 +803,7 @@ main(int argc, char **argv)
 
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(mainwin);
+  gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
 #else
   gtk_widget_show_all(mainwin);
