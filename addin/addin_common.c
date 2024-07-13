@@ -305,3 +305,42 @@ fgets_str(FILE *fp)
 
   return str;
 }
+
+static gboolean
+dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
+{
+  gtk_window_destroy (GTK_WINDOW (widget));
+  return TRUE;
+}
+
+GtkWidget *
+dialog_new(const char *title, GCallback cancel_cb, GCallback *ok_cb, gpointer user_data)
+{
+  GtkWidget *mainwin, *headerbar, *ok, *cancel, *label;
+  GObjectClass *class;
+  GtkWidgetClass *widget_class;
+
+  mainwin = gtk_window_new ();
+  headerbar = gtk_header_bar_new ();
+  label = gtk_label_new (title);
+  gtk_header_bar_set_title_widget (GTK_HEADER_BAR (headerbar), label);
+  gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (headerbar), FALSE);
+  gtk_window_set_titlebar (GTK_WINDOW (mainwin), headerbar);
+
+  cancel = gtk_button_new_with_mnemonic ("_Cancel");
+  g_signal_connect(cancel, "clicked", G_CALLBACK(cancel_cb), user_data);
+  gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), cancel);
+
+  ok = gtk_button_new_with_mnemonic ("_Ok");
+  gtk_widget_add_css_class (ok, "suggested-action");
+  g_signal_connect(ok, "clicked", G_CALLBACK(ok_cb), user_data);
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), ok);
+
+  gtk_window_set_default_widget (GTK_WINDOW (mainwin), ok);
+
+  class = G_OBJECT_GET_CLASS(mainwin);
+  widget_class = GTK_WIDGET_CLASS (class);
+  gtk_widget_class_add_binding (widget_class, GDK_KEY_Escape, 0, dialog_escape, NULL);
+
+  return mainwin;
+}
