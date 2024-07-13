@@ -203,7 +203,7 @@ create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
+dialog_response(GObject* self, GAsyncResult* res, gpointer user_data)
 {
   g_main_loop_quit(MainLoop);
 }
@@ -212,24 +212,10 @@ dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
 static void
 print_error_exit(const gchar *error)
 {
-  GtkWidget *dialog;
+  GtkAlertDialog *dialog;
 
-  dialog = gtk_message_dialog_new(GTK_WINDOW(App),
-				  GTK_DIALOG_DESTROY_WITH_PARENT,
-				  GTK_MESSAGE_ERROR,
-				  GTK_BUTTONS_CLOSE,
-				  "Error loading file %s",
-				  error);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-  g_signal_connect(dialog, "response", G_CALLBACK(dialog_response), NULL);
-  gtk_widget_show(dialog);
-#else
-  gtk_dialog_run(GTK_DIALOG(dialog));
-  gtk_widget_destroy(dialog);
-
-  exit(1);
-#endif
+  dialog = gtk_alert_dialog_new ("Error loading file\n%s", error);
+  gtk_alert_dialog_choose (dialog, GTK_WINDOW (App), NULL, dialog_response, NULL);
 }
 
 static void
