@@ -13,7 +13,7 @@
 #define FONT_SCRIPT   70.00
 #define FONT_SPACE     0.00
 
-static char *FontList[] = {"Serif",  "Sans-serif", "Monospace", NULL};
+static const char *FontList[] = {"Serif",  "Sans-serif", "Monospace", NULL};
 
 GtkWidget *
 create_text_entry(int set_default_action)
