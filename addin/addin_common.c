@@ -314,7 +314,7 @@ dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
 }
 
 GtkWidget *
-dialog_new(const char *title, GCallback cancel_cb, GCallback *ok_cb, gpointer user_data)
+dialog_new(const char *title, GCallback cancel_cb, GCallback ok_cb, gpointer user_data)
 {
   GtkWidget *mainwin, *headerbar, *ok, *cancel, *label;
   GObjectClass *class;
