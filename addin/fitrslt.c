@@ -742,22 +742,25 @@ get_opt(int argc, char **argv, struct fit_prm *prm)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
+dialog_response_cancel(GtkDialog* self, gpointer user_data)
 {
-  struct fit_prm *prm;
-  prm = user_data;
-  if (response_id == GTK_RESPONSE_ACCEPT) {
-    savescript(prm);
-  }
-  gtk_window_destroy(GTK_WINDOW(self));
   g_main_loop_quit(MainLoop);
+}
+
+static void
+dialog_response_ok(GtkDialog* self, gpointer user_data)
+{
+  struct file_prm *prm;
+  prm = user_data;
+  savescript(prm);
+  dialog_response_cancel(self, user_data);
 }
 #endif
 
 int
 main(int argc, char **argv)
 {
-  GtkWidget *mainwin;
+  GtkWidget *mainwin, *vbox;
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gint r;
 #endif
@@ -784,15 +787,12 @@ main(int argc, char **argv)
     return 0;
   }
 
-  mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					"_Cancel",
-					GTK_RESPONSE_REJECT,
-					"_OK",
-					GTK_RESPONSE_ACCEPT,
-					NULL);
-  gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);
+  mainwin = dialog_new (NAME, G_CALLBACK (dialog_response_cancel), G_CALLBACK (dialog_response_ok), &prm);
+  g_signal_connect(mainwin, "destroy", G_CALLBACK(dialog_response_cancel), &prm);
   prm.window = mainwin;
-  create_widgets(gtk_dialog_get_content_area(GTK_DIALOG(mainwin)), &prm);
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  gtk_window_set_child (GTK_WINDOW (mainwin), vbox);
+  create_widgets(vbox, &prm);
 
   g_signal_connect(prm.combo, "changed", G_CALLBACK(file_changed), &prm);
   g_signal_connect(prm.add_plus, "toggled", G_CALLBACK(file_changed), &prm);
@@ -803,7 +803,6 @@ main(int argc, char **argv)
 
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  g_signal_connect(mainwin, "response", G_CALLBACK(dialog_response), &prm);
   gtk_widget_show(mainwin);
   g_main_loop_run(MainLoop);
 #else
