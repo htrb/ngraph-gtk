@@ -13,7 +13,7 @@
 #define FONT_SCRIPT   70.00
 #define FONT_SPACE     0.00
 
-static char *FontList[] = {"Serif",  "Sans-serif", "Monospace"};
+static char *FontList[] = {"Serif",  "Sans-serif", "Monospace", NULL};
 
 GtkWidget *
 create_text_entry(int set_default_action)
@@ -135,9 +135,9 @@ const char *
 get_selected_font(struct font_prm *prm)
 {
   int font, i;
-  i = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->font));
+  i = gtk_drop_down_get_selected(GTK_DROP_DOWN(prm->font));
 
-  font = (i >= 1 && i < (int) (sizeof(FontList) / sizeof(*FontList))) ? i : 0;
+  font = (i >= 1 && i < (int) (sizeof(FontList) / sizeof(*FontList) - 1)) ? i : 0;
 
   return FontList[font];
 }
@@ -182,11 +182,9 @@ create_font_frame(struct font_prm *prm)
   table = gtk_grid_new();
   j = 0;
 
-  w = gtk_combo_box_text_new();
-  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(w), FontList[i]);
-  }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(w), 1);
+  w = gtk_drop_down_new_from_strings (FontList);
+
+  gtk_drop_down_set_selected (GTK_DROP_DOWN (w), 1);
   add_widget_to_table_sub(table, w, "_Font:", TRUE, 0, 1, j++);
   prm->font = w;
 
