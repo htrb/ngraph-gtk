@@ -750,7 +750,7 @@ dialog_response_cancel(GtkDialog* self, gpointer user_data)
 static void
 dialog_response_ok(GtkDialog* self, gpointer user_data)
 {
-  struct file_prm *prm;
+  struct fit_prm *prm;
   prm = user_data;
   savescript(prm);
   dialog_response_cancel(self, user_data);
