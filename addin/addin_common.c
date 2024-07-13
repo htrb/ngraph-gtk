@@ -174,7 +174,7 @@ GtkWidget *
 create_font_frame(struct font_prm *prm)
 {
   GtkWidget *frame, *w, *table, *hbox, *vbox;
-  unsigned int j, i;
+  unsigned int j;
   GdkRGBA color;
   GtkColorDialog *color_dialog;
 
