@@ -44,7 +44,7 @@ static GtkWidget *App = NULL;
 static GMainLoop *MainLoop;
 #endif
 
-static GtkWidget *create_widgets(struct AppData *app_data, const gchar *img_file);
+static void create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file);
 static void print_error_exit(const gchar *error);
 static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 
@@ -81,6 +81,8 @@ main(int argc, char *argv[])
 #else
   gtk_init(&argc, &argv);
 #endif
+  App = gtk_window_new();
+
   if (argc != 4) {
     static char *usage = "Usage: %s resolution image_file gra_file\n";
     gchar *error;
@@ -99,7 +101,7 @@ main(int argc, char *argv[])
   }
 
   app_data.gra = gra_file;
-  App = create_widgets(&app_data, img_file);
+  create_widgets(App, &app_data, img_file);
 #if GTK_CHECK_VERSION(4, 0, 0)
   g_main_loop_run(MainLoop);
 #else
@@ -109,10 +111,10 @@ main(int argc, char *argv[])
   return 0;
 }
 
-static GtkWidget *
-create_widgets(struct AppData *app_data, const gchar *img_file)
+static void
+create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file)
 {
-  GtkWidget *w, *vbox, *hbox, *event_box, *scrolled_window, *app;
+  GtkWidget *w, *vbox, *hbox, *event_box, *scrolled_window;
   GdkPixbuf *pixbuf;
   GError *error;
 
@@ -182,12 +184,6 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   create_buttons(app_data, hbox);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  app = gtk_window_new();
-#else
-  app = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect_swapped(app, "close-request", G_CALLBACK(g_main_loop_quit), MainLoop);
 #else
   g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
@@ -199,11 +195,10 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(app);
+  gtk_window_present (GTK_WINDOW (app));
 #else
   gtk_widget_show_all(app);
 #endif
-  return app;
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
