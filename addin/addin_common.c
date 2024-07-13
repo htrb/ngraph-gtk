@@ -146,7 +146,7 @@ void
 get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b)
 {
   int bold, italic;
-  GdkRGBA color;
+  const GdkRGBA *color;
 
   *pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->pt)) * 100;
   *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
@@ -164,10 +164,10 @@ get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *st
 #endif
   *style = (bold ? 1 : 0) + (italic ? 2 : 0);
 
-  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
-  *r = color.red * 255;
-  *g = color.green * 255;
-  *b = color.blue * 255;
+  color = gtk_color_dialog_button_get_rgba (GTK_COLOR_DIALOG_BUTTON (prm->color));
+  *r = color->red * 255;
+  *g = color->green * 255;
+  *b = color->blue * 255;
 }
 
 GtkWidget *
@@ -176,6 +176,7 @@ create_font_frame(struct font_prm *prm)
   GtkWidget *frame, *w, *table, *hbox, *vbox;
   unsigned int j, i;
   GdkRGBA color;
+  GtkColorDialog *color_dialog;
 
   frame = gtk_frame_new("font");
 
@@ -225,7 +226,8 @@ create_font_frame(struct font_prm *prm)
 #endif
   prm->italic = w;
 
-  w = gtk_color_button_new();
+  color_dialog = gtk_color_dialog_new ();
+  w = gtk_color_dialog_button_new(GTK_COLOR_DIALOG (color_dialog));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
 #else
@@ -237,7 +239,7 @@ create_font_frame(struct font_prm *prm)
   color.green = 0;
   color.blue = 0;
   color.alpha = 1;
-  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
+  gtk_color_dialog_button_set_rgba (GTK_COLOR_DIALOG_BUTTON (prm->color), &color);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), vbox);
