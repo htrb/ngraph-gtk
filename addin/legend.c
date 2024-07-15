@@ -12,7 +12,7 @@
 #include "addin_common.h"
 
 #define NAME    "Legend"
-#define VERSION "1.01.01"
+#define VERSION "1.01.02"
 
 #define POS_X   50.00
 #define POS_Y   50.00
@@ -51,6 +51,221 @@ struct file_prm {
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GMainLoop *MainLoop;
 #endif
+
+/* Legend Object */
+#define N_TYPE_LEGEND (n_legend_get_type())
+G_DECLARE_FINAL_TYPE (NLegend, n_legend_, N, LEGEND, GObject)
+
+typedef struct _NLegend NLegend;
+
+struct _NLegend {
+  GObject parent_instance;
+  struct file_data *data;
+  gchar *source;
+};
+
+G_DEFINE_TYPE(NLegend, n_legend, G_TYPE_OBJECT)
+
+enum {
+  LEGEND_PROP_ACTIVE = 1,
+  LEGEND_PROP_ID,
+  LEGEND_PROP_X,
+  LEGEND_PROP_Y,
+  LEGEND_PROP_SOURCE,
+  LEGEND_PROP_CAPTION
+};
+
+static void
+n_legend_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+{
+  NLegend *self = N_LEGEND (object);
+  switch (prop_id) {
+  case LEGEND_PROP_ACTIVE:
+    self->data->show = g_value_get_boolean (value);
+    break;
+  case LEGEND_PROP_ID:
+    self->data->id = g_value_get_int (value);
+    break;
+  case LEGEND_PROP_X:
+    self->data->x = g_value_get_int (value);
+    break;
+    case LEGEND_PROP_Y:
+    self->data->y = g_value_get_int (value);
+    break;
+  case LEGEND_PROP_CAPTION:
+    g_clear_pointer (&self->data->caption, g_free);
+    self->data->caption = g_strdup(g_value_get_string (value));
+    break;
+  case LEGEND_PROP_SOURCE:
+    g_clear_pointer (&self->source, g_free);
+    self->source = g_strdup(g_value_get_string (value));
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    break;
+  }
+}
+
+static void
+n_legend_get_property (GObject    *object,
+			guint       property_id,
+			GValue     *value,
+			GParamSpec *pspec)
+{
+  NLegend *self = N_LEGEND (object);
+
+  switch (property_id) {
+  case LEGEND_PROP_ACTIVE:
+    g_value_set_boolean (value, self->data->show);
+    break;
+  case LEGEND_PROP_ID:
+    g_value_set_int (value, self->data->id);
+    break;
+  case LEGEND_PROP_X:
+    g_value_set_int (value, self->data->x);
+    break;
+  case LEGEND_PROP_Y:
+    g_value_set_int (value, self->data->y);
+    break;
+  case LEGEND_PROP_CAPTION:
+    g_value_set_string (value, self->data->caption);
+    break;
+  case LEGEND_PROP_SOURCE:
+    g_value_set_string (value, self->source);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
+static void
+n_legend_finalize (GObject *object)
+{
+  NLegend *self = N_LEGEND (object);
+
+  g_clear_pointer (&self->source, g_free);
+  G_OBJECT_CLASS (n_legend_parent_class)->finalize (object);
+}
+
+#define ID_MAX 65535
+
+static void
+n_legend_class_init (NLegendClass * klass)
+{
+  GParamSpec *pspec;
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = n_legend_finalize;
+  object_class->get_property = n_legend_get_property;
+  object_class->set_property = n_legend_set_property;
+
+  pspec = g_param_spec_boolean ("active", NULL, NULL, TRUE, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_ACTIVE, pspec);
+
+  pspec = g_param_spec_int ("id", NULL, NULL, 0, ID_MAX, 0, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_ID, pspec);
+
+  pspec = g_param_spec_int ("x", NULL, NULL, 0, ID_MAX, 0, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_X, pspec);
+
+  pspec = g_param_spec_int ("y", NULL, NULL, 0, ID_MAX, 0, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_Y, pspec);
+
+  pspec = g_param_spec_string ("caption", NULL, NULL, NULL, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_CAPTION, pspec);
+
+  pspec = g_param_spec_string ("source", NULL, NULL, NULL, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, LEGEND_PROP_SOURCE, pspec);
+}
+
+static void
+n_legend_init (NLegend * noop)
+{
+}
+
+static NLegend *
+n_legend_new (struct file_data *data, const char *source)
+{
+  NLegend *nobj;
+  nobj = g_object_new (N_TYPE_LEGEND, NULL);
+  nobj->data = data;
+  nobj->source = g_strdup (source);
+
+  return nobj;
+}
+
+static void
+editable_label_changed (GtkEditable* self, GtkListItem *list_item)
+{
+  const char *str;
+  GObject *item;
+  NLegend *legend;
+
+  item = gtk_list_item_get_item (list_item);
+  legend = N_LEGEND (item);
+
+  str = gtk_editable_get_text (self);
+
+  g_clear_pointer (&legend->data->caption, g_free);
+  legend->data->caption = g_strdup (str);
+}
+
+static void
+setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  const char *id;
+  id = user_data;
+  if (g_strcmp0 (id, "active") == 0) {
+    GtkWidget *btn = gtk_check_button_new ();
+    gtk_list_item_set_child (list_item, btn);
+  } else if (g_strcmp0 (id, "caption") == 0) {
+    GtkWidget *label = gtk_editable_label_new ("");
+    gtk_list_item_set_child (list_item, label);
+    g_signal_connect (label, "changed", G_CALLBACK (editable_label_changed), list_item);
+  } else {
+    GtkWidget *label = gtk_label_new (NULL);
+    if (g_strcmp0 (id, "source") == 0) {
+      gtk_label_set_xalign (GTK_LABEL (label), 0);
+    } else {
+      gtk_label_set_xalign (GTK_LABEL (label), 1.0);
+    }
+    gtk_list_item_set_child (list_item, label);
+  }
+  gtk_list_item_set_accessible_label (list_item, id);
+}
+
+static void
+bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop)
+{
+  GtkWidget *w = gtk_list_item_get_child (list_item);
+  GObject *item = gtk_list_item_get_item (list_item);
+  if (g_strcmp0 (prop, "active") == 0) {
+    g_object_bind_property (item, prop, w, prop, G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  } else if (g_strcmp0 (prop, "caption") == 0) {
+    g_object_bind_property (item, prop, w, "text", G_BINDING_SYNC_CREATE);
+  } else {
+    g_object_bind_property (item, prop, w, "label", G_BINDING_SYNC_CREATE);
+  }
+}
+
+static GtkWidget *
+columnview_column_create(void)
+{
+  GtkWidget *w;
+  static GtkColumnViewColumn *column;
+
+  w = columnview_create(N_TYPE_LEGEND);
+  columnview_create_column(w, "", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "active");
+  columnview_create_column(w, "#", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "id");
+  columnview_create_column(w, "source", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "source");
+  columnview_create_column(w, "x", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "x");
+  columnview_create_column(w, "y", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "y");
+
+  column = columnview_create_column(w, "caption", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "caption");
+  gtk_column_view_column_set_expand(column, TRUE);
+
+  return w;
+}
 
 static char *
 escape_char(const char *src, const char *escape, const char *str)
@@ -573,26 +788,20 @@ create_geometry_frame(struct file_prm *prm)
 static void
 set_parameter(struct file_prm *prm)
 {
+  GListStore *list;
   int i, mix;
   char *caption;
-  GtkTreeIter iter;
-  GtkListStore *list;
 
+  list = columnview_get_list (prm->files);
+  g_list_store_remove_all (list);
 
-  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(prm->files)));
-  gtk_list_store_clear(list);
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   mix = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->mix));
-#else
-  mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
-#endif
 
   for (i = 0; i < prm->file_num; i++) {
+    NLegend *item;
     if (mix && prm->data[i].mix >= 0) {
       continue;
     }
-    gtk_list_store_append(list, &iter);
 
     if (prm->data[i].source == PLOT_SOURCE_ARRAY) {
       caption = g_strdup(prm->data[i].array);
@@ -601,15 +810,10 @@ set_parameter(struct file_prm *prm)
     } else {
       caption = g_path_get_basename(prm->data[i].file);
     }
-    gtk_list_store_set(list, &iter,
-		       0, prm->data[i].show,
-		       1, prm->data[i].id,
-		       2, caption,
-		       3, prm->data[i].x,
-		       4, prm->data[i].y,
-		       5, prm->data[i].caption,
-		       -1);
+    item = n_legend_new (&prm->data[i], caption);
+    g_list_store_append (list, item);
     g_free(caption);
+    g_object_unref(item);
   }
 }
 
@@ -622,91 +826,12 @@ set_files(GtkWidget *widget, gpointer user_data)
   set_parameter(prm);
 }
 
-static void
-caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
-{
-  struct file_prm *prm;
-  GtkTreeView *view;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  gboolean v;
-  gint i;
-
-  prm = (struct file_prm *) user_data;
-  view = GTK_TREE_VIEW(prm->files);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-    return;
-  }
-
-  gtk_tree_model_get(model, &iter, COLUMN_CHECK, &v, -1);
-  gtk_tree_model_get(model, &iter, COLUMN_ID, &i, -1);
-
-  v = !v;
-
-  prm->data[i].show = v;
-
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, v, -1);
-}
-
-static void
-caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer user_data)
-{
-  struct file_prm *prm;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  GtkTreeView *view;
-  gint i;
-
-  prm = (struct file_prm *) user_data;
-  view = GTK_TREE_VIEW(prm->files);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-    return;
-  }
-
-  gtk_tree_model_get(model, &iter, COLUMN_ID, &i, -1);
-
-  g_free(prm->data[i].caption);
-  prm->data[i].caption = g_strdup(new_text);
-
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CAPTION, new_text, -1);
-}
-
 static GtkWidget *
 create_file_frame(struct file_prm *prm)
 {
-  GtkListStore *list;
-  GtkCellRenderer *renderer;
-  GtkTreeViewColumn *col;
   GtkWidget *tview, *hbox, *swin, *frame;
-  int i, n;
-  char *title[] = {"#", "Source", "x", "y", "Caption"};
 
-  n = sizeof(title) / sizeof(*title);
-
-  list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING);
-  tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
-#if ! GTK_CHECK_VERSION(3, 14, 0)
-  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
-#endif
-  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
-
-  renderer = gtk_cell_renderer_toggle_new();
-  col = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
-  g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
-  g_signal_connect(renderer, "toggled", G_CALLBACK(caption_toggled), prm);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-
-  for (i = 0; i < n; i++) {
-    renderer = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes(title[i], renderer, "text", i + 1, "sensitive", 0, NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-  }
-  g_object_set(renderer, "editable", TRUE, NULL);
-  g_signal_connect(renderer, "edited", G_CALLBACK(caption_edited), prm);
+  tview = columnview_column_create ();
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
