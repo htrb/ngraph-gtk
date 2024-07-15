@@ -344,3 +344,20 @@ dialog_new(const char *title, GCallback cancel_cb, GCallback ok_cb, gpointer use
 
   return mainwin;
 }
+
+GtkWidget *
+columnview_create(GType item_type)
+{
+  GtkWidget *columnview;
+  GtkSelectionModel *selection;
+  GListModel *model;
+
+  columnview = gtk_column_view_new (NULL);
+  gtk_column_view_set_show_column_separators (GTK_COLUMN_VIEW (columnview), TRUE);
+
+  model = G_LIST_MODEL(g_list_store_new (item_type));
+  selection = GTK_SELECTION_MODEL(gtk_single_selection_new (model));
+  gtk_column_view_set_model (GTK_COLUMN_VIEW (columnview), selection);
+  return columnview;
+}
+

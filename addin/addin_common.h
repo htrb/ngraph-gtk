@@ -18,5 +18,6 @@ const char *get_selected_font(struct font_prm *prm);
 GtkWidget *create_font_frame(struct font_prm *prm);
 void get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b);
 GtkWidget *dialog_new(const char *title, GCallback cancel_cb, GCallback ok_cb, gpointer user_data);
+GtkWidget *columnview_create(GType item_type);
 
 #endif
