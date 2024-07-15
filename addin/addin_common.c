@@ -34,11 +34,7 @@ create_spin_button(double min, double max, double inc, double init, int digit)
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_editable_set_alignment(GTK_EDITABLE(w), 1.0);
-#else
-  gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
-#endif
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   if (digit > 0) {
     gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), digit);
@@ -58,9 +54,6 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
-#endif
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
     col++;
   }
@@ -72,9 +65,6 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     } else {
       gtk_widget_set_halign(w, GTK_ALIGN_START);
     }
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
-#endif
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
   }
 
@@ -86,11 +76,7 @@ get_text_from_entry(GtkWidget *entry)
 {
   const char *tmp;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   tmp = gtk_editable_get_text(GTK_EDITABLE(entry));
-#else
-  tmp = gtk_entry_get_text(GTK_ENTRY(entry));
-#endif
   if (tmp == NULL) {
     tmp = "";
   }
@@ -104,29 +90,13 @@ create_title(const char *name, const char *comment)
   GtkWidget *frame, *label;
 
   frame = gtk_frame_new(name);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-  g_object_set(frame, "margin", GINT_TO_POINTER(4), NULL);
-  g_object_set(frame, "border-width", GINT_TO_POINTER(4), NULL);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_label_align(GTK_FRAME(frame), 0.5);
-#else
-  gtk_frame_set_label_align(GTK_FRAME(frame), 0.5, 0.5);
-#endif
 
   label = gtk_label_new(comment);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
-#endif
   gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), label);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), label);
-#endif
 
   return frame;
 }
@@ -152,16 +122,8 @@ get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *st
   *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
   *spc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->space)) * 100;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   bold = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->bold));
-#else
-  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->bold));
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   italic = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->italic));
-#else
-  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->italic));
-#endif
   *style = (bold ? 1 : 0) + (italic ? 2 : 0);
 
   color = gtk_color_dialog_button_get_rgba (GTK_COLOR_DIALOG_BUTTON (prm->color));
@@ -202,37 +164,21 @@ create_font_frame(struct font_prm *prm)
   prm->script = w;
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), table);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
-#endif
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   w = gtk_check_button_new_with_mnemonic("_Bold");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
   prm->bold = w;
 
   w = gtk_check_button_new_with_mnemonic("_Italic");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
   prm->italic = w;
 
   color_dialog = gtk_color_dialog_new ();
   w = gtk_color_dialog_button_new(GTK_COLOR_DIALOG (color_dialog));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
   prm->color = w;
 
   color.red = 0;
@@ -241,17 +187,9 @@ create_font_frame(struct font_prm *prm)
   color.alpha = 1;
   gtk_color_dialog_button_set_rgba (GTK_COLOR_DIALOG_BUTTON (prm->color), &color);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), hbox);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), hbox);
-#endif
 
   return frame;
 }
