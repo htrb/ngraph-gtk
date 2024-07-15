@@ -377,3 +377,14 @@ create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallb
   return column;
 }
 
+GListStore *
+columnview_get_list(GtkWidget *columnview)
+{
+  GtkSelectionModel *selection;
+  GListModel *model;
+
+  selection = gtk_column_view_get_model (GTK_COLUMN_VIEW (columnview));
+  model = gtk_single_selection_get_model (GTK_SINGLE_SELECTION (selection));
+
+  return G_LIST_STORE (model);
+}
