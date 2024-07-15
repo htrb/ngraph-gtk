@@ -12,7 +12,7 @@
 #include "addin_common.h"
 
 #define NAME    "Fitrslt"
-#define VERSION "1.00.03"
+#define VERSION "1.00.04"
 
 #define POS_X    50.00
 #define POS_Y    50.00
@@ -60,6 +60,206 @@ struct fit_prm {
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GMainLoop *MainLoop;
 #endif
+
+/* Fitrslt Object */
+#define N_TYPE_FITRSLT (n_fitrslt_get_type())
+G_DECLARE_FINAL_TYPE (NFitrslt, n_fitrslt_, N, FITRSLT, GObject)
+
+typedef struct _NFitrslt NFitrslt;
+
+struct _NFitrslt {
+  GObject parent_instance;
+  gboolean active;
+  gchar *prm, *caption, *result;
+};
+
+G_DEFINE_TYPE(NFitrslt, n_fitrslt, G_TYPE_OBJECT)
+
+enum {
+  FITRSLT_PROP_ACTIVE = 1,
+  FITRSLT_PROP_PRM,
+  FITRSLT_PROP_CAPTION,
+  FITRSLT_PROP_RESULT
+};
+
+static void
+n_fitrslt_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+{
+  NFitrslt *self = N_FITRSLT (object);
+  switch (prop_id) {
+  case FITRSLT_PROP_ACTIVE:
+    self->active = g_value_get_boolean (value);
+    break;
+  case FITRSLT_PROP_PRM:
+    g_clear_pointer (&self->prm, g_free);
+    self->prm = g_strdup(g_value_get_string (value));
+    break;
+  case FITRSLT_PROP_CAPTION:
+    g_clear_pointer (&self->caption, g_free);
+    self->caption = g_strdup(g_value_get_string (value));
+    break;
+  case FITRSLT_PROP_RESULT:
+    g_clear_pointer (&self->result, g_free);
+    self->result = g_strdup(g_value_get_string (value));
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    break;
+  }
+}
+
+static void
+n_fitrslt_get_property (GObject    *object,
+			guint       property_id,
+			GValue     *value,
+			GParamSpec *pspec)
+{
+  NFitrslt *self = N_FITRSLT (object);
+
+  switch (property_id) {
+  case FITRSLT_PROP_ACTIVE:
+    g_value_set_boolean (value, self->active);
+    break;
+  case FITRSLT_PROP_PRM:
+    g_value_set_string (value, self->prm);
+    break;
+  case FITRSLT_PROP_CAPTION:
+    g_value_set_string (value, self->caption);
+    break;
+  case FITRSLT_PROP_RESULT:
+    g_value_set_string (value, self->result);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
+static void
+n_fitrslt_finalize (GObject *object)
+{
+  NFitrslt *self = N_FITRSLT (object);
+
+  g_clear_pointer (&self->prm, g_free);
+  g_clear_pointer (&self->caption, g_free);
+  g_clear_pointer (&self->result, g_free);
+  G_OBJECT_CLASS (n_fitrslt_parent_class)->finalize (object);
+}
+
+static void
+n_fitrslt_class_init (NFitrsltClass * klass)
+{
+  GParamSpec *pspec;
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  object_class->finalize = n_fitrslt_finalize;
+  object_class->get_property = n_fitrslt_get_property;
+  object_class->set_property = n_fitrslt_set_property;
+
+  pspec = g_param_spec_boolean ("active", NULL, NULL, TRUE, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, FITRSLT_PROP_ACTIVE, pspec);
+
+  pspec = g_param_spec_string ("prm", NULL, NULL, NULL, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, FITRSLT_PROP_PRM, pspec);
+
+  pspec = g_param_spec_string ("caption", NULL, NULL, NULL, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, FITRSLT_PROP_CAPTION, pspec);
+
+  pspec = g_param_spec_string ("result", NULL, NULL, NULL, G_PARAM_READWRITE);
+  g_object_class_install_property (object_class, FITRSLT_PROP_RESULT, pspec);
+}
+
+static void
+n_fitrslt_init (NFitrslt * noop)
+{
+}
+
+static NFitrslt *
+n_fitrslt_new (void)
+{
+  NFitrslt *nobj;
+
+  nobj = g_object_new (N_TYPE_FITRSLT, NULL);
+  nobj->active = TRUE;
+  nobj->prm = g_strdup ("");
+  nobj->caption = g_strdup ("");
+  nobj->result = g_strdup ("");
+
+  return nobj;
+}
+
+static void
+editable_label_changed (GtkEditable* self, GtkListItem *list_item)
+{
+  const char *str, *label;
+  GObject *item;
+  NFitrslt *fitrslt;
+
+  item = gtk_list_item_get_item (list_item);
+  fitrslt = N_FITRSLT (item);
+
+  label = gtk_list_item_get_accessible_label (list_item);
+  str = gtk_editable_get_text (self);
+  if (g_strcmp0 (label, "caption") == 0) {
+    g_clear_pointer (&fitrslt->caption, g_free);
+    fitrslt->caption = g_strdup(str);
+  } else if (g_strcmp0 (label, "result") == 0) {
+    g_clear_pointer (&fitrslt->result, g_free);
+    fitrslt->result = g_strdup(str);
+  }
+}
+
+static void
+setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
+{
+  const char *id;
+  id = user_data;
+  if (g_strcmp0 (id, "active") == 0) {
+    GtkWidget *btn = gtk_check_button_new ();
+    gtk_list_item_set_child (list_item, btn);
+  } else if (g_strcmp0 (id, "caption") == 0 || g_strcmp0 (id, "result") == 0) {
+    GtkWidget *label = gtk_editable_label_new ("");
+    gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
+    gtk_list_item_set_child (list_item, label);
+    g_signal_connect (label, "changed", G_CALLBACK (editable_label_changed), list_item);
+  } else {
+    GtkWidget *label = gtk_label_new (NULL);
+    gtk_label_set_xalign (GTK_LABEL (label), 1.0);
+    gtk_list_item_set_child (list_item, label);
+  }
+  gtk_list_item_set_accessible_label (list_item, id);
+}
+
+static void
+bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop)
+{
+  GtkWidget *w = gtk_list_item_get_child (list_item);
+  GObject *item = gtk_list_item_get_item (list_item);
+  if (g_strcmp0 (prop, "active") == 0) {
+    g_object_bind_property (item, prop, w, prop, G_BINDING_BIDIRECTIONAL);
+  } else if (g_strcmp0 (prop, "caption") == 0 || g_strcmp0 (prop, "result") == 0) {
+    g_object_bind_property (item, prop, w, "text", G_BINDING_SYNC_CREATE);
+  } else {
+    g_object_bind_property (item, prop, w, "label", G_BINDING_SYNC_CREATE);
+  }
+}
+
+static GtkWidget *
+columnview_column_create(void)
+{
+  GtkWidget *w;
+  static GtkColumnViewColumn *column;
+
+  w = columnview_create(N_TYPE_FITRSLT);
+  columnview_create_column(w, "", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "active");
+  columnview_create_column(w, "prm", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "prm");
+
+  column = columnview_create_column(w, "caption", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "caption");
+  gtk_column_view_column_set_expand(column, TRUE);
+
+  column = columnview_create_column(w, "result", G_CALLBACK(setup_column), G_CALLBACK(bind_column), "result");
+  gtk_column_view_column_set_expand(column, TRUE);
+  return w;
+}
 
 static int
 loaddatalist(struct fit_prm *prm, const char *datalist)
@@ -147,11 +347,9 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
 static int
 savescript(struct fit_prm *prm)
 {
-  char *cap, *val;
   FILE *f;
-  int frame, shadow, height, textpt, gx, gy, posx, posy, h_inc, i, draw;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
+  int frame, shadow, height, textpt, gx, gy, posx, posy, h_inc, i;
+  GListStore *list;
 
   if (prm->script == NULL) {
     return 0;
@@ -186,21 +384,14 @@ savescript(struct fit_prm *prm)
 
   h_inc = ceil(height * 1.2 / 100) * 100;
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(prm->caption));
-  if (! gtk_tree_model_get_iter_first(model, &iter)) {
-    return 1;
-  }
+  list = columnview_get_list (prm->caption);
   for (i = 0; i < PRM_NUM; i++) {
-    gtk_tree_model_get(model, &iter, COLUMN_CHECK, &draw, COLUMN_CAPTION, &cap, COLUMN_VAL, &val, -1);
-    if (draw) {
+    NFitrslt *item;
+    item = g_list_model_get_item (G_LIST_MODEL (list), i);
+    if (item->active) {
       gx = posx;
-      makescript(f, prm, gx, gy, height, cap, val);
+      makescript(f, prm, gx, gy, height, item->caption, item->result);
       gy += h_inc;
-    }
-    g_free(cap);
-    g_free(val);
-    if (! gtk_tree_model_iter_next(model, &iter)) {
-      break;
     }
   }
 
@@ -397,10 +588,9 @@ set_parameter(struct fit_prm *prm)
 {
   int i, j, accuracy, expand, add_plus, dim[PRM_NUM];
   char buf[LINE_BUF_SIZE], fmt[LINE_BUF_SIZE], *prm_str;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
+  GListStore *list;
 
-  i = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->combo));
+  i = gtk_drop_down_get_selected (GTK_DROP_DOWN (prm->combo));
   if (i < 0) {
     return;
   }
@@ -438,12 +628,10 @@ set_parameter(struct fit_prm *prm)
     }
   }
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(prm->caption));
-  if (! gtk_tree_model_get_iter_first(model, &iter)) {
-    return;
-  }
-
+  list = columnview_get_list (prm->caption);
   for (j = 0; j < PRM_NUM; j++) {
+    char fitprm[64], caption[64];
+    NFitrslt *item;
     snprintf(fmt, sizeof(fmt),
 	     "%%#%s.%dg",
 	     add_plus ? "+" : "",
@@ -456,74 +644,18 @@ set_parameter(struct fit_prm *prm)
                                 prm->data[i].file_id,
                                 j);
     }
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, dim[j], COLUMN_VAL, prm_str, -1);
+    item = g_list_model_get_item (G_LIST_MODEL (list), j);
+    snprintf(fitprm, sizeof(fitprm), "%%%02d", j);
+    snprintf(caption, sizeof(caption), "\\%%%02d: ", j);
+    g_object_set(item, "active", dim[j], "prm", fitprm, "caption", caption, "result", prm_str, NULL);
     g_free(prm_str);
-    if (! gtk_tree_model_iter_next(model, &iter)) {
-      break;
-    }
   }
 }
 
 static void
-file_changed(GtkWidget *widget, gpointer user_data)
+file_changed(struct fit_prm *prm)
 {
-  struct fit_prm *prm;
-
-  prm = (struct fit_prm *) user_data;
   set_parameter(prm);
-}
-
-static void
-text_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, struct fit_prm *prm, int column)
-{
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  GtkTreeView *view;
-
-  view = GTK_TREE_VIEW(prm->caption);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-    return;
-  }
-
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, column, new_text, -1);
-}
-
-static void
-caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer user_data)
-{
-  text_edited(renderer, path, new_text, (struct fit_prm *) user_data, COLUMN_CAPTION);
-}
-
-static void
-value_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer user_data)
-{
-  text_edited(renderer, path, new_text, (struct fit_prm *) user_data, COLUMN_VAL);
-}
-
-static void
-caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
-{
-  struct fit_prm *prm;
-  GtkTreeView *view;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  gboolean v;
-
-  prm = (struct fit_prm *) user_data;
-  view = GTK_TREE_VIEW(prm->caption);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
-    return;
-  }
-
-  gtk_tree_model_get(model, &iter, COLUMN_CHECK, &v, -1);
-
-  v = !v;
-
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, v, -1);
 }
 
 struct text_column {
@@ -535,51 +667,18 @@ struct text_column {
 static GtkWidget *
 create_caption_frame(struct fit_prm *prm)
 {
-  GtkListStore *list;
-  GtkCellRenderer *renderer;
-  GtkTreeViewColumn *col;
-  GtkTreeIter iter;
+  GListStore *list;
   GtkWidget *tview, *hbox, *frame;
-  int i, n;
-  struct text_column text_column[] = {
-    {"prm",     FALSE, NULL},
-    {"caption", TRUE,  caption_edited},
-    {"result",  TRUE,  value_edited},
-  };
-  char buf1[64], buf2[64];
+  int i;
 
-  n = sizeof(text_column) / sizeof(*text_column);
-
-  list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-  tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
-#if ! GTK_CHECK_VERSION(3, 14, 0)
-  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
-#endif
-  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
-
-  renderer = gtk_cell_renderer_toggle_new();
-  col = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
-  g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
-  g_signal_connect(renderer, "toggled", G_CALLBACK(caption_toggled), prm);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-
-  for (i = 0; i < n; i++) {
-    renderer = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes(text_column[i].title, renderer, "text", i + 1, "sensitive", 0, NULL);
-    if (text_column[i].editable) {
-      g_object_set(renderer, "editable", TRUE, NULL);
-      g_signal_connect(renderer, "edited", G_CALLBACK(text_column[i].func), prm);
-    }
-    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-  }
-
+  tview = columnview_column_create ();
+  list = columnview_get_list (tview);
   for (i = 0; i < PRM_NUM; i++) {
-    snprintf(buf1, sizeof(buf1), "%%%02d", i);
-    snprintf(buf2, sizeof(buf2), "\\%%%02d: ", i);
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter, COLUMN_PRM, buf1, COLUMN_CAPTION, buf2, -1);
+    NFitrslt *item;
+    item = n_fitrslt_new ();
+    g_list_store_append (list, item);
+    g_object_unref(item);
   }
-
   frame = gtk_frame_new(NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), tview);
@@ -605,19 +704,13 @@ create_caption_frame(struct fit_prm *prm)
 static GtkWidget *
 create_file_frame(struct fit_prm *prm)
 {
-  GtkListStore  *list;
-  GtkTreeIter iter;
-  GtkCellRenderer *rend_s;
   GtkWidget *combo, *hbox, *label;
   char *str, *filename;
   int i;
+  GStrvBuilder *strv_builder;
+  GStrv strv;
 
-  combo = gtk_combo_box_new();
-  list = gtk_list_store_new(1, G_TYPE_STRING);
-  gtk_combo_box_set_model(GTK_COMBO_BOX(combo), GTK_TREE_MODEL(list));
-  rend_s = gtk_cell_renderer_text_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), rend_s, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), rend_s, "text", 0);
+  strv_builder = g_strv_builder_new ();
 
   for (i = 0; i < prm->fit_num; i++) {
     if (prm->data[i].file == NULL) {
@@ -626,13 +719,16 @@ create_file_frame(struct fit_prm *prm)
     filename = g_path_get_basename(prm->data[i].file);
     str = g_strdup_printf("#%d %s", prm->data[i].file_id, filename);
 
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter, 0, str, -1);
+    g_strv_builder_add (strv_builder, str);
 
     g_free(str);
     g_free(filename);
   }
+  strv = g_strv_builder_end (strv_builder);
+  g_strv_builder_unref (strv_builder);
 
+  combo = gtk_drop_down_new_from_strings ((const char * const *) strv);
+  g_strfreev (strv);
   prm->combo = combo;
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -794,13 +890,13 @@ main(int argc, char **argv)
   gtk_window_set_child (GTK_WINDOW (mainwin), vbox);
   create_widgets(vbox, &prm);
 
-  g_signal_connect(prm.combo, "changed", G_CALLBACK(file_changed), &prm);
-  g_signal_connect(prm.add_plus, "toggled", G_CALLBACK(file_changed), &prm);
-  g_signal_connect(prm.expand, "toggled", G_CALLBACK(file_changed), &prm);
-  g_signal_connect(prm.accuracy, "value-changed", G_CALLBACK(file_changed), &prm);
+  g_signal_connect_swapped(prm.combo, "notify::selected", G_CALLBACK(file_changed), &prm);
+  g_signal_connect_swapped(prm.add_plus, "toggled", G_CALLBACK(file_changed), &prm);
+  g_signal_connect_swapped(prm.expand, "toggled", G_CALLBACK(file_changed), &prm);
+  g_signal_connect_swapped(prm.accuracy, "value-changed", G_CALLBACK(file_changed), &prm);
 
-  gtk_combo_box_set_active(GTK_COMBO_BOX(prm.combo), 0);
-
+  gtk_drop_down_set_selected (GTK_DROP_DOWN (prm.combo), 0);
+  set_parameter(&prm);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_present (GTK_WINDOW (mainwin));
