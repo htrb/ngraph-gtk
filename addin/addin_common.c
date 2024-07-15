@@ -362,7 +362,7 @@ columnview_create(GType item_type)
 }
 
 GtkColumnViewColumn *
-create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data)
+columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data)
 {
   GtkColumnViewColumn *column;
   GtkListItemFactory *factory;

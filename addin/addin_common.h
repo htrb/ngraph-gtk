@@ -19,7 +19,7 @@ GtkWidget *create_font_frame(struct font_prm *prm);
 void get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b);
 GtkWidget *dialog_new(const char *title, GCallback cancel_cb, GCallback ok_cb, gpointer user_data);
 GtkWidget *columnview_create(GType item_type);
-GtkColumnViewColumn *create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data);
+GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data);
 GListStore *columnview_get_list(GtkWidget *columnview);
 
 #endif
