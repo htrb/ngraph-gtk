@@ -57,9 +57,7 @@ struct fit_prm {
   int posx, posy, fit_num;
 };
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static GMainLoop *MainLoop;
-#endif
 
 /* Fitrslt Object */
 #define N_TYPE_FITRSLT (n_fitrslt_get_type())
@@ -319,11 +317,7 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
   get_font_parameter(&prm->font, &textpt, &textspc, &textsc, &style, &textred, &textblue, &textgreen);
   font = get_selected_font(&prm->font);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
-#else
-  frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
-#endif
 
   fprintf(f, "new text\n");
   fprintf(f, "text::text='%s %s'\n", cap, val);
@@ -363,21 +357,13 @@ savescript(struct fit_prm *prm)
   posx = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->x)) * 100;
   posy = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->y)) * 100;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
-#else
-  frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
-#endif
   if (frame) {
     fprintf(f, "new iarray name:textlen\n");
     fprintf(f, "new iarray name:textbbox\n");
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   shadow = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->shadow));
-#else
-  shadow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->shadow));
-#endif
   textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font.pt)) * 100;
   height = ceil(textpt * 25.4 / 72.0 / 100) * 100;
   gy = posy;
@@ -439,16 +425,9 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
   gtk_widget_set_hexpand(*hbox, FALSE);
 
   label = gtk_label_new_with_mnemonic(title);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
-#endif
 
   w = create_spin_button(min, max, inc, init, 0);
-#if GTK_CHECK_VERSION(3, 12, 0)
   gtk_widget_set_margin_end(w, 4);
-#else
-  gtk_widget_set_margin_right(w, 4);
-#endif
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_widget_set_hexpand(w, TRUE);
   gtk_widget_set_halign(w, GTK_ALIGN_FILL);
@@ -466,11 +445,7 @@ frame_toggled(GtkWidget *togglebutton, gpointer user_data)
   struct fit_prm *prm;
 
   prm = (struct fit_prm *) user_data;
-#if GTK_CHECK_VERSION(4, 0, 0)
   state = gtk_check_button_get_active(GTK_CHECK_BUTTON(togglebutton));
-#else
-  state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(togglebutton));
-#endif
   gtk_widget_set_sensitive(GTK_WIDGET(prm->shadow), state);
 }
 
@@ -484,73 +459,32 @@ create_format_frame(struct fit_prm *prm)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   w = gtk_check_button_new_with_mnemonic("add _+");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(w), ADD_PLUS);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), ADD_PLUS);
-#endif
   prm->add_plus = w;
 
   w = gtk_check_button_new_with_mnemonic("_Expand");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(w), EXPAND);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), EXPAND);
-#endif
   prm->expand = w;
 
   w = gtk_check_button_new_with_mnemonic("_Frame");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
-#endif
   prm->frame = w;
 
   w = gtk_check_button_new_with_mnemonic("_Shadow");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
-#endif
   prm->shadow = w;
 
   g_signal_connect(prm->frame, "toggled", G_CALLBACK(frame_toggled), prm);
 
   w = my_create_spin_button("_Accuracy:", 1, 15, 1, ACCURACY, &hbox);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
-#endif
   prm->accuracy = w;
 
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), vbox);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), vbox);
-#endif
 
   return frame;
 }
@@ -574,11 +508,7 @@ create_position_frame(struct fit_prm *prm)
   add_widget_to_table_sub(table, w, "_Y:", TRUE, 0, 1, j++);
   prm->y = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
 
   return frame;
 }
@@ -596,16 +526,8 @@ set_parameter(struct fit_prm *prm)
   }
 
   accuracy = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(prm->accuracy));
-#if GTK_CHECK_VERSION(4, 0, 0)
   expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->expand));
-#else
-  expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->expand));
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_plus = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->add_plus));
-#else
-  add_plus = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->add_plus));
-#endif
 
   if (strcmp(prm->data[i].type, "poly") == 0) {
     for (j = 0; j < PRM_NUM; j++) {
@@ -680,21 +602,13 @@ create_caption_frame(struct fit_prm *prm)
     g_object_unref(item);
   }
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), tview);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), tview);
-#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_set_hexpand(frame, TRUE);
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_box_append(GTK_BOX(hbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
-#endif
 
   prm->caption = tview;
 
@@ -735,13 +649,8 @@ create_file_frame(struct fit_prm *prm)
   label = gtk_label_new_with_mnemonic("_Data:");
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), combo);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), label);
   gtk_box_append(GTK_BOX(hbox), combo);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 4);
-#endif
 
   return hbox;
 }
@@ -753,43 +662,21 @@ create_control(GtkWidget *box, struct fit_prm *prm)
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   w = create_format_frame(prm);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-#endif
 
   w = create_position_frame(prm);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-#endif
 
   w = create_font_frame(&prm->font);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
 
   gtk_box_append(GTK_BOX(box), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 4);
-#endif
 
   w = create_file_frame(prm);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), w);
-#else
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 4);
-#endif
 
   w = create_caption_frame(prm);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), w);
-#else
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 4);
-#endif
 
   return NULL;
 }
@@ -800,11 +687,7 @@ create_widgets(GtkWidget *vbox, struct fit_prm *prm)
   GtkWidget *w;
 
   w = create_title(NAME " version " VERSION, "fitting results -> legend text");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-#endif
 
   w = create_control(vbox, prm);
 }
@@ -836,7 +719,6 @@ get_opt(int argc, char **argv, struct fit_prm *prm)
   return data_file;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dialog_response_cancel(GtkDialog* self, gpointer user_data)
 {
@@ -851,25 +733,17 @@ dialog_response_ok(GtkDialog* self, gpointer user_data)
   savescript(prm);
   dialog_response_cancel(self, user_data);
 }
-#endif
 
 int
 main(int argc, char **argv)
 {
   GtkWidget *mainwin, *vbox;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gint r;
-#endif
   struct fit_prm prm;
   const char *data_file;
 
   setlocale(LC_ALL, "");
-#if GTK_CHECK_VERSION(4, 0, 0)
   MainLoop = g_main_loop_new (NULL, FALSE);
   gtk_init();
-#else
-  gtk_init(&argc, &argv);
-#endif
 
   prm.posx = POS_X;
   prm.posy = POS_Y;
@@ -898,17 +772,8 @@ main(int argc, char **argv)
   gtk_drop_down_set_selected (GTK_DROP_DOWN (prm.combo), 0);
   set_parameter(&prm);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
-#else
-  gtk_widget_show_all(mainwin);
-
-  r = gtk_dialog_run(GTK_DIALOG(mainwin));
-  if (r == GTK_RESPONSE_ACCEPT) {
-    savescript(&prm);
-  }
-#endif
 
   return 0;
 }
