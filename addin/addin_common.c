@@ -361,3 +361,19 @@ columnview_create(GType item_type)
   return columnview;
 }
 
+GtkColumnViewColumn *
+create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data)
+{
+  GtkColumnViewColumn *column;
+  GtkListItemFactory *factory;
+
+  factory = gtk_signal_list_item_factory_new ();
+  g_signal_connect (factory, "setup", setup, user_data);
+  g_signal_connect (factory, "bind",  bind, user_data);
+
+  column = gtk_column_view_column_new (header, factory);
+  gtk_column_view_append_column (GTK_COLUMN_VIEW (columnview), column);
+
+  return column;
+}
+
