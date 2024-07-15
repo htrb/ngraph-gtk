@@ -40,9 +40,7 @@ struct rectangle{
 };
 static GtkWidget *App = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static GMainLoop *MainLoop;
-#endif
 
 static void create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file);
 static void print_error_exit(const gchar *error);
@@ -51,14 +49,7 @@ static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 static void create_entry(GdkPixbuf *im, GtkWidget *hbox, struct AppData *data);
 static void create_buttons(struct AppData *data, GtkWidget *hbox);
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
-#else
-static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data);
-#endif
 static void save_button_clicked(GtkButton *widget, gpointer data);
 static void cancel_button_clicked(GtkButton *widget, gpointer data);
 
@@ -75,12 +66,8 @@ main(int argc, char *argv[])
   static gchar *img_file = NULL, *gra_file = NULL;
   struct AppData app_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   MainLoop = g_main_loop_new (NULL, FALSE);
   gtk_init();
-#else
-  gtk_init(&argc, &argv);
-#endif
   App = gtk_window_new();
 
   if (argc != 4) {
@@ -88,10 +75,8 @@ main(int argc, char *argv[])
     gchar *error;
     error = g_strdup_printf(usage, g_path_get_basename(argv[0]));
     print_error_exit(error);
-#if GTK_CHECK_VERSION(4, 0, 0)
     g_main_loop_run(MainLoop);
     exit(1);
-#endif
   }
   gra_file = argv[3];
   img_file = argv[2];
@@ -102,11 +87,7 @@ main(int argc, char *argv[])
 
   app_data.gra = gra_file;
   create_widgets(App, &app_data, img_file);
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_main_loop_run(MainLoop);
-#else
-  gtk_main();
-#endif
 
   return 0;
 }
@@ -117,6 +98,7 @@ create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file)
   GtkWidget *w, *vbox, *hbox, *event_box, *scrolled_window;
   GdkPixbuf *pixbuf;
   GError *error;
+  GtkGesture *gesture;
 
   app_data->entry = NULL;
 
@@ -128,14 +110,9 @@ create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file)
   if (pixbuf == NULL) {
     print_error_exit(error->message);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_picture_new_for_filename(img_file);
   gtk_picture_set_can_shrink(GTK_PICTURE(w), FALSE);
-#if GTK_CHECK_VERSION(4, 8, 0)
   gtk_picture_set_content_fit(GTK_PICTURE(w), GTK_CONTENT_FIT_SCALE_DOWN);
-#else
-  gtk_picture_set_keep_aspect_ratio(GTK_PICTURE(w), TRUE);
-#endif
   gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
   gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_START);
   app_data->im = pixbuf;
@@ -143,71 +120,33 @@ create_widgets(GtkWidget *app, struct AppData *app_data, const gchar *img_file)
   gtk_widget_set_vexpand(w, TRUE);
   event_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(event_box), w);
-#else
-  w = gtk_image_new_from_pixbuf(pixbuf);
-  app_data->im = gtk_image_get_pixbuf(GTK_IMAGE(w));
-  event_box = gtk_event_box_new();
-  gtk_container_add(GTK_CONTAINER(event_box), w);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GtkGesture *gesture;
 
   gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
 
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 1);
   g_signal_connect(gesture, "pressed", G_CALLBACK(button_press_event), app_data);
-#else
-  g_signal_connect(event_box, "button-press-event", G_CALLBACK(button_press_event), app_data);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrolled_window = gtk_scrolled_window_new();
-#else
-  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_widget_set_size_request(scrolled_window, 800, 600);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), event_box);
-#else
-  gtk_container_add(GTK_CONTAINER(scrolled_window), event_box);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), scrolled_window);
   gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-#endif
 
   create_buttons(app_data, hbox);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect_swapped(app, "close-request", G_CALLBACK(g_main_loop_quit), MainLoop);
-#else
-  g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_child(GTK_WINDOW(app), vbox);
-#else
-  gtk_container_add(GTK_CONTAINER(app), vbox);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_present (GTK_WINDOW (app));
-#else
-  gtk_widget_show_all(app);
-#endif
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dialog_response(GObject* self, GAsyncResult* res, gpointer user_data)
 {
   g_main_loop_quit(MainLoop);
 }
-#endif
 
 static void
 print_error_exit(const gchar *error)
@@ -229,32 +168,18 @@ create_buttons(struct AppData *data, GtkWidget *box)
   im = data->im;
 
   create_entry(im, vbox, data);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), vbox);
-#else
-  gtk_box_pack_start(GTK_BOX(box), vbox, FALSE, FALSE, 10);
-#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   w = gtk_button_new_with_label(" OK ");
   g_signal_connect(w, "clicked", G_CALLBACK(save_button_clicked), data);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 5);
-#endif
 
   w = gtk_button_new_with_label(" Cancel ");
   g_signal_connect(w, "clicked", G_CALLBACK(cancel_button_clicked), NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
 
   gtk_box_append(GTK_BOX(box), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 5);
-
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-#endif
 }
 
 static void
@@ -265,29 +190,17 @@ create_entry(GdkPixbuf *im, GtkWidget *box, struct AppData *data)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   w = gtk_label_new("BGCOLOR:");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-#endif
 
   entry = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
   gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), entry);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-#endif
 
   data->entry = entry;
   set_bgcolor(255, 255, 255, 255, data);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-#endif
 }
 
 static void
@@ -298,25 +211,12 @@ set_bgcolor(int r, int g, int b, int a, struct AppData *data)
   gra_set_bgcolor(r, g, b, a);
   sprintf(bgcolor, "#%02x%02x%02x%02x", r, g, b, a);
   if(data->entry != NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_text(GTK_EDITABLE(data->entry), bgcolor);
-#else
-    gtk_entry_set_text(GTK_ENTRY(data->entry), bgcolor);
-#endif
   }
 }
 
 /************* Event Handler **************/
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean
-delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
-{
-  gtk_main_quit();
-  return TRUE;
-}
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer data)
 {
@@ -342,40 +242,6 @@ button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y,
   a = (alpha) ? pixels[i + 3] : 255;
   set_bgcolor(r, g, b, a, app_data);
 }
-#else
-static gboolean
-button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data)
-{
-  struct AppData *app_data = (struct AppData *) data;
-  GdkPixbuf *im;
-  int i, x = event->x,  y = event->y, w, h, r, g, b, a, rowstride, alpha, bpp;
-  guchar *pixels;
-
-  im = app_data->im;
-  w = gdk_pixbuf_get_width(im);
-  h = gdk_pixbuf_get_height(im);
-  rowstride = gdk_pixbuf_get_rowstride(im);
-  pixels = gdk_pixbuf_get_pixels(im);
-  alpha = gdk_pixbuf_get_has_alpha(im);
-  bpp = rowstride / w;
-
-  if(x >= w || y >= h)
-    return TRUE;
-
-  i = y * rowstride + x * bpp;
-  switch(event->button){
-  case 1:
-    r = pixels[i];
-    g = pixels[i + 1];
-    b = pixels[i + 2];
-    a = (alpha) ? pixels[i + 3] : 255;
-    set_bgcolor(r, g, b, a, app_data);
-    break;
-  }
-
-  return TRUE;
-}
-#endif
 
 static void
 save_button_clicked(GtkButton *widget, gpointer data)
@@ -393,23 +259,15 @@ save_button_clicked(GtkButton *widget, gpointer data)
   dotsize = gra_set_dpi(app_data->dpi);
   r = gra_save(im, grafile);
   printf("%d %d\n", w * dotsize, h * dotsize);
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (! r) {
     g_main_loop_quit(MainLoop);
   }
-#else
-  gtk_main_quit();
-#endif
 }
 
 static void
 cancel_button_clicked(GtkButton *widget, gpointer data)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_main_loop_quit(MainLoop);
-#else
-  gtk_main_quit();
-#endif
 }
 
 static void
