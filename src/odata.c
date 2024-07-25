@@ -332,7 +332,7 @@ static NHASH FileConfigHash = NULL;
 
 #if HAVE_ISFINITE
 #define check_infinite(v) (! isfinite(v))
-#elsif HAVE_FINITE
+#elif HAVE_FINITE
 #define check_infinite(v) (! finite(v))
 #else
 #define check_infinite(v) ((v) != (v) || (v) == HUGE_VAL || (v) == - HUGE_VAL)
