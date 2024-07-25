@@ -5601,6 +5601,30 @@ check_mtime(struct f2ddata *fp, struct f2dlocal *local)
   return 0;
 }
 
+static int
+get_final_line(struct f2ddata *fp, struct f2dlocal *local)
+{
+  int line = 0;
+  while (TRUE) {
+    int rcode;
+    char *buf;
+    rcode = fgetline(fp->fd, &buf);
+    g_free(buf);
+    if (rcode == -1) {
+      return -1;
+    } else if (rcode == 1) {
+      local->total_line = line;
+      fp->final += line + 1;
+      if (fp->final < 0) {
+	fp->final = 0;
+      }
+      reopendata(fp);
+      break;;
+    }
+    line++;
+  }
+  return 0;
+}
 
 static int
 getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
