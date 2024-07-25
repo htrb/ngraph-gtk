@@ -216,7 +216,6 @@ setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointe
     gtk_list_item_set_child (list_item, btn);
   } else if (g_strcmp0 (id, "caption") == 0 || g_strcmp0 (id, "result") == 0) {
     GtkWidget *label = gtk_editable_label_new ("");
-    gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
     gtk_list_item_set_child (list_item, label);
     g_signal_connect (label, "changed", G_CALLBACK (editable_label_changed), list_item);
   } else {
