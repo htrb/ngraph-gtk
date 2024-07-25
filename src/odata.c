@@ -5640,6 +5640,13 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
     return 0;
   }
 
+  if (fp->final < -1) {
+    if (get_final_line(fp, local) == -1) {
+      closedata(fp, local);
+      return -1;
+    }
+  }
+
   if (hskipdata(fp)!=0) {
     closedata(fp, local);
     return 1;
@@ -5828,15 +5835,12 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   local->sumxy = fp->sumxy;
   local->num = fp->num;
   local->rcode = rcode;
-  local->total_line = fp->line;
 
   if (rcode==-1)
     return -1;
 
   if (fp->interrupt == FALSE)
     local->mtime = fp->mtime;
-
-  set_final_line(fp, local);
 
   return 0;
 }
