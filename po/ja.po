@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2023-02-09 16:12+0900\n"
+"POT-Creation-Date: 2024-08-03 15:08+0900\n"
 "PO-Revision-Date: 2023-01-24 15:34+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -5739,7 +5739,6 @@ msgstr "キーボードショートカットの表示"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
 #: src/gtk/data/gtk/menus-appmenu.ui:7
-#, c-format
 msgid "About %s"
 msgstr "%sについて"
 
@@ -5750,7 +5749,6 @@ msgstr "サービス"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
 #: src/gtk/data/gtk/menus-appmenu.ui:30
-#, c-format
 msgid "Hide %s"
 msgstr "%s を非表示"
 
@@ -5766,7 +5764,6 @@ msgstr "全て表示"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
 #: src/gtk/data/gtk/menus-appmenu.ui:50
-#, c-format
 msgid "Quit %s"
 msgstr "%s を終了"
 
