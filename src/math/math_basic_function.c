@@ -3409,6 +3409,7 @@ math_func_array_compact(MathFunctionCallExpression *exp, MathEquation *eq, MathV
       n++;
       if (i < ary->num) {
         memmove(ary->data.val + i, ary->data.val + i + 1, sizeof(*ary->data.val) * (ary->num - i));
+	i--;
       }
     }
   }
