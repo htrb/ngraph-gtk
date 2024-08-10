@@ -1753,7 +1753,7 @@ math_func_unless(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   return math_expression_calculate(exp->buf[n].exp, rval);
 }
 
-#define CHECK_VAL_TYPE(R,V,T) (R)->val = ((V).val.type == T);	\
+#define CHECK_VAL_TYPE(R,V,T) (R)->val = ((V).val.type == T ? 1 : 0);	\
 				 (R)->type = MATH_VALUE_NORMAL;
 
 
@@ -3409,6 +3409,7 @@ math_func_array_compact(MathFunctionCallExpression *exp, MathEquation *eq, MathV
       n++;
       if (i < ary->num) {
         memmove(ary->data.val + i, ary->data.val + i + 1, sizeof(*ary->data.val) * (ary->num - i));
+	i--;
       }
     }
   }
