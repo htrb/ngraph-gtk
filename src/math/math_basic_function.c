@@ -1753,7 +1753,7 @@ math_func_unless(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   return math_expression_calculate(exp->buf[n].exp, rval);
 }
 
-#define CHECK_VAL_TYPE(R,V,T) (R)->val = ((V).val.type == T);	\
+#define CHECK_VAL_TYPE(R,V,T) (R)->val = ((V).val.type == T ? 1 : 0);	\
 				 (R)->type = MATH_VALUE_NORMAL;
 
 
