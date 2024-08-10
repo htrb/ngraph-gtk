@@ -64,6 +64,20 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <releases>
+  <release version="6.09.09" date="2024-08">
+    <description>
+      <ul>
+	<li> Fixed a bug in the function array_compact that it did not work correctly when the array contains a sequence of non-normal numbers.</li>
+      </ul>
+    </description>
+    </release>
+    <release version="6.09.08" date="2024-08-04">
+    <description>
+      <ul>
+	<li> Fixed a bug that caused incorrect values for constants such as SUMY, AVY, etc. when the "last line" was less than -1.</li>
+      </ul>
+    </description>
+    </release>
     <release version="6.09.07" date="2023-02-09">
       <description>
 	<ul>
@@ -85,7 +99,6 @@
 	  <li> Zoom aspect ratio is set to 1 when only text or mark object is focused.</li>
 	  <li> Fix a bug that ruby plugin was not working on Ruby 3.0 or later.</li>
 	  <li> Fix a bug that spellcheck add-in is not available on Ruby 3.0 or later.</li>
-	  <li> (macOS) can be installed on Homebrew.</li>
 	</ul>
       </description>
     </release>
