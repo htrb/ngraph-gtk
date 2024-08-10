@@ -64,6 +64,29 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <releases>
+    <release version="6.09.09" date="2024-08"/>
+    <description>
+      <ul>
+	<li> Fixed a bug in the function array_compact that it did not work correctly when the array contains a sequence of non-normal numbers.</li>
+      </ul>
+    </description>
+    <release version="6.09.08" date="2024-08-04"/>
+    <description>
+      <ul>
+	<li> Fixed a bug that caused incorrect values for constants such as SUMY, AVY, etc. when the "last line" was less than -1.</li>
+      </ul>
+    </description>
+    <release version="6.09.07" date="2023-02-09"/>
+    <description>
+      <ul>
+	<li> Added "errorband_x" and "errorband_y" to the plot types.</li>
+	<li> Fixed a bug that the plot type "polygon_solid_fill" could not be drawn correctly when the plot type was logarithmic or reciprocal axis.</li>
+	<li> Fixed a bug that some plotting functions could not draw correctly when logarithmic or reciprocal axis.</li>
+	<li> Fixed a bug that "Save Data" sometimes terminated abnormally.</li>
+	<li> Fixed a bug that dialog::button did not work correctly.</li>
+	<li> Added -t and -C command option to ngp2.</li>
+      </ul>
+    </description>
     <release version="6.09.06" date="2022-05-15"/>
     <description>
       <ul>
@@ -73,7 +96,6 @@
 	<li> Zoom aspect ratio is set to 1 when only text or mark object is focused.</li>
 	<li> Fix a bug that ruby plugin was not working on Ruby 3.0 or later.</li>
 	<li> Fix a bug that spellcheck add-in is not available on Ruby 3.0 or later.</li>
-	<li> (macOS) can be installed on Homebrew.</li>
       </ul>
     </description>
     <release version="6.09.05" date="2021-10-29"/>
