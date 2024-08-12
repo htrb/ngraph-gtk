@@ -18,7 +18,7 @@
   <update_contact>ZXB01226_at_nifty.com</update_contact>
   <screenshots>
     <screenshot type="default">
-      <image>http://hito.music.coocan.jp/ngraph/ngraph_609_linux.png</image>
+      <image>https://htrb.github.io/ngraph-gtk/manual/ja/tutorial/window.png</image>
       <caption>Main application window</caption>
     </screenshot>
   </screenshots>
@@ -32,7 +32,7 @@
     <control>touch</control>
   </recommends>
   <requires>
-    <display_length compare="ge">medium</display_length>
+    <display_length compare="ge">800</display_length>
   </requires>
   <content_rating type="oars-1.1">
     <content_attribute id="violence-cartoon">none</content_attribute>
@@ -64,30 +64,33 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <releases>
-    <release version="6.09.09" date="2024-08"/>
+    <release version="6.09.09" date="2024-08">
     <description>
       <ul>
 	<li> Fixed a bug in the function array_compact that it did not work correctly when the array contains a sequence of non-normal numbers.</li>
       </ul>
     </description>
-    <release version="6.09.08" date="2024-08-04"/>
+    </release>
+    <release version="6.09.08" date="2024-08-04">
     <description>
       <ul>
 	<li> Fixed a bug that caused incorrect values for constants such as SUMY, AVY, etc. when the "last line" was less than -1.</li>
       </ul>
     </description>
-    <release version="6.09.07" date="2023-02-09"/>
+    </release>
+    <release version="6.09.07" date="2023-02-09">
     <description>
       <ul>
 	<li> Added "errorband_x" and "errorband_y" to the plot types.</li>
 	<li> Fixed a bug that the plot type "polygon_solid_fill" could not be drawn correctly when the plot type was logarithmic or reciprocal axis.</li>
-	<li> Fixed a bug that some plotting functions could not draw correctly when logarithmic or reciprocal axis.</li>
+	<li> Fixed a bug that some plotting functions could not draw correctly when the plot type was logarithmic or reciprocal axis.</li>
 	<li> Fixed a bug that "Save Data" sometimes terminated abnormally.</li>
 	<li> Fixed a bug that dialog::button did not work correctly.</li>
 	<li> Added -t and -C command option to ngp2.</li>
       </ul>
     </description>
-    <release version="6.09.06" date="2022-05-15"/>
+    </release>
+    <release version="6.09.06" date="2022-05-15">
     <description>
       <ul>
 	<li> Add bitwise operators to mathematical conversions.</li>
@@ -98,7 +101,8 @@
 	<li> Fix a bug that spellcheck add-in is not available on Ruby 3.0 or later.</li>
       </ul>
     </description>
-    <release version="6.09.05" date="2021-10-29"/>
+    </release>
+    <release version="6.09.05" date="2021-10-29">
     <description>
       <ul>
 	<li> Add support for using the actual line width and color in the draft when creating a new legend or editing a part of it (semi-transparent display).</li>
@@ -119,7 +123,8 @@
 	<li> Fix a bug in which adding or deleting a font alias was not reflected in the font setting combo box when selecting an object.</li>
       </ul>
     </description>
-    <release version="6.09.04" date="2021-08-29"/>
+    </release>
+    <release version="6.09.04" date="2021-08-29">
     <description>
       <ul>
 	<li> Add the ability to select a dark theme.</li>
@@ -131,6 +136,7 @@
 	<li> (macOS) Fix a bug where drag and drop of files was not accepted anymore (GTK).</li>
       </ul>
     </description>
+    </release>
     <release version="6.09.03" date="2021-06-19"/>
     <replace version="6.09.02" date="2021-05-15"/>
     <replace version="6.09.01" date="2021-02-01"/>
