@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ngraph-gtk 6.09.08\n"
+"Project-Id-Version: ngraph-gtk 6.09.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2024-08-03 15:08+0900\n"
+"POT-Creation-Date: 2024-08-16 17:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,6 +37,198 @@ msgstr ""
 
 #: misc/com.github.htrb.ngraph-gtk.metainfo.xml:22
 msgid "Main application window"
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:70
+msgid ""
+"Fixed a bug in the function array_compact that it did not work correctly "
+"when the array contains a sequence of non-normal numbers."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:77
+msgid ""
+"Fixed a bug that caused incorrect values for constants such as SUMY, AVY, "
+"etc. when the \"last line\" was less than -1."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:84
+msgid "Added \"errorband_x\" and \"errorband_y\" to the plot types."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:85
+msgid ""
+"Fixed a bug that the plot type \"polygon_solid_fill\" could not be drawn "
+"correctly when the plot type was logarithmic or reciprocal axis."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:86
+msgid ""
+"Fixed a bug that some plotting functions could not draw correctly when the "
+"plot type was logarithmic or reciprocal axis."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:87
+msgid "Fixed a bug that \"Save Data\" sometimes terminated abnormally."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:88
+msgid "Fixed a bug that dialog::button did not work correctly."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:89
+msgid "Added -t and -C command option to ngp2."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:96
+msgid "Add bitwise operators to mathematical conversions."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:97
+msgid "Add \"fit_solve\" function to mathematical conversion."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:98
+msgid "Reorganize source package contents for easier cross-compilation."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:99
+msgid "Zoom aspect ratio is set to 1 when only text or mark object is focused."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:100
+msgid "Fix a bug that ruby plugin was not working on Ruby 3.0 or later."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:101
+msgid "Fix a bug that spellcheck add-in is not available on Ruby 3.0 or later."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:108
+msgid ""
+"Add support for using the actual line width and color in the draft when "
+"creating a new legend or editing a part of it (semi-transparent display)."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:109
+msgid ""
+"Add support for using the actual drawing image when moving, enlarging, or "
+"reducing the selected object (semi-transparent display)."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:110
+msgid ""
+"Enabled to set the value of parameter object to the initial value at once."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:111
+msgid ""
+"Add the ability to display the page setup dialog when creating a new graph."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:112
+msgid ""
+"Changed the initial position of axes to match the paper size when creating a "
+"new graph."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:113
+msgid ""
+"When creating a new graph, the size of the graph now follows the settings of "
+"the axis saved in \"Save as initial state (graph)\"."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:114
+msgid ""
+"When creating a new axis, some settings now follow the settings of the axis "
+"saved in \"Save as initial state (graph)\"."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:115
+msgid "The \"Legend Text Initial State\" dialog was reorganized."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:116
+msgid "Add \"Axis Grid Initial State\" dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:117
+msgid "Improved the design of the page setup dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:118
+msgid ""
+"Add \"Widescreen (16:10)\" and \"Executive\" to the paper selection of the "
+"page setup dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:119
+msgid ""
+"Fix a bug that the orientation of the paper for printing was wrong when "
+"\"Standard\", \"Wide\" or \"Any\" was selected in the paper selection of the "
+"Page Setup dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:120
+msgid ""
+"Fix a bug that the update flag of the graph was not set when the position or "
+"length of the axis was changed in the setting dialog of frame graph, grid "
+"graph, and intersection graph."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:121
+msgid ""
+"Fix a bug that the direction of the axis and text was wrong when performing "
+"operations such as zooming in, zooming out, rotating, and flipping when the "
+"direction of the axis and text was between 180 degrees and 270 degrees."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:122
+msgid ""
+"Fix a bug that when an error message was displayed during data drawing, "
+"drawing could not be performed properly."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:123
+msgid ""
+"Fix a bug in which adding or deleting a font alias was not reflected in the "
+"font setting combo box when selecting an object."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:130
+msgid "Add the ability to select a dark theme."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:131
+msgid ""
+"When dragging and dropping ngp files, the folder of the ngp file is now the "
+"current folder."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:132
+msgid ""
+"The axis name is always used to specify and display the axis in the GUI."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:133
+msgid "Returned to the original folder when canceled in the read graph dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:134
+msgid ""
+"GtkFileChooserButton is now used to specify the expand folder in the graph "
+"loading dialog."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:135
+msgid ""
+"The destination of merge file now follows the specification of the expansion "
+"folder."
+msgstr ""
+
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:136
+msgid ""
+"(macOS) Fix a bug where drag and drop of files was not accepted anymore "
+"(GTK)."
 msgstr ""
 
 #: src/gtk/ox11menu.c:1923
