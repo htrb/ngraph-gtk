@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update -q && sudo apt-get install
           --no-install-recommends -y libgtk-4-dev libgsl-dev libreadline-dev ruby ruby-dev libgtksourceview-5-dev gettext autopoint
     - name: autoreconf
-      run: autoreconf --install
+      run: autoreconf --install --force
     - name: configure
       run: ./configure
     - name: make

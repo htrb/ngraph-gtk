@@ -64,7 +64,7 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <releases>
-    <release version="6.09.09" date="2024-08">
+    <release version="6.09.09" date="2024-08-17">
       <description>
 	<ul>
 	  <li> Fixed a bug in the function array_compact that it did not work correctly when the array contains a sequence of non-normal numbers.</li>

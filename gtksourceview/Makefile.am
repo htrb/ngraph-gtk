@@ -10,3 +10,5 @@ MATH_DEFINITION = $(top_builddir)/src/odata.c		\
 
 $(langspecs): create_lang.nsc $(MATH_DEFINITION) $(srcdir)/$(langspecs).pre $(srcdir)/$(langspecs).post
 	$(top_builddir)/src/ngraph -i $(srcdir)/create_lang.nsc "$(SED)" "$(srcdir)/$(langspecs).pre" "$(srcdir)/$(langspecs).post" > $(srcdir)/$(langspecs)
+
+CLEANFILES = $(langspecs)
