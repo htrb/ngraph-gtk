@@ -302,6 +302,11 @@ DialogExecute(GtkWidget *parent, void *dialog)
     gtk_window_destroy (GTK_WINDOW (data->widget));
     data->widget = NULL;
   }
+#else
+  if (data->widget && (data->parent != parent)) {
+    gtk_window_set_transient_for(GTK_WINDOW(data->widget), GTK_WINDOW(parent));
+    data->parent = parent;
+  }
 #endif
 
   if (data->widget == NULL) {
