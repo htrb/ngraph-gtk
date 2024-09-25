@@ -280,7 +280,7 @@ dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
   return TRUE;
 }
 
-#define DESTROY_DIALOG 1
+#define DESTROY_DIALOG 0
 void
 DialogExecute(GtkWidget *parent, void *dialog)
 {
