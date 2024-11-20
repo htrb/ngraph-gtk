@@ -383,7 +383,6 @@ get_symbol(const char *str, const char ** rstr)
     g_free(buf);
     tok = create_token(str, type);
     if (tok == NULL) {
-      g_free(buf);
       return NULL;
     }
   } else {
