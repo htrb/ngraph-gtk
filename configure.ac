@@ -21,6 +21,15 @@ case "$host" in
   *-*-mingw*)
     os_win32=yes
     AC_CHECK_TOOL(WINDRES, windres)
+    case "$MINGW_ARC" in
+      clang*)
+        stdcpplib="-lc++"
+        ;;
+      *)
+        stdcpplib="-lstdc++"
+        ;;
+    esac
+    AC_SUBST(STDCPPLIB, $stdcpplib)
     ;;
   *)
     os_win32=no
