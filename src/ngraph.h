@@ -16,7 +16,7 @@ enum ngraph_object_field_type {
   NSARRAY = 9,
   NENUM = 10,
   NOBJ = 11,
-#if USE_LABEL
+#ifdef USE_LABEL
   NLABEL = 12,
 #endif
   NVFUNC = 20,

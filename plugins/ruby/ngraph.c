@@ -1525,7 +1525,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   case NBFUNC:
     val = (rval.i) ? Qtrue : Qfalse;
     break;
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCFUNC:
 #endif
   case NIFUNC:
@@ -1669,7 +1669,7 @@ add_common_const(VALUE ngraph_module)
   VALUE type, attr;
 
   type = rb_define_module_under(ngraph_module, "FIELD_TYPE");
-#if USE_NCHAR
+#ifdef USE_NCHAR
   rb_define_const(type, "CHAR", INT2FIX(NCHAR));
 #endif
   rb_define_const(type, "VOID", INT2FIX(NVOID));
@@ -1683,12 +1683,12 @@ add_common_const(VALUE ngraph_module)
   rb_define_const(type, "SARRAY", INT2FIX(NSARRAY));
   rb_define_const(type, "ENUM", INT2FIX(NENUM));
   rb_define_const(type, "OBJ", INT2FIX(NOBJ));
-#if USE_LABEL
+#ifdef USE_LABEL
   rb_define_const(type, "LABEL", INT2FIX(NLABEL));
 #endif
   rb_define_const(type, "VFUNC", INT2FIX(NVFUNC));
   rb_define_const(type, "BFUNC", INT2FIX(NBFUNC));
-#if USE_NCHAR
+#ifdef USE_NCHAR
   rb_define_const(type, "CFUNC", INT2FIX(NCFUNC));
 #endif
   rb_define_const(type, "IFUNC", INT2FIX(NIFUNC));

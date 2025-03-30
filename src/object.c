@@ -1564,7 +1564,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     table[i].offset=offset;
     switch (table[i].type) {
     case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
     case NLABEL:
 #endif
     case NVFUNC:
@@ -1719,7 +1719,7 @@ dup_inst(struct objlist *obj, N_VALUE *inst)
     type = robj->table[idn].type;
     switch (type) {
     case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
     case NLABEL:
 #endif
     case NVFUNC:
@@ -1805,7 +1805,7 @@ free_inst(struct objlist *obj, N_VALUE *inst)
     type = robj->table[idn].type;
     switch (type) {
     case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
     case NLABEL:
 #endif
     case NVFUNC:
@@ -2507,7 +2507,7 @@ chkobjarglist(struct objlist *obj, const char *name)
     case NBOOL:
       arglist="b";
       break;
-#if USE_NCHAR
+#ifdef USE_NCHAR
     case NCHAR:
       arglist="c";
       break;
@@ -2998,14 +2998,14 @@ _putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
   idp=chkobjoffset2(robj,idn);
   switch (robj->table[idn].type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
   case NINT:  case NIFUNC:
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR: case NCFUNC:
 #endif
   case NENUM:
@@ -3079,14 +3079,14 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
 
   switch (robj->table[idn].type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
     break;
   case NBOOL:
   case NINT:
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR:
 #endif
   case NENUM:
@@ -3113,14 +3113,14 @@ _getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
   idp=chkobjoffset2(robj,idn);
   switch (robj->table[idn].type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
   case NINT:  case NIFUNC:
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR: case NCFUNC:
 #endif
   case NENUM:
@@ -3184,14 +3184,14 @@ getobj(struct objlist *obj, const char *vname,int id,
   }
   switch (robj->table[idn].type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
   case NINT: case NIFUNC:
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR: case NCFUNC:
 #endif
   case NENUM:
@@ -3345,12 +3345,12 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
   if (getobj(obj,vname,sid,0,NULL,po)==-1) return -1;
   switch (robj->table[idn].type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NBOOL:
   case NINT:
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR:
 #endif
   case NENUM:
@@ -4201,7 +4201,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     else bval="false";
     g_string_append_printf(str,"%s",bval);
     break;
-#if USE_NCHAR
+#ifdef USE_NCHAR
   case NCHAR: case NCFUNC:
     g_string_append_printf(str,"%c",*(char *)po);
     break;

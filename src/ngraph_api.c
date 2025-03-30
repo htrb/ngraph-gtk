@@ -121,7 +121,7 @@ ngraph_object_put(struct objlist *obj, const char *vname, int id, ngraph_value *
   type = chkobjfieldtype(obj, vname);
   switch (type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
@@ -348,7 +348,7 @@ ngraph_object_get(struct objlist *obj, const char *vname, int id, ngraph_arg *ar
 
   switch (type) {
   case NVOID:
-#if USE_LABEL
+#ifdef USE_LABEL
   case NLABEL:
 #endif
   case NVFUNC:
