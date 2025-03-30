@@ -2091,7 +2091,7 @@ add_recent_menu_item(GtkRecentInfo *info, GtkStringList *string_list, int type)
   int local, n;
   const char *uri, *mime, *target_mime;
   char *filename;
-  struct stat sb;
+  GStatBuf sb;
 
   if (! gtk_recent_info_has_application (info, AppName)) {
     return;
