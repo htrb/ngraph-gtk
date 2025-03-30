@@ -107,3 +107,13 @@ osx/ngraph.icns
 test/*.log
 test/*.sh.trs
 /src/gtk/data/ngraphui.resources.xml
+m4/
+/po/Makefile.in.in
+/po/Makevars.template
+/po/stamp-it
+/po/quot.sed
+/po/insert-header.sed
+/po/en@quot.header
+/po/en@boldquot.header
+/po/boldquot.sed
+/po/Rules-quot
