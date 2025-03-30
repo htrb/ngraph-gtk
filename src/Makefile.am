@@ -60,7 +60,7 @@ libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_bu
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
 libngraph_la_LDFLAGS = $(libngraph_ldflags)
 if OS_WIN32
-  libngraph_la_LIBADD += -lgdi32 -lgdiplus -lstdc++
+  libngraph_la_LIBADD += -lgdi32 -lgdiplus -lstdc++ -lc++
 endif
 
 bin_PROGRAMS = ngraph
