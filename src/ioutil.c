@@ -501,7 +501,7 @@ nsearchpath(char *path,char *name,int shellscript)
 }
 
 static int
-nscandir(char *dir,char ***namelist, int (*compar)())
+nscandir(char *dir,char ***namelist, int (*compar)(const void *, const void *))
 {
   unsigned int i;
   GDir *dp;
@@ -556,8 +556,9 @@ nscandir(char *dir,char ***namelist, int (*compar)())
 }
 
 static int
-nalphasort(char **a,char **b)
+nalphasort(const void *pa, const void *pb)
 {
+  char * const *a = pa, * const *b = pb;
   return strcmp(*a,*b);
 }
 
