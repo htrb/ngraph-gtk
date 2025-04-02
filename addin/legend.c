@@ -52,7 +52,7 @@ static GMainLoop *MainLoop;
 
 /* Legend Object */
 #define N_TYPE_LEGEND (n_legend_get_type())
-G_DECLARE_FINAL_TYPE (NLegend, n_legend_, N, LEGEND, GObject)
+G_DECLARE_FINAL_TYPE (NLegend, n_legend, N, LEGEND, GObject)
 
 typedef struct _NLegend NLegend;
 
