@@ -61,7 +61,7 @@ static GMainLoop *MainLoop;
 
 /* Fitrslt Object */
 #define N_TYPE_FITRSLT (n_fitrslt_get_type())
-G_DECLARE_FINAL_TYPE (NFitrslt, n_fitrslt_, N, FITRSLT, GObject)
+G_DECLARE_FINAL_TYPE (NFitrslt, n_fitrslt, N, FITRSLT, GObject)
 
 typedef struct _NFitrslt NFitrslt;
 
