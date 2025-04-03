@@ -46,7 +46,7 @@ static void create_widgets(GtkWidget *app, struct AppData *app_data, const gchar
 static void print_error_exit(const gchar *error);
 static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 
-static void create_entry(GdkPixbuf *im, GtkWidget *hbox, struct AppData *data);
+static void create_entry(GtkWidget *hbox, struct AppData *data);
 static void create_buttons(struct AppData *data, GtkWidget *hbox);
 
 static void button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
@@ -54,11 +54,11 @@ static void save_button_clicked(GtkButton *widget, gpointer data);
 static void cancel_button_clicked(GtkButton *widget, gpointer data);
 
 static int  rectcmp(const void *tmpa, const void *tmpb);
-static void fputcolor(FILE *fp, struct Color *color);
-static int  colorcmp(struct Color *a, struct Color *b);
+static void fputcolor(FILE *fp, const struct Color *color);
+static int  colorcmp(const struct Color *a, const struct Color *b);
 static int  gra_set_dpi(int dpi);
 static void gra_set_bgcolor(gint r, gint g, gint b, gint a);
-static int  gra_save(GdkPixbuf *im, char *gra_file);
+static int  gra_save(GdkPixbuf *im, const char *gra_file);
 
 int
 main(int argc, char *argv[])
@@ -72,7 +72,7 @@ main(int argc, char *argv[])
 
   if (argc != 4) {
     static char *usage = "Usage: %s resolution image_file gra_file\n";
-    gchar *error;
+    const gchar *error;
     error = g_strdup_printf(usage, g_path_get_basename(argv[0]));
     print_error_exit(error);
     g_main_loop_run(MainLoop);
@@ -161,13 +161,10 @@ static void
 create_buttons(struct AppData *data, GtkWidget *box)
 {
   GtkWidget *w, *vbox, *hbox;
-  GdkPixbuf *im;
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-  im = data->im;
-
-  create_entry(im, vbox, data);
+  create_entry(vbox, data);
   gtk_box_append(GTK_BOX(box), vbox);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -183,7 +180,7 @@ create_buttons(struct AppData *data, GtkWidget *box)
 }
 
 static void
-create_entry(GdkPixbuf *im, GtkWidget *box, struct AppData *data)
+create_entry(GtkWidget *box, struct AppData *data)
 {
   GtkWidget *w, *hbox, *entry = NULL;
 
@@ -248,7 +245,7 @@ save_button_clicked(GtkButton *widget, gpointer data)
 {
   struct AppData *app_data = (struct AppData *) data;
   GdkPixbuf *im;
-  gchar *grafile;
+  const gchar *grafile;
   int dotsize, w, h, r;
 
   im = app_data->im;
@@ -292,7 +289,7 @@ gra_set_dpi(int dpi)
 }
 
 static int
-gra_save(GdkPixbuf *im, char *gra_file)
+gra_save(GdkPixbuf *im, const char *gra_file)
 {
   gint w, h, x, x1, y, i, j, rowstride, alpha, bpp, offset;
   struct Color shape_color, color, color2;
@@ -307,7 +304,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
   h = gdk_pixbuf_get_height(im);
 
   if(INT_MAX / sizeof(*rect) / w / h < 1 || INT_MAX / w / DotSize < 1 || INT_MAX / h / DotSize < 1){
-    gchar *error;
+    const gchar *error;
     error = g_strdup_printf("Too large image.\n");
     print_error_exit(error);
     return 1;
@@ -413,7 +410,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
 }
 
 static int
-colorcmp(struct Color *a, struct Color *b)
+colorcmp(const struct Color *a, const struct Color *b)
 {
   return ! (a->r == b->r && a->g == b->g && a->b == b->b && a->a == b->a);
 }
@@ -421,7 +418,7 @@ colorcmp(struct Color *a, struct Color *b)
 static int
 rectcmp(const void *tmpa, const void *tmpb)
 {
-  struct rectangle *a = (struct rectangle *)tmpa,  *b = (struct rectangle *)tmpb;
+  const struct rectangle *a = (struct rectangle *)tmpa,  *b = (struct rectangle *)tmpb;
   int c, d;
 
   c = (((int)a->r)<<16) + (((int)a->g)<<8) + a->b;
@@ -429,7 +426,8 @@ rectcmp(const void *tmpa, const void *tmpb)
   return d - c;
 }
 
-static void fputcolor(FILE *fp, struct Color *color)
+static void
+fputcolor(FILE *fp, const struct Color *color)
 {
   if (color->a > 0) {
     fprintf(fp, "G,4,%d,%d,%d,%d\n", color->r, color->g, color->b, color->a);
