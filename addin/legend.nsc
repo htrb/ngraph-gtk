@@ -16,8 +16,14 @@ then
     DATALIST=${system:0:temp_file}
     object data -instance > "$DATALIST"
     get data:0-! -id -field -escape source file array id hidden x y type mark_type mark_size line_width line_style R G B R2 G2 B2 math_x math_y >> "$DATALIST"
+    if [ `get menu -field configuration:use_dark_theme` = "true" ]
+    then
+	DARK_THEME="-d"
+    else
+	DARK_THEME=""
+    fi
     SCRIPT=${system:0:temp_file}
-    "${NGRAPHLIB}/legend" -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
+    "${NGRAPHLIB}/legend" $DARK_THEME -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
     if [ -s "$SCRIPT" ];
     then
 	new shell
