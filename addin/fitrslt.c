@@ -54,7 +54,7 @@ struct fit_prm {
   GtkWidget *caption;
   const char *script;
   struct fit_data *data;
-  int posx, posy, fit_num;
+  int posx, posy, fit_num, dark_theme;
 };
 
 static GMainLoop *MainLoop;
@@ -708,6 +708,8 @@ get_opt(int argc, char **argv, struct fit_prm *prm)
       if (argv[i]) {
 	prm->posy = atoi(argv[i]);
       }
+    } else if (strcmp(argv[i], "-d") == 0) {
+      prm->dark_theme = TRUE;
     } else if (data_file == NULL) {
       data_file = argv[i];
     } else {
@@ -746,6 +748,7 @@ main(int argc, char **argv)
 
   prm.posx = POS_X;
   prm.posy = POS_Y;
+  prm.dark_theme = FALSE;
 
   data_file = get_opt(argc, argv, &prm);
   if (data_file == NULL) {
@@ -771,6 +774,9 @@ main(int argc, char **argv)
   gtk_drop_down_set_selected (GTK_DROP_DOWN (prm.combo), 0);
   set_parameter(&prm);
 
+  if (prm.dark_theme) {
+    use_dark_theme();
+  }
   gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
 
