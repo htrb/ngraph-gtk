@@ -21,5 +21,6 @@ GtkWidget *dialog_new(const char *title, GCallback cancel_cb, GCallback ok_cb, g
 GtkWidget *columnview_create(GType item_type);
 GtkColumnViewColumn *columnview_create_column(GtkWidget *columnview, const char *header, GCallback setup, GCallback bind, gpointer user_data);
 GListStore *columnview_get_list(GtkWidget *columnview);
+void use_dark_theme(void);
 
 #endif
