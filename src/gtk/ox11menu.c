@@ -2306,6 +2306,46 @@ mx_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 }
 
 static int
+mx_configuration(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *id;
+  struct menu_config *cfg;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  id = (char *) argv[2];
+  if (id == NULL) {
+    return 0;
+  }
+
+  if (nhash_get_ptr(MenuConfigHash, id, (void *) &cfg)) {
+    return 0;
+  }
+  switch (cfg->type) {
+  case MENU_CONFIG_TYPE_NUMERIC:
+    rval->str = g_strdup_printf("%d", * (int *) cfg->data);
+    break;
+  case MENU_CONFIG_TYPE_BOOL:
+    rval->str = g_strdup_printf("%s", * (int *) cfg->data ? "true" : "false");
+    break;
+  case MENU_CONFIG_TYPE_STRING:
+    rval->str = g_strdup_printf("%s", * (char **) cfg->data);
+    break;
+  case MENU_CONFIG_TYPE_CHARMAP:
+  case MENU_CONFIG_TYPE_COLOR:
+  case MENU_CONFIG_TYPE_COLOR_ARY:
+  case MENU_CONFIG_TYPE_SCRIPT:
+  case MENU_CONFIG_TYPE_WINDOW:
+    break;
+  }
+
+  return 0;
+}
+
+static int
 mx_exeparent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   return _exeparent(obj, argv[1], inst, rval, argc, argv);
@@ -2339,6 +2379,7 @@ static struct objtable gtkmenu[] = {
   {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
   {"active", NBFUNC, NREAD | NEXEC, mx_get_active, "", 0},
   {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
+  {"configuration", NSFUNC, NREAD | NEXEC, mx_configuration, NULL, 0},
   {"_output", NVFUNC, 0, mx_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, mx_exeparent, NULL, 0},
   {"_charascent", NIFUNC, 0, mx_exeparent, NULL, 0},
