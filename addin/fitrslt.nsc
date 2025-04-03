@@ -34,8 +34,14 @@ then
 	    get ${data::fit} -field -escape id type poly_dimension user_func %00 %01 %02 %03 %04 %05 %06 %07 %08 %09 >> "$DATALIST"
 	fi
     done
+    if [ `get menu -field configuration:use_dark_theme` = "true" ]
+    then
+	DARK_THEME="-d"
+    else
+	DARK_THEME=""
+    fi
     SCRIPT=${system:0:temp_file}
-    "${NGRAPHLIB}/fitrslt" -x ${X} -y ${Y} "$DATALIST" "$SCRIPT"
+    "${NGRAPHLIB}/fitrslt" $DARK_THEME -x ${X} -y ${Y} "$DATALIST" "$SCRIPT"
     if [ -s "$SCRIPT" ];
     then
 	new shell
