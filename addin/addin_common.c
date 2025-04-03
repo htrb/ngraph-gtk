@@ -197,7 +197,8 @@ create_font_frame(struct font_prm *prm)
 int
 fgets_int(FILE *fp)
 {
-  char buf[LINE_BUF_SIZE], *r;
+  char buf[LINE_BUF_SIZE];
+  const char *r;
   int val;
 
   r = fgets(buf, sizeof(buf), fp);
@@ -213,7 +214,8 @@ fgets_int(FILE *fp)
 double
 fgets_double(FILE *fp)
 {
-  char buf[LINE_BUF_SIZE], *r;
+  char buf[LINE_BUF_SIZE];
+  const char *r;
   double val;
 
   r = fgets(buf, sizeof(buf), fp);
@@ -229,7 +231,8 @@ fgets_double(FILE *fp)
 char *
 fgets_str(FILE *fp)
 {
-  char buf[LINE_BUF_SIZE], *r;
+  char buf[LINE_BUF_SIZE];
+  const char *r;
   char *str;
 
   r = fgets(buf, sizeof(buf), fp);
@@ -325,4 +328,13 @@ columnview_get_list(GtkWidget *columnview)
   model = gtk_single_selection_get_model (GTK_SINGLE_SELECTION (selection));
 
   return G_LIST_STORE (model);
+}
+
+void
+use_dark_theme(void)
+{
+  GtkSettings *settings;
+
+  settings = gtk_settings_get_default();
+  g_object_set(G_OBJECT(settings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 }
