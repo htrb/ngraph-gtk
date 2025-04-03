@@ -45,7 +45,7 @@ struct file_prm {
   struct font_prm font;
   const char *script;
   struct file_data *data;
-  int posx, posy, w, file_num;
+  int posx, posy, w, file_num, dark_theme;
 };
 
 static GMainLoop *MainLoop;
@@ -837,6 +837,8 @@ get_opt(int argc, char **argv, struct file_prm *prm)
       if (argv[i]) {
 	prm->w = atoi(argv[i]);
       }
+    } else if (strcmp(argv[i], "-d") == 0) {
+      prm->dark_theme = TRUE;
     } else if (data_file == NULL) {
       data_file = argv[i];
     } else {
@@ -875,6 +877,7 @@ main(int argc, char **argv)
 
   prm.posx = POS_X;
   prm.posy = POS_Y;
+  prm.dark_theme = FALSE;
   data_file = get_opt(argc, argv, &prm);
   if (data_file == NULL) {
     return 0;
@@ -895,6 +898,9 @@ main(int argc, char **argv)
 
   set_parameter(&prm);
 
+  if (prm.dark_theme) {
+    use_dark_theme();
+  }
   gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
 
