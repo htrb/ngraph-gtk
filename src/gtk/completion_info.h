@@ -3,11 +3,10 @@
 #include "gtk_common.h"
 #include "sourcecompletionwords.h"
 
-/* must be implemented */
 struct completion_info
 {
   char *lower_text, *text, *text_wo_paren, *info;
-  WordsProposal *proposal;      /* unused member */
+  WordsProposal *proposal;
 };
 
 extern struct completion_info completion_info_const[];
