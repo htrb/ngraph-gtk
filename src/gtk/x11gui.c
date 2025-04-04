@@ -1604,7 +1604,7 @@ void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
 {
   GdkSurface *surface;
-  /* must be implemented */
+  /* In Wayland the compositor owns window positioning. */
   surface = gtk_native_get_surface(GTK_NATIVE(win));
   *w = gdk_surface_get_width(surface);
   *h = gdk_surface_get_height(surface);
