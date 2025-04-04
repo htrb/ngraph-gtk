@@ -1426,37 +1426,6 @@ EvalDialog(struct EvalDialog *data,
   data->sel = iarray;
 }
 
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-static gboolean
-scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
-{
-  gdouble x, y;
-
-  switch (e->direction) {
-  case GDK_SCROLL_UP:
-  case GDK_SCROLL_LEFT:
-    range_increment(w, -SCROLL_INC);
-    break;
-  case GDK_SCROLL_DOWN:
-  case GDK_SCROLL_RIGHT:
-    range_increment(w, SCROLL_INC);
-    break;
-  case GDK_SCROLL_SMOOTH:
-    if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
-      range_increment(w, y * SCROLL_INC);
-    }
-    return TRUE;
-  default:
-    return FALSE;
-  }
-
-  return TRUE;
-}
-#endif
-
 #if 0
 static void
 menu_activate(GtkMenuShell *menushell, gpointer user_data)
