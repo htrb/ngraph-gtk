@@ -1339,38 +1339,8 @@ get_home(void)
 static void
 create_icon(void)
 {
-  GList *list = NULL;
-  GdkPixbuf *pixbuf;
-
-  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_SVG_ICON_FILE, NULL);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-
-  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON_FILE, NULL);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-
-  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON64_FILE, NULL);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-
-  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON128_FILE, NULL);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-
-  if (list) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-    gtk_window_set_default_icon_list(list);
-    gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
-#endif
-    g_list_free_full(list, g_object_unref);
-  }
+  gtk_window_set_default_icon_name("ngraph");
+  gtk_window_set_icon_name(GTK_WINDOW(TopLevel), "ngraph");
 }
 
 static int
