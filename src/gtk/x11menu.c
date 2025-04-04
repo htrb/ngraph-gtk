@@ -2607,6 +2607,7 @@ application(char *file)
     display = gdk_display_get_default();
     theme = gtk_icon_theme_get_for_display(display);
     gtk_icon_theme_add_resource_path(theme, NGRAPH_ICON_PATH);
+    gtk_icon_theme_add_resource_path(theme, NGRAPH_APP_ICON_PATH);
     if (create_toplevel_window()) {
       return 1;
     }
