@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2024-12-30 20:29+0900\n"
+"POT-Creation-Date: 2025-04-04 16:42+0900\n"
 "PO-Revision-Date: 2025-03-30 23:26+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1169 src/gtk/x11menu.c:2915
+#: src/gtk/ox11menu.c:1169 src/gtk/x11menu.c:2886
 msgid "Error:"
 msgstr "エラー:"
 
@@ -23,7 +23,7 @@ msgstr "エラー:"
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:270 src/gtk/x11commn.c:1889
+#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:270 src/gtk/x11commn.c:1888
 msgid "Confirm"
 msgstr "確認"
 
@@ -31,7 +31,7 @@ msgstr "確認"
 msgid "Message"
 msgstr "メッセージ"
 
-#: src/gtk/ox11dlg.c:235 src/gtk/ox11dlg.c:391 src/gtk/x11commn.c:2317
+#: src/gtk/ox11dlg.c:235 src/gtk/ox11dlg.c:391 src/gtk/x11commn.c:2316
 #: src/gtk/x11gui.c:329 src/gtk/x11gui.c:886 src/gtk/x11gui.c:971
 #: src/gtk/x11gui.c:1065 src/gtk/x11gui.c:1167 src/gtk/x11opt.c:1168
 msgid "_OK"
@@ -539,21 +539,21 @@ msgstr "グリッドプロパティ (複数選択)"
 msgid "scale undo (multi select)"
 msgstr "スケールアンドゥ (複数選択)"
 
-#: src/gtk/x11commn.c:1302 src/gtk/x11opt.c:1806
+#: src/gtk/x11commn.c:1301 src/gtk/x11opt.c:1806
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1392 src/gtk/x11menu.c:436
+#: src/gtk/x11commn.c:1391 src/gtk/x11menu.c:436
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1671
+#: src/gtk/x11commn.c:1670
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1888
+#: src/gtk/x11commn.c:1887
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -561,36 +561,36 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:2203
+#: src/gtk/x11commn.c:2202
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:2217
+#: src/gtk/x11commn.c:2216
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:2221
+#: src/gtk/x11commn.c:2220
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:2250
+#: src/gtk/x11commn.c:2249
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:2316
+#: src/gtk/x11commn.c:2315
 msgid "Drawing end"
 msgstr "描画終了"
 
-#: src/gtk/x11commn.c:2364
+#: src/gtk/x11commn.c:2363
 msgid "Error messages"
 msgstr "エラーメッセージ"
 
-#: src/gtk/x11commn.c:2418 src/gtk/x11commn.c:2515
+#: src/gtk/x11commn.c:2417 src/gtk/x11commn.c:2514
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:2548
+#: src/gtk/x11commn.c:2547
 msgid "error"
 msgstr "エラー"
 
@@ -1236,31 +1236,31 @@ msgstr "最大値(_M):"
 msgid "di_ViSion:"
 msgstr "分割数(_V):"
 
-#: src/gtk/x11file.c:4952 src/gtk/x11menu.c:410
+#: src/gtk/x11file.c:4965 src/gtk/x11menu.c:410
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:4992
+#: src/gtk/x11file.c:5005
 msgid "close data (multi select)"
 msgstr "データを閉じる (複数選択)"
 
-#: src/gtk/x11file.c:5174
+#: src/gtk/x11file.c:5187
 msgid "data property (multi select)"
 msgstr "データプロパティ (複数選択)"
 
-#: src/gtk/x11file.c:5239
+#: src/gtk/x11file.c:5252
 msgid "edit data file (single select)"
 msgstr "データファイルの編集 (単一選択)"
 
-#: src/gtk/x11file.c:6308
+#: src/gtk/x11file.c:6321
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:6309
+#: src/gtk/x11file.c:6322
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:6317
+#: src/gtk/x11file.c:6330
 msgid "Data file"
 msgstr "データの保存"
 
@@ -2063,120 +2063,120 @@ msgstr "スケール設定を戻す"
 msgid "_Add-in"
 msgstr "アドイン(_A)"
 
-#: src/gtk/x11menu.c:2326
+#: src/gtk/x11menu.c:2296
 msgid "Save menu"
 msgstr "保存メニュー"
 
-#: src/gtk/x11menu.c:2331
+#: src/gtk/x11menu.c:2301
 msgid "Recent Graphs"
 msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:2338
+#: src/gtk/x11menu.c:2308
 msgid "Recent Data Files"
 msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:2963
+#: src/gtk/x11menu.c:2934
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:3072 src/gtk/x11menu.c:3135
+#: src/gtk/x11menu.c:3043 src/gtk/x11menu.c:3106
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11menu.c:3391 src/gtk/x11menu.c:3410
+#: src/gtk/x11menu.c:3362 src/gtk/x11menu.c:3381
 msgid "edit"
 msgstr "編集"
 
-#: src/gtk/x11menu.c:3392
+#: src/gtk/x11menu.c:3363
 msgid "move"
 msgstr "移動"
 
-#: src/gtk/x11menu.c:3393
+#: src/gtk/x11menu.c:3364
 msgid "rotate"
 msgstr "回転"
 
-#: src/gtk/x11menu.c:3394
+#: src/gtk/x11menu.c:3365
 msgid "flip"
 msgstr "反転"
 
-#: src/gtk/x11menu.c:3395
+#: src/gtk/x11menu.c:3366
 msgid "delete object"
 msgstr "オブジェクトの削除"
 
-#: src/gtk/x11menu.c:3396
+#: src/gtk/x11menu.c:3367
 msgid "create object"
 msgstr "オブジェクトの作成"
 
-#: src/gtk/x11menu.c:3397
+#: src/gtk/x11menu.c:3368
 msgid "align"
 msgstr "位置合わせ"
 
-#: src/gtk/x11menu.c:3398
+#: src/gtk/x11menu.c:3369
 msgid "order"
 msgstr "描画順の変更"
 
-#: src/gtk/x11menu.c:3399
+#: src/gtk/x11menu.c:3370
 msgid "duplicate"
 msgstr "複製"
 
-#: src/gtk/x11menu.c:3400
+#: src/gtk/x11menu.c:3371
 msgid "execute shell"
 msgstr "シェルの実行"
 
-#: src/gtk/x11menu.c:3401
+#: src/gtk/x11menu.c:3372
 msgid "execute add-in"
 msgstr "アドインの実行"
 
-#: src/gtk/x11menu.c:3402
+#: src/gtk/x11menu.c:3373
 msgid "scale clear"
 msgstr "スケールクリア"
 
-#: src/gtk/x11menu.c:3403
+#: src/gtk/x11menu.c:3374
 msgid "scale undo"
 msgstr "スケールアンドゥ"
 
-#: src/gtk/x11menu.c:3404
+#: src/gtk/x11menu.c:3375
 msgid "open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/x11menu.c:3405
+#: src/gtk/x11menu.c:3376
 msgid "add range"
 msgstr "「範囲」の追加"
 
-#: src/gtk/x11menu.c:3406
+#: src/gtk/x11menu.c:3377
 msgid "paste"
 msgstr "貼り付け"
 
-#: src/gtk/x11menu.c:3407
+#: src/gtk/x11menu.c:3378
 msgid "scale"
 msgstr "拡大・縮小"
 
-#: src/gtk/x11menu.c:3408
+#: src/gtk/x11menu.c:3379
 msgid "auto scale"
 msgstr "自動スケール"
 
-#: src/gtk/x11menu.c:3409
+#: src/gtk/x11menu.c:3380
 msgid "scale trimming"
 msgstr "軸トリミング"
 
-#: src/gtk/x11menu.c:3449
+#: src/gtk/x11menu.c:3420
 #, c-format
 msgid "_Redo: %s"
 msgstr "やり直し: %s (_R)"
 
-#: src/gtk/x11menu.c:3452 src/gtk/data/gtk/menus-common.ui.in:123
+#: src/gtk/x11menu.c:3423 src/gtk/data/gtk/menus-common.ui.in:123
 #: src/gtk/data/gtk/menus-common-win.ui.in:143
 #: src/gtk/data/gtk/menus-common.ui:122
 msgid "_Redo"
 msgstr "やり直し(_R)"
 
-#: src/gtk/x11menu.c:3459
+#: src/gtk/x11menu.c:3430
 #, c-format
 msgid "_Undo: %s"
 msgstr "元に戻す: %s (_U)"
 
-#: src/gtk/x11menu.c:3462 src/gtk/data/gtk/menus-common.ui.in:128
+#: src/gtk/x11menu.c:3433 src/gtk/data/gtk/menus-common.ui.in:128
 #: src/gtk/data/gtk/menus-common-win.ui.in:148
 #: src/gtk/data/gtk/menus-common.ui:127
 msgid "_Undo"
@@ -2552,41 +2552,41 @@ msgstr "画像ファイル作成中"
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/gtk/x11view.c:2043 src/gtk/x11view.c:2056
+#: src/gtk/x11view.c:2012 src/gtk/x11view.c:2025
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:2253
+#: src/gtk/x11view.c:2222
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2256
+#: src/gtk/x11view.c:2225
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2407
+#: src/gtk/x11view.c:2376
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:4261
+#: src/gtk/x11view.c:4230
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:5590
+#: src/gtk/x11view.c:5559
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:7081
+#: src/gtk/x11view.c:7050
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11view.c:7097
+#: src/gtk/x11view.c:7066
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11view.c:7098
+#: src/gtk/x11view.c:7067
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
