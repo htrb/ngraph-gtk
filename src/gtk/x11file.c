@@ -4434,17 +4434,30 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static int
+set_mark_type(struct FileDialog *d)
+{
+  int oval, nval;
+  getobj(d->Obj, "mark_type", d->Id, 0, NULL, &oval);
+  nval = get_mark_type_from_widget (d->mark_btn);
+  if (oval != nval) {
+    if (putobj(d->Obj, "mark_type", d->Id, &nval) == -1) {
+      return 1;
+    }
+    set_graph_modified();
+  }
+  return 0;
+}
+
+static int
 plot_tab_set_value(struct FileDialog *d)
 {
-  int mark;
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return TRUE;
 
   if (SetObjFieldFromWidget(d->curve, d->Obj, d->Id, "interpolation"))
     return TRUE;
 
-  mark = get_mark_type_from_widget (d->mark_btn);
-  if (putobj(d->Obj, "mark_type", d->Id, &mark) == -1)
+  if (set_mark_type(d))
     return TRUE;
 
   if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "mark_size"))
