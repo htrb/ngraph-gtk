@@ -39,6 +39,7 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 #ifdef LIST_INIT
 struct CREATE_NAME(Pref, DialogAdd_data) {
   struct LIST_TYPE *fprev, *fnew;
+  struct CREATE_NAME(Pref, Dialog) *d;
 };
 
 static void
@@ -51,6 +52,7 @@ CREATE_NAME(Pref, DialogAdd_response)(struct response_callback *cb)
   data = (struct CREATE_NAME(Pref, DialogAdd_data) *) cb->data;
   fnew = data->fnew;
   fprev = data->fprev;
+  d = data->d;
   g_free(data);
 
   if (cb->return_value != IDOK) {
@@ -61,7 +63,6 @@ CREATE_NAME(Pref, DialogAdd_response)(struct response_callback *cb)
     }
     g_free(fnew);
   }
-  d = (struct CREATE_NAME(Pref, Dialog) *) cb->dialog;
   CREATE_NAME(Pref, DialogSetupItem)(d);
 }
 
@@ -96,6 +97,7 @@ CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
   data = g_malloc0(sizeof(*data));
   data->fnew = fnew;
   data->fprev = fprev;
+  data->d = d;
   response_callback_add(&SET_DIALOG, CREATE_NAME(Pref, DialogAdd_response), NULL, data);
   DialogExecute(d->widget, &SET_DIALOG);
 }
