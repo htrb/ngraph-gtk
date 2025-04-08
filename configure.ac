@@ -20,7 +20,6 @@ AC_MSG_CHECKING([for native Win32])
 case "$host" in
   *-*-mingw*)
     os_win32=yes
-    AC_CHECK_TOOL(WINDRES, windres)
     case "$MSYSTEM" in
       CLANG*)
         stdcpplib="-lc++"
@@ -36,6 +35,9 @@ case "$host" in
     ;;
 esac
 AC_MSG_RESULT([$os_win32])
+if test "$os_win32" = "yes"; then
+   AC_CHECK_TOOL(WINDRES, windres)
+fi
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 
 AC_MSG_CHECKING([for native OSX])
