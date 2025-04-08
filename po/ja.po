@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2025-04-04 16:42+0900\n"
+"POT-Creation-Date: 2025-04-08 13:03+0900\n"
 "PO-Revision-Date: 2025-03-30 23:26+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -31,7 +31,7 @@ msgstr "確認"
 msgid "Message"
 msgstr "メッセージ"
 
-#: src/gtk/ox11dlg.c:235 src/gtk/ox11dlg.c:391 src/gtk/x11commn.c:2316
+#: src/gtk/ox11dlg.c:235 src/gtk/ox11dlg.c:391 src/gtk/x11commn.c:2317
 #: src/gtk/x11gui.c:329 src/gtk/x11gui.c:886 src/gtk/x11gui.c:971
 #: src/gtk/x11gui.c:1065 src/gtk/x11gui.c:1167 src/gtk/x11opt.c:1168
 msgid "_OK"
@@ -561,36 +561,36 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:2202
+#: src/gtk/x11commn.c:2203
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:2216
+#: src/gtk/x11commn.c:2217
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:2220
+#: src/gtk/x11commn.c:2221
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:2249
+#: src/gtk/x11commn.c:2250
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:2315
+#: src/gtk/x11commn.c:2316
 msgid "Drawing end"
 msgstr "描画終了"
 
-#: src/gtk/x11commn.c:2363
+#: src/gtk/x11commn.c:2364
 msgid "Error messages"
 msgstr "エラーメッセージ"
 
-#: src/gtk/x11commn.c:2417 src/gtk/x11commn.c:2514
+#: src/gtk/x11commn.c:2418 src/gtk/x11commn.c:2515
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:2547
+#: src/gtk/x11commn.c:2548
 msgid "error"
 msgstr "エラー"
 
@@ -888,7 +888,7 @@ msgstr "編集(_E)"
 #: src/gtk/data/gtk/menus-common-win.ui.in:334
 #: src/gtk/data/gtk/menus-common-win.ui.in:494
 #: src/gtk/data/gtk/menus-common.ui:313 src/gtk/data/gtk/menus-common.ui:473
-#: src/gtk/x11opt_proto.h:355
+#: src/gtk/x11opt_proto.h:357
 msgid "_Close"
 msgstr "閉じる(_C)"
 
@@ -1036,12 +1036,12 @@ msgstr "新規行(_L):"
 #: src/gtk/data/gtk/menus-common-win.ui.in:1151
 #: src/gtk/data/gtk/menus-common.ui:295 src/gtk/data/gtk/menus-common.ui:336
 #: src/gtk/data/gtk/menus-common.ui:381 src/gtk/data/gtk/menus-common.ui:465
-#: src/gtk/data/gtk/menus-common.ui:482 src/gtk/x11opt_proto.h:323
+#: src/gtk/data/gtk/menus-common.ui:482 src/gtk/x11opt_proto.h:325
 msgid "_Add"
 msgstr "追加(_A)"
 
 #: src/gtk/x11file.c:2154 src/gtk/x11file.c:2356 src/gtk/x11graph.c:694
-#: src/gtk/x11opt.c:734 src/gtk/x11opt_proto.h:333
+#: src/gtk/x11opt.c:734 src/gtk/x11opt_proto.h:335
 msgid "_Remove"
 msgstr "削除(_R)"
 
@@ -1400,7 +1400,7 @@ msgstr "先頭へ(_T)"
 #: src/gtk/data/gtk/menus-common-win.ui.in:1135
 #: src/gtk/data/gtk/menus-common-win.ui.in:1187
 #: src/gtk/data/gtk/menus-common.ui:174 src/gtk/data/gtk/menus-common.ui:663
-#: src/gtk/x11opt_proto.h:345
+#: src/gtk/x11opt_proto.h:347
 msgid "_Up"
 msgstr "上へ(_U)"
 
@@ -1426,7 +1426,7 @@ msgstr "上へ(_U)"
 #: src/gtk/data/gtk/menus-common-win.ui.in:1139
 #: src/gtk/data/gtk/menus-common-win.ui.in:1191
 #: src/gtk/data/gtk/menus-common.ui:178 src/gtk/data/gtk/menus-common.ui:667
-#: src/gtk/x11opt_proto.h:339
+#: src/gtk/x11opt_proto.h:341
 msgid "_Down"
 msgstr "下へ(_D)"
 
@@ -5829,7 +5829,7 @@ msgstr "全て表示"
 msgid "Quit %s"
 msgstr "%s を終了"
 
-#: src/gtk/x11opt_proto.h:327
+#: src/gtk/x11opt_proto.h:329
 msgid "_Preferences"
 msgstr "設定(_P)"
 
