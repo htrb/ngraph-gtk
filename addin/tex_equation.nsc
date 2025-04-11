@@ -1,8 +1,10 @@
 #! ngraph
 # Description: Te_X equation,import TeX equation as GRA,
 
-TEX_COMMAND="pdflatex"
-TEX_OPTION="-halt-on-error"
+TEX_COMMAND="lualatex"
+TEX_OPTION="--halt-on-error --output-format=dvi"
+
+DVIPS_COMMAND="dvips"
 
 PSTOEDIT_COMMAND="pstoedit"
 PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
@@ -18,7 +20,7 @@ tex_eqn_error_dialog() {
 }
 
 tex_eqn_check_command() {
-    if which -q $1
+    if which -q "$1"
     then
 	true
     else
@@ -74,7 +76,7 @@ do
     str=`get $text -field text`
     cat <<-EOF > $TEX_FILE.tex
 	\documentclass[12pt]{article}
-	\usepackage{amsmath,txfonts}
+	\usepackage{amsmath}
 	\begin{document}
 	\pagestyle{empty}
 	\[
@@ -85,7 +87,7 @@ do
     $TEX_COMMAND $TEX_OPTION "$TEX_FILE".tex | menu::cat
     menu::echo "---------------"
     menu::echo
-    if [ ! -r "$TEX_FILE".pdf ]
+    if [ ! -r "$TEX_FILE".dvi ]
     then
 	tex_eqn_error_dialog "Faital error occurred while executing $TEX_COMMAND."
 	rm "$TEX_FILE".*
@@ -93,7 +95,16 @@ do
 	exit
     fi
 
-    $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$TEX_FILE".pdf "$TEX_FILE".fig
+    $DVIPS_COMMAND "$TEX_FILE".dvi
+    if [ ! -r "$TEX_FILE".ps ]
+    then
+	tex_eqn_error_dialog "Faital error occurred while executing $DVIPS_COMMAND."
+	rm "$TEX_FILE".*
+	tex_eqn_delete_object
+	exit
+    fi
+
+    $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$TEX_FILE".ps "$TEX_FILE".fig
     if [ ! -r "$TEX_FILE".fig ]
     then
 	tex_eqn_error_dialog "Faital error occurred while executing $PSTOEDIT_COMMAND."
