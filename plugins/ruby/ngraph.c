@@ -1910,6 +1910,7 @@ Init_ngraph(void)
   rb_define_singleton_method(NgraphModule, "execute_loginshell", ruby_ngraph_exec_loginshell, 2);
 
   NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
+  rb_undef_alloc_func(NgraphClass);
   rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
   add_common_const(NgraphModule);
 }
