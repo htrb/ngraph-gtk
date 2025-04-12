@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2025-04-08 13:03+0900\n"
-"PO-Revision-Date: 2025-03-30 23:26+0900\n"
+"PO-Revision-Date: 2025-04-12 20:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -1133,7 +1133,7 @@ msgstr "ジョイン(_J):"
 
 #: src/gtk/x11file.c:3704
 msgid "Line"
-msgstr "直線"
+msgstr "線スタイル"
 
 #: src/gtk/x11file.c:3712 src/gtk/x11lgnd.c:1906
 msgid "_Size:"
