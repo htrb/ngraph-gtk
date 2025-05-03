@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2025-04-08 13:03+0900\n"
-"PO-Revision-Date: 2025-04-12 20:44+0900\n"
+"POT-Creation-Date: 2025-05-03 20:24+0900\n"
+"PO-Revision-Date: 2025-04-27 23:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -32,8 +32,8 @@ msgid "Message"
 msgstr "メッセージ"
 
 #: src/gtk/ox11dlg.c:235 src/gtk/ox11dlg.c:391 src/gtk/x11commn.c:2317
-#: src/gtk/x11gui.c:329 src/gtk/x11gui.c:886 src/gtk/x11gui.c:971
-#: src/gtk/x11gui.c:1065 src/gtk/x11gui.c:1167 src/gtk/x11opt.c:1168
+#: src/gtk/x11gui.c:329 src/gtk/x11gui.c:888 src/gtk/x11gui.c:973
+#: src/gtk/x11gui.c:1067 src/gtk/x11gui.c:1169 src/gtk/x11opt.c:1168
 msgid "_OK"
 msgstr "_OK"
 
@@ -986,7 +986,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1887 src/gtk/x11gui.c:247 src/gtk/x11gui.c:1596
+#: src/gtk/x11file.c:1887 src/gtk/x11gui.c:247 src/gtk/x11gui.c:1598
 #: src/gtk/x11menu.c:434 src/gtk/data/gtk/menus-common.ui.in:39
 #: src/gtk/data/gtk/menus-common.ui.in:686
 #: src/gtk/data/gtk/menus-common-win.ui.in:39
@@ -1458,14 +1458,14 @@ msgstr "最後へ(_B)"
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:871 src/gtk/x11gui.c:340 src/gtk/x11gui.c:459
-#: src/gtk/x11gui.c:606 src/gtk/x11gui.c:712 src/gtk/x11gui.c:885
-#: src/gtk/x11gui.c:970 src/gtk/x11gui.c:1064 src/gtk/x11gui.c:1166
-#: src/gtk/x11gui.c:1373 src/gtk/x11opt.c:1170
+#: src/gtk/x11graph.c:871 src/gtk/x11gui.c:341 src/gtk/x11gui.c:461
+#: src/gtk/x11gui.c:608 src/gtk/x11gui.c:714 src/gtk/x11gui.c:887
+#: src/gtk/x11gui.c:972 src/gtk/x11gui.c:1066 src/gtk/x11gui.c:1168
+#: src/gtk/x11gui.c:1375 src/gtk/x11opt.c:1170
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: src/gtk/x11graph.c:872 src/gtk/x11gui.c:1492 src/gtk/x11gui.c:1544
+#: src/gtk/x11graph.c:872 src/gtk/x11gui.c:1494 src/gtk/x11gui.c:1546
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -1567,27 +1567,27 @@ msgstr "削除(_D)"
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11gui.c:446 src/gtk/x11gui.c:511
+#: src/gtk/x11gui.c:448 src/gtk/x11gui.c:513
 msgid "Error"
 msgstr "エラー"
 
-#: src/gtk/x11gui.c:461
+#: src/gtk/x11gui.c:463
 msgid "_No"
 msgstr "いいえ(_N)"
 
-#: src/gtk/x11gui.c:462
+#: src/gtk/x11gui.c:464
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:1225 src/gtk/x11gui.c:1401 src/gtk/x11gui.c:1406
+#: src/gtk/x11gui.c:1227 src/gtk/x11gui.c:1403 src/gtk/x11gui.c:1408
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:1378
+#: src/gtk/x11gui.c:1380
 msgid "Change current directory"
 msgstr "カレントディレクトリを移動"
 
-#: src/gtk/x11gui.c:1389
+#: src/gtk/x11gui.c:1391
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
@@ -2679,11 +2679,15 @@ msgstr "下へ"
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:1283
+#: src/gtk/x11parameter.c:1329
 msgid "_Save as default"
 msgstr "初期値に設定(_S)"
 
-#: src/gtk/x11parameter.c:1324
+#: src/gtk/x11parameter.c:1335
+msgid "_Reset"
+msgstr "リセット(_R)"
+
+#: src/gtk/x11parameter.c:1375
 msgid "Add"
 msgstr "追加"
 
