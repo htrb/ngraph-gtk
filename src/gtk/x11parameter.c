@@ -1277,6 +1277,52 @@ save_as_default(GtkButton *button, gpointer user_data)
 }
 
 static void
+reset_settings(GtkButton *button, gpointer user_data)
+{
+  struct obj_list_data *d;
+  int i, num;
+  GtkGrid *grid;
+  d = (struct obj_list_data *) user_data;
+  num = chkobjlastinst(d->obj) + 1;
+  grid = GTK_GRID (d->text);
+  for (i = 0; i < num; i++) {
+    double value;
+    int ival, type;
+    GtkWidget *w;
+    getobj(d->obj, "type", i, 0, NULL, &type);
+    switch (type) {
+    case PARAMETER_TYPE_SPIN:
+      w = gtk_grid_get_child_at (grid, 3, i);
+      getobj(d->obj, "value", i, 0, NULL, &value);
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w), value);
+      break;
+    case PARAMETER_TYPE_SCALE:
+      w = gtk_grid_get_child_at (grid, 3, i);
+      getobj(d->obj, "value", i, 0, NULL, &value);
+      gtk_range_set_value (GTK_RANGE (w), value);
+      break;
+    case PARAMETER_TYPE_SWITCH:
+      w = gtk_grid_get_child_at (grid, 3, i);
+      getobj(d->obj, "active", i, 0, NULL, &ival);
+      gtk_switch_set_active (GTK_SWITCH (w), ival);
+      break;
+    case PARAMETER_TYPE_CHECK:
+      w = gtk_grid_get_child_at (grid, 2, i);
+      getobj(d->obj, "active", i, 0, NULL, &ival);
+      gtk_check_button_set_active (GTK_CHECK_BUTTON (w), ival);
+      break;
+    case PARAMETER_TYPE_COMBO:
+      w = gtk_grid_get_child_at (grid, 3, i);
+      getobj(d->obj, "selected", i, 0, NULL, &ival);
+      combo_box_set_active (w, ival);
+      break;
+    case PARAMETER_TYPE_TRANSITION:
+      break;
+    }
+  }
+}
+
+static void
 add_save_as_default_button(struct obj_list_data *d, int row, int width)
 {
   GtkWidget *button, *box;
