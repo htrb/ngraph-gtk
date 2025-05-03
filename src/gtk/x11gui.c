@@ -331,6 +331,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->SetupWindow(dlg, data, TRUE);
     btn = gtk_button_new_with_mnemonic (data->ok_button);
     gtk_window_set_default_widget (GTK_WINDOW (dlg), btn);
+    data->ok = btn;
 
     g_signal_connect_swapped (btn, "clicked", G_CALLBACK (dialog_response_ok), data);
     gtk_widget_add_css_class (btn, "suggested-action");
@@ -358,6 +359,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     dlg = data->widget;
     data->SetupWindow(dlg, data, FALSE);
   }
+  gtk_window_set_focus (GTK_WINDOW (dlg), data->ok);
 
   data->ret = IDLOOP;
 

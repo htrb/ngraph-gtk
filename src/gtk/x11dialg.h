@@ -108,7 +108,7 @@ void response_callback_add(void *dialog, response_callback_func cb, response_cal
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);       \
   void (*CloseWindow) (GtkWidget *w, void *data);                       \
   int lockstate, menulock, modified;                                    \
-  GtkWidget *win_ptr;                                                   \
+  GtkWidget *win_ptr, *ok;						\
 
 
 struct DialogType
