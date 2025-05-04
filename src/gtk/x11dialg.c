@@ -284,7 +284,7 @@ initdialog(void)
   DlgImageOut.resource = N_("output image");
 }
 
-struct response_callback *
+static struct response_callback *
 response_callback_new(response_callback_func func, response_callback_free_func free, gpointer data)
 {
   struct response_callback *cb;
