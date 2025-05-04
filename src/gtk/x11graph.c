@@ -1067,7 +1067,6 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   combo_box_set_active(d->path, Menulocal.savepath);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_data), Menulocal.savewithdata);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_merge), Menulocal.savewithmerge);
-  d->focus = d->include_data;
 }
 
 static void
