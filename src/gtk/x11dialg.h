@@ -75,7 +75,7 @@ void set_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *p
 void set_color2(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);
 void set_fill_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);
 void set_stroke_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);
-int putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix);
+int putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, const char *prefix);
 int putobj_color2(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);
 int putobj_fill_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);
 int putobj_stroke_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id);

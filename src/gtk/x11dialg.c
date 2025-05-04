@@ -1562,7 +1562,7 @@ _putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, const ch
 }
 
 int
-putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix)
+putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, const char *prefix)
 {
   return _putobj_color(w, aw, obj, id, prefix, NULL);
 }
