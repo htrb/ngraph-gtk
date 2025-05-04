@@ -359,7 +359,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
     dlg = data->widget;
     data->SetupWindow(dlg, data, FALSE);
   }
-  gtk_window_set_focus (GTK_WINDOW (dlg), data->ok);
 
   data->ret = IDLOOP;
 
@@ -368,7 +367,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
   Menulock = TRUE;
 #endif
   if (data->focus) {
-    gtk_widget_grab_focus(data->focus);
+    gtk_window_set_focus (GTK_WINDOW (dlg), data->focus);
+  } else {
+    gtk_window_set_focus (GTK_WINDOW (dlg), data->ok);
   }
   data->win_ptr = get_current_window();
   set_current_window(dlg);
