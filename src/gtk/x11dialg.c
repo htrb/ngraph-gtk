@@ -1508,7 +1508,7 @@ set_stroke_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id)
 }
 
 static int
-_putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, char *prefix, char *postfix)
+_putobj_color(GtkWidget *w, GtkWidget *aw, struct objlist *obj, int id, const char *prefix, const char *postfix)
 {
   GdkRGBA color;
   int r, g, b, a, o;
