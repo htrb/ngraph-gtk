@@ -23,7 +23,7 @@ static int save_data(const char *fname2, int p, int n, double minx, double maxx)
 int
 main(int argc,char **argv)
 {
-  char *fname1,*fname2;
+  const char *fname1, *fname2;
   int n, p, num;
   double minx, maxx;
 
