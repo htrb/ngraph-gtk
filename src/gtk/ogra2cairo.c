@@ -115,37 +115,37 @@ static struct compatible_font_info CompatibleFont[] = {
 #define FONT_FACE_NUM ((int) (sizeof(FontFaceStr) / sizeof(*FontFaceStr)))
 
 static int
-mxp2dw(struct gra2cairo_local *local, int r)
+mxp2dw(const struct gra2cairo_local *local, int r)
 {
   return ceil(r / local->pixel_dot_x);
 }
 
 static double
-mxd2pw(struct gra2cairo_local *local, int r)
+mxd2pw(const struct gra2cairo_local *local, int r)
 {
   return r * local->pixel_dot_x;
 }
 
 static int
-mxp2dh(struct gra2cairo_local *local, int r)
+mxp2dh(const struct gra2cairo_local *local, int r)
 {
   return ceil(r / local->pixel_dot_y);
 }
 
 static double
-mxd2ph(struct gra2cairo_local *local, int r)
+mxd2ph(const struct gra2cairo_local *local, int r)
 {
   return r * local->pixel_dot_y;
 }
 
 static double
-mxd2px(struct gra2cairo_local *local, int x)
+mxd2px(const struct gra2cairo_local *local, int x)
 {
   return x * local->pixel_dot_x + local->offsetx;
 }
 
 static double
-mxd2py(struct gra2cairo_local *local, int y)
+mxd2py(const struct gra2cairo_local *local, int y)
 {
   return y * local->pixel_dot_y + local->offsety;
 }
@@ -285,7 +285,7 @@ loadconfig(void)
   char *tok, *str, *s2;
   char *f1, *f2, *f3;
   int len;
-  struct fontmap *fnew;
+  const struct fontmap *fnew;
 
   fp = openconfig(CAIROCONF);
   if (fp == NULL)
