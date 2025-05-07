@@ -152,7 +152,7 @@ nstraddchar(char *po, int len, char ch)
 }
 
 char *
-nstrcat(char *po,char *s)
+nstrcat(char *po, const char *s)
 {
   size_t i, len;
 
@@ -202,7 +202,7 @@ strcmp0(const char *s1, const char *s2)
 }
 
 int
-strcmp2(char *s1,char *s2)
+strcmp2(const char *s1, const char *s2)
 {
   int len1,len2,len,c;
 
@@ -312,7 +312,8 @@ getitok(char **s, int *len, const char *ifs)
 char *
 getitok2(char **s, int *len, const char *ifs)
 {
-  char *po,*s2;
+  const char *s2;
+  char *po;
 
   if ((s2 = getitok(s, len, ifs))==NULL) return NULL;
   if ((po=g_malloc(*len+1))==NULL) {

@@ -40,11 +40,11 @@ enum DECIMALSIGN_TYPE {
 
 char *nstrnew(void);
 char *nstrccat(char *po,char ch);
-char *nstrcat(char *po,char *s);
+char *nstrcat(char *po, const char *s);
 char *nstraddchar(char *po, int len, char ch);
 
-int strcmp0(const char *s1,const char *s2);
-int strcmp2(char *s1,char *s2);
+int strcmp0(const char *s1, const char *s2);
+int strcmp2(const char *s1, const char *s2);
 #define WILD_PATHNAME 2
 #define WILD_PERIOD 4
 int wildmatch(const char *pat, const char *s,int flags);
