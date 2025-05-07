@@ -86,7 +86,8 @@ legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   maxy=*(int *)argv[5];
   err=*(int *)argv[6];
   if ((minx==maxx) && (miny==maxy)) {
-    int i, *data, num;
+    int i, num;
+    const int *data;
     num=arraynum(array)-4;
     data=arraydata(array);
     for (i=0;i<num-2;i+=2) {
