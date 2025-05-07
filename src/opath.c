@@ -154,7 +154,7 @@ arrowdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 arrowput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *field;
+  const char *field;
   int *val_ptr;
 
   field = argv[1];
@@ -675,7 +675,7 @@ set_points(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static int
-check_point_match(int i, int j, int *pdata, int err, int x, int y)
+check_point_match(int i, int j, const int *pdata, int err, int x, int y)
 {
   double x1, y1, x2, y2, r, ip;
 
@@ -718,7 +718,8 @@ static int
 point_match(struct objlist *obj, N_VALUE *inst, int type, int fill, int err, int x, int y)
 {
   struct narray *points;
-  int *pdata, num, r, i;
+  const int *pdata;
+  int num, r, i;
 
   if (type == PATH_TYPE_CURVE) {
     int intp;
