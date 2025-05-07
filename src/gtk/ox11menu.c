@@ -310,7 +310,7 @@ add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
   char *buf;
   struct narray *palette;
   int i, n;
-  GdkRGBA *color;
+  const GdkRGBA *color;
   palette = &(Menulocal.custom_palette);
   n = arraynum(palette);
   if (n < 1) {
@@ -1556,7 +1556,7 @@ mx_clear(cairo_region_t *region, char const **objects)
     array = &Menulocal.drawrable;
     n = arraynum(array);
     for (i = 0; i < n; i++) {
-      char *obj;
+      const char *obj;
       obj = arraynget_str(array, i);
       clear_layer(obj, region);
     }
@@ -1859,7 +1859,8 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 static int
 mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *s, h[256];
+  const char *s;
+  char h[256];
   int i, n;
   GString *str;
 
@@ -2279,7 +2280,8 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
 static int
 mx_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char code, *cstr, *layer;
+  char code;
+  const char *cstr, *layer;
   struct gra2cairo_local *local;
 
   local = (struct gra2cairo_local *)argv[2];
