@@ -261,14 +261,15 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
 static char *
 replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *conf)
 {
-  char *s, *s2, *buf, *tok2, **data;
+  char *s, *s2, *buf, **data;
+  const char *tok2;
   int len, len2, i, j, num, num2;
 
   num = arraynum(conf);
   data = arraydata(conf);
 
   while (fgetline(fp, &buf) == 0) {
-    char *tok;
+    const char *tok;
     int out;
     if (buf[0]=='[') {
       return buf;
@@ -401,7 +402,8 @@ flush:
 static int
 removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
 {
-  char *s, *s2, *buf, *tok, **data;
+  char *s, *buf, **data;
+  const char *s2, *tok;
   int out, len, len2, i, num, change;
 
   num = arraynum(conf);
