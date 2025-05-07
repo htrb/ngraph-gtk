@@ -523,11 +523,15 @@ shget(struct nshell *nshell)
       }
     }
 #else  /* HAVE_READLINE_READLINE_H */
+#if USE_EVENT_LOOP
     set_shellevloop(0);
+#endif
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
+#if USE_EVENT_LOOP
     reset_shellevloop();
+#endif
 #endif	/* HAVE_READLINE_READLINE_H */
   } else {
     do {
@@ -4349,7 +4353,7 @@ shellsavestdio(struct nshell *nshell)
 }
 
 void
-shellrestorestdio(struct nshell *nshell)
+shellrestorestdio(const struct nshell *nshell)
 {
   getstdin=nshell->sgetstdin;
   putstdout=nshell->sputstdout;

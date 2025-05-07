@@ -123,7 +123,7 @@ void sherror2(int code,char *mes);
 void sherror3(char *cmd,int code,char *mes);
 void sherror4(char *cmd,int code);
 void shellsavestdio(struct nshell *nshell);
-void shellrestorestdio(struct nshell *nshell);
+void shellrestorestdio(const struct nshell *nshell);
 int setshelloption(struct nshell *nshell,char *opt);
 int getshelloption(struct nshell *nshell,char opt);
 int set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char **argv);
