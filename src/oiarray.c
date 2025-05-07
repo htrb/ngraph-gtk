@@ -74,7 +74,8 @@ static int
 iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
-  int num,*po;
+  int num;
+  const int *po;
 
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
@@ -520,7 +521,8 @@ static int
 iarray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int n, *data;
+  int n;
+  const int *data;
   double val;
 
   rval->i = 0;
@@ -547,7 +549,8 @@ static int
 iarray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int n, *data;
+  int n;
+  const int *data;
   double val;
 
   rval->d = 0;
@@ -570,7 +573,8 @@ static int
 iarray_rms(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int n, *data;
+  int n;
+  const int *data;
   double val;
 
   rval->d = 0;
@@ -593,7 +597,8 @@ static int
 iarray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int n, *data;
+  int n;
+  const int *data;
   double sum, ssum, val;
 
   rval->d = 0;
@@ -621,7 +626,8 @@ static int
 iarray_min(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int i, n, *data, val;
+  int i, n, val;
+  const int *data;
 
   rval->i = 0;
 
@@ -649,7 +655,8 @@ static int
 iarray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int i, n, *data, val;
+  int i, n, val;
+  const int *data;
 
   rval->i = 0;
 
