@@ -82,7 +82,7 @@ darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
-  double *po;
+  const double *po;
 
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
@@ -409,7 +409,8 @@ static void
 cache_data(struct objlist *obj, N_VALUE *inst, struct darray_local *local)
 {
   struct narray *array;
-  double min, max, sum, ssum, *data;
+  double min, max, sum, ssum;
+  const double *data;
   int n;
 
   _getobj(obj, "@", inst, &array);
