@@ -1257,6 +1257,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
     }
 
     file2 = get_utf8_filename(tmp);
+    g_free (tmp);
     if (file2) {
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
