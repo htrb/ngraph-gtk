@@ -237,7 +237,7 @@ mergedone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
 #if USE_MERGE_CACHE
 static void
-gra_cache_init(struct gra_cache *cache, struct gra_info *info)
+gra_cache_init(struct gra_cache *cache, const struct gra_info *info)
 {
   if (cache->data) {
     gra_data_free(cache->data);
@@ -984,7 +984,7 @@ static int
 mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
-  char *field;
+  const char *field;
   int zoom, val;
   struct narray *array;
 
