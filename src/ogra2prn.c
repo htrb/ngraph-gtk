@@ -102,9 +102,9 @@ gra2p_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   struct gra2plocal *gra2plocal;
   struct objlist *sys;
   char code;
-  int *cpar;
+  const int *cpar;
   int i;
-  char *cstr;
+  const char *cstr;
   char *graf,*sname,*sver;
   char *pfx;
   GString *s;
