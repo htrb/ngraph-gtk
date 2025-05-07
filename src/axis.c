@@ -48,7 +48,6 @@ roundmin(double min,double sc)
 static void
 getaxispositionfirst(struct axislocal *alocal)
 {
-  double min,max,inc;
   int numlim1,numlim2,numlim3;
 
   if (alocal->tighten) {
@@ -78,6 +77,7 @@ getaxispositionfirst(struct axislocal *alocal)
     alocal->dposs=alocal->dposm/alocal->countsend;
     alocal->counts=1;
   } else if (alocal->atype==AXISINVERSE) {
+    double min, max, inc;
     if (alocal->div<=0) {
       if (alocal->num<=numlim1) alocal->countsend=10;
       else if (alocal->num<=numlim2) alocal->countsend=5;
