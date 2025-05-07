@@ -473,7 +473,7 @@ nsearchpath(char *path,char *name,int shellscript)
   }
 
   if (strchr(name,DIRSEP)==NULL) {
-    char *tok;
+    const char *tok;
     while ((tok=getitok(&path,&len,PATHSEP))!=NULL) {
       g_free(cmdname);
       if ((cmdname=g_malloc(strlen(name)+len+2))==NULL) return NULL;
@@ -563,7 +563,7 @@ nalphasort(const void *pa, const void *pb)
 }
 
 static int
-nglob2(char *path,int po,int *num,char ***list)
+nglob2(const char *path,int po,int *num,char ***list)
 {
   int i,j,p1,escape;
   char **namelist, *s;
