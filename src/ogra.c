@@ -109,7 +109,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
       && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
     if ((!chkobjfield(dobj,"_list"))
         && (!_getobj(dobj,"_list",dinst,&sarray)) && (sarray!=NULL)) {
-      struct objlist *gobj;
+      const struct objlist *gobj;
       char *list;
       list=arraynget_str(sarray,0);
       if (((gobj=getobjlist(list,&gid,&gfield,NULL))!=NULL)
@@ -374,7 +374,7 @@ static int
 oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
-  char *arg;
+  const char *arg;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC!=-1) {
@@ -392,7 +392,7 @@ oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 }
 
 static int
-oGRAdrawparent(struct objlist *parent, char **oGRAargv, int layer)
+oGRAdrawparent(const struct objlist *parent, char **oGRAargv, int layer)
 {
   struct objlist *ocur;
   int i,instnum;
