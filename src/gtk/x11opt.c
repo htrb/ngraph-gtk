@@ -1745,7 +1745,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.grid = spin_entry_get_val(d->grid);
 
   a = combo_box_get_active(d->fftype);
-  if (a > 0) {
+  if (a >= 0) {
     Menulocal.focus_frame_type = ((a == 0) ? N_LINE_TYPE_SOLID : N_LINE_TYPE_DOT);
   }
 
