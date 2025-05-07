@@ -544,7 +544,8 @@ widget_set_line_width(struct objlist *obj, N_VALUE *inst)
 static void
 widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *prefix, const char *postfix)
 {
-  char field[256], *color_str[] = {"R", "G", "B", "A"};
+  char field[256];
+  const char *color_str[] = {"R", "G", "B", "A"};
   int color[4], i;
   GdkRGBA gcolor;
 
@@ -650,7 +651,7 @@ static int
 check_font_index(const char *font)
 {
   int i;
-  struct fontmap *fcur;
+  const struct fontmap *fcur;
 
   if (font == NULL) {
     return 0;
@@ -1001,7 +1002,7 @@ check_focused_obj(struct FOCUS_OBJ_INFO *info)
   }
   num = get_focused_obj_type_array(NgraphApp.Viewer.focusobj, objs);
   for (i = 0; i < num; i++) {
-    struct FocusObj *focus;
+    const struct FocusObj *focus;
     focus = &objs[i];
     for (j = 0; j < FOCUS_OBJ_N; j++) {
       if (info->info[j].obj == focus->obj) {
@@ -1090,7 +1091,7 @@ chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_
 typedef int (* AXISGRID_CALLBACK)(struct objlist *, N_VALUE *, void *);
 
 static int
-check_axis_id(struct AxisGroupInfo *info, int id)
+check_axis_id(const struct AxisGroupInfo *info, int id)
 {
   int i;
   for (i = 0; i < info->num; i++) {
@@ -1102,7 +1103,7 @@ check_axis_id(struct AxisGroupInfo *info, int id)
 }
 
 static int
-check_axisgrid(struct objlist *aobj, struct AxisGroupInfo *info, AXISGRID_CALLBACK cb, void *usr_data)
+check_axisgrid(struct objlist *aobj, const struct AxisGroupInfo *info, AXISGRID_CALLBACK cb, void *usr_data)
 {
   int i, n, aid, r;
   struct objlist *obj;
