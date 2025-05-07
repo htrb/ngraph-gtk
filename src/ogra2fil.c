@@ -81,8 +81,8 @@ gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   struct gra2flocal *gra2flocal;
   char code;
-  int *cpar;
-  char *cstr;
+  const int *cpar;
+  const char *cstr;
   char *fname,*graf,*sname,*sver;
 
   gra2flocal=(struct gra2flocal *)argv[2];
