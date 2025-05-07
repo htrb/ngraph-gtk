@@ -1502,7 +1502,7 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     return FALSE;
   }
   num++;
-  if (num > 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
+  if (putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
     return FALSE;
 
   if (num != dim)
