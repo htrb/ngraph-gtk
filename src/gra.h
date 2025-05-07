@@ -68,10 +68,10 @@ struct GRAdata
 typedef int (*clipfunc)(double *x0,double *y0,double *x1,double *y1,
                         void *local);
 typedef void (*transfunc)(double x0,double y0,int *x1,int *y1,void *local);
-typedef void (*diffunc)(double d,double c[],
+typedef void (*diffunc)(double d,const double c[],
                         double *dx,double *dy,double *ddx,double *ddy,
                         void *local);
-typedef void (*intpfunc)(double d,double c[],
+typedef void (*intpfunc)(double d,const double c[],
                         double x0,double y0,double *x,double *y,void *local);
 
 typedef int (*directfunc)(char code,int *cpar,char *cstr,void *local);

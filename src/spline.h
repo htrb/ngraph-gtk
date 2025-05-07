@@ -28,12 +28,12 @@
 
 int spline(double x[],double y[],double c1[],double c2[],double c3[],
            int num,int bc0,int bc1,double df0,double df1);
-void bspline(int edge,double x[],double c[]);
-void splinedif(double d,double c[],
+void bspline(int edge, const double x[], double c[]);
+void splinedif(double d, const double c[],
                double *dx,double *dy,double *ddx,double *ddy,void *local);
-void bsplinedif(double d,double c[],
+void bsplinedif(double d, const double c[],
                 double *dx,double *dy,double *ddx,double *ddy,void *local);
-void splineint(double d,double c[],double x0,double y0,double *x,double *y,
+void splineint(double d, const double c[], double x0, double y0, double *x, double *y,
                void *local);
-void bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
+void bsplineint(double d, const double c[], double x0, double y0, double *x, double *y,
                void *local);

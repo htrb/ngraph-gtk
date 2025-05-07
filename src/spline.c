@@ -27,7 +27,7 @@
 #include "spline.h"
 
 static int
-splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
+splinecheck(const double d[], const double mu[], const double ram[], const double x[], const double y[], int num)
 {
   double h1;
   int i;
@@ -44,7 +44,7 @@ splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
 }
 
 static void
-splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
+splinesetval(double d[], double mu[], double ram[], const double x[], const double y[], int num)
 {
   double h1,y1;
   int i;
@@ -66,7 +66,7 @@ splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
 }
 
 static int
-splinesolv(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
+splinesolv(double d[], double mu[], const double ram[], double x[], double y[], int num, double *xx)
 {
   int i;
 
@@ -86,7 +86,7 @@ splinesolv(double d[],double mu[],double ram[],double x[],double y[], int num,do
 }
 
 static int
-splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
+splinesolv2(double d[], const double mu[], double ram[], double x[], double y[], int num, double *xx)
 {
   int i;
 
@@ -219,7 +219,7 @@ spline(double x[],double y[],double c1[],double c2[],double c3[],
 }
 
 void
-bspline(int edge,double x[],double c[])
+bspline(int edge, const double x[], double c[])
 {
   if (edge==0) {
       c[0]=(x[0]+4*x[1]+x[2])/6;
@@ -250,7 +250,7 @@ bspline(int edge,double x[],double c[])
 }
 
 void
-splinedif(double d,double c[],
+splinedif(double d, const double c[],
                double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=2*c[1]+6*d*c[2];
@@ -261,7 +261,7 @@ splinedif(double d,double c[],
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 void
-splinedifxy(double d,double c[],
+splinedifxy(double d, const cdouble c[],
                  double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=0;
@@ -272,7 +272,7 @@ splinedifxy(double d,double c[],
 #endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 void
-bsplinedif(double d,double c[],
+bsplinedif(double d, const double c[],
                 double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=2*c[2]+6*d*c[3];
@@ -282,7 +282,7 @@ bsplinedif(double d,double c[],
 }
 
 void
-splineint(double d,double c[],double x0,double y0,double *x,double *y,
+splineint(double d, const double c[], double x0, double y0, double *x, double *y,
                void *local)
 {
   *x=x0+d*(c[0]+d*(c[1]+d*c[2]));
@@ -291,7 +291,7 @@ splineint(double d,double c[],double x0,double y0,double *x,double *y,
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 void
-splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
+splineintxy(double d,const double c[],double x0,double y0,double *x,double *y,
                  void *local)
 {
   double dd;
@@ -303,7 +303,7 @@ splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
 #endif  /* COMPILE_UNUSED_FUNCTIONS */
 
 void
-bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
+bsplineint(double d, const double c[], double x0, double y0, double *x, double *y,
                 void *local)
 {
   *x=c[0]+d*(c[1]+d*(c[2]+d*c[3]));
