@@ -405,7 +405,7 @@ SetScriptDialog(struct SetScriptDialog *data, struct script *sc)
 static void
 PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
 {
-  struct script *fcur;
+  const struct script *fcur;
   GListStore *model;
 
   columnview_clear(d->list);
@@ -476,7 +476,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefScriptDialogClose(GtkWidget *w, void *data)
 {
-  struct PrefScriptDialog *d;
+  const struct PrefScriptDialog *d;
 
   d = (struct PrefScriptDialog *) data;
 
@@ -793,7 +793,7 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
   gchar *alias, *family;
   const char *font;
   gchar *font_name;
-  struct fontmap *fmap;
+  const struct fontmap *fmap;
   GString *alt;
   GtkStringList *list;
   int i, n;
@@ -874,7 +874,7 @@ FontSettingDialog(struct FontSettingDialog *d, const char *alias, const char *fo
 static void
 PrefFontDialogSetupItem(struct PrefFontDialog *d)
 {
-  struct fontmap *fcur;
+  const struct fontmap *fcur;
   GListStore *model;
 
   columnview_clear(d->list);
@@ -905,7 +905,7 @@ static void
 PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
-  struct fontmap *fcur;
+  const struct fontmap *fcur;
   NText *text;
   const char *fontalias;
 
@@ -990,7 +990,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefFontDialogClose(GtkWidget *w, void *data)
 {
-  struct PrefFontDialog *d;
+  const struct PrefFontDialog *d;
 
   d = (struct PrefFontDialog *) data;
 
