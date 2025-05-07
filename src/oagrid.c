@@ -269,8 +269,8 @@ get_grid_prm(struct objlist *obj, char *axisy,
 
 static int
 draw_grid_line(struct objlist *obj, int GC,
-	       struct axis_prm *a1_prm, struct axis_pos *a1_pos,
-	       struct axis_pos *a2_pos, struct grid_prm *gprm)
+	       struct axis_prm *a1_prm, const struct axis_pos *a1_pos,
+	       const struct axis_pos *a2_pos, struct grid_prm *gprm)
 {
   int r, rcode, snum, wid, *sdata;
   double po;
@@ -318,7 +318,7 @@ draw_grid_line(struct objlist *obj, int GC,
 }
 
 static int
-draw_background(struct objlist *obj, N_VALUE *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
+draw_background(struct objlist *obj, N_VALUE *inst, int GC, const struct axis_pos *ax, const struct axis_pos *ay)
 {
   int r, br, bg, bb, ba, pos[8];
 
