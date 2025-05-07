@@ -664,7 +664,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   inum = arraynum(iarray);
   for (i = 0; i < inum; i++) {
-    int *ptr;
+    const int *ptr;
     ptr = (int *) arraynget(iarray, i);
     if (ptr && *ptr >= 0 && *ptr < n)
       r[*ptr] = 1;
