@@ -992,7 +992,7 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
     return;
   }
   num++;
-  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1) {
+  if (putobj(d->Obj, "poly_dimension", id, &num) == -1) {
     cb(TRUE, ud);
     return;
   }
