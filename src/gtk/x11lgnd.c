@@ -563,7 +563,7 @@ set_font(struct LegendDialog *d, int id)
   int style;
   const struct compatible_font_info *compatible;
 
-  compatible = SetFontListFromObj(d->font, d->Obj, d->Id, "font");
+  compatible = SetFontListFromObj(d->font, d->Obj, id, "font");
 
   if (compatible) {
     /* for backward compatibility */
@@ -581,7 +581,7 @@ set_font(struct LegendDialog *d, int id)
       }
     }
   } else {
-    getobj(d->Obj, "style", d->Id, 0, NULL, &style);
+    getobj(d->Obj, "style", id, 0, NULL, &style);
   }
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
