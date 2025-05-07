@@ -307,7 +307,8 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
                  int argc, char **argv)
 {
   char code, *fname;
-  int *cpar, format, r;
+  const int *cpar;
+  int format, r;
   struct gra2cairo_local *local;
 
   local = (struct gra2cairo_local *)argv[2];
