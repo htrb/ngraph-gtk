@@ -73,7 +73,7 @@ struct nGetOpenFileData
 static int add_buttons(GtkWidget *dlg, const struct narray *array);
 
 void
-dialog_wait(int *wait)
+dialog_wait(volatile const int *wait)
 {
   while (*wait) {
     msleep(BLOCKING_DIALOG_WAIT);
