@@ -233,13 +233,13 @@ cmeval(struct nshell *nshell,int argc,char **argv)
 int
 cmexit(struct nshell *nshell,int argc,char **argv)
 {
-  int a;
   char *endptr;
 
   if (argc>2) {
     sherror4(argv[0],ERREXTARG);
     return ERREXTARG;
   } else if (argc==2) {
+    int a;
     a=strtol(argv[1],&endptr,10);
     if (endptr[0]!='\0') {
       sherror3(argv[0],ERRNUMERIC,argv[1]);
@@ -328,7 +328,7 @@ static int
 print_func(struct nhash *h, void *data)
 {
   struct vallist *val;
-  struct cmdlist *cmdcur;
+  const struct cmdlist *cmdcur;
   struct prmlist *prmcur;
 
   val = (struct vallist *) h->val.p;
@@ -529,12 +529,12 @@ int
 cmshift(struct nshell *nshell,int argc,char **argv)
 {
   int i,a;
-  char *arg,*endptr;
 
   if (argc>2) {
     sherror4(argv[0],ERREXTARG);
     return ERREXTARG;
   } else if (argc==2) {
+    char *arg,*endptr;
     arg=argv[1];
     a=strtol(arg,&endptr,10);
     if (endptr[0]!='\0') {
@@ -558,7 +558,7 @@ int
 cmtype(struct nshell *nshell,int argc,char **argv)
 {
   struct prmlist *prm2;
-  struct cmdlist *cmdcur;
+  const struct cmdlist *cmdcur;
   int j;
   char *cmdname;
   shell_proc proc;
@@ -624,7 +624,7 @@ cmunset(struct nshell *nshell,int argc,char **argv)
 }
 
 static void
-objdisp(struct objlist *root,struct objlist *parent,int *tab)
+objdisp(struct objlist *root,const struct objlist *parent,int *tab)
 {
   int i;
   struct objlist *objcur;
@@ -794,7 +794,7 @@ cmobject(struct nshell *nshell,int argc,char **argv)
 }
 
 static void
-dispparent(struct objlist *parent,int noinst)
+dispparent(const struct objlist *parent,int noinst)
 {
   struct objlist *ocur;
 
@@ -990,7 +990,8 @@ cmget(struct nshell*nshell,int argc,char **argv)
   struct objlist *obj;
   struct narray iarray;
   char *field,*valstr;
-  int i,j,k,l,anum,len,*adata;
+  int i,j,k,l,anum,len;
+  const int *adata;
   int nowrite,nofield,noid,quote,perm,multi,escape;
 
   if (argc<2) {
@@ -1078,7 +1079,8 @@ int
 cmput(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
-  int i,j,anum,*adata;
+  int i,j,anum;
+  const int *adata;
   struct narray iarray;
 
   if (argc<2) {
@@ -1118,7 +1120,8 @@ cmdup(struct nshell *nshell, int argc, char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i, anum, *adata;
+  int i, anum;
+  const int *adata;
 
   if (argc < 2) {
     sherror4(argv[0], ERROBJARG);
@@ -1162,7 +1165,8 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i,j,anum,*adata;
+  int i,j,anum;
+  const int *adata;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -1204,7 +1208,8 @@ cmmove(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int anum,id1,id2,*adata;
+  int anum,id1,id2;
+  const int *adata;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -1274,7 +1279,8 @@ cmexe(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i,j,anum,*adata;
+  int i,j,anum;
+  const int *adata;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
