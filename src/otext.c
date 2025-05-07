@@ -109,7 +109,7 @@ static int
 textgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
-  char *field;
+  const char *field;
 
   field=(char *)(argv[1]);
   if (strcmp(field,"pt") == 0) {
