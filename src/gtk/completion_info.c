@@ -1,7 +1,7 @@
 #include "completion_info.h"
 
 static int
-check_paren(GtkTextIter *iter)
+check_paren(const GtkTextIter *iter)
 {
   GtkTextIter cur;
   gunichar ch, paren;
@@ -19,7 +19,7 @@ check_paren(GtkTextIter *iter)
 }
 
 static GListStore *
-completion_info_populate(struct completion_info *info, const char *word, int len, GtkTextIter *iter)
+completion_info_populate(struct completion_info *info, const char *word, int len, const GtkTextIter *iter)
 {
   GListStore *ret = NULL;
   int i;
@@ -54,13 +54,13 @@ completion_info_populate(struct completion_info *info, const char *word, int len
 }
 
 GListStore *
-completion_info_func_populate(const char *word, int len, GtkTextIter *iter)
+completion_info_func_populate(const char *word, int len, const GtkTextIter *iter)
 {
   return completion_info_populate(completion_info_func, word, len, iter);
 }
 
 GListStore *
-completion_info_const_populate(const char *word, int len, GtkTextIter *iter)
+completion_info_const_populate(const char *word, int len, const GtkTextIter *iter)
 {
   return completion_info_populate(completion_info_const, word, len, iter);
 }

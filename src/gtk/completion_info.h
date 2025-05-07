@@ -12,7 +12,7 @@ struct completion_info
 extern struct completion_info completion_info_const[];
 extern struct completion_info completion_info_func[];
 
-GListStore *completion_info_func_populate(const char *word, int len, GtkTextIter *iter);
-GListStore *completion_info_const_populate(const char *word, int len, GtkTextIter *iter);
+GListStore *completion_info_func_populate(const char *word, int len, const GtkTextIter *iter);
+GListStore *completion_info_const_populate(const char *word, int len, const GtkTextIter *iter);
 
 #endif
