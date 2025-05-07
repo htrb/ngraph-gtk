@@ -228,7 +228,8 @@ get_grid_prm(struct objlist *obj, char *axisy,
 	if (anum > 0) {
 	  id = arraylast_int(&iarray);
 	  arraydel(&iarray);
-	  if (anum > 0 && (inst1 = getobjinst(aobj, id))) {
+	  inst1 = getobjinst(aobj, id);
+	  if (inst1) {
 	    _getobj(aobj, "min", inst1, &prm->amin);
 	    _getobj(aobj, "max", inst1, &prm->amax);
 	    _getobj(aobj, "inc", inst1, &prm->inc);
