@@ -3769,9 +3769,9 @@ GRAcmatchtod(double x,double y,struct cmatchtype *data)
     if (!data->bboxset || gx2>data->maxx) data->maxx=gx2;
     if (!data->bboxset || gy2>data->maxy) data->maxy=gy2;
   } else {
-    double r,r2,r3,ip;
     if ((data->gclipf==NULL)
      || (data->gclipf(&x1,&y1,&x2,&y2,data->gflocal)==0)) {
+      double r, r2, r3;
       if (data->gtransf==NULL) {
         gx1=nround(x1);
         gy1=nround(y1);
@@ -3791,6 +3791,7 @@ GRAcmatchtod(double x,double y,struct cmatchtype *data)
       if ((r<=data->err) || (r3<data->err)) {
         data->match=TRUE;
       } else if (r2!=0) {
+        double ip;
         ip=((x2-x1)*(data->pointx-x1)+(y2-y1)*(data->pointy-y1))/r2;
         if ((0<=ip) && (ip<=r2)) {
           x2=x1+(x2-x1)*ip/r2;
