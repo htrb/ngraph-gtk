@@ -23,7 +23,7 @@ extern "C" {
   void emfplus_flush (struct gdiobj *gdi);
   void emfplus_line (struct gdiobj *gdi, int x1, int y1, int x2, int y2);
   void emfplus_text (struct gdiobj *gdi, int *x, int *y, struct font_info *font, const wchar_t *text);
-  void emfplus_line_attribte (struct gdiobj *gdi, int width, int cap, int join, int miter, int n, int *style);
+  void emfplus_line_attribte (struct gdiobj *gdi, int width, int cap, int join, int miter, int n, const int *style);
   void emfplus_rectangle (struct gdiobj *gdi, int x1, int y1, int x2, int y2, int fill);
   void emfplus_polygon (struct gdiobj *gdi, int n, const int *xy, int fill);
   void emfplus_color (struct gdiobj *gdi, int r, int g, int b, int a);

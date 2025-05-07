@@ -211,7 +211,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
 }
 
 void
-emfplus_line_attribte (struct gdiobj *gdi, int width, int cap, int join, int miter, int n, int *style)
+emfplus_line_attribte (struct gdiobj *gdi, int width, int cap, int join, int miter, int n, const int *style)
 {
   LineCap endCap;
   LineJoin lineJoin;
