@@ -3134,11 +3134,6 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
-struct file_dialog_mark_data {
-  struct FileDialog *d;
-  GtkWidget *w;
-};
-
 struct execute_fit_dialog_data {
   struct objlist *fileobj;
   int fileid;
@@ -4194,7 +4189,7 @@ bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_d
 }
 
 static GtkWidget *
-create_preview_table(struct FileDialog *d)
+create_preview_table(void)
 {
   GtkWidget *view;
   int i;
@@ -4265,7 +4260,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_notebook_new();
     gtk_notebook_set_tab_pos (GTK_NOTEBOOK (w), GTK_POS_LEFT);
 
-    view = create_preview_table(d);
+    view = create_preview_table();
     if (view) {
       GtkWidget *swin;
       label = gtk_label_new_with_mnemonic(_("_Table"));
@@ -4347,7 +4342,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Move"));
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
-    view = create_preview_table(d);
+    view = create_preview_table();
     swin = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
@@ -4934,10 +4929,10 @@ CmFileOpen_response(char **file, gpointer user_data)
     char **ptr;
     undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
     for (ptr = file; *ptr; ptr++) {
-      char *name;
-      name = *ptr;
       id = newobj(obj);
       if (id >= 0) {
+	char *name;
+	name = *ptr;
 	arrayadd(farray, &id);
 	changefilename(name);
 	putobj(obj, "file", id, name);
@@ -4972,7 +4967,8 @@ file_close_response(struct response_callback *cb)
   struct narray *farray;
   farray = (struct narray *) cb->data;
   if (cb->return_value == IDOK) {
-    int i, *array, num;
+    int i, num;
+    const int *array;
     struct obj_list_data *data;
     data = NgraphApp.FileWin.data.data;
     num = arraynum(farray);
@@ -5702,7 +5698,8 @@ set_line_style(struct objlist *obj, int id, int ggc)
   getobj(obj, "line_style", id, 0, NULL, &line_style);
   n = arraynum(line_style);
   if (n > 0) {
-    int i, *style, *ptr;
+    int i, *style;
+    const int *ptr;
     style = g_malloc(sizeof(*style) * n);
     if (style == NULL) {
       GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
@@ -6090,11 +6087,11 @@ disconnect_handler (GtkWidget *w, n_list_store *item)
 {
   int num;
   GListModel *list;
-  GObject *ev;
 
   list = gtk_widget_observe_controllers (w);
   num = g_list_model_get_n_items (list);
   if (num > 0) {
+    GObject *ev;
     ev = g_list_model_get_object (list, 0);
     g_signal_handlers_disconnect_matched (ev, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
   }
