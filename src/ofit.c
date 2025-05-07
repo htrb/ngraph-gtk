@@ -241,7 +241,7 @@ static int
 fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
-  char *field;
+  const char *field;
   char *math;
   struct fitlocal *fitlocal;
   MathEquation *code;
@@ -255,7 +255,7 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
           || ((strncmp(field,"derivative",10)==0) && (field[10]!='\0'))) {
     math=(char *)(argv[2]);
     if (math!=NULL) {
-      MathEquationParametar *prm;
+      const MathEquationParametar *prm;
       code = create_math_equation(obj, math, field);
       if (code == NULL) {
 	return 1;
@@ -350,7 +350,7 @@ display_equation(const char *equation)
 }
 
 static char *
-get_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe, int disp)
+get_poly_equation(const struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe, int disp)
 {
   GString *equation;
   int i, precision;
@@ -446,7 +446,7 @@ show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
 static enum FitError
 fitpoly(struct fitlocal *fitlocal,
 	enum FIT_OBJ_TYPE type,int dimension,int through,double x0,double y0,
-	double *data,int num,int disp,int weight,double *wdata)
+	const double *data,int num,int disp,int weight,const double *wdata)
 /*
   return
          FitError_Range
@@ -647,8 +647,8 @@ show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, 
 
 static enum FitError
 fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
-	int deriv,double converge,double *data,int num,int disp,
-	int weight,double *wdata)
+	int deriv,double converge,const double *data,int num,int disp,
+	int weight,const double *wdata)
 /*
   return
          FitError_Interrupt
@@ -663,12 +663,12 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 */
 {
   int ecode;
-  int *needdata;
+  const int *needdata;
   int tbl[FIT_DIMENSION_MAX],dim,n,count,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
   vector b, x2, parerr;
   MathValue par[FIT_DIMENSION_MAX], par2[FIT_DIMENSION_MAX], var;
-  MathEquationParametar *prm;
+  const MathEquationParametar *prm;
   matrix m;
   int i,j,k;
   char buf[1024];
