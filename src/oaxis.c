@@ -225,7 +225,7 @@ static int
 axisuniqgroup(struct objlist *obj,char type)
 {
   int num;
-  N_VALUE *inst;
+  const N_VALUE *inst;
 
   num = 0;
   do {
@@ -363,10 +363,8 @@ static int
 axisput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
             int argc,char **argv)
 {
-  char *field;
-  char *format;
-  int sharp,minus,plus;
-  int i,j;
+  const char *field;
+  const char *format;
 
   field=argv[1];
   if (strcmp(field,"arrow_length")==0) {
@@ -384,6 +382,8 @@ axisput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     if (*(int *)(argv[2])<1000) *(int *)(argv[2])=1000;
 	else if (*(int *)(argv[2])>100000) *(int *)(argv[2])=100000;
   } else if (strcmp(field,"num_format")==0) {
+    int sharp,minus,plus;
+    int i,j;
     format=(char *)(argv[2]);
     if (format==NULL) {
       error(obj,ERRFORMAT);
@@ -552,7 +552,8 @@ axisbbox2(struct objlist *obj, N_VALUE *inst, struct narray **rval)
 static int
 check_direction(struct objlist *obj, int type, N_VALUE **inst_array)
 {
-  int i, n, direction, normal_dir[] = {0, 9000, 0, 9000};
+  int i, n, direction;
+  const int normal_dir[] = {0, 9000, 0, 9000};
 
   switch (type) {
   case 'f':
@@ -835,7 +836,7 @@ static int
 axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
-  int *data;
+  const int *data;
   struct narray *array;
 
   rval->i=FALSE;
@@ -1966,7 +1967,7 @@ static char *
 get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
 {
   int i, j, len;
-  char *s;
+  const char *s;
   char pm[] = "±";
   GString *num;
 
@@ -2853,7 +2854,7 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
 }
 
 static int
-draw_wave(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
+draw_wave(struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, int GC)
 {
   int wave, wwidth, wlength, i;
   double wx[5],wxc1[5],wxc2[5],wxc3[5];
@@ -2938,7 +2939,7 @@ draw_wave(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
 }
 
 static int
-draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
+draw_arrow(struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, int GC)
 {
   int arrow,alength,awidth;
   double alen,awid,dx,dy;
@@ -3510,7 +3511,7 @@ axisgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   struct narray *iarray;
-  int *data;
+  const int *data;
   int num,gnum;
   char type;
 
@@ -3584,7 +3585,7 @@ axisgrouppos(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 {
   int x, y, lx, ly;
   struct narray *iarray;
-  int *data;
+  const int *data;
   int anum;
 
   iarray = (struct narray *)argv[2];
@@ -3692,7 +3693,7 @@ axisdefgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   int oidx, oidy;
   struct narray *iarray;
-  int *data;
+  const int *data;
   int anum;
 
   if (axisgrouping(obj, inst, rval, argc, argv))
@@ -3918,7 +3919,8 @@ axisscalepush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
 {
   struct narray *array;
   int num;
-  double min,max,inc,*data;
+  double min,max,inc;
+  const double *data;
 
   _getobj(obj,"min",inst,&min);
   _getobj(obj,"max",inst,&max);
