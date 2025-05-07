@@ -85,7 +85,7 @@ struct ToolItem;
 static void create_menu(struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
-static void check_exist_instances(struct objlist *parent);
+static void check_exist_instances(const struct objlist *parent);
 static void check_instance(struct objlist *obj);
 
 static char *Cursor[] = {
@@ -1375,7 +1375,7 @@ free_cursor(void)
 static void
 tool_button_enter_cb(GtkEventControllerMotion *self, gdouble x, gdouble y, gpointer user_data)
 {
-  char *str;
+  const char *str;
 
   str = (char *) user_data;
   SetStatusBar(str);
@@ -1584,7 +1584,7 @@ create_object_tabs(void)
 static void
 edit_menu_shown(GtkWidget *w, gpointer user_data)
 {
-  struct Viewer *d;
+  const struct Viewer *d;
 
   d = (struct Viewer *) user_data;
 
@@ -1594,7 +1594,7 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
 static void
 clipboard_changed(GdkClipboard* self,  gpointer user_data)
 {
-  struct Viewer *d;
+  const struct Viewer *d;
 
   d = (struct Viewer *) user_data;
 
@@ -1979,7 +1979,7 @@ check_instance(struct objlist *obj)
     return;
   }
   for (i = 0; i < ActionWidgetNum; i++) {
-    struct objlist *dobj;
+    const struct objlist *dobj;
     dobj = NULL;
     switch (i) {
     case DataPropertyAction:
@@ -2041,7 +2041,7 @@ check_instance(struct objlist *obj)
 }
 
 static void
-check_exist_instances(struct objlist *parent)
+check_exist_instances(const struct objlist *parent)
 {
   struct objlist *ocur;
 
@@ -2671,9 +2671,9 @@ UpdateAll(char **objects)
 
 static void
 check_update_obj(char **objects,
-		 struct obj_list_data *file, int *update_file,
-		 struct obj_list_data *axis, int *update_axis,
-		 struct obj_list_data *merge, int *update_merge,
+		 const struct obj_list_data *file, int *update_file,
+		 const struct obj_list_data *axis, int *update_axis,
+		 const struct obj_list_data *merge, int *update_merge,
 		 int *update_axisgrid)
 {
   char **ptr;
@@ -2690,7 +2690,7 @@ check_update_obj(char **objects,
   *update_merge = FALSE;
 
   for (ptr = objects; *ptr; ptr++) {
-    struct objlist *obj;
+    const struct objlist *obj;
     obj = getobject(*ptr);
     if (obj == file->obj) {
       *update_file = TRUE;
@@ -3232,7 +3232,7 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
 enum TOOLBOX_MODE
 get_toolbox_mode(void)
 {
-  GtkWidget *widget;
+  const GtkWidget *widget;
 
   widget = gtk_stack_get_visible_child(GTK_STACK(ToolBox));
   return (widget == CToolbar) ? TOOLBOX_MODE_TOOLBAR: TOOLBOX_MODE_SETTING_PANEL;
@@ -3252,7 +3252,7 @@ struct undo_info {
 static struct undo_info *UndoInfo = NULL, *RedoInfo = NULL;
 
 static void
-iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
+iterate_undo_func(const struct objlist *parent, UNDO_FUNC func)
 {
   struct objlist *obj;
   obj = parent->child;
@@ -3440,7 +3440,7 @@ set_undo_menu_label(void)
 int
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
 {
-  struct undo_info *info;
+  const struct undo_info *info;
 
   info = undo_info_push(type, obj);
   if (info == NULL) {
@@ -3553,7 +3553,7 @@ graph_modified_sub(int a)
 }
 
 static int
-undo_check_modified(struct undo_info *info)
+undo_check_modified(const struct undo_info *info)
 {
   int modified_saved, modified_current;
   modified_saved = info->modified;
