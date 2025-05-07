@@ -21,9 +21,9 @@
  *
  */
 
-char *ndate(time_t *timep,int style);
-char *ntime(time_t *timep,int style);
-int gettimeval(char *s,time_t *time);
+char *ndate(const time_t *timep, int style);
+char *ntime(const time_t *timep, int style);
+int gettimeval(const char *s, time_t *time);
 char *nstrftime(const gchar *fmt, double mjd);
 void mjd2gd(double mjd, struct tm *tm);
 

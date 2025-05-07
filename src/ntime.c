@@ -39,7 +39,7 @@ char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
                     "Jul","Aug","Sep","Oct","Nov","Dec"};
 
 char *
-ndate(time_t *timep,int style)
+ndate(const time_t *timep, int style)
 {
   struct tm *ltime;
   char *c;
@@ -75,7 +75,7 @@ ndate(time_t *timep,int style)
 }
 
 char *
-ntime(time_t *timep,int style)
+ntime(const time_t *timep, int style)
 {
   struct tm *ltime;
   char *c;
@@ -116,7 +116,7 @@ ntime(time_t *timep,int style)
 }
 
 int
-gettimeval(char *s,time_t *time)
+gettimeval(const char *s, time_t *time)
 {
   char *endptr;
   struct tm tm;
@@ -230,7 +230,7 @@ mjd2gd(double mjd, struct tm *tm)
 }
 
 static int
-get_iso_8601_week(struct tm *t)
+get_iso_8601_week(const struct tm *t)
 {
   int y, w, a, b, c, x;
 
