@@ -10604,7 +10604,7 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
     return 1;
 
   _getobj(obj,"type",inst,&type);
-  if (type==3) {
+  if (type == PLOT_TYPE_CURVE) {
     _getobj(obj,"interpolation",inst,&intp);
     if (curveoutfile(obj,fp,fp2,intp,div)!=0) {
       fclose(fp2);
