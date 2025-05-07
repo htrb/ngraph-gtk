@@ -6377,7 +6377,7 @@ file_save_data_response(int ret, gpointer user_data)
     }
 
     getobj(obj, "type", array[i], 0, NULL, &type);
-    if (type == 3) {
+    if (type == PLOT_TYPE_CURVE) {
       curve = TRUE;
     }
   }
