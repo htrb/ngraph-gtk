@@ -47,7 +47,7 @@ static gboolean
 save_history_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 {
   FILE *fp;
-  int *a;
+  const int *a;
   char *v;
 
   fp = (FILE *) data;
