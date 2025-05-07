@@ -5013,7 +5013,7 @@ calculate_average_simple(struct f2ddata *fp, int smx, int smy, int sm2, int sm3,
 }
 
 static void
-calculate_average_weughted(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
+calculate_average_weighted(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
 {
   int i, weight;
   const struct f2ddata_buf *buf;
@@ -5221,7 +5221,7 @@ calculate_average(struct f2ddata *fp, int smx, int smy, int sm2, int sm3)
     calculate_average_simple(fp, smx, smy, sm2, sm3, num);
     break;
   case MOVING_AVERAGE_WEIGHTED:
-    calculate_average_weughted(fp, smx, smy, sm2, sm3, num);
+    calculate_average_weighted(fp, smx, smy, sm2, sm3, num);
     break;
   case MOVING_AVERAGE_EXPONENTIAL:
     calculate_average_exponential(fp, smx, smy, sm2, sm3, num);
