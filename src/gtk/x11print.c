@@ -189,12 +189,12 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 static void
 OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *box;
   struct OutputImageDialog *d;
   char *title;
 
   d = (struct OutputImageDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *box;
     w = gtk_check_button_new_with_mnemonic(_("_Convert texts to paths"));
     d->t2p = w;
     gtk_box_append(GTK_BOX(d->vbox), w);
@@ -404,7 +404,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
 }
 
 static void
-init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
+init_graobj(struct objlist *graobj, int id, const char *dev_name, int dev_oid)
 {
   struct narray *drawrable;
   char *device;
