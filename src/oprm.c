@@ -140,13 +140,13 @@ narray *linestyleconv(int attr,int dottedsize)
 
 static void
 addfontcontrol(char *s,int *po,int *fchange,int *jchange,
-                    int *fff,int *ffb,int *ffj,int script)
+	       const int *fff, const int *ffb, int *ffj, int script)
 {
   int j;
 
   j=*po;
   if (fchange[script]) {
-    char *style;
+    const char *style;
     j+=sprintf(s+j,"%%F{%s}",fontchar[fff[script]]);
     switch (ffb[script]) {
     case FONT_STYLE_NORMAL:
@@ -173,7 +173,7 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
 
 
 static char *
-remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
+remarkconv(char *str, int ff, int fj, int fb, const int *fnameid, const char *prmfile)
 /* %C is ignored
    %F ---> %F{}
    %d ---> %{system:0:date:1}
@@ -388,7 +388,7 @@ sscanf2(char *buffer,char *format,...)
 {
   va_list ap;
   int i,num;
-  char *s;
+  const char *s;
   char *endptr;
 
   va_start(ap,format);
@@ -418,7 +418,7 @@ sscanf2(char *buffer,char *format,...)
 }
 
 static int
-gettimeval2(char *s,time_t *time)
+gettimeval2(const char *s,time_t *time)
 {
   char *endptr;
   struct tm tm;
@@ -458,7 +458,8 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct objlist *mgobj,*gobj,*cmobj;
   int fid,fidroot,fitid,aid,agdid,lid,pid,mid,tid,rid,cid;
   int mgid,gid,cmid;
-  char *s,*s2;
+  char *s;
+  const char*s2;
   int d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,R,G,B,gx[11],gy[11];
   double f1,f2,f3,f4;
   int type,intp,mark,fittype;
@@ -483,7 +484,8 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int ll1,ll2,ll3;
   double amax,amin,ainc;
   int atype,aid2[4],posx,posy;
-  char format[10],*EOD;
+  char format[10];
+  const char *EOD;
   char *filename;
   time_t ftime;
   struct utimbuf tm;
