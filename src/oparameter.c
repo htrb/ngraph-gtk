@@ -200,7 +200,7 @@ parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 {
   int type, checked, selected, transition;
   double value, prm;
-  char *field, *transition_field;
+  const char *field, *transition_field;
 
   field = argv[1];
   _getobj(obj, "type", inst, &type);
