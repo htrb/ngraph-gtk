@@ -35,7 +35,7 @@ allocate_iarray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
-    struct narray *ptr;
+    const struct narray *ptr;
     ptr = arrayadd(array, &arg->ary[i].i);
     if (ptr == NULL) {
       arrayfree(array);
@@ -66,7 +66,7 @@ allocate_darray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
-    struct narray *ptr;
+    const struct narray *ptr;
     ptr = arrayadd(array, &arg->ary[i].d);
     if (ptr == NULL) {
       arrayfree(array);
@@ -97,7 +97,7 @@ allocate_sarray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
-    struct narray *ptr;
+    const struct narray *ptr;
     ptr = arrayadd2(array, arg->ary[i].str);
     if (ptr == NULL) {
       arrayfree(array);
@@ -270,7 +270,7 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 }
 
 static void
-free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_arg *arg)
+free_obj_arg(const char **ary, struct objlist *obj, const char *vname, const ngraph_arg *arg)
 {
   int i, n, num;
   const char *arglist;
@@ -423,7 +423,8 @@ struct objlist *
 ngraph_get_object_instances_by_str(const char *str, int *n, int **ids)
 {
   struct narray iarray;
-  int *id_ary, *adata, anum, i, r;
+  int *id_ary, anum, i, r;
+  const int *adata;
   struct objlist *obj;
 
   if (n) {
@@ -597,43 +598,43 @@ ngraph_get_root_object(void)
 }
 
 const char *
-ngraph_get_object_version(struct objlist *obj)
+ngraph_get_object_version(const struct objlist *obj)
 {
   return chkobjver(obj);
 }
 
 int
-ngraph_get_object_id(struct objlist *obj)
+ngraph_get_object_id(const struct objlist *obj)
 {
   return chkobjectid(obj);
 }
 
 int
-ngraph_get_object_size(struct objlist *obj)
+ngraph_get_object_size(const struct objlist *obj)
 {
   return chkobjsize(obj);
 }
 
 int
-ngraph_get_object_current_id(struct objlist *obj)
+ngraph_get_object_current_id(const struct objlist *obj)
 {
   return chkobjcurinst(obj);
 }
 
 int
-ngraph_get_object_last_id(struct objlist *obj)
+ngraph_get_object_last_id(const struct objlist *obj)
 {
   return chkobjlastinst(obj);
 }
 
 struct objlist *
-ngraph_get_next_object(struct objlist *obj)
+ngraph_get_next_object(const struct objlist *obj)
 {
   return obj->next;
 }
 
 struct objlist *
-ngraph_get_child_object(struct objlist *obj)
+ngraph_get_child_object(const struct objlist *obj)
 {
   return obj->child;
 }
