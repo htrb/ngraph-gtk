@@ -3595,7 +3595,7 @@ GRAinview(int GC,int x,int y)
 }
 
 void
-GRAcurvefirst(int GC,int num,int *dashlist,
+GRAcurvefirst(int GC,int num,const int *dashlist,
 	      clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
 	      double x0,double y0)
 {
@@ -3744,7 +3744,6 @@ GRAcmatchtod(double x,double y,struct cmatchtype *data)
 {
   double x1,y1,x2,y2;
   int gx1,gy1,gx2,gy2;
-  double r,r2,r3,ip;
 
   x1=data->x0;
   y1=data->y0;
@@ -3770,6 +3769,7 @@ GRAcmatchtod(double x,double y,struct cmatchtype *data)
     if (!data->bboxset || gx2>data->maxx) data->maxx=gx2;
     if (!data->bboxset || gy2>data->maxy) data->maxy=gy2;
   } else {
+    double r,r2,r3,ip;
     if ((data->gclipf==NULL)
      || (data->gclipf(&x1,&y1,&x2,&y2,data->gflocal)==0)) {
       if (data->gtransf==NULL) {

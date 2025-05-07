@@ -166,7 +166,7 @@ void GRAtextextentraw(char *s,char *font, int style,
                  int size,int space,int *gx0,int *gy0,int *gx1,int *gy1);
 int GRAinput(int GC,char *s,int leftm,int topm,int rate_x,int rate_y);
 int GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y);
-void GRAcurvefirst(int GC,int num,int *dashlist,
+void GRAcurvefirst(int GC,int num,const int *dashlist,
       clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
              double x0,double y0);
 int GRAcurve(int GC,double c[],double x0,double y0);
