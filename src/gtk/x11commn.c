@@ -2490,7 +2490,7 @@ ProgressDialog_append_text(const char *text)
 }
 
 void
-ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
+ProgressDialogCreate(const char *title, progress_func update, progress_func finalize, gpointer data)
 {
   int i;
   if (ProgressDialogData) {
