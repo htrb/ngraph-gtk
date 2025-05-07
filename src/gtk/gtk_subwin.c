@@ -32,7 +32,7 @@
 
 #define DOUBLE_CLICK_PERIOD 250
 
-static void hidden(struct obj_list_data *d);
+static void hide_obj(struct obj_list_data *d);
 
 void
 update_viewer(struct obj_list_data *d)
@@ -305,7 +305,7 @@ focus_all(struct obj_list_data *d)
 }
 
 static void
-hidden(struct obj_list_data *d)
+hide_obj(struct obj_list_data *d)
 {
   int sel, num;
   int hidden;
@@ -447,7 +447,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
     swin_update(d);
     break;
   case GDK_KEY_BackSpace:
-    hidden(d);
+    hide_obj(d);
     break;
   case GDK_KEY_space:
     if (state & GDK_CONTROL_MASK)
