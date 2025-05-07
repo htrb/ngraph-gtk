@@ -115,6 +115,7 @@ check_id(VALUE klass)
 
   if (inst->id < 0) {
     rb_raise(rb_eArgError, "%s: the instance is already deleted.", rb_obj_classname(klass));
+    return NULL;
   }
 
   last = ngraph_get_object_last_id(inst->obj);
@@ -130,6 +131,7 @@ check_id(VALUE klass)
     if (r < 0) {
       inst->id = -1;
       rb_raise(rb_eArgError, "%s: the instance is already deleted.", rb_obj_classname(klass));
+      return NULL;
     }
   }
 
@@ -209,6 +211,7 @@ check_inst_args(VALUE self, VALUE arg, const char *field, struct ngraph_instance
 
   if (! rb_obj_is_kind_of(arg, NgraphClass)) {
     rb_raise(rb_eArgError, "%s#%s: illegal type of the argument (%s).", rb_obj_classname(self), field, rb_obj_classname(arg));
+    return 1;
   }
 
   *inst2 = check_id(arg);
@@ -218,6 +221,7 @@ check_inst_args(VALUE self, VALUE arg, const char *field, struct ngraph_instance
 
   if ((*inst1)->obj != (*inst2)->obj) {
     rb_raise(rb_eArgError, "%s#%s: illegal type of the argument (%s).", rb_obj_classname(self), field, rb_obj_classname(arg));
+    return 1;
   }
 
   return 0;
@@ -1044,12 +1048,14 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
     obj = ngraph_get_object_instances_by_str(ptr, NULL, &ids);
     if (obj == NULL) {
       rb_raise(rb_eArgError, "%s#%s: illegal instance representation (%s).", rb_obj_classname(self), field, ptr);
+      return Qnil;
     }
     ngraph_free(ids);
     break;
   default:
     if (! rb_obj_is_kind_of(arg, NgraphClass)) {
       rb_raise(rb_eArgError, "%s#%s: illegal type of the argument (%s).", rb_obj_classname(self), field, rb_obj_classname(arg));
+      return Qnil;
     }
 
     inst2 = check_id(arg);
@@ -1098,6 +1104,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
   } else {
     if (!RB_TYPE_P(arg, T_ARRAY)) {
       rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
+      return Qnil;
     }
 
     num = RARRAY_LEN(arg);
@@ -1174,6 +1181,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
   } else {
     if (!RB_TYPE_P(arg, T_ARRAY)) {
       rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
+      return Qnil;
     }
 
     num = RARRAY_LEN(arg);
@@ -1250,6 +1258,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
   } else {
     if (!RB_TYPE_P(arg, T_ARRAY)) {
       rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
+      return Qnil;
     }
 
     num = RARRAY_LEN(arg);
@@ -1342,6 +1351,7 @@ get_array_arg(VALUE self, const char *field, VALUE arg, int *num)
 
   if (!RB_TYPE_P(arg, T_ARRAY)) {
     rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
+    return Qnil;
   }
 
   n = RARRAY_LEN(arg);
@@ -1790,6 +1800,7 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
 
   if (! rb_obj_is_kind_of(nobj, NgraphClass)) {
     rb_raise(rb_eArgError, "%s: illegal type of the argument (%s).", rb_obj_classname(module), rb_obj_classname(nobj));
+    return Qnil;
   }
 
   if (NIL_P(cmd)) {
@@ -1802,6 +1813,7 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
     loginshell = ALLOCA_N(char, len);
     if (loginshell == NULL) {
       rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(module));
+      return Qnil;
     }
     strcpy(loginshell, str);
   }
