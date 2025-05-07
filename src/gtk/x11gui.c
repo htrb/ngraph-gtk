@@ -70,7 +70,7 @@ struct nGetOpenFileData
   int multi;
 };
 
-static int add_buttons(GtkWidget *dlg, struct narray *array);
+static int add_buttons(GtkWidget *dlg, const struct narray *array);
 
 void
 dialog_wait(int *wait)
@@ -552,7 +552,7 @@ struct input_dialog_data {
   GtkWidget *text;
   string_response_cb cb;
   int *res_btn;
-  struct narray *buttons;
+  const struct narray *buttons;
   gpointer data;
 };
 
@@ -583,7 +583,7 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
 }
 
 void
-input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, int *res_btn, string_response_cb cb, gpointer user_data)
+input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, const struct narray *buttons, int *res_btn, string_response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *text;
   GtkBox *vbox;
@@ -639,7 +639,7 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
 struct radio_dialog_data {
   response_cb cb;
   int anum;
-  struct narray *buttons;
+  const struct narray *buttons;
   int *res_btn;
   GtkWidget **btn_ary;
   gpointer data;
@@ -674,7 +674,7 @@ radio_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
 }
 
 void
-radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const char *button, struct narray *buttons, int *res_btn, int selected, response_cb cb, gpointer user_data)
+radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const char *button, const struct narray *buttons, int *res_btn, int selected, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkBox *vbox;
@@ -752,7 +752,7 @@ radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
 }
 
 static int
-add_buttons(GtkWidget *dlg, struct narray *array)
+add_buttons(GtkWidget *dlg, const struct narray *array)
 {
   char **d;
   int i, anum;
@@ -791,7 +791,7 @@ button_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
 }
 
 void
-button_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *buttons, response_cb cb, gpointer user_data)
+button_dialog(GtkWidget *parent, const char *title, const char *caption, const struct narray *buttons, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg;
   struct button_dialog_data *data;
@@ -834,7 +834,7 @@ struct combo_dialog_data {
   string_response_cb cb;
   int *res_btn;
   char **label;
-  struct narray *buttons;
+  const struct narray *buttons;
   gpointer data;
 };
 
@@ -868,7 +868,7 @@ combo_dialog_response(GtkWidget *dlg, int response, gpointer user_data)
 }
 
 void
-combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data)
+combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *combo;
   GtkBox *vbox;
@@ -950,7 +950,7 @@ combo_entry_dialog_response(GtkWidget *dlg, int response, gpointer user_data)
 }
 
 void
-combo_entry_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data)
+combo_entry_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *combo;
   GtkBox *vbox;
@@ -1012,7 +1012,7 @@ struct spin_dialog_data {
   response_cb cb;
   int *res_btn;
   double *val;
-  struct narray *buttons;
+  const struct narray *buttons;
   gpointer data;
 };
 
@@ -1039,7 +1039,7 @@ spin_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
 }
 
 void
-spin_dialog(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, response_cb cb, gpointer user_data)
+spin_dialog(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, const struct narray *buttons, int *res_btn, double *r, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *spin;
   GtkBox *vbox;
@@ -1111,7 +1111,7 @@ struct check_dialog_data {
   response_cb cb;
   int *res_btn, anum, *r;
   double *val;
-  struct narray *buttons;
+  const struct narray *buttons;
   gpointer data;
 };
 
@@ -1141,7 +1141,7 @@ check_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
 }
 
 void
-check_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, response_cb cb, gpointer user_data)
+check_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const struct narray *buttons, int *res_btn, int *r, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkBox *vbox;
