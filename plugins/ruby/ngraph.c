@@ -463,7 +463,7 @@ get_ngraph_obj(const char *name)
 }
 
 static void
-add_child(VALUE ary, struct objlist *parent, int noinst)
+add_child(VALUE ary, const struct objlist *parent, int noinst)
 {
   struct objlist *ocur;
   VALUE obj;
@@ -1037,7 +1037,7 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
   char buf[128];
   const char *name, *ptr;
   int *ids;
-  struct objlist *obj;
+  const struct objlist *obj;
 
   switch (TYPE(arg)) {
   case T_NIL:
