@@ -343,7 +343,7 @@ curve_expand(double c[], double x0, double y0, diffunc gdiff, intpfunc gintpf, s
 }
 
 int
-curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points)
+curve_expand_points(const int *pdata, int num, int intp, struct narray *expand_points)
 {
   int i, j, bsize, spcond, x, y;
   double c[8];

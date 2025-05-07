@@ -103,7 +103,7 @@ int put_fill_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 int put_stroke_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int put_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
-int curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points);
+int curve_expand_points(const int *pdata, int num, int intp, struct narray *expand_points);
 void text_get_bbox(int x, int y, char *text, char *font, int style, int pt, int dir, int space, int scriptsize, int raw, int *bbox);
 
 #endif
