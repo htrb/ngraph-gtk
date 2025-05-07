@@ -1067,7 +1067,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 {
   double min, max, inc;
   struct narray *array;
-  double *data;
+  const double *data;
   char buf[30];
 
   combo_box_clear(d->min);
@@ -2042,7 +2042,7 @@ font_tab_set_value(struct AxisDialog *axis)
 static void
 font_tab_setup_item(struct AxisDialog *axis, int id)
 {
-  struct compatible_font_info *compatible;
+  const struct compatible_font_info *compatible;
   struct AxisFont *d;
   int style;
 
