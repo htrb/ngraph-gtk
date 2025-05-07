@@ -379,7 +379,7 @@ static void
 SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SelectDialog *d;
-  int i, *seldata, selnum;
+  int i;
 
   d = (struct SelectDialog *) data;
 
@@ -435,6 +435,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (chkobjlastinst(d->Obj) == 0) {
     columnview_set_active (d->list, 0, TRUE);
   } else if (d->isel) {
+    const int *seldata;
+    int selnum;
     seldata = arraydata(d->isel);
     selnum = arraynum(d->isel);
 
@@ -568,7 +570,7 @@ static void
 CopyDialogClose(GtkWidget *w, void *data)
 {
   struct CopyDialog *d;
-  NInst *inst;
+  const NInst *inst;
 
 
   d = (struct CopyDialog *) data;
@@ -1056,7 +1058,8 @@ get_style_index(struct objlist *obj, int id, char *field)
   int i;
   struct narray *array;
   int stylenum;
-  int *style, a;
+  const int *style;
+  int a;
   char *s;
 
   getobj(obj, field, id, 0, NULL, &array);
@@ -1097,7 +1100,8 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 {
   struct narray *array;
   char buf[128];
-  int i, n, *points, pos;
+  int i, n, pos;
+  const int *points;
   GtkEntryBuffer *t_buf;
 
   t_buf = gtk_entry_get_buffer(entry);
@@ -1322,11 +1326,6 @@ axis_combo_box_get_id_array(GtkWidget *cbox)
 {
   return g_object_get_data(G_OBJECT(cbox), AXIS_COMBO_BOX_ID_LIST_KEY);
 }
-
-struct axis_combo_box_each_data {
-  GtkWidget *combo;
-  int id;
-};
 
 static int
 axis_combo_box_get_id(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
