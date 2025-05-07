@@ -279,7 +279,7 @@ static int
 markgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
-  char *field;
+  const char *field;
   int val;
 
   field = (char *) (argv[1]);
