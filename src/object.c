@@ -4100,7 +4100,8 @@ struct objlist *
 getobjlist(char *list,int *id,char **field,int *oid)
 {
   char *objname;
-  char *ids,*ids2;
+  char *ids;
+  const char *ids2;
   int len;
   struct objlist *obj;
   char *endptr;
@@ -4137,7 +4138,8 @@ char *
 chgobjlist(char *olist)
 {
   char *list,*objname,*newlist;
-  char *ids,*ids2;
+  char *ids;
+  const char *ids2;
   int id,len;
   struct objlist *obj;
   char *endptr;
@@ -4180,7 +4182,7 @@ chgobjlist(char *olist)
 char *
 getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
 {
-  struct narray *array;
+  const struct narray *array;
   void *po;
   char *bval;
   const char *arglist;
@@ -4296,7 +4298,7 @@ add_arg_object(char *s2, char ***argv)
   if (s2 && s2[0]) {
     char *oname;
     int i;
-    struct objlist *obj2;
+    const struct objlist *obj2;
     os = s2;
     oname = getitok2(&os, &olen, ":");
     if (oname == NULL) {
@@ -5183,7 +5185,8 @@ struct narray *
 sgetobj(char *arg,int limittype,int cr,int quote)
 {
   struct objlist *obj;
-  int i,anum,*id;
+  int i,anum;
+  const int *id;
   struct narray iarray,*sarray;
   char *valstr;
 
@@ -5281,7 +5284,8 @@ int
 sputobj(char *arg)
 {
   struct objlist *obj;
-  int i,anum,*id;
+  int i,anum;
+  const int *id;
   struct narray iarray;
 
   arrayinit(&iarray,sizeof(int));
@@ -5364,7 +5368,8 @@ int
 sexeobj(char *arg)
 {
   struct objlist *obj;
-  int i,anum,*id;
+  int i,anum;
+  const int *id;
   struct narray iarray;
   int rcode;
 
