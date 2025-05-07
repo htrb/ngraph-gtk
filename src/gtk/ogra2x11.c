@@ -498,7 +498,7 @@ gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 }
 
 static double
-get_color(struct gtklocal *gtklocal, int argc, char **argv)
+get_color(const struct gtklocal *gtklocal, int argc, char **argv)
 {
   int c;
 
@@ -624,7 +624,7 @@ static int
 gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char code;
-  int *cpar;
+  const int *cpar;
   struct gtklocal *gtklocal;
 
   code = *(char *) (argv[3]);
