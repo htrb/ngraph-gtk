@@ -118,10 +118,10 @@ static void ViewerEvRealize(GtkWidget *w, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
 static void ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data);
 static gboolean ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data);
-static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d);
+static gboolean ViewerEvLButtonDown(unsigned int state, const TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
-static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
+static gboolean ViewerEvMouseMove(unsigned int state, const TPoint *point, struct Viewer *d);
 static void ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
@@ -290,7 +290,7 @@ struct FOCUSED_INST {
 static int
 compare_focused_inst(const void *a, const void *b)
 {
-  struct FOCUSED_INST *inst_a, *inst_b;
+  const struct FOCUSED_INST *inst_a, *inst_b;
   inst_a = (struct FOCUSED_INST *) a;
   inst_b = (struct FOCUSED_INST *) b;
   return (inst_a->id - inst_b->id);
@@ -338,7 +338,7 @@ CopyFocusedObjects(void)
 {
   struct narray *focus_array;
   struct FocusObj **focus;
-  struct objlist *axis;
+  const struct objlist *axis;
   char *s;
   int i, r, n, num;
   GString *str;
@@ -411,7 +411,7 @@ CutFocusedObjects(void)
 }
 
 static void
-check_last_insts(struct objlist *parent, struct narray *array)
+check_last_insts(const struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
   int instnum;
@@ -429,7 +429,7 @@ check_last_insts(struct objlist *parent, struct narray *array)
 }
 
 static void
-focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
+focus_new_insts(const struct objlist *parent, struct narray *array, char **objects)
 {
   struct objlist *ocur;
   int i, oid;
@@ -903,7 +903,7 @@ int
 data_dropped(struct narray *filenames, int file_type)
 {
   char  *arg[4];
-  struct objlist *obj, *mobj;
+  const struct objlist *obj, *mobj;
   struct data_dropped_data *data;
   int num;
 
@@ -1096,7 +1096,7 @@ file_dropped(const GValue* value)
   n = arraynum(files);
   r = TRUE;
   if (n == 1) {
-    char *fname;
+    const char *fname;
     fname = arraynget_str(files, 0);
     r = graph_dropped(fname);
   }
@@ -1253,7 +1253,7 @@ bind_eval_inst_item (GtkLabel *label, int column, NInst *inst)
 }
 
 static void
-bind_eval_data_item (GtkLabel *label, int column, NData *data)
+bind_eval_data_item (GtkLabel *label, int column, const NData *data)
 {
   char buf[64];
 
@@ -1305,10 +1305,10 @@ bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer us
 static GListModel *
 create_child_func (GObject *item, gpointer user_data)
 {
-  struct EvalDialog *d;
+  const struct EvalDialog *d;
   int i, id;
   GListStore *list;
-  NInst *inst;
+  const NInst *inst;
 
   if (! G_TYPE_CHECK_INSTANCE_TYPE(item, N_TYPE_INST)) {
     return NULL;
@@ -1385,11 +1385,11 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
-EvalDialogClose(GtkWidget *w, void *data)
+EvalDialogClose(GtkWidget *w, void *user_data)
 {
   struct EvalDialog *d;
 
-  d = (struct EvalDialog *) data;
+  d = (struct EvalDialog *) user_data;
   if ((d->ret == IDEVMASK) || (d->ret == IDEVMOVE)) {
     GtkSelectionModel *selected;
     int i, n;
@@ -2069,7 +2069,7 @@ evaluate_response(struct response_callback *cb)
   int selnum;
   struct objlist *fileobj;
   struct Viewer *vd;
-  struct EvalDialog *d;
+  const struct EvalDialog *d;
 
   vd = (struct Viewer *) cb->data;
   d = (struct EvalDialog *) cb->dialog;
@@ -2250,7 +2250,8 @@ trimming_response(struct response_callback *cb)
 
   if (cb->return_value == IDOK) {
     int i;
-    int *array, num;
+    const int *array;
+    int num;
     int vx1, vy1, vx2, vy2;
     char *argv[4];
     vx1 = x1 - x2;
@@ -2564,7 +2565,8 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d
   int i, num;
   struct FocusObj **focus;
   struct narray *abbox;
-  int bboxnum, *bbox;
+  int bboxnum;
+  const int *bbox;
   N_VALUE *inst;
   struct savedstdio save;
 
@@ -2675,7 +2677,7 @@ ShowFocusFrame(cairo_t *cr, struct Viewer *d)
   struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum;
-  int *bbox;
+  const int *bbox;
   int x1, y1, x2, y2;
   N_VALUE *inst;
   struct savedstdio save;
@@ -2823,7 +2825,8 @@ get_focused_obj_array(struct narray *focusobj, char **objs)
 static void
 AlignFocusedObj(int align)
 {
-  int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
+  int i, num, bboxnum, minx, miny, maxx, maxy, dx, dy;
+  const int *bbox;
   struct FocusObj **focus;
   struct narray *abbox;
   char *argv[4], *objs[OBJ_MAX];
@@ -3052,7 +3055,7 @@ draw_cairo_arc(cairo_t *cr, int x, int y, int rx, int ry, int a1, int a2)
 static void
 show_focus_line_set_dash(cairo_t *cr, struct narray *style, double zoom)
 {
-  int *data;
+  const int *data;
   double *tmp;
   int i, n;
 
@@ -3126,7 +3129,8 @@ show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N
 {
   int x, y, rx, ry, fill, pie_slice, a1, a2, close_path;
   int stroke;
-  struct Point expo, *poptr;
+  struct Point expo;
+  const struct Point *poptr;
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
   _getobj(obj, "rx", inst, &rx);
@@ -3182,7 +3186,7 @@ show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N
 }
 
 static void
-draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
+draw_frame_rect(cairo_t *gc, int change, double zoom, const int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
 
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -3225,7 +3229,7 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
 }
 
 static void
-draw_focus_axis(cairo_t *gc, int change, double zoom, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
+draw_focus_axis(cairo_t *gc, int change, double zoom, const int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
   int minx, miny, height, width, single_axis;
@@ -3313,7 +3317,7 @@ draw_curve_common(cairo_t *cr, int *data, int num, int intp)
 }
 
 static int
-draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const struct Viewer *d)
+draw_focus_curve(cairo_t *cr, const int *po, int num, int intp, double zoom, const struct Viewer *d)
 {
   int *data;
   int i, r;
@@ -3397,7 +3401,7 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum;
-  int *bbox;
+  const int *bbox;
   N_VALUE *inst;
   struct savedstdio save;
   double zoom;
@@ -3442,7 +3446,7 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
 }
 
 static void
-set_dash(cairo_t *cr, struct presettings *setting, double zoom)
+set_dash(cairo_t *cr, const struct presettings *setting, double zoom)
 {
   int style, i;
   double dash[LINE_STYLE_ELEMENT_MAX];
@@ -4067,7 +4071,7 @@ init_zoom(unsigned int state, struct Viewer *d)
 }
 
 static void
-mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d)
+mouse_down_move(unsigned int state, const TPoint *point, struct Viewer *d)
 {
   int cursor;
 
@@ -4127,7 +4131,7 @@ mouse_down_move_data(struct Viewer *d)
   int selnum, sel, i, ax, ay, anum, iline, j, movenum;
   double dx, dy;
   char *axis, *argv[3];
-  int *ptr;
+  const int *ptr;
 
   fileobj = chkobject("data");
   if (fileobj == NULL)
@@ -4238,7 +4242,7 @@ mouse_down_move_data(struct Viewer *d)
 }
 
 static void
-mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out, double factor)
+mouse_down_zoom2(unsigned int state, const TPoint *point, struct Viewer *d, int zoom_out, double factor)
 {
   static double saved_dpi_d = -1;
   static double saved_dpi_i = -1;
@@ -4291,13 +4295,13 @@ mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_o
 }
 
 static void
-mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+mouse_down_zoom(unsigned int state, const TPoint *point, struct Viewer *d, int zoom_out)
 {
   mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_NORMAL);
 }
 
 static void
-mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+mouse_down_zoom_little(unsigned int state, const TPoint *point, struct Viewer *d, int zoom_out)
 {
   mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_LITTLE);
 }
@@ -4424,7 +4428,7 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, int n)
 }
 
 static gboolean
-ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
+ViewerEvLButtonDown(unsigned int state, const TPoint *point, struct Viewer *d)
 {
   double zoom;
   int pos;
@@ -4493,7 +4497,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 }
 
 static void
-mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_up_point(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int x1, x2, y1, y2, err;
 
@@ -4611,7 +4615,7 @@ add_data_grid_to_objs(char **objs)
 }
 
 static void
-mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_up_drag(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int dx, dy, axis;
   char *objs[OBJ_MAX];
@@ -4702,7 +4706,7 @@ zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct
 }
 
 static void
-mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_up_zoom(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int vx1, vy1, preserve_ratio;
   double zoom_x, zoom_y;
@@ -4735,7 +4739,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 }
 
 static void
-mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_up_change(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int dx, dy, axis;
   struct FocusObj *focus;
@@ -4870,7 +4874,7 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 }
 
 static void
-set_drag_info(struct Viewer *d)
+set_drag_info(const struct Viewer *d)
 {
   char buf[32];
 
@@ -4895,7 +4899,7 @@ SetPoint(struct Viewer *d, int x, int y)
 
   if (NgraphApp.Message && GTK_WIDGET_VISIBLE(NgraphApp.Message)) {
     char buf[128];
-    struct Point *po;
+    const struct Point *po;
     unsigned int num;
     snprintf(buf, sizeof(buf), "% 6.2f, % 6.2f", x / 100.0, y / 100.0);
     gtk_label_set_text(GTK_LABEL(NgraphApp.Message_pos), buf);
@@ -5047,7 +5051,7 @@ create_drawble_response(struct response_callback *cb)
 {
   struct create_drawble_data *data;
   char *objects[3];
-  struct Viewer *d;
+  const struct Viewer *d;
 
   d = &NgraphApp.Viewer;
   data = (struct create_drawble_data *) cb->data;
@@ -5092,7 +5096,7 @@ create_legend1(struct Viewer *d)
 {
   int num;
   struct objlist *obj = NULL;
-  struct Point *po;
+  const struct Point *po;
   int id, x1, y1, undo;
 
   d->Capture = FALSE;
@@ -5562,9 +5566,7 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
 static gboolean
 ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  int num;
   struct Point *po;
-  double zoom;
 
   if (Menulock || Globallock)
     return FALSE;
@@ -5572,6 +5574,8 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   if (d->MoveData) {
     move_data_cancel(d, TRUE);
   } else if (d->Capture) {
+    int num;
+    double zoom;
     zoom = Menulocal.PaperZoom / 10000.0;
     switch (d->Mode) {
     case PathB:
@@ -5639,7 +5643,8 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 static int
 get_mouse_cursor_type(struct Viewer *d, int x, int y)
 {
-  int j, x1, y1, x2, y2, num, cursor, bboxnum, *bbox;
+  int j, x1, y1, x2, y2, num, cursor, bboxnum;
+  const int *bbox;
   N_VALUE *inst;
   struct narray *abbox;
   struct FocusObj **focus;
@@ -5723,7 +5728,7 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
 }
 
 static void
-update_frame_rect(TPoint *point, struct Viewer *d, double zoom)
+update_frame_rect(const TPoint *point, struct Viewer *d, double zoom)
 {
   d->MouseX2 = calc_mouse_x(point->x, zoom, d);
   d->MouseY2 = calc_mouse_y(point->y, zoom, d);
@@ -5734,7 +5739,7 @@ update_frame_rect(TPoint *point, struct Viewer *d, double zoom)
 static void
 calc_snap_angle(struct narray *points, int *dx, int *dy)
 {
-  struct Point *po2;
+  const struct Point *po2;
   int x, y, w, h, n;
   double angle, l;
 
@@ -5813,7 +5818,7 @@ calc_snap_angle(struct narray *points, int *dx, int *dy)
 static void
 calc_integer_ratio(struct narray *points, int *dx, int *dy)
 {
-  struct Point *po2;
+  const struct Point *po2;
   int x, y, w, h;
 
   x = *dx;
@@ -5847,7 +5852,7 @@ calc_integer_ratio(struct narray *points, int *dx, int *dy)
 }
 
 static void
-mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_drag(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int x, y;
 
@@ -5864,7 +5869,7 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 }
 
 static void
-mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_zoom(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   double zoom_x, zoom_y, preserve_ratio;
   int vx1, vx2, vy1, vy2;
@@ -5885,7 +5890,7 @@ mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 }
 
 static void
-mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_change(unsigned int state, const TPoint *point, double zoom, struct Viewer *d)
 {
   int x, y;
 
@@ -5904,7 +5909,7 @@ mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer 
 }
 
 static void
-mouse_move_scroll(TPoint *point, struct Viewer *d)
+mouse_move_scroll(const TPoint *point, struct Viewer *d)
 {
   int h, w;
   double dx, dy;
@@ -5967,7 +5972,7 @@ set_cross_gauge_position(int dx, int dy, double zoom, struct Viewer *d)
 }
 
 static gboolean
-ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
+ViewerEvMouseMove(unsigned int state, const TPoint *point, struct Viewer *d)
 {
   int dx, dy;
   double zoom;
@@ -6596,7 +6601,7 @@ check_focused_obj(struct narray *focusobj, const struct objlist *fobj, int oid)
 
   num = arraynum(focusobj);
   for (i = 0; i < num; i++) {
-    struct FocusObj *focus;
+    const struct FocusObj *focus;
     focus = *(struct FocusObj **) arraynget(focusobj, i);
     if (focus == NULL)
       continue;
@@ -7215,7 +7220,6 @@ update_focused_obj(struct Viewer *d, int i)
   int x1, y1;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
-  char type;
   char *group;
 
   if (i < 0) {
@@ -7245,6 +7249,7 @@ update_focused_obj(struct Viewer *d, int i)
     _getobj(obj, "group", inst, &group);
 
     if (group && group[0] != 'a') {
+      char type;
       type = search_axis_group(obj, id, group,
 			       &findX, &findY, &findU, &findR, &findG,
 			       &idx, &idy, &idu, &idr, &idg);
