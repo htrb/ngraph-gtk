@@ -180,14 +180,14 @@ void error22(struct objlist *obj,int code, const char *mes1, const char *mes2);
 void error3(struct objlist *obj,int code,int num);
 
 void ignorestdio(struct savedstdio *save);
-void restorestdio(struct savedstdio *save);
+void restorestdio(const struct savedstdio *save);
 void savestdio(struct savedstdio *save);
-void loadstdio(struct savedstdio *save);
+void loadstdio(const struct savedstdio *save);
 
 void arrayinit(struct narray *array,unsigned int base);
 struct narray *arraynew(unsigned int base);
-void *arraydata(struct narray *array);
-unsigned int arraynum(struct narray *array);
+void *arraydata(const struct narray *array);
+unsigned int arraynum(const struct narray *array);
 void arraydel(struct narray *array);
 void arraydel2(struct narray *array);
 void arrayclear(struct narray *array);
@@ -207,14 +207,14 @@ struct narray *array_slice(struct narray *array, int start, int length);
 struct narray *array_slice2(struct narray *array, int start, int length);
 struct narray *arraydup(struct narray *array);
 struct narray *arraydup2(struct narray *array);
-void *arraynget(struct narray *array,unsigned int idx);
-int arraynget_int(struct narray *array, unsigned int idx);
-double arraynget_double(struct narray *array, unsigned int idx);
-char *arraynget_str(struct narray *array, unsigned int idx);
-void *arraylast(struct narray *array);
-int arraylast_int(struct narray *array);
+void *arraynget(const struct narray *array,unsigned int idx);
+int arraynget_int(const struct narray *array, unsigned int idx);
+double arraynget_double(const struct narray *array, unsigned int idx);
+char *arraynget_str(const struct narray *array, unsigned int idx);
+void *arraylast(const struct narray *array);
+int arraylast_int(const struct narray *array);
 int arraypop_int(struct narray *array);
-int array_find_int(struct narray *array, int number);
+int array_find_int(const struct narray *array, int number);
 void arraysort_int(struct narray *array);
 void arrayrsort_int(struct narray *array);
 void arrayuniq_int(struct narray *array);
@@ -225,7 +225,7 @@ void arrayrsort_str(struct narray *array);
 void arraysort_str(struct narray *array);
 void arrayuniq_str(struct narray *array);
 void arrayuniq_all_str(struct narray *array);
-int arraycmp(struct narray *a, struct narray *b);
+int arraycmp(const struct narray *a, const struct narray *b);
 int arraycpy(struct narray *a, struct narray *b);
 
 int getargc(char **arg);
@@ -235,31 +235,31 @@ void arg_del(char **arg);
 #if USE_EVENT_LOOP
 void registerevloop(const char *objname, const char *evname,
                     struct objlist *obj,int idn,N_VALUE *inst,void *local);
-void unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst);
+void unregisterevloop(const struct objlist *obj, int idn, const N_VALUE *inst);
 void eventloop(void);
 #endif
 
 struct objlist *chkobjroot(void);
-void *addobject(char *name,char *alias,char *parentname,
+void *addobject(char *name,char *alias,const char *parentname,
                 char *ver,int tblnum,struct objtable *table,
                 int errnum,char **errtable,void *local,DoneProc doneproc);
 void hideinstance(struct objlist *obj);
 void recoverinstance(struct objlist *obj);
 struct objlist *chkobject(const char *name);
-int chkobjectid(struct objlist *obj);
-const char *chkobjectname(struct objlist *obj);
-const char *chkobjectalias(struct objlist *obj);
-struct objlist *chkobjparent(struct objlist *obj);
-int chkobjchild(struct objlist *parent,struct objlist *child);
-char *chkobjver(struct objlist *obj);
-int chkobjsize(struct objlist *obj);
-int chkobjlastinst(struct objlist *obj);
-int chkobjcurinst(struct objlist *obj);
+int chkobjectid(const struct objlist *obj);
+const char *chkobjectname(const struct objlist *obj);
+const char *chkobjectalias(const struct objlist *obj);
+struct objlist *chkobjparent(const struct objlist *obj);
+int chkobjchild(const struct objlist *parent,struct objlist *child);
+char *chkobjver(const struct objlist *obj);
+int chkobjsize(const struct objlist *obj);
+int chkobjlastinst(const struct objlist *obj);
+int chkobjcurinst(const struct objlist *obj);
 int chkobjoffset(struct objlist *obj, const char *name);
-int chkobjoffset2(struct objlist *obj,int tblpos);
-N_VALUE *chkobjinstoid(struct objlist *obj,int oid);
-N_VALUE *chkobjinst(struct objlist *obj,int id);
-int chkobjoid(struct objlist *obj,int oid);
+int chkobjoffset2(const struct objlist *obj,int tblpos);
+N_VALUE *chkobjinstoid(const struct objlist *obj,int oid);
+N_VALUE *chkobjinst(const struct objlist *obj,int id);
+int chkobjoid(const struct objlist *obj,int oid);
 int chkobjfieldnum(struct objlist *obj);
 char *chkobjfieldname(struct objlist *obj,int num);
 int chkobjfield(struct objlist *obj, const char *name);
@@ -278,7 +278,7 @@ int getobjfield(struct objlist *obj, const char *name);
 
 int _putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val);
 int _getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val);
-int _exeparent(struct objlist *obj,const char *vname,N_VALUE *inst,N_VALUE *rval,
+int _exeparent(const struct objlist *obj,const char *vname,N_VALUE *inst,N_VALUE *rval,
                int argc,char **argv);
 int _exeobj(struct objlist *obj,const char *vname,N_VALUE *inst,int argc,char **argv);
 int __exeobj(struct objlist *obj,int idn,N_VALUE *inst,int argc,char **argv);
@@ -306,7 +306,7 @@ int getobjilist(char *s,struct objlist **obj,struct narray *iarray,
                 int def,int *spc);
 int chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,
                  int def);
-char *mkobjlist(struct objlist *obj, const char *objname,int id, const char *field,int oid);
+char *mkobjlist(const struct objlist *obj, const char *objname,int id, const char *field,int oid);
 struct objlist *getobjlist(char *list,int *id,char **field,int *oid);
 char *chgobjlist(char *olist);
 char *getvaluestr(struct objlist *obj, const char *field,void *val,int cr,int quote);
