@@ -73,7 +73,7 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
 
 static int
 testexpand(int pre,int *oppo,int *numpo,
-               int numbuf[],char *numbufc[],char opbuf[],int prebuf[])
+	   int numbuf[], char *numbufc[], const char opbuf[], const int prebuf[])
 {
   int argnum;
   int d1,d2;
