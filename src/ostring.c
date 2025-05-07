@@ -369,7 +369,8 @@ static int
 string_rindex(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int pos, size, len;
-  char *str, *pattern, *ptr, *find;
+  char *str, *pattern, *find;
+  const char *ptr;
 
   rval->i = -1;
 
