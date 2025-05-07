@@ -70,7 +70,7 @@ struct mlocal {
 };
 
 static void
-msettbl(N_VALUE *inst,struct mlocal *mlocal)
+msettbl(N_VALUE *inst, const struct mlocal *mlocal)
 {
   inst[mlocal->idpx].d=mlocal->x;
   inst[mlocal->idpy].d=mlocal->y;
@@ -165,7 +165,7 @@ static void
 parse_original_formula(struct objlist *obj,N_VALUE *inst, struct mlocal *mlocal)
 {
   char *ptr;
-  MathEquationParametar *prm;
+  const MathEquationParametar *prm;
 
   _getobj(obj, "formula", inst, &ptr);
   math_equation_parse(mlocal->code, ptr);
@@ -196,7 +196,7 @@ mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct mlocal *mlocal;
   int rcode;
   char *err_msg;
-  MathEquationParametar *prm;
+  const MathEquationParametar *prm;
 
   math=argv[2];
   _getobj(obj,"_local",inst,&mlocal);
@@ -255,7 +255,7 @@ mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mparam(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *arg;
+  const char *arg;
   struct mlocal *mlocal;
 
   _getobj(obj, "_local", inst, &mlocal);
@@ -280,7 +280,7 @@ mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
   int i,num;
-  double *adata;
+  const double *adata;
   struct narray *darray;
   int maxdim;
   MathValue val, *data;
