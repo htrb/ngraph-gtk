@@ -65,12 +65,11 @@ nraise(double x)
 int
 nround(double x)
 {
-  int ix;
-  double dx;
-
   if (x>G_MAXINT) return G_MAXINT;
   else if (x<G_MININT) return G_MININT;
   else {
+    int ix;
+    double dx;
     ix=(int )x;
     dx=x-ix;
     if (dx>=0.5) return ix+1;
@@ -182,7 +181,7 @@ HSB2RGB(double h, double s, double b, int *R, int *G, int *B)
 }
 
 int
-bsearch_int(int *ary, int n, int val, int *idx)
+bsearch_int(const int *ary, int n, int val, int *idx)
 {
   int min, max;
 
