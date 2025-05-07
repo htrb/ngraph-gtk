@@ -69,7 +69,8 @@ static int
 g2g_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char code;
-  int *cpar, force_opacity;
+  const int *cpar;
+  int force_opacity;
   struct gra2cairo_local *local;
 
   local = (struct gra2cairo_local *)argv[2];
