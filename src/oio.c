@@ -216,12 +216,10 @@ static int
 io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
-  FILE *fp;
   char *s;
 
   _getobj(obj, "_local", inst, &io_local);
-  fp = io_local->fp;
-  if (fp == NULL) {
+  if (io_local->fp == NULL) {
     return 1;
   }
 
@@ -402,7 +400,7 @@ io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct io_local *io_local;
   FILE *fp;
   size_t len, rlen;
-  char *buf;
+  const char *buf;
 
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
