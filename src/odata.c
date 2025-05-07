@@ -541,7 +541,7 @@ struct object_color_type {
 static int
 line_number(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -2144,7 +2144,7 @@ file_filename(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -2508,7 +2508,7 @@ open_array(char *objstr, struct array_prm *ary)
 static void
 add_file_prm(struct f2ddata *fp, MathEquationParametar *prm)
 {
-  int i, j, id, num2, *data2;
+  int i, id;
   N_VALUE *inst1;
 
   if (prm == NULL) {
@@ -2522,6 +2522,8 @@ add_file_prm(struct f2ddata *fp, MathEquationParametar *prm)
 	fp->maxdim = prm->id[i] % 1000;
       }
     } else if (id <= chkobjlastinst(fp->obj)) {
+      int num2, j;
+      const int *data2;
       num2 = arraynum(&(fp->fileopen));
       data2 = arraydata(&(fp->fileopen));
       for (j = 0; j < num2; j++) {
@@ -3086,11 +3088,11 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, enum EOEQ_ASSIGN_TYPE
 }
 
 static int
-put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, enum EOEQ_ASSIGN_TYPE assign_type, char *field, char *eq, int *use_eoeq_assign)
+put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, enum EOEQ_ASSIGN_TYPE assign_type, char *field, const char *eq, int *use_eoeq_assign)
 {
   int rcode, type;
   char *x, *y, *f, *g, *h, *err_msg;
-  MathEquation *eqn;
+  const MathEquation *eqn;
 
   if (use_eoeq_assign ) {
     *use_eoeq_assign = FALSE;
@@ -3204,7 +3206,7 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
     f2dlocal->column_string_array_id_x = -1;
     f2dlocal->maxdimx = 0;
     if (f2dlocal->codex[0]) {
-      MathEquationParametar *prm;
+      const MathEquationParametar *prm;
       int array_id;
 
       prm = math_equation_get_parameter(f2dlocal->codex[0], 0, NULL);
@@ -3222,7 +3224,7 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
     f2dlocal->column_array_id_y = -1;
     f2dlocal->maxdimy = 0;
     if (f2dlocal->codey[0]) {
-      MathEquationParametar *prm;
+      const MathEquationParametar *prm;
       int array_id;
 
       prm = math_equation_get_parameter(f2dlocal->codey[0], 0, NULL);
@@ -3629,7 +3631,7 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 }
 
 static double
-my_strtod(char *po, char **endptr)
+my_strtod(const char *po, char **endptr)
 {
   char *decimalsign_ptr;
   double val;
@@ -3808,7 +3810,8 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   double val;
   int i, r;
   int dim;
-  char *ifs, csv;
+  const char *ifs;
+  char csv;
   MathValue v;
   ifs = fp->ifs_buf;
   csv = fp->csv;
@@ -3987,8 +3990,8 @@ set_data_progress(struct f2ddata *fp)
 }
 
 static void
-getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
-			MathValue *datax, MathValue *datay, int filenum, int *openfile)
+getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy, const int *needx, const int *needy,
+			MathValue *datax, MathValue *datay, int filenum, const int *openfile)
 {
   char *argv[2];
   int i,j,k;
@@ -3999,7 +4002,8 @@ getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy, int *needx, in
   struct narray *coldata;
 
   for (i = 0; i < filenum; i++) {
-    int *idata, inum, argc, id;
+    const int *idata;
+    int inum, argc, id;
     N_VALUE *inst1;
     id = openfile[i];
     arrayinit(&iarray,sizeof(int));
@@ -4106,7 +4110,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
 static int
-search_mask(int *mask, int n, int *index, int line)
+search_mask(const int *mask, int n, int *index, int line)
 {
   int i;
 
@@ -4401,8 +4405,8 @@ file_calculate(struct f2ddata *fp, MathEquation *eq, const MathValue *x, const M
 }
 
 static int
-getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, MathValue *datax, MathValue *datay,
-	     MathValue *gdata, int filenum, int *openfile)
+getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, const int *needx, const int *needy, MathValue *datax, MathValue *datay,
+	     MathValue *gdata, int filenum, const int *openfile)
 {
   int masked,moved,moven;
   struct f2ddata_buf *buf;
@@ -4836,8 +4840,8 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 }
 
 static int
-getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
-	     MathValue *datax, MathValue *datay, MathValue *gdata, int filenum, int *openfile)
+getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, const int *needx, const int *needy,
+	     MathValue *datax, MathValue *datay, MathValue *gdata, int filenum, const int *openfile)
 {
   while (! fp->eof && fp->bufnum < DXBUFSIZE) {
     int rcode;
@@ -4874,7 +4878,7 @@ static void
 calculate_average_simple(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
 {
   int i;
-  struct f2ddata_buf *buf;
+  const struct f2ddata_buf *buf;
   int numx, numy, num2, num3;
   double sumx, sumy, sum2, sum3;
 
@@ -5012,7 +5016,7 @@ static void
 calculate_average_weughted(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
 {
   int i, weight;
-  struct f2ddata_buf *buf;
+  const struct f2ddata_buf *buf;
   int numx, numy, num2, num3;
   double sumx, sumy, sum2, sum3, wx, wy, w2, w3;
 
@@ -5118,7 +5122,7 @@ static void
 calculate_average_exponential(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
 {
   int i;
-  struct f2ddata_buf *buf;
+  const struct f2ddata_buf *buf;
   int numx, numy, num2, num3;
   double sumx, sumy, sum2, sum3, ax, ay, a2, a3, wx, wy, w2, w3, weight;
 
@@ -5235,7 +5239,8 @@ getdata(struct f2ddata *fp)
 {
   int rcode;
   int smx,smy,sm2,sm3;
-  int filenum,*openfile,*needx,*needy;
+  const int*openfile,*needx,*needy;
+  int filenum;
   struct narray filedatax,filedatay;
   unsigned int fnumx,fnumy,j;
 #if BUF_TYPE == USE_RING_BUF
@@ -5568,7 +5573,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
 }
 
 static void
-set_final_line(struct f2ddata *fp, struct f2dlocal *local)
+set_final_line(struct f2ddata *fp, const struct f2dlocal *local)
 {
   if (fp->final < -1) {
     fp->final += local->total_line + 1;
@@ -5579,7 +5584,7 @@ set_final_line(struct f2ddata *fp, struct f2dlocal *local)
 }
 
 static int
-check_mtime(struct f2ddata *fp, struct f2dlocal *local)
+check_mtime(struct f2ddata *fp, const struct f2dlocal *local)
 {
   if (local->mtime != fp->mtime) {
     return 1;
@@ -5971,7 +5976,7 @@ f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double xl,yl,xg,yg;
   double minx,miny,maxx,maxy;
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   fp=local;
   if (!fp->dataclip) return 0;
@@ -6025,7 +6030,7 @@ f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double xl,yl,xg,yg;
   double minx,miny,maxx,maxy;
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   fp=local;
   if (!fp->dataclip) return 0;
@@ -6067,10 +6072,10 @@ f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 }
 
 static void
-f2dsplinedif(double d,double c[],
+f2dsplinedif(double d,const double c[],
 	     double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   fp=local;
   splinedif(d,c,dx,dy,ddx,ddy,NULL);
@@ -6081,10 +6086,10 @@ f2dsplinedif(double d,double c[],
 }
 
 static void
-f2dbsplinedif(double d,double c[],
+f2dbsplinedif(double d,const double c[],
 	      double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
-  struct f2ddata *fp;
+  const struct f2ddata *fp;
 
   fp=local;
   bsplinedif(d,c,dx,dy,ddx,ddy,NULL);
@@ -6095,7 +6100,7 @@ f2dbsplinedif(double d,double c[],
 }
 
 static void
-f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
+f2derror(struct objlist *obj, const struct f2ddata *fp, int code, const char *s)
 {
   char buf[256];
 
@@ -6124,11 +6129,11 @@ error_info_init(struct error_info *einfo)
 
 static void
 errordisp(struct objlist *obj,
-	  struct f2ddata *fp,
+	  const struct f2ddata *fp,
 	  struct error_info *einfo)
 {
   int x,y;
-  char *s;
+  const char *s;
 
   if (!einfo->emerr) {
     x=FALSE;
@@ -6202,9 +6207,9 @@ errordisp(struct objlist *obj,
 
 static void
 errordisp2(struct objlist *obj,
-	   struct f2ddata *fp,
+	   const struct f2ddata *fp,
 	   struct error_info *einfo,
-	   char ddstat,char *s)
+	   char ddstat, const char *s)
 {
   if (!einfo->emerr && (ddstat==MATH_VALUE_ERROR)) {
     f2derror(obj,fp,ERRMERR,s);
@@ -6240,7 +6245,6 @@ dataadd(double dx,double dy,double dz,
 {
   double *xb,*yb,*zb,*c1b,*c2b,*c3b,*c4b,*c5b,*c6b;
   int *rb,*gb,*bb,*ab;
-  int bz;
 
   if (*size==0) {
     if (((*x=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
@@ -6263,6 +6267,7 @@ dataadd(double dx,double dy,double dz,
       return NULL;
     }
   } else if ((*size%SPBUFFERSZ)==0) {
+    int bz;
     bz=*size/SPBUFFERSZ+1;
     if (((xb=g_realloc(*x,sizeof(double)*SPBUFFERSZ*bz))==NULL)
      || ((yb=g_realloc(*y,sizeof(double)*SPBUFFERSZ*bz))==NULL)
@@ -7276,7 +7281,7 @@ draw_errorband(int GC, struct narray *upper, struct narray *lower, struct f2ddat
 {
   struct narray pos;
   int i, n;
-  double *ud, *ld;
+  const double *ud, *ld;
 
   n = arraynum(upper) / 2;
   if (n < 2) {
@@ -7616,7 +7621,7 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
 
   error_info_init(&einfo);
   for (i = j = 0; getdata2(fp, code, maxdim, &dd, &ddstat) == 0; i++) {
-    int *line;
+    const int *line;
     line = (int *) arraynget(index, j);
 
     if (line == NULL) {
@@ -7954,7 +7959,8 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct f2ddata *fp;
   int rcode;
   int w, h, clip, zoom;
-  char *fit, *field, *array;
+  char *fit, *array;
+  const char *field;
   char *file;
   struct array_prm ary;
 
@@ -8985,7 +8991,7 @@ f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static void
-f2dsettbl(N_VALUE *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
+f2dsettbl(N_VALUE *inst, const struct f2dlocal *f2dlocal, struct f2ddata *fp)
 {
   int gx,gy,g2,g3;
 
@@ -9160,7 +9166,8 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   int rcode;
   struct narray *iarray;
   struct narray *darray;
-  int i,num,*data,maxdim;
+  int i, num, maxdim;
+  const int *data;
   double d;
   MathValue gdata[FILE_OBJ_MAXCOL + 3];
 
@@ -9475,7 +9482,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   struct f2dlocal *f2dlocal;
   int dnum;
-  char *field;
+  const char *field;
   char *ptr;
   int src, r;
   struct data_stat stat_x, stat_y;
@@ -9551,7 +9558,7 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   int line;
   double dx,dy,d2,d3;
   int find;
-  char *field;
+  const char *field;
   char *ptr;
 
   g_free(rval->str);
@@ -9830,7 +9837,7 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   struct narray iarray;
   struct objlist *aobj;
   int i,anum,id,r = 1;
-  int *adata;
+  const int *adata;
   double min,max;
   int minstat,maxstat;
   int hidden;
@@ -10014,9 +10021,9 @@ store(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv, int 
   char *file,*date,*time;
   int style;
   char *buf;
-  const char *name;
 
   if (*storefd == NULL) {
+    const char *name;
     char *base, *argv2[2];
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
@@ -10648,7 +10655,8 @@ f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
-  char *file, *data_file;
+  const char *file;
+  char *data_file;
   int div,append,r;
 
   _getobj(obj,"_local",inst,&f2dlocal);
