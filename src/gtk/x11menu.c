@@ -2682,12 +2682,14 @@ check_update_obj(char **objects,
     *update_file = TRUE;
     *update_axis = TRUE;
     *update_merge = TRUE;
+    *update_axisgrid = TRUE;
     return;
   }
 
   *update_file = FALSE;
   *update_axis = FALSE;
   *update_merge = FALSE;
+  *update_axisgrid = FALSE;
 
   for (ptr = objects; *ptr; ptr++) {
     const struct objlist *obj;
