@@ -6242,6 +6242,7 @@ GetDrawFiles(struct narray *farray, response_cb cb)
 
 struct save_data_data
 {
+  int div;
   char *file;
   struct narray *farray;
 };
@@ -6267,13 +6268,14 @@ save_data_main(gpointer user_data)
   struct narray *farray;
   struct objlist *obj;
   char buf[1024];
-  int i, *array, num, onum;
+  int i, *array, num, onum, div;
   char *argv[4];
   struct save_data_data *data;
 
   data = (struct save_data_data *) user_data;
   file = data->file;
   farray = data->farray;
+  div = data->div;
 
   obj = chkobject("data");
   array = arraydata(farray);
@@ -6302,19 +6304,13 @@ save_data_main(gpointer user_data)
 static void
 save_data_response(char *file, gpointer user_data)
 {
-  struct save_data_data *data;
+  struct save_data_data *data = user_data;
   if (file == NULL) {
-    arrayfree((struct narray *) user_data);
-    return;
-  }
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    arrayfree((struct narray *) user_data);
-    g_free(file);
+    arrayfree (data->farray);
+    g_free (data);
     return;
   }
   data->file = file;
-  data->farray = (struct narray *) user_data;
   SetStatusBar(_("Making data file."));
   ProgressDialogCreate(_("Making data file"), save_data_main, save_data_finalize, data);
 }
@@ -6323,8 +6319,17 @@ static void
 save_data(struct narray *farray, int div)
 {
   int chd;
+  struct save_data_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    arrayfree(farray);
+    return;
+  }
+  data->div = div;
+  data->file = NULL;
+  data->farray = farray;
   chd = Menulocal.changedirectory;
-  nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, chd, save_data_response, farray);
+  nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, chd, save_data_response, data);
 }
 
 static void
