@@ -296,7 +296,8 @@ static void
 ochgobjlist(char **olist)
 {
   char *list,*objname,*field;
-  char *ids,*ids2;
+  char *ids;
+  const char *ids2;
   int id,len;
   struct objlist *obj;
   char *endptr;
