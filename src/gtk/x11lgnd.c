@@ -400,7 +400,8 @@ static char *
 LegendLineCB(struct objlist *obj, int id)
 {
   struct narray *array;
-  int num, *data, path_type;
+  int num, path_type;
+  const int *data;
   char *s, **enum_path_type;
 
   getobj(obj, "type", id, 0, NULL, &path_type);
@@ -560,7 +561,7 @@ static void
 set_font(struct LegendDialog *d, int id)
 {
   int style;
-  struct compatible_font_info *compatible;
+  const struct compatible_font_info *compatible;
 
   compatible = SetFontListFromObj(d->font, d->Obj, d->Id, "font");
 
@@ -1302,7 +1303,7 @@ fill_alpha_setup (struct LegendDialog *d, GtkWidget *table, int i)
 }
 
 static void
-draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
+draw_arrow_pixmap(struct LegendDialog *d)
 {
   int lw, len, x, w;
   cairo_t *cr;
@@ -1340,7 +1341,7 @@ LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   d = (struct LegendDialog *) client_data;
 
   if (d->arrow_pixmap == NULL) {
-    draw_arrow_pixmap(w, d);
+    draw_arrow_pixmap(d);
   }
 
   if (d->arrow_pixmap == NULL) {
@@ -1354,7 +1355,7 @@ LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 static void
 LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
 {
-  draw_arrow_pixmap(w, d);
+  draw_arrow_pixmap(d);
   gtk_widget_queue_draw(d->view);
 }
 
@@ -2367,7 +2368,7 @@ ObjListUpdate(struct obj_list_data *d, int clear, int draw)
 void
 LegendWinUpdate(char **objects, int clear, int draw)
 {
-  struct objlist *obj;
+  const struct objlist *obj;
   char **ptr;
   struct SubWin *win[] = {
     &NgraphApp.PathWin,
@@ -2404,7 +2405,8 @@ LegendWinUpdate(char **objects, int clear, int draw)
 static void
 get_points(struct objlist *obj, int id, int *x, int *y, int *n)
 {
-  int *points, i;
+  const int *points;
+  int i;
   struct narray *array;
 
   getobj(obj, "points", id, 0, NULL, &array);
@@ -2462,7 +2464,8 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
   }
   n = arraynum(line_style);
   if (n > 0) {
-    int i, *style, *ptr;
+    int i, *style;
+    const int *ptr;
     style = g_malloc(sizeof(*style) * n);
     if (style == NULL) {
       _GRAclose(ggc);
