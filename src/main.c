@@ -128,7 +128,8 @@ get_login_shell(struct objlist *sys)
 static void
 osx_set_env(const char *app)
 {
-  char *bundle, rpath[PATH_MAX];
+  const char *bundle;
+  char rpath[PATH_MAX];
   char bundle_contents[PATH_MAX], bundle_res[PATH_MAX], bundle_lib[PATH_MAX], bundle_bin[PATH_MAX], bundle_dat[PATH_MAX], bundle_etc[PATH_MAX];
   char xdg[PATH_MAX], ruby[PATH_MAX], pango[PATH_MAX], pixbuf[PATH_MAX], immodule[PATH_MAX];
   const char *home;
