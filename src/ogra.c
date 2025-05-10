@@ -278,10 +278,11 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
     if (oGRAdisconnect(obj,inst,FALSE)) return 1;
     if (!_getobj(dobj,"oid",dinst,&oid)) {
-      if ((dev=mkobjlist(dobj,NULL,oid,"_output",TRUE))!=NULL)
-      if (_putobj(obj,"_device",inst,dev)) {
-        g_free(dev);
-        return 1;
+      if ((dev=mkobjlist(dobj,NULL,oid,"_output",TRUE))!=NULL) {
+	if (_putobj(obj,"_device",inst,dev)) {
+	  g_free(dev);
+	  return 1;
+	}
       }
     }
   }
