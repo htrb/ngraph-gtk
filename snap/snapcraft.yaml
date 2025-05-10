@@ -9,12 +9,12 @@ description: |
 
 grade: stable # stable | devel
 confinement: strict
-base: core20
+base: core24
 
 apps:
   ngraph-gtk:
     command: usr/bin/ngraph-snap.sh
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs:
       - gsettings # For desktop theme detection under Wayland session
       - home
@@ -53,7 +53,7 @@ parts:
       - gettext
       - libreadline-dev
       - ruby-dev
-      - libgtksourceview-3.0-dev
+      - libgtksourceview-5-dev
     stage-packages:
       - ruby
       - xterm
@@ -65,7 +65,7 @@ parts:
   libraries:
     plugin: nil
     stage-packages:
-      - libgsl23
+      - libgsl27
       - libatk-bridge2.0-0
       - libatk1.0-0
       - libatspi2.0-0
@@ -77,15 +77,15 @@ parts:
       - libfreetype6
       - libgdk-pixbuf2.0-0
       - libgraphite2-3
-      - libgtk-3-0
-      - libgtksourceview-4-0
+      - libgtk-4-1
+      - libgtksourceview-5-0
       - libharfbuzz0b
-      - libicu66
+      - libicu74
       - libpango-1.0-0
       - libpangocairo-1.0-0
       - libpangoft2-1.0-0
       - libpixman-1-0
-      - libpng16-16
+      - libpng16-16t64
       - libthai0
       - libwayland-client0
       - libwayland-cursor0
