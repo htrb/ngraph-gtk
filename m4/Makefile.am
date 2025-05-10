@@ -1,5 +1,5 @@
 EXTRA_DIST = codeset.m4 gettext.m4 glibc2.m4 glibc21.m4 gsl.m4		\
-	glib-2.0.m4 gtk-3.0.m4 iconv.m4 intdiv0.m4 intl.m4 intldir.m4	\
+	glib-2.0.m4 iconv.m4 intdiv0.m4 intl.m4 intldir.m4	\
 	intlmacosx.m4 intmax.m4 inttypes-pri.m4 inttypes_h.m4		\
 	lcmessage.m4 lib-ld.m4 lib-link.m4 lib-prefix.m4 libtool.m4	\
 	lock.m4 longlong.m4 ltoptions.m4 ltsugar.m4 ltversion.m4	\
