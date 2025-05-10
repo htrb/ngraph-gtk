@@ -14,7 +14,7 @@ MATH_FUNCTION_ARG_TYPE = {
 }.freeze
 
 func_str = []
-IO.foreach(ARGV[0]) do |l|
+File.foreach(ARGV[0]) do |l|
   next if l[0] == '#'
 
   l.chomp!
