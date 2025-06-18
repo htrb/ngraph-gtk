@@ -323,9 +323,9 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
   if (Menulocal.math_input_mode) {
-    gtk_widget_grab_focus(d->text);
+    d->focus = d->text;
   } else {
-    gtk_widget_grab_focus(d->list);
+    d->focus = d->list;
   }
 }
 
