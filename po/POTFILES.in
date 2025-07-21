@@ -25,7 +25,6 @@ src/gtk/data/gtk/menus-common-win.ui.in
 src/gtk/data/gtk/menus-tool.ui
 src/gtk/data/gtk/help-overlay.ui
 src/gtk/data/gtk/menus-appmenu.ui
-src/gtk/data/gtk/menus-common.ui
 src/gtk/x11opt_proto.h
 src/math/math_error.c
 src/nstring.c

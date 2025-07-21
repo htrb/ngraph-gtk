@@ -59,7 +59,6 @@ src/gtk/ngraphui.resources.c
 src/gtk/ngraph.resources.c
 src/gtk/completion_info_data.c
 
-src/gtk/data/gtk/menus-common.ui
 src/ngraph
 
 src/math/math_constant.c
