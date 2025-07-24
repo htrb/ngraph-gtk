@@ -50,7 +50,6 @@ use_external_viewer=0
 history_size=1000
 sidebar=1
 png_dpi=72
-emf_dpi=576
 ps_version=0
 svg_version=0
 main_pane=640
