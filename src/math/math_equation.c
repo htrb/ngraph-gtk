@@ -416,6 +416,7 @@ math_equation_parse(MathEquation *eq, const char *str)
   if (str) {
     eq->exp = math_parser_parse(str, eq, &err);
   } else {
+    err = 0;
     eq->exp = NULL;
   }
 
