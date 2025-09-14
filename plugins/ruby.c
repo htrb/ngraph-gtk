@@ -86,6 +86,7 @@ require_files(VALUE data)
 
   rb_require("enc/encdb");
   rb_require("enc/trans/transdb");
+  rb_require("rbconfig");
 #if RUBY_API_VERSION_MAJOR < 3
   rb_require("rubygems");
 #endif
