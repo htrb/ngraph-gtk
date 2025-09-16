@@ -1287,7 +1287,7 @@ alpha_setup (struct LegendDialog *d, GtkWidget *table, int i)
 static void
 alpha2_setup (struct LegendDialog *d, GtkWidget *table, int i)
 {
-  alpha_setup_common ("_Alpha2:", table, &d->alpha2, i);
+  alpha_setup_common ("_Alpha 2:", table, &d->alpha2, i);
 }
 
 static void
