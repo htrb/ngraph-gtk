@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2025-09-14 10:51+0900\n"
-"PO-Revision-Date: 2025-04-27 23:43+0900\n"
+"PO-Revision-Date: 2025-09-16 20:07+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -1098,19 +1098,19 @@ msgstr "タイプ"
 
 #: src/gtk/x11file.c:3658
 msgid "_Color 1:"
-msgstr "色 1(_C):"
+msgstr "色1(_C):"
 
 #: src/gtk/x11file.c:3662
 msgid "_Alpha 1:"
-msgstr "不透明度1(_A)"
+msgstr "不透明度1(_A):"
 
 #: src/gtk/x11file.c:3666
 msgid "_Color 2:"
-msgstr "色 2(_C):"
+msgstr "色2(_C):"
 
 #: src/gtk/x11file.c:3670
 msgid "_Alpha 2:"
-msgstr "不透明度2(_A)"
+msgstr "不透明度2(_A):"
 
 #: src/gtk/x11file.c:3690 src/gtk/x11lgnd.c:1218 src/gtk/x11lgndx.c:413
 msgid "_Miter:"
