@@ -63,6 +63,13 @@
     <name>Hiroyuki Ito</name>
   </developer>
   <releases>
+    <release version="6.09.10" date="2025-09-15">
+      <description>
+	<ul>
+	  <li> Use GTK4.</li>
+	</ul>
+      </description>
+    </release>
     <release version="6.09.09" date="2024-08-17">
       <description>
 	<ul>
