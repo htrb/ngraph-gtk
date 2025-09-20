@@ -28,7 +28,7 @@ BINFILES="libLerc.dll libbrotlidec.dll libbrotlicommon.dll
         libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre2-8-0.dll
         libpixman-1-0.dll libpng16-16.dll libreadline8.dll librsvg-2-2.dll
         libsharpyuv-0.dll libtermcap-0.dll libthai-0.dll libtiff-6.dll
-        libwebp-7.dll libwinpthread-1.dll libxml2-2.dll libzstd.dll
+        libwebp-7.dll libwinpthread-1.dll libxml2-16.dll libzstd.dll
         zlib1.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
 
 
