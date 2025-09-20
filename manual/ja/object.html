@@ -114,7 +114,7 @@ size of instance: 32
 <h3><a name="system">system</a></h3>
 <pre>
 object: system
-version: 6.09.06
+version: 6.09.09
 parent: object
 object id: 2
 number of fields: 39
@@ -457,8 +457,8 @@ alias: gra2win:gra2x11
 version: 1.00.00
 parent: gra2cairo
 object id: 12
-number of fields: 37
-size of instance: 264
+number of fields: 35
+size of instance: 256
 </pre>
 <table border="1" cellspacing="0">
 <tr><th>permission</th><th>field name</th><th>field type</th></tr>
@@ -492,13 +492,11 @@ size of instance: 264
 <tr><td>rw-</td><td align="right">BR</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">BG</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">BB</td><td>int</td></tr>
-<tr><td>r-x</td><td align="right">wait_action</td><td>char*( void )</td></tr>
 <tr><td>---</td><td align="right">_gtklocal</td><td>void*</td></tr>
 <tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
 <tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
 <tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
-<tr><td>---</td><td align="right">_evloop</td><td>void( )</td></tr>
 </table>
 
 <h3><a name="gra2gdk">gra2gdk</a></h3>
@@ -563,6 +561,7 @@ size of instance: 272
 <tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
 <tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
 <tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
@@ -574,7 +573,6 @@ size of instance: 272
 <tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
 <tr><td>rw-</td><td align="right">redraw_num</td><td>int</td></tr>
-<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
 <tr><td>r-x</td><td align="right">redraw</td><td>void( void )</td></tr>
 <tr><td>r-x</td><td align="right">draw</td><td>void( void )</td></tr>
 <tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
@@ -592,7 +590,7 @@ size of instance: 272
 <tr><td>r-x</td><td align="right">locale</td><td>char*( void )</td></tr>
 <tr><td>r-x</td><td align="right">active</td><td>bool( void )</td></tr>
 <tr><td>r-x</td><td align="right">addin_list_append</td><td>void( obj )</td></tr>
-<tr><td>---</td><td align="right">_evloop</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">configuration</td><td>char*( )</td></tr>
 <tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
 <tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
@@ -1775,8 +1773,8 @@ object: dialog
 version: 1.00.00
 parent: object
 object id: 38
-number of fields: 28
-size of instance: 192
+number of fields: 26
+size of instance: 176
 </pre>
 <table border="1" cellspacing="0">
 <tr><th>permission</th><th>field name</th><th>field type</th></tr>
@@ -1787,8 +1785,6 @@ size of instance: 192
 <tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">next</td><td>void*</td></tr>
-<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
-<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">title</td><td>char*</td></tr>
 <tr><td>rw-</td><td align="right">caption</td><td>char*</td></tr>
 <tr><td>rw-</td><td align="right">select</td><td>int[]</td></tr>
