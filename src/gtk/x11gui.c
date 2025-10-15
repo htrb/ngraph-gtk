@@ -320,6 +320,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     data->parent = parent;
     data->widget = dlg;
+    gtk_window_set_title (GTK_WINDOW (dlg), _(data->resource));
     data->vbox = GTK_BOX(gtk_box_new (GTK_ORIENTATION_VERTICAL, 0));
     headerbar = gtk_header_bar_new();
     gtk_header_bar_set_decoration_layout (GTK_HEADER_BAR (headerbar), "");
