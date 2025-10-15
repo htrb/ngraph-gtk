@@ -498,6 +498,19 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 }
 
 static void
+font_button_set_font (GtkWidget *btn, const char *font)
+{
+  PangoFontDescription *desc;
+
+  desc = pango_font_description_from_string (font);
+  if (desc == NULL) {
+    return;
+  }
+  gtk_font_dialog_button_set_font_desc (GTK_FONT_DIALOG_BUTTON (btn), desc);
+  pango_font_description_free (desc);
+}
+
+static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
   GtkSelectionModel *model;
@@ -508,7 +521,7 @@ FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
     char *tmp;
 
     tmp = g_strdup_printf("%s, 16", d->font_str);
-    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->font_b), tmp);
+    font_button_set_font(d->font_b, tmp);
     g_free(tmp);
   }
 
@@ -551,63 +564,39 @@ AlternativeFontListSelCb(GtkSelectionModel *sel, guint position, guint n_items, 
   return FALSE;
 }
 
-static gchar *
-get_font_family(const gchar *font_name)
-{
-  gchar *ptr;
-  const gchar *family;
-  PangoFontDescription *pdesc;
-
-  pdesc = pango_font_description_from_string(font_name);
-  family = pango_font_description_get_family(pdesc);
-  if (family == NULL) {
-    return NULL;
-  }
-
-  ptr = g_strdup(family);
-
-  pango_font_description_free(pdesc);
-
-  return ptr;
-}
-
 static void
-FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpointer client_data)
+FontSettingDialogAddAlternative_response(GObject *source_object, GAsyncResult *res, gpointer client_data)
 {
-  struct FontSettingDialog *d;
   PangoFontFamily *family;
-
-  if (response != GTK_RESPONSE_OK) {
-    gtk_window_destroy(GTK_WINDOW(dialog));
-    return;
-  }
+  GtkFontDialog * dialog;
+  struct FontSettingDialog *d;
 
   d = (struct FontSettingDialog *) client_data;
-  family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
+  dialog = GTK_FONT_DIALOG (source_object);
+  family = gtk_font_dialog_choose_family_finish (dialog, res, NULL);
   if (family) {
     const gchar *font_name;
     GtkStringList *list;
     font_name = pango_font_family_get_name(family);
     list = listview_get_string_list (d->list);
     gtk_string_list_append (list, font_name);
+    g_object_unref (family);
   }
-  gtk_window_destroy(GTK_WINDOW(dialog));
 }
 
 static void
 FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 {
+  GtkFontDialog *dialog;
   struct FontSettingDialog *d;
-  GtkWidget *dialog;
 
   d = (struct FontSettingDialog *) client_data;
 
-  dialog = gtk_font_chooser_dialog_new(_("Alternative font"), GTK_WINDOW(d->widget));
-  gtk_font_chooser_set_level(GTK_FONT_CHOOSER(dialog), GTK_FONT_CHOOSER_LEVEL_FAMILY);
-
-  g_signal_connect(dialog, "response", G_CALLBACK(FontSettingDialogAddAlternative_response), d);
-  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-  gtk_window_present(GTK_WINDOW (dialog));
+  dialog = gtk_font_dialog_new ();
+  gtk_font_dialog_set_title (dialog, _("Alternative font"));
+  gtk_font_dialog_set_modal (dialog, TRUE);
+  gtk_font_dialog_choose_family (dialog, GTK_WINDOW(d->widget), NULL, NULL, FontSettingDialogAddAlternative_response, d);
+  g_object_unref (dialog);
 }
 
 static void
@@ -701,9 +690,9 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Alias:"), TRUE, j++);
     d->alias = w;
 
-    w = gtk_font_button_new();
-    gtk_font_button_set_use_size(GTK_FONT_BUTTON(w), FALSE);
-    gtk_font_chooser_set_level(GTK_FONT_CHOOSER(w), GTK_FONT_CHOOSER_LEVEL_FAMILY);
+    w = gtk_font_dialog_button_new (gtk_font_dialog_new ());
+    gtk_font_dialog_button_set_use_size(GTK_FONT_DIALOG_BUTTON(w), FALSE);
+    gtk_font_dialog_button_set_level(GTK_FONT_DIALOG_BUTTON(w), GTK_FONT_LEVEL_FAMILY);
     add_widget_to_table(table, w, _("_Font:"), TRUE, j++);
     d->font_b = w;
 
@@ -790,9 +779,10 @@ static void
 FontSettingDialogClose(GtkWidget *wi, void *data)
 {
   struct FontSettingDialog *d;
-  gchar *alias, *family;
+  gchar *alias;
+  const gchar *family;
   const char *font;
-  gchar *font_name;
+  PangoFontDescription * desc;
   const struct fontmap *fmap;
   GString *alt;
   GtkStringList *list;
@@ -821,13 +811,12 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
     return;
   }
 
-  font_name = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(d->font_b));
-  if (font_name == NULL) {
+  desc = gtk_font_dialog_button_get_font_desc (GTK_FONT_DIALOG_BUTTON (d->font_b));
+  if (desc == NULL) {
     g_free(alias);
     return;
   }
-  family = get_font_family(font_name);
-  g_free(font_name);
+  family = pango_font_description_get_family (desc);
   if (family == NULL) {
     g_free(alias);
     return;
@@ -838,7 +827,6 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
   } else {
     gra2cairo_add_fontmap(alias, family);
   }
-  g_free(family);
 
   list = listview_get_string_list(d->list);
   n = g_list_model_get_n_items (G_LIST_MODEL (list));
@@ -1035,15 +1023,15 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   spin_entry_set_val(d->data_head_lines, Menulocal.data_head_lines);
 
   if (Menulocal.coordwin_font) {
-    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->coordwin_font), Menulocal.coordwin_font);
+    font_button_set_font(d->coordwin_font, Menulocal.coordwin_font);
   }
 
   if (Menulocal.infowin_font) {
-    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->infowin_font), Menulocal.infowin_font);
+    font_button_set_font(d->infowin_font, Menulocal.infowin_font);
   }
 
   if (Menulocal.file_preview_font) {
-    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
+    font_button_set_font(d->file_preview_font, Menulocal.file_preview_font);
   }
 
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->select_data), Menulocal.select_data);
@@ -1288,15 +1276,15 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     i = 0;
-    w = gtk_font_button_new();
+    w = gtk_font_dialog_button_new (gtk_font_dialog_new ());
     add_widget_to_table(table, w, _("_Coordinate view:"), FALSE, i++);
     d->coordwin_font = w;
 
-    w = gtk_font_button_new();
+    w = gtk_font_dialog_button_new (gtk_font_dialog_new ());
     add_widget_to_table(table, w, _("_Information view:"), FALSE, i++);
     d->infowin_font = w;
 
-    w = gtk_font_button_new();
+    w = gtk_font_dialog_button_new (gtk_font_dialog_new ());
     add_widget_to_table(table, w, _("data _Preview:"), FALSE, i++);
     d->file_preview_font = w;
 
@@ -1354,8 +1342,13 @@ static int
 set_font(char **cfg, GtkWidget *btn)
 {
   char *buf;
+  PangoFontDescription *desc;
 
-  buf = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(btn));
+  desc = gtk_font_dialog_button_get_font_desc (GTK_FONT_DIALOG_BUTTON (btn));
+  if (desc == NULL) {
+    return 0;
+  }
+  buf = pango_font_description_to_string (desc);
   if (buf && *cfg) {
     if (strcmp(*cfg, buf)) {
       g_free(*cfg);
