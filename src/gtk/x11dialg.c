@@ -282,6 +282,10 @@ initdialog(void)
   DlgImageOut.response_cb = NULL;
   DlgImageOut.focus = NULL;
   DlgImageOut.resource = N_("output image");
+  DlgFontSetting.widget = NULL;
+  DlgFontSetting.focus = NULL;
+  DlgFontSetting.response_cb = NULL;
+  DlgFontSetting.resource = N_("Font alias");
 }
 
 static struct response_callback *
