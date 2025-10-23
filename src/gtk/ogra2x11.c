@@ -161,7 +161,7 @@ gtkclose(GtkWidget *widget, gpointer user_data)
 }
 
 static void
-size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
+size_allocate(GtkWidget *widget, const GdkRectangle *allocation, gpointer user_data)
 {
   double w, h;
   w = allocation->width;
@@ -691,8 +691,9 @@ gtk_set_fit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   local->fit = fit;
 
   if (fit && local->mainwin) {
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(local->mainwin, &allocation);
+    GdkRectangle allocation;
+    allocation.width = gtk_widget_get_width (GTK_WIDGET (local->mainwin));
+    allocation.height = gtk_widget_get_height (GTK_WIDGET (local->mainwin));
     size_allocate(local->mainwin, &allocation, local);
   }
 
