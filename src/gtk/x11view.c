@@ -2205,6 +2205,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   data->maxx = (x1 > x2) ? x1 : x2;
   data->maxy = (y1 > y2) ? y1 : y2;
 
+  data->err = err;
   data->limit = EVAL_NUM_MAX;
 
   data->argv[0] = (char *) &data->minx;
