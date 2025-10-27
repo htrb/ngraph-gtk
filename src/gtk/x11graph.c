@@ -74,7 +74,7 @@ static struct pagelisttype pagelist[] = {
   {N_("Custom"),                  "custom",                 PAPER_ID_CUSTOM,    0,     0},
   {N_("normal display (4:3)"),    "normal display",         PAPER_ID_NORMAL,    21000, 28000},
   {N_("wide display (16:9)"),     "wide display",           PAPER_ID_WIDE,      21600, 38400},
-  {N_("wide display (16:10)"),    "wide display",           PAPER_ID_WIDE2,     21000, 33600},
+  {N_("wide display (16:10)"),    "wide display",           PAPER_ID_WIDE2,     24000, 38400},
   {"A3 (297.00x420.00)",          GTK_PAPER_NAME_A3,        PAPER_ID_A3,        29700, 42000},
   {"A4 (210.00x297.00)",          GTK_PAPER_NAME_A4,        PAPER_ID_A4,        21000, 29700},
   {"A5 (148.00x210.00)",          GTK_PAPER_NAME_A5,        PAPER_ID_A5,        14800, 21000},
