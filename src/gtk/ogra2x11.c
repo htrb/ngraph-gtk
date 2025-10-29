@@ -90,8 +90,7 @@ struct gtklocal
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
-static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
-			   gpointer user_data);
+static gboolean gtkevpaint(struct gtklocal *gtklocal, cairo_t * e);
 static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
 static int gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -106,12 +105,8 @@ static int gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int arg
 static void resized(GtkWidget *widget, int w, int h, gpointer user_data);
 
 static gboolean
-gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
+gtkevpaint(struct gtklocal *gtklocal, cairo_t *cr)
 {
-  struct gtklocal *gtklocal;
-
-  gtklocal = (struct gtklocal *) user_data;
-
   if (gtklocal->surface == NULL) {
     return FALSE;
   }
@@ -211,7 +206,10 @@ resized(GtkWidget *widget, int w, int h, gpointer user_data)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
-  gtkevpaint(GTK_WIDGET(drawing_area), cr, user_data);
+  (void) drawing_area;
+  (void) width;
+  (void) height;
+  gtkevpaint(user_data, cr);
 }
 
 static int
