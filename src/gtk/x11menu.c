@@ -2728,7 +2728,6 @@ UpdateAll2(char **objs, int redraw)
     MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, redraw);
   }
   LegendWinUpdate(objs, TRUE, redraw);
-  InfoWinUpdate(TRUE);
   ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, redraw);
   presetting_set_parameters(&NgraphApp.Viewer);
 }

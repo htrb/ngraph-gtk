@@ -93,11 +93,6 @@ InfoWinClear(void)
   gtk_text_buffer_set_text(buf, "", 0);
 }
 
-void
-InfoWinUpdate(int clear)
-{
-}
-
 GtkWidget *
 InfoWinCreate(struct SubWin *d)
 {

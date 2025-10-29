@@ -22,7 +22,6 @@
  */
 
 void InfoWinClear(void);
-void InfoWinUpdate(int clear);
 void InfoWinDrawInfoText(const char *str);
 void InfoWinSetFont(char *font);
 GtkWidget *InfoWinCreate(struct SubWin *d);
