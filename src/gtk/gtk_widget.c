@@ -385,7 +385,7 @@ create_file_entry(struct objlist *obj)
 }
 
 static void
-direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
+direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos)
 {
   int angle, val;
 
@@ -423,15 +423,15 @@ direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos, GdkEvent
 }
 
 static void
-direction_down(GtkWidget *button, GtkSpinButton *user_data)
+direction_down(GtkSpinButton *button)
 {
-  direction_icon_released(user_data, GTK_ENTRY_ICON_PRIMARY, NULL, NULL);
+  direction_icon_released(button, GTK_ENTRY_ICON_PRIMARY);
 }
 
 static void
-direction_up(GtkWidget *button, GtkSpinButton *user_data)
+direction_up(GtkSpinButton *button)
 {
-  direction_icon_released(user_data, GTK_ENTRY_ICON_SECONDARY, NULL, NULL);
+  direction_icon_released(button, GTK_ENTRY_ICON_SECONDARY);
 }
 
 GtkWidget *
@@ -444,10 +444,10 @@ create_direction_entry(GtkWidget *table, const char *title, int row)
   gtk_editable_set_max_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
 
   ubtn = button_new_with_icon("go-up-symbolic", FALSE);
-  g_signal_connect(ubtn, "clicked", G_CALLBACK(direction_up), w);
+  g_signal_connect_swapped(ubtn, "clicked", G_CALLBACK(direction_up), w);
 
   dbtn = button_new_with_icon("go-down-symbolic", FALSE);
-  g_signal_connect(dbtn, "clicked", G_CALLBACK(direction_down), w);
+  g_signal_connect_swapped(dbtn, "clicked", G_CALLBACK(direction_down), w);
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(box), w);
