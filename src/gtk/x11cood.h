@@ -22,6 +22,5 @@
  */
 
 void CoordWinSetFont(const char *font);
-void CoordWinUpdate(int clear);
 void CoordWinSetCoord(int x, int y);
 GtkWidget *CoordWinCreate(struct SubWin *d);

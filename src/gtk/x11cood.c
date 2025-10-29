@@ -111,11 +111,6 @@ CoordWinSetCoord(int x, int y)
   lock = FALSE;
 }
 
-void
-CoordWinUpdate(int clear)
-{
-}
-
 GtkWidget *
 CoordWinCreate(struct SubWin *d)
 {
