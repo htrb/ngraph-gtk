@@ -3643,7 +3643,7 @@ selct_type_notify(struct FileDialog *d)
 }
 
 static GtkWidget *
-plot_tab_create(GtkWidget *parent, struct FileDialog *d)
+plot_tab_create(struct FileDialog *d)
 {
   GtkWidget *table, *hbox, *w, *vbox, *frame;
   int i;
@@ -3811,7 +3811,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
 
 
-  w = plot_tab_create(wi, d);
+  w = plot_tab_create(d);
   label = gtk_label_new_with_mnemonic(_("_Plot"));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
