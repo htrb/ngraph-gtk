@@ -1480,6 +1480,7 @@ load_dialog_cb_free(struct load_dialog_data *data)
 static void
 draw_callback(gpointer user_data)
 {
+  (void) user_data;
   UpdateAll2(NULL, FALSE);
   menu_clear_undo();
 }
@@ -2291,7 +2292,7 @@ show_progress(int pos, const char *msg, double fraction)
 }
 
 static void
-stop_btn_clicked(GtkButton *button, gpointer user_data)
+stop_btn_clicked(void)
 {
   if (ProgressDialogData == NULL) {
     return;

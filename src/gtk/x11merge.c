@@ -199,6 +199,7 @@ MergeDialogClose(GtkWidget *w, void *data)
 {
   struct MergeDialog *d;
   int ret;
+  (void) w;
 
   d = (struct MergeDialog *) data;
 
@@ -230,6 +231,7 @@ void
 MergeDialog(struct obj_list_data *data, int id, int user_data)
 {
   struct MergeDialog *d;
+  (void) user_data;
 
   d = (struct MergeDialog *) data->dialog;
 
@@ -256,6 +258,7 @@ CmMergeOpen_response(char *name, gpointer user_data)
 {
   int id, undo;
   struct objlist *obj;
+  (void) user_data;
 
   if (name == NULL) {
     return;
@@ -283,6 +286,9 @@ void
 CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int chd;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
 
   if (Menulock || Globallock)
     return;
@@ -486,6 +492,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   int sel, num, last_id, i;
   struct obj_list_data *d;
+  (void) widget;
 
   d = (struct obj_list_data *) user_data;
 

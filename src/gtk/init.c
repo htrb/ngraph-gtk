@@ -283,6 +283,7 @@ displaydialogconsole(const char *str)
 static void
 displaystatusconsole(const char *str)
 {
+  (void) str;
 }
 
 void
@@ -798,6 +799,7 @@ static int
 set_dir_defs(char *app)
 {
   const char *snap;
+  (void) app;
 
   snap = g_getenv("SNAP");
   if (snap) {

@@ -350,6 +350,7 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user
   char *ext;
   const char *str;
   int chd;
+  (void) icon_pos;
 
   obj = (struct objlist *) user_data;
   if (obj == NULL)
@@ -602,6 +603,8 @@ spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType arg1, gpointer use
   const char *str;
   double oval, val;
   int ecode;
+  (void) arg1;
+  (void) user_data;
 
   str = gtk_editable_get_text(GTK_EDITABLE(spinbutton));
   if (str == NULL)
@@ -773,6 +776,7 @@ show_color_sel(GtkWidget *w, gpointer user_data)
 {
   GdkRGBA col;
   char buf[64];
+  (void) user_data;
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &col);
   snprintf(buf, sizeof(buf),
@@ -822,6 +826,10 @@ static void
 show_color_dialog(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   GtkColorChooser *btn;
+  (void) gesture;
+  (void) n_press;
+  (void) x;
+  (void) y;
   btn = GTK_COLOR_CHOOSER(user_data);
   gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
   if (Menulocal.use_custom_palette) {

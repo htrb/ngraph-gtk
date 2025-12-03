@@ -276,6 +276,8 @@ dialog_add_move_button (struct DialogType *data)
 static gboolean
 dialog_escape (GtkWidget* widget, GVariant* args, gpointer user_data)
 {
+  (void) args;
+  (void) user_data;
   gtk_window_close (GTK_WINDOW (widget));
   return TRUE;
 }

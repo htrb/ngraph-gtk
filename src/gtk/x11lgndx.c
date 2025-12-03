@@ -69,7 +69,7 @@ clear_view(struct LegendGaussDialog *d)
 }
 
 static void
-LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
+LegendGaussDialogSetupItem(struct LegendGaussDialog *d, int id)
 {
   int n;
 
@@ -104,7 +104,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 }
 
 static gboolean
-LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
+LegendGaussDialogPaint(cairo_t *cr, gpointer client_data)
 {
   struct LegendGaussDialog *d;
   int pw, dw, minx, miny, maxx, maxy,
@@ -346,7 +346,10 @@ LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
-  LegendGaussDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
+  (void) width;
+  (void) height;
+  (void) drawing_area;
+  LegendGaussDialogPaint(cr, user_data);
 }
 
 static void
@@ -491,7 +494,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
   }
-  LegendGaussDialogSetupItem(wi, d, d->Id);
+  LegendGaussDialogSetupItem(d, d->Id);
 }
 
 static void
@@ -501,6 +504,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   int ret, a, i, amp, wd, gx, gy;
   double y = 0, tmp;
   struct narray *parray;
+  (void) w;
 
   d = (struct LegendGaussDialog *) data;
   if (d->ret != IDOK)

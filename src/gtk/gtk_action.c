@@ -15,105 +15,124 @@
 #include "x11view.h"
 #include "ox11menu.h"
 
+#define UNUSED_PARAMETERS (void) action; (void) parameter; (void) app;
+
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmHelpHelp();
 }
 
 static void
 about_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmHelpAbout();
 }
 
 static void
 demo_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmHelpDemo();
 }
 
 static void
 quit_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphQuit();
 }
 
 static void
 GraphNewFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphNewMenu(MenuIdGraphNewFrame);
 }
 
 static void
 GraphNewSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphNewMenu(MenuIdGraphNewSection);
 }
 
 static void
 GraphNewCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphNewMenu(MenuIdGraphNewCross);
 }
 
 static void
 GraphNewClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphNewMenu(MenuIdGraphAllClear);
 }
 
 static void
 GraphLoadAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphLoad();
 }
 
 static void
 GraphSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphOverWrite();
 }
 
 static void
 GraphSaveAsAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphSave();
 }
 
 static void
 GraphExportGRAAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputGRAFile);
 }
 
 static void
 GraphExportPSAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputPSFile);
 }
 
 static void
 GraphExportEPSAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputEPSFile);
 }
 
 static void
 GraphExportPDFAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputPDFFile);
 }
 
 static void
 GraphExportSVGAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputSVGFile);
 }
 
 static void
 GraphExportPNGAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputPNGFile);
 }
 
@@ -121,24 +140,28 @@ GraphExportPNGAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 static void
 GraphExportEMFAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputEMFFile);
 }
 
 static void
 GraphExportEMFPlusAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputEMFPlusFile);
 }
 
 static void
 GraphExportEMFClipboardAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputEMFClipboard);
 }
 
 static void
 GraphExportEMFPlusClipboardAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputMenu(MenuIdOutputEMFPlusClipboard);
 }
 #endif
@@ -146,36 +169,42 @@ GraphExportEMFPlusClipboardAction_activated(GSimpleAction *action, GVariant *par
 static void
 GraphDrawOrderAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphSwitch();
 }
 
 static void
 GraphPageSetupAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphPage(FALSE);
 }
 
 static void
 GraphPrintPreviewAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputViewerB();
 }
 
 static void
 GraphPrintAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOutputPrinterB();
 }
 
 static void
 GraphCurrentDirectoryAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphDirectory();
 }
 
 static void
 GraphShellAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmGraphShell();
 }
 
@@ -184,6 +213,8 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
 {
   int i, n;
   struct script *fcur;
+  (void) action;
+  (void) app;
 
   if (Menulock || Globallock) {
     return;
@@ -208,150 +239,175 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
 static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditRedo);
 }
 
 static void
 EditUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditUndo);
 }
 
 static void
 EditCutAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditCut);
 }
 
 static void
 EditCopyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditCopy);
 }
 
 static void
 EditPasteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditPaste);
 }
 
 static void
 EditDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditDelete);
 }
 
 static void
 EditDuplicateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditDuplicate);
 }
 
 static void
 EditSelectAllAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditSelectAll);
 }
 
 static void
 EditOrderTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditOrderTop);
 }
 
 static void
 EditOrderUpAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditOrderUp);
 }
 
 static void
 EditOrderDownAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditOrderDown);
 }
 
 static void
 EditOrderBottomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditOrderBottom);
 }
 
 static void
 EditAlignLeftAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignLeft);
 }
 
 static void
 EditAlignVCenterAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignVCenter);
 }
 
 static void
 EditAlignRightAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignRight);
 }
 
 static void
 EditAlignTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignTop);
 }
 
 static void
 EditAlignHCenterAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignHCenter);
 }
 
 static void
 EditAlignBottomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdAlignBottom);
 }
 
 static void
 EditRotateCWAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditRotateCW);
 }
 
 static void
 EditRotateCCWAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditRotateCCW);
 }
 
 static void
 EditFlipHAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditFlipHorizontally);
 }
 
 static void
 EditFlipVAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmEditMenuCB(MenuIdEditFlipVertically);
 }
 
 static void
 ViewDrawDirectAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmViewerDraw(FALSE);
 }
 
 static void
 ViewDrawAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmViewerDraw(TRUE);
 }
 
 static void
 ViewClearInformationWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   if (Menulock || Globallock) {
     return;
   }
@@ -362,6 +418,7 @@ static void
 toggle_action(GSimpleAction *action, GVariant *parameter, enum MenuID id)
 {
   int state;
+  (void) action;
 
   if (Menulock || Globallock) {
     return;
@@ -375,324 +432,385 @@ toggle_action(GSimpleAction *action, GVariant *parameter, enum MenuID id)
 static void
 ViewSidebarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleSidebar);
 }
 
 static void
 ViewStatusbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleStatusbar);
 }
 
 static void
 ViewRulerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleRuler);
 }
 
 static void
 ViewScrollbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleScrollbar);
 }
 
 static void
 ViewCommandToolbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleCToolbar);
 }
 
 static void
 ViewToolboxAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdTogglePToolbar);
 }
 
 static void
 ViewCrossGaugeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleCrossGauge);
 }
 
 static void
 ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   toggle_action(action, parameter, MenuIdToggleGridLine);
 }
 
 static void
 DataAddFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmFileOpen(NULL, NULL, app);
 }
 
 static void
 DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmRangeAdd(NULL, NULL, app);
 }
 
 static void
 DataPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmFileUpdate();
 }
 
 static void
 DataCloseAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmFileClose();
 }
 
 static void
 DataEditAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmFileEdit();
 }
 
 static void
 DataSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmFileSaveData();
 }
 
 static void
 DataMathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmFileMath();
 }
 
 static void
 ParameterAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmParameterAdd();
 }
 
 static void
 ParameterPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmParameterUpdate();
 }
 
 static void
 ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmParameterDelete();
 }
 
 static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmAxisAddFrame(NULL, NULL, app);
 }
 
 static void
 AxisAddSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmAxisAddSection(NULL, NULL, app);
 }
 
 static void
 AxisAddCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmAxisAddCross(NULL, NULL, app);
 }
 
 static void
 AxisAddSingleAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmAxisAddSingle(NULL, NULL, app);
 }
 
 static void
 AxisPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisUpdate();
 }
 
 static void
 AxisDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisDel();
 }
 
 static void
 AxisScaleZoomAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisZoom();
 }
 
 static void
 AxisScaleClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisClear();
 }
 
 static void
 AxisScaleUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisScaleUndo();
 }
 
 static void
 AxisGridNewAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisGridNew();
 }
 
 static void
 AxisGridPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisGridUpdate();
 }
 
 static void
 AxisGridDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmAxisGridDel();
 }
 
 static void
 LegendPathPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmLineUpdate();
 }
 
 static void
 LegendPathDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmLineDel();
 }
 
 static void
 LegendRectanglePropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmRectUpdate();
 }
 
 static void
 LegendRectangleDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmRectDel();
 }
 
 static void
 LegendArcPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmArcUpdate();
 }
 
 static void
 LegendArcDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmArcDel();
 }
 
 static void
 LegendMarkPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmMarkUpdate();
 }
 
 static void
 LegendMarkDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmMarkDel();
 }
 
 static void
 LegendTextPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmTextUpdate();
 }
 
 static void
 LegendTextDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmTextDel();
 }
 
 static void
 MergeAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) action;
+  (void) parameter;
   CmMergeOpen(NULL, NULL, app);
 }
 
 static void
 MergePropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmMergeUpdate();
 }
 
 static void
 MergeCloseAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmMergeClose();
 }
 
 static void
 PreferenceViewerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionViewer();
 }
 
 static void
 PreferenceExternalViewerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionExtViewer();
 }
 
 static void
 PreferenceFontAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionPrefFont();
 }
 
 static void
 PreferenceAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionScript();
 }
 
 static void
 PreferenceMiscAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionMisc();
 }
 
 static void
 PreferenceSaveSettingAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionSaveDefault();
 }
 
 static void
 PreferenceSaveGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionSaveNgp();
 }
 
 static void
 PreferenceDataDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionFileDef();
 }
 
 static void
 PreferenceTextDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionTextDef();
 }
 
 static void
 PreferenceGridDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   CmOptionGridDef();
 }
 
 static void
 PopupUpdateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  UNUSED_PARAMETERS;
   ViewerUpdateCB();
 }
 

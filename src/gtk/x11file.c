@@ -251,6 +251,8 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
   gchar *text;
   GtkTextBuffer *buffer;
   const char *str;
+  (void) notebook;
+  (void) page;
 
   d = user_data;
   d->page = page_num;
@@ -365,6 +367,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
   char *obuf, *ptr;
   int n, i;
   GtkSelectionModel *gsel;
+  (void) w;
 
   d = (struct MathTextDialog *) data;
 
@@ -458,7 +461,7 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
 }
 
 static void
-MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
+MathDialogSetupItem(struct MathDialog *d)
 {
   int i;
   char *math, *field = NULL;
@@ -496,7 +499,7 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
     if (w == d->func[i])
       d->Mode = i;
   }
-  MathDialogSetupItem(d->widget, d);
+  MathDialogSetupItem(d);
 }
 
 struct math_dialog_list_data {
@@ -521,7 +524,7 @@ update_selected_item(struct MathDialog *d)
       arrayadd(&array, &id);
     }
   }
-  MathDialogSetupItem(d->widget, d);
+  MathDialogSetupItem(d);
   for (i = 0; i < n; i++) {
     int id;
     id = get_id_from_instance_selection (gsel, i);
@@ -596,6 +599,8 @@ static void
 math_dialog_activated_cb(GtkColumnView *view, guint pos, gpointer user_data)
 {
   struct MathDialog *d;
+  (void) view;
+  (void) pos;
 
   d = (struct MathDialog *) user_data;
   MathDialogList(d);
@@ -607,6 +612,8 @@ set_btn_sensitivity_selected_cb (GtkSelectionModel* self, guint position, guint 
   int n;
   GtkWidget *w;
   GtkBitset *sel;
+  (void) position;
+  (void) n_items;
 
   w = GTK_WIDGET(user_data);
   sel = gtk_selection_model_get_selection (self);
@@ -629,6 +636,7 @@ static void
 setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
   GtkWidget *label = gtk_label_new (NULL);
   int math;
+  (void) factory;
   math = strcmp (prop, "id");
   gtk_label_set_xalign (GTK_LABEL (label),  math ? 0.0 : 1.0);
   if (math) {
@@ -642,18 +650,21 @@ static void
 bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   NInst *item = N_INST(gtk_list_item_get_item (list_item));
+  (void) factory;
   g_object_bind_property (item, prop, label, "label", G_BINDING_SYNC_CREATE);
 }
 
 static char *
 sort_column (NInst *item, gpointer user_data)
 {
+  (void) user_data;
   return g_strdup (item->name);
 }
 
 static int
 sort_by_id (const NInst *item, gpointer user_data)
 {
+  (void) user_data;
   return item->id;
 }
 
@@ -733,12 +744,14 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->Mode = 0;
   }
 
-  MathDialogSetupItem(wi, d);
+  MathDialogSetupItem(d);
 }
 
 static void
 MathDialogClose(GtkWidget *w, void *data)
 {
+  (void) w;
+  (void) data;
 }
 
 void
@@ -756,6 +769,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct FitSaveDialog *d;
   int i;
   char *s;
+  (void) wi;
 
   d = (struct FitSaveDialog *) data;
   if (makewidget) {
@@ -783,6 +797,7 @@ FitSaveDialogClose(GtkWidget *w, void *data)
 {
   struct FitSaveDialog *d;
   const char *s;
+  (void) w;
 
   d = (struct FitSaveDialog *) data;
 
@@ -819,7 +834,7 @@ FitSaveDialog(struct FitSaveDialog *data, struct objlist *obj, int sid)
 }
 
 static void
-FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
+FitDialogSetupItem(struct FitDialog *d, int id)
 {
   int a, i;
 
@@ -889,7 +904,7 @@ fit_dialog_copy_response(int sel, gpointer user_data)
   struct FitDialog *d;
   d = (struct FitDialog *) user_data;
   if (sel != -1) {
-    FitDialogSetupItem(d->widget, d, sel);
+    FitDialogSetupItem(d, sel);
   }
 }
 
@@ -1306,15 +1321,12 @@ FitDialogSave(struct FitDialog *d)
 }
 
 static int
-check_fit_func(GtkEditable *w, gpointer client_data)
+check_fit_func(struct FitDialog *d)
 {
-  struct FitDialog *d;
   MathEquation *code;
   MathEquationParametar *prm;
   const char *math;
   int dim, i, deriv;
-
-  d = (struct FitDialog *) client_data;
 
   code = math_equation_basic_new();
   if (code == NULL)
@@ -1486,7 +1498,7 @@ FitDialogResult(struct FitDialog *d)
 }
 
 static int
-FitDialogApply(GtkWidget *w, struct FitDialog *d)
+FitDialogApply(struct FitDialog *d)
 {
   int i, num, dim;
   const gchar *s;
@@ -1566,9 +1578,9 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
 static void
 FitDialogDraw(struct FitDialog *d)
 {
-  if (!FitDialogApply(d->widget, d))
+  if (!FitDialogApply(d))
     return;
-  FitDialogSetupItem(d->widget, d, d->Id);
+  FitDialogSetupItem(d, d->Id);
   Draw(FALSE, NULL, NULL);
 }
 
@@ -1641,7 +1653,7 @@ FitDialogSetSensitivity(struct FitDialog *d)
     gtk_widget_set_sensitive(d->usr_def_frame, TRUE);
     gtk_widget_set_sensitive(d->usr_def_prm_tbl, TRUE);
     set_user_fit_sensitivity(d, deriv);
-    check_fit_func(NULL, d);
+    check_fit_func(d);
     break;
   }
 }
@@ -1660,7 +1672,7 @@ create_user_fit_frame(struct FitDialog *d)
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
   entry_completion_set_entry(NgraphApp.fit_list, w);
-  g_signal_connect(w, "changed", G_CALLBACK(check_fit_func), d);
+  g_signal_connect_swapped(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
   w = create_text_entry(TRUE, TRUE);
@@ -1722,7 +1734,7 @@ select_fit_item_cb(GtkWidget *list_view, guint position, gpointer user_data)
   }
 
   id = position + d->Lastid + 1;
-  FitDialogSetupItem(d->widget, d, id);
+  FitDialogSetupItem(d, id);
 }
 
 static void
@@ -1904,7 +1916,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
   }
 
-  FitDialogSetupItem(wi, d, d->Id);
+  FitDialogSetupItem(d, d->Id);
 }
 
 static void
@@ -1913,6 +1925,7 @@ FitDialogClose(GtkWidget *w, void *data)
   struct FitDialog *d;
   int ret;
   int i, lastid;
+  (void) w;
 
   d = (struct FitDialog *) data;
   switch (d->ret) {
@@ -1929,7 +1942,7 @@ FitDialogClose(GtkWidget *w, void *data)
 
   ret = d->ret;
   d->ret = IDLOOP;
-  if (ret == IDOK && ! FitDialogApply(w, d)) {
+  if (ret == IDOK && ! FitDialogApply(d)) {
     return;
   }
   d->ret = ret;
@@ -2056,6 +2069,8 @@ spin_button_set_activates_signal(GtkWidget *w, GCallback cb, gpointer user_data)
 static void
 move_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_label_new (NULL);
+  (void) factory;
+  (void) user_data;
   gtk_label_set_xalign (GTK_LABEL (label), 1.0);
   gtk_list_item_set_child (list_item, label);
 }
@@ -2065,6 +2080,8 @@ transform_double (GBinding* binding, const GValue* from_value, GValue* to_value,
 {
   double val;
   char buf[64];
+  (void) binding;
+  (void) user_data;
 
   val = g_value_get_double (from_value);
   snprintf (buf, sizeof (buf), DOUBLE_STR_FORMAT, val);
@@ -2076,6 +2093,7 @@ static void
 move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *prop) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   GObject *item = gtk_list_item_get_item (list_item);
+  (void) factory;
   if (prop[0] == 'l') {
     g_object_bind_property (item, prop, label, "label", G_BINDING_SYNC_CREATE);
   } else {
@@ -2086,6 +2104,7 @@ move_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, con
 static int
 sort_by_line (const NData *item, gpointer user_data)
 {
+  (void) user_data;
   return item->line;
 }
 
@@ -2310,6 +2329,8 @@ FileMaskDialogRemove(struct FileDialog *d)
 static void
 mask_setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_label_new (NULL);
+  (void) factory;
+  (void) user_data;
   gtk_label_set_xalign (GTK_LABEL (label), 1.0);
   gtk_list_item_set_child (list_item, label);
 }
@@ -2318,6 +2339,8 @@ static void
 mask_bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   GObject *item = gtk_list_item_get_item (list_item);
+  (void) factory;
+  (void) user_data;
   g_object_bind_property (item, "line", label, "label", G_BINDING_SYNC_CREATE);
 }
 
@@ -2676,11 +2699,10 @@ create_math_text_tab(GtkWidget *tab, const gchar *label)
 }
 
 static void
-MathDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+MathDialogChangeInputType(struct FileDialog *d, GtkWidget *page, guint page_num)
 {
-  struct FileDialog *d;
+  (void) page;
 
-  d = user_data;
   d->math_page = page_num;
 
   switch (page_num) {
@@ -2755,7 +2777,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   title = gtk_label_new(_("multi line"));
   w = math_text_widgets_create(d);
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, title);
-  g_signal_connect(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
+  g_signal_connect_swapped(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
 
   add_widget_to_table_sub(grid, tab, NULL, TRUE, 0, 4, 2, pos++);
   return pos;
@@ -2899,6 +2921,7 @@ static void
 setup_mark (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *image;
+  (void) factory;
 
   image = gtk_image_new ();
   gtk_image_set_icon_size (GTK_IMAGE (image), Menulocal.icon_size);
@@ -2911,6 +2934,7 @@ bind_mark (GtkListItemFactory *factory, GtkListItem *list_item)
   GtkWidget *image;
   GtkStringObject *str;
   int type;
+  (void) factory;
 
   image = gtk_list_item_get_child (list_item);
   str = gtk_list_item_get_item (list_item);
@@ -3094,7 +3118,7 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 }
 
 static void
-FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
+FileDialogSetupItem(struct FileDialog *d)
 {
   char *valstr;
 
@@ -3310,6 +3334,7 @@ fit_dialog_fit_response(int ret, gpointer user_data)
 {
   struct FileDialog *d;
   char *valstr;
+  (void) ret;
   d = (struct FileDialog *) user_data;
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
@@ -3363,7 +3388,7 @@ static void
 FileDialogOption(struct FileDialog *d)
 {
   exeobj(d->Obj, "load_settings", d->Id, 0, NULL);
-  FileDialogSetupItem(d->widget, d);
+  FileDialogSetupItem(d);
 }
 
 static void
@@ -3612,9 +3637,8 @@ file_settings_copy(struct FileDialog *d)
 }
 
 static void
-selct_type_notify(GtkWidget *w, GParamSpec* pspec, gpointer user_data)
+selct_type_notify(struct FileDialog *d)
 {
-  struct FileDialog *d = (struct FileDialog *) user_data;
   FileDialogType(d->type, d);
 }
 
@@ -3632,7 +3656,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
   d->type = w;
-  g_signal_connect(w, "notify::selected", G_CALLBACK(selct_type_notify), d);
+  g_signal_connect_swapped(w, "notify::selected", G_CALLBACK(selct_type_notify), d);
 
   w = gtk_button_new();
   add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
@@ -4144,6 +4168,7 @@ static void
 setup_table (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;
+  (void) factory;
 
   label = gtk_label_new (NULL);
   gtk_widget_set_halign (label, GTK_ALIGN_END);
@@ -4156,6 +4181,7 @@ transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, 
   NText *text;
   const char *str;
   int col;
+  (void) from_value;
 
   col = GPOINTER_TO_INT (user_data);
   text = N_TEXT (g_binding_dup_source (binding));
@@ -4169,6 +4195,8 @@ static gboolean
 transform_ellipsize (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
 {
   int attribute;
+  (void) binding;
+  (void) user_data;
 
   attribute = g_value_get_uint (from_value);
   g_value_set_enum (to_value, attribute ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END);
@@ -4180,6 +4208,7 @@ bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_d
 {
   GtkWidget *label;
   NText *text;
+  (void) factory;
 
   label = gtk_list_item_get_child (list_item);
   text = N_TEXT (gtk_list_item_get_item (list_item));
@@ -4298,7 +4327,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[0] = (char *) &line;
   argv[1] = NULL;
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
-  FileDialogSetupItem(wi, d);
+  FileDialogSetupItem(d);
 
   d->initialized = TRUE;
   set_headlines(d, s);
@@ -4364,7 +4393,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
 
-  FileDialogSetupItem(wi, d);
+  FileDialogSetupItem(d);
 
   d->initialized = TRUE;
   set_headline_table_header(d);
@@ -4425,7 +4454,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
 
-  FileDialogSetupItem(wi, d);
+  FileDialogSetupItem(d);
 }
 
 static int
@@ -4492,7 +4521,7 @@ focus_math_widget(struct FileDialog *d, int math_tab_id, GtkWidget *text, GtkWid
 }
 
 static int
-FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
+FileDialogCloseCommon(struct FileDialog *d)
 {
   int r;
 
@@ -4598,7 +4627,7 @@ FileDialogClose(GtkWidget *w, void *data)
     break;
   }
 
-  if (FileDialogCloseCommon(w, d))
+  if (FileDialogCloseCommon(d))
     return;
 
   if (mask_tab_set_value(d)) {
@@ -4656,7 +4685,7 @@ FileDialog(struct obj_list_data *data, int id, int multi)
 }
 
 static void
-FileDialogDefSetupItem(GtkWidget *w, struct FileDialog *d, int id)
+FileDialogDefSetupItem(struct FileDialog *d)
 {
   plot_tab_setup_item(d, d->Id);
   math_tab_setup_item(d, d->Id);
@@ -4675,7 +4704,7 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
     FileDialogSetupCommon(wi, d);
     gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
   }
-  FileDialogDefSetupItem(wi, d, d->Id);
+  FileDialogDefSetupItem(d);
 }
 
 static void
@@ -4696,7 +4725,7 @@ FileDefDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (FileDialogCloseCommon(w, d))
+  if (FileDialogCloseCommon(d))
     return;
 
   d->ret = ret;
@@ -4836,6 +4865,9 @@ CmRangeAdd (GSimpleAction *action, GVariant *parameter, gpointer client_data)
   struct objlist *obj;
   struct obj_list_data *data;
   struct range_add_data *res_data;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
 
   if (Menulock || Globallock)
     return;
@@ -4912,6 +4944,7 @@ CmFileOpen_response(char **file, gpointer user_data)
   struct objlist *obj;
   struct narray *farray;
   struct file_open_data *data;
+  (void) user_data;
 
   obj = chkobject("data");
   if (obj == NULL) {
@@ -4952,6 +4985,9 @@ void
 CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int chd;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
 
   if (Menulock || Globallock)
     return;
@@ -5335,6 +5371,8 @@ static void
 file_edit_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
   FileWinFileEdit(d);
@@ -5374,6 +5412,8 @@ static void
 file_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data*) client_data;
   FileWinFileDelete(d);
@@ -5415,6 +5455,8 @@ static void
 file_copy_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
   FileWinFileCopy(d);
@@ -5451,6 +5493,8 @@ static void
 file_copy2_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
   FileWinFileCopy2(d);
@@ -5565,6 +5609,8 @@ static void
 file_draw_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
   FileWinFileDraw(d);
@@ -6045,6 +6091,7 @@ select_axis_menu (struct objlist *obj, const char *field, int id, GtkStringList 
   char *axis;
   char *str;
   int row;
+  (void) list;
 
   getobj (obj, field, id, 0, NULL, &axis);
   row = get_axis_id_by_field_str (&aobj, axis);
@@ -6062,6 +6109,7 @@ bind_axis(GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char *axis;
   int type;
+  (void) w;
   type = strcmp (field, "axis_y");
   axis = get_axis_obj_str(obj, id, (type) ? AXIS_X : AXIS_Y);
   return axis;
@@ -6072,6 +6120,8 @@ bind_type(GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
   GdkTexture *texture;
+  (void) w;
+  (void) field;
 
   pixbuf = draw_type_pixbuf(obj, id);
   if (pixbuf == NULL) {
@@ -6105,6 +6155,7 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
   struct narray *mask, *move;
   const char *str;
   char *rstr;
+  (void) field;
 
   getobj(obj, "source", id, 0, NULL, &src);
   str = get_plot_info_str(obj, id, src);
@@ -6418,6 +6469,7 @@ static gboolean
 filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer user_data)
 {
   struct obj_list_data *d;
+  (void) w;
 
   g_return_val_if_fail(w != NULL, FALSE);
 
@@ -6470,6 +6522,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   int sel, num, source, i;
   struct obj_list_data *d;
+  (void) widget;
 
   d = (struct obj_list_data *) user_data;
 
@@ -6523,6 +6576,9 @@ drop_file(const GValue *value, int type)
 static gboolean
 drag_drop_cb(GtkDropTarget *self, const GValue *value, gdouble x, gdouble y, gpointer user_data)
 {
+  (void) self;
+  (void) x;
+  (void) y;
   return drop_file(value, GPOINTER_TO_INT(user_data));
 }
 

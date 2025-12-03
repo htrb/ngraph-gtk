@@ -91,6 +91,7 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
 static void
 JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  (void) app;
   Widgets.join = check_selected_item(action, parameter, joinchar, Widgets.join_type.widget, Widgets.join_icon);
   update_focused_obj(Widgets.join_type.widget, GINT_TO_POINTER(Widgets.join));
 }
@@ -137,6 +138,7 @@ static void
 StrokeFillClosePathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   int state;
+  (void) app;
   state = g_variant_get_boolean(parameter);
   Widgets.close_path = state;
   set_stroke_fill_icon();
@@ -147,6 +149,7 @@ static void
 StrokeFillFillAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   int state;
+  (void) app;
   state = g_variant_get_boolean(parameter);
   Widgets.fill = state;
   set_stroke_fill_icon();
@@ -157,6 +160,7 @@ static void
 StrokeFillStrokeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   int state;
+  (void) app;
   state = g_variant_get_boolean(parameter);
   Widgets.stroke = state;
   set_stroke_fill_icon();
@@ -1189,7 +1193,7 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 }
 
 static int
-update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
+update_focused_obj_width(struct Viewer *d, int num)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1408,7 +1412,7 @@ update_focused_obj_color2(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
-update_focused_obj_path_type(GtkWidget *widget, struct Viewer *d, int num)
+update_focused_obj_path_type(struct Viewer *d, int num)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1456,7 +1460,7 @@ update_focused_obj_font_axis(struct objlist *obj, N_VALUE *inst)
 }
 
 static int
-update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
+update_focused_obj_font(struct Viewer *d, int num)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1510,7 +1514,7 @@ update_focused_obj_font_size_axis(struct objlist *obj, N_VALUE *inst, int pt)
 }
 
 static int
-update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
+update_focused_obj_font_size(struct Viewer *d, int num)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1667,6 +1671,7 @@ update_focused_obj_font_style(struct Viewer *d, int num, int style, int apply)
 static void
 update_focused_obj_from_notify (GtkWidget *w, GParamSpec *pspec, gpointer user_data)
 {
+  (void) pspec;
   update_focused_obj(w, user_data);
 }
 
@@ -1690,7 +1695,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   get_focused_obj_array(d->focusobj, objs);
   undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
   if (widget == Widgets.line_width.widget) {
-    modified = update_focused_obj_width(widget, d, num);
+    modified = update_focused_obj_width(d, num);
   } else if (widget == Widgets.line_style.widget) {
     modified = update_focused_obj_line_style(widget, d, num);
   } else if (widget == Widgets.color1.widget) {
@@ -1698,7 +1703,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.color2.widget) {
     modified = update_focused_obj_color2(widget, d, num);
   } else if (widget == Widgets.path_type.widget) {
-    modified = update_focused_obj_path_type(widget, d, num);
+    modified = update_focused_obj_path_type(d, num);
   } else if (widget == Widgets.join_type.widget) {
     modified = update_focused_obj_field_value(d, num, "join", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.marker_type_begin.widget) {
@@ -1712,7 +1717,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.stroke_fill.widget) {
     modified = update_focused_obj_stroke_fill(d, num, GPOINTER_TO_INT(user_data));
   } else if (widget == Widgets.font.widget) {
-    modified = update_focused_obj_font(widget, d, num);
+    modified = update_focused_obj_font(d, num);
   } else if (widget == Widgets.bold.widget) {
     int apply;
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
@@ -1722,7 +1727,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
     modified = update_focused_obj_font_style(d, num, GRA_FONT_STYLE_ITALIC, apply);
   } else if (widget == Widgets.pt.widget) {
-    modified = update_focused_obj_font_size(widget, d, num);
+    modified = update_focused_obj_font_size(d, num);
   } else if (widget == Widgets.mark_type.widget) {
     struct objlist *mark_obj;
     mark_obj = chkobject("mark");
@@ -1746,6 +1751,8 @@ static void
 factory_method_setup(GtkSignalListItemFactory *self, GtkListItem *list_item, gpointer user_data)
 {
   GtkWidget *box, *label, *icon;
+  (void) self;
+  (void) user_data;
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
   label = gtk_label_new(NULL);
@@ -1765,6 +1772,7 @@ selected_item_changed (GtkDropDown *self, GParamSpec *pspec, GtkListItem *list_i
 {
   GtkWidget *box;
   GtkWidget *check;
+  (void) pspec;
 
   box = gtk_list_item_get_child (list_item);
   check = gtk_widget_get_last_child (box);
@@ -1784,6 +1792,7 @@ factory_method_bind(GtkSignalListItemFactory *factory, GtkListItem *list_item, g
   const char *string;
   char buf[64], img_file[256];
   int i, width;
+  (void) factory;
 
   combo = GTK_WIDGET(user_data);
   item = gtk_list_item_get_item (list_item);
@@ -1814,9 +1823,11 @@ factory_method_bind(GtkSignalListItemFactory *factory, GtkListItem *list_item, g
 }
 
 static void
-line_width_changed(GtkWidget *cbox, GParamSpec *pspec, GtkListItem *list_item)
+line_width_changed(GtkWidget *cbox, GParamSpec *pspec, gpointer user_data)
 {
   int selected;
+  (void) pspec;
+  (void) user_data;
 
   selected = combo_box_get_active(cbox);
   if (selected < 0) {
@@ -1829,6 +1840,7 @@ static void
 factory_method_unbind(GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
   GtkDropDown *self = user_data;
+  (void) factory;
 
   g_signal_handlers_disconnect_by_func (self, selected_item_changed, list_item);
 }

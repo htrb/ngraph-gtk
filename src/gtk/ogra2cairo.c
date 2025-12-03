@@ -369,6 +369,7 @@ static int
 free_fonts_sub(struct nhash *h, void *d)
 {
   struct fontmap *fcur;
+  (void) d;
 
   fcur = (struct fontmap *) h->val.p;
 
@@ -648,7 +649,7 @@ gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region)
 }
 
 static double
-gra2cairo_get_pixel_dot(char **argv)
+gra2cairo_get_pixel_dot(int argc, char **argv)
 {
   int dpi;
 
@@ -670,6 +671,7 @@ gra2cairo_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 {
   int dpi;
   struct gra2cairo_local *local;
+  (void) rval;
 
   dpi = *(int *) argv[2];
 
@@ -679,7 +681,7 @@ gra2cairo_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   _putobj(obj, "dpiy", inst, &dpi);
 
   local->pixel_dot_x =
-    local->pixel_dot_y = gra2cairo_get_pixel_dot(argv);
+    local->pixel_dot_y = gra2cairo_get_pixel_dot(argc, argv);
 
   return 0;
 }
@@ -688,10 +690,11 @@ static int
 gra2cairo_set_dpi_x(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
+  (void) rval;
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_x = gra2cairo_get_pixel_dot(argv);
+  local->pixel_dot_x = gra2cairo_get_pixel_dot(argc, argv);
 
   return 0;
 }
@@ -700,10 +703,11 @@ static int
 gra2cairo_set_dpi_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
+  (void) rval;
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_y = gra2cairo_get_pixel_dot(argv);
+  local->pixel_dot_y = gra2cairo_get_pixel_dot(argc, argv);
 
   return 0;
 }
@@ -748,6 +752,7 @@ set_antialias(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 {
   int antialias;
   struct gra2cairo_local *local;
+  (void) rval;
 
   antialias = *(int *) argv[2];
 
@@ -965,6 +970,9 @@ gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, cha
 {
   struct gra2cairo_local *local;
   cairo_surface_t *surface;
+  (void) rval;
+  (void) argc;
+  (void) argv;
 
   _getobj(obj, "_local", inst, &local);
 
@@ -1044,6 +1052,9 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   cairo_line_cap_t cap;
   double *dashlist = NULL;
   struct gra2cairo_local *local;
+  (void) inst;
+  (void) rval;
+
 
   local = (struct gra2cairo_local *)argv[2];
   code = *(char *)(argv[3]);
@@ -1450,6 +1461,7 @@ use_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	      char **argv)
 {
   struct gra2cairo_local *local;
+  (void) rval;
 
   if (_getobj(obj, "_local", inst, &local))
     return 1;

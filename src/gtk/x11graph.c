@@ -130,7 +130,7 @@ set_paper_type(int w, int h)
 }
 
 static void
-PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
+PageDialogSetupItem(struct PageDialog *d)
 {
   int j;
 
@@ -159,10 +159,11 @@ PageDialogPage(GtkWidget *w, GParamSpec *spec, gpointer client_data)
 {
   struct PageDialog *d;
   int paper, landscape;
+  (void) spec;
 
   d = (struct PageDialog *) client_data;
 
-  paper = combo_box_get_active(d->paper);
+  paper = combo_box_get_active(w);
   landscape = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->landscape));
 
   if (paper < 0)
@@ -183,12 +184,9 @@ PageDialogPage(GtkWidget *w, GParamSpec *spec, gpointer client_data)
 }
 
 static void
-PageDialogOrientation(GtkWidget *widget, gpointer client_data)
+PageDialogOrientation(struct PageDialog *d)
 {
-  struct PageDialog *d;
   int w, h;
-
-  d = (struct PageDialog *) client_data;
 
   w = spin_entry_get_val(d->paperwidth);
   h = spin_entry_get_val(d->paperheight);
@@ -240,7 +238,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_check_button_set_group(GTK_CHECK_BUTTON(w), GTK_CHECK_BUTTON(group));
     add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, 1, i++);
     d->landscape = w;
-    g_signal_connect(w, "toggled", G_CALLBACK(PageDialogOrientation), d);
+    g_signal_connect_swapped(w, "toggled", G_CALLBACK(PageDialogOrientation), d);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Left margin:"), FALSE, i++);
@@ -265,7 +263,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_append(GTK_BOX(d->vbox), table);
   }
-  PageDialogSetupItem(wi, d);
+  PageDialogSetupItem(d);
 #if 0
   d->show_cancel = ! d->new_graph;
 #endif
@@ -276,6 +274,7 @@ PageDialogClose(GtkWidget *wi, void *data)
 {
   struct PageDialog *d;
   int w, h, sign;
+  (void) wi;
 
   d = (struct PageDialog *) data;
   if (d->ret != IDOK)
@@ -327,7 +326,7 @@ set_drawlist_btn_state(struct SwitchDialog *d, gboolean b)
 }
 
 static void
-SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
+SwitchDialogSetupItem(struct SwitchDialog *d)
 {
   int j, num;
   GtkStringList *list;
@@ -353,6 +352,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   GtkSelectionModel *selected;
   int num, *data, i, j, n;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
 
@@ -379,7 +379,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
     }
   }
 
-  SwitchDialogSetupItem(d->widget, d);
+  SwitchDialogSetupItem(d);
   set_drawlist_btn_state(d, FALSE);
 }
 
@@ -390,6 +390,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
   int i, j, n, pos, num2;
   int *data;
   GtkSelectionModel *selected;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
 
@@ -423,7 +424,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
     }
   }
 
-  SwitchDialogSetupItem(d->widget, d);
+  SwitchDialogSetupItem(d);
   set_drawlist_btn_state(d, FALSE);
 }
 
@@ -435,6 +436,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
   int k, modified;
   int i, n;
   struct narray objary;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
@@ -455,7 +457,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
 
   if (modified) {
     int row;
-    SwitchDialogSetupItem(d->widget, d);
+    SwitchDialogSetupItem(d);
     n = arraynum (&objary);
     for (i = 0; i < n; i++) {
       row = arraynget_int (&objary, i);
@@ -476,6 +478,7 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   int modified;
   int i, size;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
@@ -497,7 +500,7 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
 
   if (modified) {
     int n;
-    SwitchDialogSetupItem(d->widget, d);
+    SwitchDialogSetupItem(d);
     n = arraynum (&objary);
     for (i = 0; i < n; i++) {
       int row;
@@ -517,6 +520,7 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
   GtkSelectionModel *selected;
   struct SwitchDialog *d;
   int i, size, num = 0;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
@@ -532,7 +536,7 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
     arrayins(&(d->idrawrable), &k, 0);
     num++;
   }
-  SwitchDialogSetupItem(d->widget, d);
+  SwitchDialogSetupItem(d);
   gtk_selection_model_unselect_all(selected);
   for (i = 0; i < num; i++) {
     gtk_selection_model_select_item(selected, i, FALSE);
@@ -545,6 +549,7 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   GtkSelectionModel *selected;
   int i, num = 0, size;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
@@ -560,7 +565,7 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
     arrayadd(&(d->idrawrable), &k);
     num++;
   }
-  SwitchDialogSetupItem(d->widget, d);
+  SwitchDialogSetupItem(d);
   gtk_selection_model_unselect_all(selected);
   for (i = size - num; i < size; i++) {
     gtk_selection_model_select_item(selected, i, FALSE);
@@ -573,6 +578,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
   GtkSelectionModel *selected;
   struct SwitchDialog *d;
   int i, size;
+  (void) w;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_list_view_get_model(GTK_LIST_VIEW(d->drawlist));
@@ -584,7 +590,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
     }
     arrayndel(&(d->idrawrable), i);
   }
-  SwitchDialogSetupItem(d->widget, d);
+  SwitchDialogSetupItem(d);
   set_drawlist_btn_state(d, FALSE);
 }
 
@@ -592,6 +598,8 @@ static gboolean
 drawlist_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   struct SwitchDialog *d;
+  (void) position;
+  (void) n_items;
 
   d = (struct SwitchDialog *) user_data;
 
@@ -609,6 +617,8 @@ static gboolean
 objlist_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer user_data)
 {
   struct SwitchDialog *d;
+  (void) position;
+  (void) n_items;
 
   d = (struct SwitchDialog *) user_data;
 
@@ -756,7 +766,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
   }
   g_free(obj_check);
-  SwitchDialogSetupItem(wi, d);
+  SwitchDialogSetupItem(d);
   set_objlist_btn_state(d, FALSE);
   set_drawlist_btn_state(d, FALSE);
 }
@@ -765,6 +775,7 @@ static void
 SwitchDialogClose(GtkWidget *w, void *data)
 {
   struct SwitchDialog *d;
+  (void) w;
 
   d = (struct SwitchDialog *) data;
   if (d->ret == IDOK) {
@@ -859,12 +870,10 @@ on_open_response(GtkDialog *dialog, int response, gpointer user_data)
 }
 
 static void
-folder_chooser_button_clicked(GtkWidget *self, gpointer user_data)
+folder_chooser_button_clicked(struct folder_chooser_data *data)
 {
   GtkWidget *dialog;
-  struct folder_chooser_data *data;
 
-  data = (struct folder_chooser_data *) user_data;
   dialog = gtk_file_chooser_dialog_new(data->title,
 				       GTK_WINDOW(data->parent),
 				       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
@@ -879,7 +888,7 @@ folder_chooser_button_clicked(GtkWidget *self, gpointer user_data)
     g_object_unref (folder);
   }
   gtk_window_present (GTK_WINDOW (dialog));
-  g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), user_data);
+  g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), data);
 }
 
 static GtkWidget *
@@ -895,7 +904,7 @@ folder_chooser_button_new(const char *title, GtkWidget *parent)
   data->folder = NULL;
   data->parent = parent;
   data->button = gtk_button_new();
-  g_signal_connect(data->button, "clicked", G_CALLBACK(folder_chooser_button_clicked), data);
+  g_signal_connect_swapped(data->button, "clicked", G_CALLBACK(folder_chooser_button_clicked), data);
   g_object_set_data(G_OBJECT(data->button), FOLDER_CHOOSER_DATA_KEY, data);
   return data->button;
 }
@@ -944,6 +953,7 @@ DirectoryDialogClose(GtkWidget *w, void *data)
 {
   struct DirectoryDialog *d;
   char *s;
+  (void) w;
 
   d = (struct DirectoryDialog *) data;
   if (d->ret == IDCANCEL)
@@ -1008,6 +1018,7 @@ LoadDialogClose(GtkWidget *w, void *data)
 {
   struct LoadDialog *d;
   int loadpath;
+  (void) w;
 
   d = (struct LoadDialog *) data;
   if (d->ret == IDCANCEL)
@@ -1041,6 +1052,7 @@ static void
 SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SaveDialog *d;
+  (void) wi;
 
   d = (struct SaveDialog *) data;
   if (makewidget) {
@@ -1074,6 +1086,7 @@ SaveDialogClose(GtkWidget *w, void *data)
 {
   int num;
   struct SaveDialog *d;
+  (void) w;
 
   d = (struct SaveDialog *) data;
   if (d->ret == IDCANCEL)
@@ -1099,6 +1112,7 @@ SaveDialog(struct SaveDialog *data)
 static void
 draw_callback(gpointer user_data)
 {
+  (void) user_data;
   UpdateAll2(NULL, FALSE);
   InfoWinClear();
   menu_clear_undo();
@@ -1107,6 +1121,8 @@ draw_callback(gpointer user_data)
 static void
 graph_new_cb_response(int res, gpointer user_data)
 {
+  (void) res;
+  (void) user_data;
 
   SetFileName(NULL);
   set_axis_undo_button_sensitivity(FALSE);
@@ -1194,6 +1210,7 @@ CmGraphLoad_response(int ret, gpointer user_data)
 {
   char *cwd;
   int chd;
+  (void) user_data;
 
   if (! ret) {
     return;
@@ -1317,6 +1334,7 @@ graph_shell_main(gpointer user_data)
 {
   struct objlist *shell;
   GThread *thread;
+  (void) user_data;
 
   shell = chkobject("shell");
   if (shell) {

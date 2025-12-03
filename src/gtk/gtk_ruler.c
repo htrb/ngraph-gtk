@@ -74,6 +74,8 @@ static void nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg);
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
+  (void) width;
+  (void) height;
   nruler_expose(GTK_WIDGET(drawing_area), cr, user_data);
 }
 
@@ -175,8 +177,10 @@ nruler_destroy(GtkWidget *widget, gpointer user_data)
 }
 
 static void
-nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data)
+nruler_resize(GtkWidget *widget, int width, int height, gpointer user_data)
 {
+  (void) width;
+  (void) height;
   nruler_realize(widget, user_data);
 }
 

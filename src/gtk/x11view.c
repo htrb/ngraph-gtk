@@ -117,7 +117,7 @@ static void ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_da
 static void ViewerEvRealize(GtkWidget *w, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
 static void ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data);
-static gboolean ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data);
+static gboolean ViewerEvPaint(cairo_t *cr, gpointer client_data);
 static gboolean ViewerEvLButtonDown(unsigned int state, const TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
@@ -211,6 +211,8 @@ scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer u
 {
   struct Viewer *d;
   double x, y;
+  (void) widget;
+  (void) frame_clock;
 
   d = (struct Viewer *) user_data;
 
@@ -1112,6 +1114,7 @@ drag_drop_cb(GtkDropTarget* self, const GValue* value, gdouble x, gdouble y, gpo
 {
   struct Viewer *d;
   int r;
+  (void) self;
 
   if (Globallock || Menulock || DnDLock)
     return FALSE;;
@@ -1145,7 +1148,7 @@ init_dnd(struct Viewer *d)
 }
 
 static void
-EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
+EvalDialogSetupItem(struct EvalDialog *d)
 {
   GtkSelectionModel *sel;
   GListModel *tree;
@@ -1200,6 +1203,8 @@ eval_data_sel_cb(GtkSelectionModel *sel, guint position, guint n_items, gpointer
 {
   int n;
   GtkWidget *w;
+  (void) position;
+  (void) n_items;
 
   w = GTK_WIDGET(user_data);
 
@@ -1213,6 +1218,7 @@ static void
 setup_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_data)
 {
   int i;
+  (void) factory;
 
   i = GPOINTER_TO_INT (user_data);
   if (i == 0) {
@@ -1281,6 +1287,7 @@ bind_eval_item (GtkListItemFactory *factory, GtkListItem *list_item, gpointer us
   GObject *data;
   guint i;
   GtkTreeListRow *tree_row;
+  (void) factory;
 
   tree_row = gtk_list_item_get_item(list_item);
   i = GPOINTER_TO_INT (user_data);
@@ -1381,13 +1388,14 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
   }
-  EvalDialogSetupItem(wi, d);
+  EvalDialogSetupItem(d);
 }
 
 static void
 EvalDialogClose(GtkWidget *w, void *user_data)
 {
   struct EvalDialog *d;
+  (void) w;
 
   d = (struct EvalDialog *) user_data;
   if ((d->ret == IDEVMASK) || (d->ret == IDEVMOVE)) {
@@ -1467,6 +1475,7 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 {
   struct Viewer *d;
   int cursor;
+  (void) gesture;
 
   d = (struct Viewer *) user_data;
 
@@ -1494,6 +1503,9 @@ static void
 end_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer user_data)
 {
   struct Viewer *d;
+  (void) gesture;
+  (void) start_x;
+  (void) start_y;
 
   d = (struct Viewer *) user_data;
   d->drag_prm.active = FALSE;
@@ -1520,6 +1532,7 @@ long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
   GdkEventSequence *sequence;
   GdkEvent *event;
   GdkEventType type;
+  (void) user_data;
 
   sequence = gtk_gesture_get_last_updated_sequence(gesture);
   event = gtk_gesture_get_last_event(gesture, sequence);
@@ -1549,6 +1562,7 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
   gint64 current_time;
   gdouble t;
   double x0, y0, x, y;
+  (void) widget;
 
   d = (struct Viewer *) user_data;
 
@@ -1577,6 +1591,7 @@ swipe_cb(GtkGestureSwipe *gesture, gdouble velocity_x, gdouble velocity_y, gpoin
 {
   struct Viewer *d;
   GdkFrameClock *frame_clock;
+  (void) gesture;
 
   d = (struct Viewer *) user_data;
   if (! d->drag_prm.active) {
@@ -1668,6 +1683,7 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   struct Viewer *d;
   double x, y;
   int dpi;
+  (void) sequence;
 
   d = (struct Viewer *) user_data;
 
@@ -1734,6 +1750,8 @@ zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
   struct Viewer *d;
   char *objs[OBJ_MAX];
+  (void) gesture;
+  (void) sequence;
 
   d = (struct Viewer *) user_data;
 
@@ -1757,6 +1775,8 @@ static void
 zoom_cancel(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
   struct Viewer *d;
+  (void) gesture;
+  (void) sequence;
 
   d = (struct Viewer *) user_data;
 
@@ -1803,7 +1823,10 @@ add_event_scroll(GtkWidget *widget, struct Viewer *d)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
-  ViewerEvPaint(GTK_WIDGET(drawing_area), cr, user_data);
+  (void) width;
+  (void) height;
+  (void) drawing_area;
+  ViewerEvPaint(cr, user_data);
 }
 
 void
@@ -1898,6 +1921,7 @@ viewer_win_file_update_response(int ret, gpointer user_data)
 {
   char *objects[] = {"data", NULL};
   struct narray *dfile;
+  (void) ret;
   dfile = (struct narray *) user_data;
   arrayfree(dfile);
   UpdateAll(objects);
@@ -6223,6 +6247,7 @@ ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, g
   TPoint point;
   guint button;
   GdkModifierType state;
+  (void) n_press;
 
   d = (struct Viewer *) client_data;
   button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
@@ -6298,6 +6323,8 @@ static gboolean
 ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
   struct Viewer *d;
+  (void) controller;
+  (void) keycode;
 
   d = (struct Viewer *) user_data;
 
@@ -6369,6 +6396,9 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
   char *objs[OBJ_MAX];
   int dx, dy;
   int axis;
+  (void) controller;
+  (void) keycode;
+  (void) state;
 
   if (Menulock || Globallock)
     return;
@@ -6427,6 +6457,7 @@ static void
 ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data)
 {
   struct Viewer *d;
+  (void) w;
 
   d = (struct Viewer *) client_data;
 
@@ -6437,7 +6468,7 @@ ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data)
 }
 
 static gboolean
-ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
+ViewerEvPaint(cairo_t *cr, gpointer client_data)
 {
   struct Viewer *d;
 
@@ -7046,6 +7077,7 @@ draw_func(gpointer user_data)
 {
   N_VALUE *gra_inst;
   struct Viewer *d;
+  (void) user_data;
 
   d = &NgraphApp.Viewer;
 
@@ -7110,6 +7142,7 @@ Draw(int SelectFile, draw_cb cb, gpointer user_data)
 static void
 viewer_draw_finalize(gpointer user_data)
 {
+  (void) user_data;
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
 }
@@ -7737,6 +7770,10 @@ void
 CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   GdkModifierType state;
+  (void) n_press;
+  (void) x;
+  (void) y;
+  (void) user_data;
   state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
   KeepMouseMode = (state & GDK_SHIFT_MASK);
   gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);

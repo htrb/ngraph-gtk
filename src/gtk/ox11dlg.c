@@ -180,6 +180,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   char *mes, *title;
   int locksave;
   struct dialog_data data;
+  (void) rval;
 
   memset(&data, 0, sizeof(data));
 
@@ -701,6 +702,11 @@ static int
 dlgbeep(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int locksave;
+  (void) obj;
+  (void) inst;
+  (void) rval;
+  (void) argc;
+  (void) argv;
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -739,6 +745,8 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int ret;
   char *file;
   struct dialog_data data;
+  (void) obj;
+  (void) inst;
 
   memset(&data, 0, sizeof(data));
 
@@ -805,6 +813,8 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   char **file = NULL;
   struct narray *farray;
   struct dialog_data data;
+  (void) obj;
+  (void) inst;
 
   memset(&data, 0, sizeof(data));
 
@@ -868,6 +878,8 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int ret;
   char *file;
   struct dialog_data data;
+  (void) obj;
+  (void) inst;
 
   memset(&data, 0, sizeof(data));
 

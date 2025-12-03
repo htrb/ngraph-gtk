@@ -88,7 +88,7 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
-static int gtkclose(GtkWidget *widget, gpointer user_data);
+static int gtkclose(const GtkWidget *widget);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(struct gtklocal *gtklocal, cairo_t * e);
 static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -124,10 +124,8 @@ gtkevpaint(struct gtklocal *gtklocal, cairo_t *cr)
 }
 
 static void
-destroyed(GtkWidget *win, gpointer user_data)
+destroyed(struct gtklocal *local)
 {
-  struct gtklocal *local;
-  local = (struct gtklocal *) user_data;
   if (local->quit_main_loop) {
     g_idle_add_once((GSourceOnceFunc) g_main_loop_quit, main_loop());
   }
@@ -135,7 +133,7 @@ destroyed(GtkWidget *win, gpointer user_data)
 }
 
 static int
-gtkclose(GtkWidget *widget, gpointer user_data)
+gtkclose(const GtkWidget *widget)
 {
   struct gtklocal *local;
   int i, id;
@@ -170,6 +168,7 @@ resized(GtkWidget *widget, int w, int h, gpointer user_data)
   struct gtklocal *local;
   double rh, rw, ratio;
   int pw, ph, dpi;
+  (void) widget;
 
   local = (struct gtklocal *) user_data;
   if (local == NULL) {
@@ -310,8 +309,8 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
-  g_signal_connect(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal);
-  g_signal_connect(gtklocal->mainwin, "destroy", G_CALLBACK(destroyed), gtklocal);
+  g_signal_connect(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), NULL);
+  g_signal_connect_swapped(gtklocal->mainwin, "destroy", G_CALLBACK(destroyed), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
@@ -514,6 +513,7 @@ gtkbg(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
   const char *field;
+  (void) rval;
 
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
@@ -537,6 +537,9 @@ static int
 gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
+  (void) rval;
+  (void) argc;
+  (void) argv;
 
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
@@ -652,6 +655,7 @@ gtk_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 {
   int dpi, fit;
   struct gtklocal *local;
+  (void) rval;
 
   dpi = abs(*(int *) argv[2]);
 
@@ -681,6 +685,7 @@ gtk_set_fit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 {
   int fit;
   struct gtklocal *local;
+  (void) rval;
 
   _getobj(obj, "_gtklocal", inst, &local);
 
@@ -702,6 +707,7 @@ static int
 gtk_set_frame(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
+  (void) rval;
 
   _getobj(obj, "_gtklocal", inst, &local);
 
@@ -715,6 +721,7 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 {
   int width, height, size;
   struct gtklocal *local;
+  (void) rval;
 
   _getobj(obj, "_gtklocal", inst, &local);
 

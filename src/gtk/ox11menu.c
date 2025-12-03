@@ -520,6 +520,7 @@ menu_config_set_bgcolor(char *s2, void *data)
 {
   char *f1, *endptr;
   int len, val;
+  (void) data;
 
   f1 = getitok2(&s2, &len, " \t,");
   val = strtol(f1, &endptr, 16);
@@ -539,6 +540,7 @@ menu_config_set_custom_palette(char *s2, void *data)
   unsigned int r, g, b, a;
   struct narray *palette;
   GdkRGBA color;
+  (void) data;
 
   colors = g_strsplit(s2, ",", 0);
   if (colors == NULL) {
@@ -757,6 +759,7 @@ static int
 free_layers(struct nhash *layers, void *ptr)
 {
   struct layer *layer;
+  (void) ptr;
   layer = layers->val.p;
   if (layer == NULL) {
     return 0;
@@ -1157,6 +1160,7 @@ static void
 putstderr_response(int response, gpointer user_data)
 {
   struct dialog_data *data;
+  (void) response;
   data = (struct dialog_data *) user_data;
   if (data) {
     data->wait = FALSE;
@@ -1311,6 +1315,9 @@ static int
 mxredrawflag(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
+  (void) obj;
+  (void) inst;
+  (void) rval;
   Menulocal.redrawf = *(int *) argv[2];
   return 0;
 }
@@ -1320,6 +1327,9 @@ mxredraw_num(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
   int n;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   n = *(int *) argv[2];
 
@@ -1337,6 +1347,9 @@ mx_data_head_lines(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
   int n;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   n = *(int *) argv[2];
 
@@ -1412,6 +1425,9 @@ static int
 mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct mxredraw_data *data;
+  (void) rval;
+  (void) argc;
+  (void) argv;
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1429,6 +1445,8 @@ static int
 mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int dpi;
+  (void) inst;
+  (void) rval;
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1494,7 +1512,7 @@ clear_region(cairo_t *cr, cairo_region_t *region)
 }
 
 static void
-flush_window(gpointer user_data)
+flush_window()
 {
   if (Menulocal.local->cairo) {
     cairo_surface_t *surface;
@@ -1518,11 +1536,15 @@ flush_window(gpointer user_data)
 static int
 mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  (void) inst;
+  (void) rval;
+  (void) argc;
+  (void) argv;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
-  flush_window(NULL);
+  flush_window();
 
   return 0;
 }
@@ -1586,6 +1608,9 @@ mxfullpathngp(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	      char **argv)
 {
   char *name, *ngp2;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   name = (char *) argv[2];
   if (name == NULL)
@@ -1677,12 +1702,15 @@ mx_get_focused(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 static void
 print_dialog_main_quit(gpointer user_data)
 {
+  (void) user_data;
   g_main_loop_quit(main_loop());
 }
 
 static void
 print_dialog_quit(int res, gpointer user_data)
 {
+  (void) res;
+  (void) user_data;
   gtk_window_destroy(GTK_WINDOW(TopLevel));
   TopLevel = NULL;
   g_idle_add_once(print_dialog_main_quit, NULL);
@@ -1736,6 +1764,9 @@ static int
 mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int show_dialog, select_file, flag;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   select_file = * (int *) argv[2];
   show_dialog = * (int *) argv[3];
@@ -1754,6 +1785,8 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 static int
 mx_echo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  (void) inst;
+  (void) rval;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1773,6 +1806,8 @@ mx_cat(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
   char buf[1024];
   int len, use_stdin = TRUE;
   int fd;
+  (void) inst;
+  (void) rval;
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1805,6 +1840,9 @@ mx_cat(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 static int
 mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  (void) inst;
+  (void) rval;
+  (void) argc;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1821,6 +1859,10 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   char **actions;
   int i, j;
   GString *str;
+  (void) obj;
+  (void) inst;
+  (void) rval;
+  (void) argc;
 
   if (rval->str) {
     g_free(rval->str);
@@ -1863,6 +1905,8 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
   char h[256];
   int i, n;
   GString *str;
+  (void) obj;
+  (void) inst;
 
   if (rval->str) {
     g_free(rval->str);
@@ -1988,6 +2032,10 @@ mx_show_source_view_search_path(struct objlist *obj, N_VALUE *inst, N_VALUE *rva
   int i;
   GtkSourceLanguageManager *lm;
   GString *str;
+  (void) obj;
+  (void) inst;
+  (void) argc;
+  (void) argv;
 
   if (rval->str) {
     g_free(rval->str);
@@ -2023,6 +2071,10 @@ static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int drawing;
+  (void) inst;
+  (void) rval;
+  (void) argc;
+  (void) argv;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -2052,6 +2104,8 @@ static int
 mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int modified;
+  (void) inst;
+  (void) rval;
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -2100,6 +2154,9 @@ mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   struct objlist *lobj;
   struct narray iarray;
   struct focus_obj_data data;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   legend = (char *) argv[2];
   if (legend == NULL) {
@@ -2131,6 +2188,11 @@ mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 static int
 mx_unfocus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  (void) obj;
+  (void) inst;
+  (void) rval;
+  (void) argc;
+  (void) argv;
 
   g_idle_add_once(idle_call_func, UnFocus);
 
@@ -2141,6 +2203,10 @@ static int
 mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   const char *locale;
+  (void) obj;
+  (void) inst;
+  (void) argc;
+  (void) argv;
 
   if (rval->str) {
     g_free(rval->str);
@@ -2158,6 +2224,10 @@ mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 static int
 mx_get_active(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  (void) obj;
+  (void) inst;
+  (void) argc;
+  (void) argv;
   if (TopLevel) {
     rval->i = TRUE;
   } else {
@@ -2175,6 +2245,9 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
   struct objlist *sa_obj;
   struct narray iarray;
   struct script *addin, *list;
+  (void) obj;
+  (void) inst;
+  (void) rval;
 
   sarray = (char *) argv[2];
   if (sarray  == NULL) {
@@ -2312,6 +2385,8 @@ mx_configuration(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 {
   char *id;
   struct menu_config *cfg;
+  (void) obj;
+  (void) inst;
 
   if (rval->str) {
     g_free(rval->str);

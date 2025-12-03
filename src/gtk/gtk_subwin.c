@@ -391,6 +391,7 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
 {
   struct obj_list_data *d;
   GtkWidget *w;
+  (void) keycode;
   /*
   static guint32 ev_time = 0;
   guint32 t;
@@ -553,6 +554,8 @@ parameter_sub_window_create(struct SubWin *d)
 static void
 list_focused(GtkEventControllerFocus *ev, gpointer user_data)
 {
+  (void) ev;
+  (void) user_data;
   set_focus_insensitive(&NgraphApp.Viewer);
 }
 
@@ -603,6 +606,8 @@ item_toggled (GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpoi
   int state, id;
   const char *field;
   GtkWidget *w;
+  (void) x;
+  (void) y;
 
   w = gtk_event_controller_get_widget (GTK_EVENT_CONTROLLER (gesture));
   gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
@@ -710,6 +715,8 @@ enum_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
+  (void) x;
+  (void) y;
 
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
@@ -722,6 +729,8 @@ mark_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
   GtkWidget *parent;
   n_list_store *item;
   int id, cur;
+  (void) x;
+  (void) y;
 
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
@@ -732,7 +741,7 @@ mark_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 }
 
 static int
-get_integer_from_entry (GtkWidget *entry, const n_list_store *item, int cur)
+get_integer_from_entry (GtkWidget *entry, const n_list_store *item)
 {
   int val;
   double dval;
@@ -746,7 +755,7 @@ get_integer_from_entry (GtkWidget *entry, const n_list_store *item, int cur)
 }
 
 static double
-get_double_from_entry (GtkWidget *entry, const n_list_store *item, double cur)
+get_double_from_entry (GtkWidget *entry, double cur)
 {
   const char *text;
   int ecode;
@@ -787,7 +796,7 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
   if (item->inc) {
     int cur, val;
     getobj (d->obj, item->name, id, 0, NULL, &cur);
-    val = get_integer_from_entry (entry, item, cur);
+    val = get_integer_from_entry (entry, item);
     if (val == cur) {
       return;
     }
@@ -795,7 +804,7 @@ set_numeric_item_cb (GtkWidget *self, gpointer user_data)
   } else {
     double cur, val;
     getobj (d->obj, item->name, id, 0, NULL, &cur);
-    val = get_double_from_entry (entry, item, cur);
+    val = get_double_from_entry (entry, cur);
     if (val == cur) {
       return;
     }
@@ -872,6 +881,8 @@ numeric_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
+  (void) x;
+  (void) y;
 
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
@@ -925,6 +936,8 @@ string_cb (GtkEventController *self, gdouble x, gdouble y, gpointer user_data)
 {
   GtkWidget *parent;
   n_list_store *item;
+  (void) x;
+  (void) y;
 
   item = (n_list_store *) user_data;
   parent = gtk_event_controller_get_widget (self);
@@ -946,6 +959,7 @@ setup_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store 
   GtkWidget *w;
   int type;
   GtkGesture *gesture;
+  (void) factory;
 
   switch (item->type) {
   case G_TYPE_BOOLEAN:
@@ -1051,6 +1065,7 @@ transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, 
   n_list_store *item;
   const char *field;
   char *str;
+  (void) from_value;
 
   inst = N_INST (g_binding_dup_source (binding));
   item = (n_list_store *) user_data;
@@ -1074,6 +1089,8 @@ transform_sensitive (GBinding* binding, const GValue* from_value, GValue* to_val
 {
   NInst *inst;
   int hidden;
+  (void) from_value;
+  (void) user_data;
 
   inst = N_INST (g_binding_dup_source (binding));
   getobj (inst->obj, "hidden", inst->id, 0, NULL, &hidden);
@@ -1088,6 +1105,7 @@ transform_boolean (GBinding* binding, const GValue* from_value, GValue* to_value
   n_list_store *item;
   NInst *inst;
   int active;
+  (void) from_value;
 
   inst = N_INST (g_binding_dup_source (binding));
   item = (n_list_store *) user_data;
@@ -1106,6 +1124,7 @@ transform_picture (GBinding* binding, const GValue* from_value, GValue* to_value
   n_list_store *item;
   NInst *inst;
   GdkPaintable *image;
+  (void) from_value;
 
   item = (n_list_store *) user_data;
   if (item->bind_func == NULL) {
@@ -1145,6 +1164,7 @@ bind_column (GtkListItemFactory *factory, GtkListItem *list_item, n_list_store *
 {
   GtkWidget *w;
   NInst *inst;
+  (void) factory;
   w = gtk_list_item_get_child (list_item);
   inst = gtk_list_item_get_item (list_item);
   g_object_set_data (G_OBJECT (w), INSTANCE_ID_KEY, GINT_TO_POINTER (inst->id));
@@ -1236,54 +1256,72 @@ list_sub_window_build(struct obj_list_data *d)
 void
 list_sub_window_delete(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   delete((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_copy(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   copy((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_top(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   move_top((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_last(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   move_last((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_up(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   move_up((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_down(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   move_down((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_update(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   swin_update((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   focus((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
 list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
+  (void) action;
+  (void) parameter;
   focus_all((struct obj_list_data *) user_data);
 }
 
@@ -1370,6 +1408,8 @@ void
 list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data*) client_data;
   int sel, num;

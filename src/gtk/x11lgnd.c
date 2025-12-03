@@ -689,7 +689,7 @@ setup_mark_type(struct LegendDialog *d, int id, GtkWidget *type, const char *fie
 }
 
 static void
-legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
+legend_dialog_setup_item(struct LegendDialog *d, int id)
 {
   unsigned int i;
   int x1, y1, x2, y2;
@@ -854,6 +854,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->space, "space"},
     {d->script_size, "script_size"},
   };
+  (void) w;
 
   switch(d->ret) {
   case IDOK:
@@ -988,7 +989,7 @@ legend_copy_clicked_response(int sel, gpointer user_data)
   struct LegendDialog *d;
   d = (struct LegendDialog *) user_data;
   if (sel != -1) {
-    legend_dialog_setup_item(d->widget, d, sel);
+    legend_dialog_setup_item(d, sel);
   }
 }
 
@@ -1042,6 +1043,7 @@ point_changed (GtkEditableLabel *label, GParamSpec *spec, gpointer user_data)
   int val;
   gboolean editing;
   GValue value = G_VALUE_INIT;
+  (void) spec;
 
   editing = gtk_editable_label_get_editing (label);
   if (editing) {
@@ -1067,6 +1069,8 @@ transform_text (GBinding* binding, const GValue* from_value, GValue* to_value, g
 {
   char buf[64];
   int val;
+  (void) binding;
+  (void) user_data;
 
   val = g_value_get_int (from_value);
   snprintf (buf, sizeof (buf), "%.2f", val / 100.0);
@@ -1078,6 +1082,7 @@ static void
 setup_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, const char *col)
 {
   GtkWidget *label = gtk_editable_label_new ("");
+  (void) factory;
   gtk_editable_set_alignment (GTK_EDITABLE (label), 1.0);
   gtk_list_item_set_accessible_label (list_item, col);
   gtk_list_item_set_child (list_item, label);
@@ -1089,6 +1094,7 @@ bind_point_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gp
 {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   NPoint *item = N_POINT(gtk_list_item_get_item (list_item));
+  (void) factory;
   g_object_bind_property_full (G_OBJECT (item), col, label, "text", G_BINDING_SYNC_CREATE, transform_text, NULL, col, NULL);
 }
 
@@ -1334,7 +1340,7 @@ draw_arrow_pixmap(struct LegendDialog *d)
 }
 
 static void
-LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
+LegendArrowDialogPaint(cairo_t *cr, gpointer client_data)
 {
   struct LegendDialog *d;
 
@@ -1353,7 +1359,7 @@ LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 }
 
 static void
-LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
+LegendArrowDialogScale(struct LegendDialog *d)
 {
   draw_arrow_pixmap(d);
   gtk_widget_queue_draw(d->view);
@@ -1366,7 +1372,7 @@ LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
 
   d = (struct LegendDialog *) client_data;
   d->wid = gtk_range_get_value(GTK_RANGE(w)) * 100;
-  LegendArrowDialogScale(w, d);
+  LegendArrowDialogScale(d);
 }
 
 static void
@@ -1376,24 +1382,29 @@ LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 
   d = (struct LegendDialog *) client_data;
   d->ang = gtk_range_get_value(GTK_RANGE(w));
-  LegendArrowDialogScale(w, d);
+  LegendArrowDialogScale(d);
 }
 
 static gchar*
 format_value_percent(GtkScale *scale, gdouble value, gpointer user_data)
 {
+  (void) scale;
+  (void) user_data;
   return g_strdup_printf ("%.0f%%", value);
 }
 
 static gchar*
 format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
 {
+  (void) scale;
+  (void) user_data;
   return g_strdup_printf ("%.0f°", value);
 }
 
 static void
 setup_mark_item (GtkListItemFactory *factory, GtkListItem *list_item)
 {
+  (void) factory;
   GtkWidget *image;
 
   image = gtk_image_new ();
@@ -1407,6 +1418,7 @@ bind_mark_item (GtkListItemFactory *factory, GtkListItem *list_item)
   GtkWidget *image;
   GtkStringObject *strobj;
   const char *icon;
+  (void) factory;
 
   image = gtk_list_item_get_child (list_item);
   strobj = gtk_list_item_get_item (list_item);
@@ -1481,7 +1493,10 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
-  LegendArrowDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
+  (void) width;
+  (void) height;
+  (void) drawing_area;
+  LegendArrowDialogPaint(cr, user_data);
 }
 
 static void
@@ -1621,7 +1636,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendLineCB;
   }
-  legend_dialog_setup_item(wi, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
 }
 
 void
@@ -1720,7 +1735,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendRectCB;
   }
-  legend_dialog_setup_item(wi, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
 }
 
 void
@@ -1845,7 +1860,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendArcCB;
   }
-  legend_dialog_setup_item(wi, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
 }
 
 void
@@ -1922,7 +1937,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->prop_cb = LegendArcCB;
   }
 
-  legend_dialog_setup_item(wi, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
 }
 
 void
@@ -2015,6 +2030,7 @@ static void
 setup_character_map (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;
+  (void) factory;
 
   label = gtk_label_new (NULL);
   gtk_list_item_set_child (list_item, label);
@@ -2027,6 +2043,7 @@ bind_char_cb (GtkListItemFactory *factory, GtkListItem *list_item)
   gpointer item;
   const char *string;
   char *markup;
+  (void) factory;
 
   label = gtk_list_item_get_child (list_item);
   item = gtk_list_item_get_item (list_item);
@@ -2155,7 +2172,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendTextCB;
   }
-  legend_dialog_setup_item(wi, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
   d->focus = d->text;
 }
 
@@ -2172,6 +2189,7 @@ static void
 LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 {
   struct LegendDialog *d;
+  (void) w;
 
   d = (struct LegendDialog *) data;
   if (makewidget) {
@@ -2189,7 +2207,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 
     d->prop_cb = LegendTextCB;
   }
-  legend_dialog_setup_item(w, d, d->Id);
+  legend_dialog_setup_item(d, d->Id);
 }
 
 void
@@ -2316,30 +2334,35 @@ CmOptionTextDef(void)
 static void
 LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  (void) user_data;
   LegendArrowDialog(&DlgLegendArrow, data->obj, id);
 }
 
 static void
 LegendWinRectUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  (void) user_data;
   LegendRectDialog(&DlgLegendRect, data->obj, id);
 }
 
 static void
 LegendWinArcUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  (void) user_data;
   LegendArcDialog(&DlgLegendArc, data->obj, id);
 }
 
 static void
 LegendWinMarkUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  (void) user_data;
   LegendMarkDialog(&DlgLegendMark, data->obj, id);
 }
 
 static void
 LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  (void) user_data;
   LegendTextDialog(&DlgLegendText, data->obj, id);
 }
 
@@ -2541,6 +2564,8 @@ static void *
 bind_color (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
+  (void) w;
+  (void) field;
   pixbuf = draw_color_pixbuf(obj, id, OBJ_FIELD_COLOR_TYPE_STROKE, 40);
   if (pixbuf) {
     GdkTexture *texture;
@@ -2555,6 +2580,8 @@ static int
 select_path_type_menu (struct objlist *obj, const char *field, int id, GtkStringList *list, int sel)
 {
   int type, interpolation;
+  (void) field;
+  (void) list;
 
   getobj(obj, "type", id, 0, NULL, &type);
   getobj(obj, "interpolation", id, 0, NULL, &interpolation);
@@ -2587,6 +2614,8 @@ setup_path_type_menu (struct objlist *obj, const char *field, int id, GtkStringL
   int type, interpolation;
   const char **enumlist;
   int i;
+  (void) field;
+  (void) list;
 
   enumlist = (const char **) chkobjarglist(obj, "type");
   gtk_string_list_append (list, _(enumlist[0]));
@@ -2610,6 +2639,8 @@ bind_path_type (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   char **enumlist;
   int type, interpolation;
+  (void) w;
+  (void) field;
 
   getobj(obj, "type", id, 0, NULL, &type);
   getobj(obj, "interpolation", id, 0, NULL, &interpolation);
@@ -2628,6 +2659,8 @@ bind_path_pos (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int n, x0, y0;
   char str[256];
+  (void) w;
+  (void) field;
 
   get_points(obj, id, &x0, &y0, &n);
   switch (field[0]) {
@@ -2651,6 +2684,7 @@ bind_rect_x (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int x1, x2;
   char str[256];
+  (void) w;
 
   getobj(obj, "x1", id, 0, NULL, &x1);
   getobj(obj, "x2", id, 0, NULL, &x2);
@@ -2667,6 +2701,7 @@ bind_rect_y (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   int y1, y2;
   char str[256];
+  (void) w;
 
   getobj(obj, "y1", id, 0, NULL, &y1);
   getobj(obj, "y2", id, 0, NULL, &y2);
@@ -2743,6 +2778,8 @@ static void *
 bind_mark (GtkWidget *w, struct objlist *obj, const char *field, int id)
 {
   GdkPixbuf *pixbuf;
+  (void) w;
+  (void) field;
   pixbuf = draw_mark_pixbuf(obj, id);
   if (pixbuf) {
     GdkTexture *texture;
@@ -2857,6 +2894,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   int m, last_id;
   struct obj_list_data *d;
   const char *name;
+  (void) widget;
 
   d = (struct obj_list_data *) user_data;
 

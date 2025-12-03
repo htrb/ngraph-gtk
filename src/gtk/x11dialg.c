@@ -312,7 +312,7 @@ response_callback_add(void *dialog, response_callback_func cb, response_callback
 }
 
 static void
-multi_list_default_cb(GtkWidget *view, guint pos, gpointer user_data)
+multi_list_default_cb(gpointer user_data)
 {
   dialog_response(IDOK, user_data);
 }
@@ -346,6 +346,7 @@ search_id(GtkWidget *columnview, int id)
 static void
 setup_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_label_new (NULL);
+  (void) factory;
   gtk_label_set_xalign (GTK_LABEL (label), GPOINTER_TO_INT (user_data) ? 0.0 : 1.0);
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
@@ -356,6 +357,7 @@ static void
 bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer user_data) {
   GtkWidget *label = gtk_list_item_get_child (list_item);
   NInst *item = N_INST(gtk_list_item_get_item (list_item));
+  (void) factory;
 
   if (GPOINTER_TO_INT (user_data)) {
     gtk_label_set_text(GTK_LABEL(label), item->name);
@@ -370,12 +372,14 @@ bind_column (GtkSignalListItemFactory *factory, GtkListItem *list_item, gpointer
 static char *
 sort_column (NInst *item, gpointer user_data)
 {
+  (void) user_data;
   return g_strdup (item->name);
 }
 
 static int
-sort_by_id (NInst *item, gpointer user_data)
+sort_by_id (const NInst *item, gpointer user_data)
 {
+  (void) user_data;
   return item->id;
 }
 
@@ -395,7 +399,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     columnview_set_numeric_sorter(col, G_TYPE_INT, G_CALLBACK(sort_by_id), NULL);
     columnview_create_column(d->list, _("property"), G_CALLBACK(setup_column), G_CALLBACK(bind_column), G_CALLBACK(sort_column), GINT_TO_POINTER (1), TRUE);
 
-    g_signal_connect(d->list, "activate", G_CALLBACK(multi_list_default_cb), d);
+    g_signal_connect_swapped(d->list, "activate", G_CALLBACK(multi_list_default_cb), d);
 
     swin = gtk_scrolled_window_new();
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -462,6 +466,7 @@ SelectDialogClose(GtkWidget *w, void *data)
   GListModel *list;
   NInst *ni;
   int n, i;
+  (void) w;
 
   d = (struct SelectDialog *) data;
   list = G_LIST_MODEL(gtk_column_view_get_model (GTK_COLUMN_VIEW (d->list)));
@@ -508,7 +513,7 @@ SelectDialog(struct SelectDialog *data,
 }
 
 static void
-single_list_default_cb(GtkColumnView *view, guint pos, gpointer user_data)
+single_list_default_cb(gpointer user_data)
 {
   dialog_response(GTK_RESPONSE_OK, user_data);
 }
@@ -533,7 +538,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
 
-    g_signal_connect(d->list, "activate", G_CALLBACK(single_list_default_cb), d);
+    g_signal_connect_swapped(d->list, "activate", G_CALLBACK(single_list_default_cb), d);
 
     w = gtk_frame_new(NULL);
     gtk_frame_set_child(GTK_FRAME(w), swin);
@@ -575,7 +580,7 @@ CopyDialogClose(GtkWidget *w, void *data)
 {
   struct CopyDialog *d;
   const NInst *inst;
-
+  (void) w;
 
   d = (struct CopyDialog *) data;
 
@@ -1287,15 +1292,6 @@ enum AXIS_COMBO_BOX_COLUMN {
   AXIS_COMBO_BOX_COLUMN_NUM         = 4
 };
 
-static void
-axis_combo_box_deleted(GtkWidget *cbox, gpointer user_data)
-{
-  struct narray *array;
-
-  array = (struct narray *) user_data;
-  arrayfree(array);
-}
-
 GtkWidget *
 axis_combo_box_create(int flags)
 {
@@ -1309,7 +1305,7 @@ axis_combo_box_create(int flags)
   cbox = combo_box_create();
   g_object_set_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY, GINT_TO_POINTER(flags));
   g_object_set_data(G_OBJECT(cbox), AXIS_COMBO_BOX_ID_LIST_KEY, array);
-  g_signal_connect(cbox, "destroy", G_CALLBACK(axis_combo_box_deleted), array);
+  g_signal_connect_swapped(cbox, "destroy", G_CALLBACK(arrayfree), array);
   return cbox;
 }
 

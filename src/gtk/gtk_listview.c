@@ -5,6 +5,7 @@ void
 setup_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
 {
   GtkWidget *label;
+  (void) factory;
 
   label = gtk_label_new (NULL);
   gtk_widget_set_halign (label, GTK_ALIGN_START);
@@ -17,6 +18,7 @@ bind_listitem_cb (GtkListItemFactory *factory, GtkListItem *list_item)
   GtkWidget *label;
   gpointer item;
   const char *string;
+  (void) factory;
 
   label = gtk_list_item_get_child (list_item);
   item = gtk_list_item_get_item (list_item);
@@ -71,6 +73,7 @@ setup_header_cb (GtkListItemFactory *factory, GtkListHeader *list_item, gpointer
 {
   GtkWidget *label;
   const char *string = (const char *) user_data;
+  (void) factory;
 
   label = gtk_label_new (string);
   gtk_list_header_set_child (list_item, label);

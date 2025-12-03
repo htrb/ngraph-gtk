@@ -82,6 +82,7 @@ n_inst_class_init (NInstClass * klass)
 static void
 n_inst_init (NInst * noop)
 {
+  (void) noop;
 }
 
 NInst*
@@ -161,6 +162,7 @@ n_data_class_init (NDataClass * klass)
 static void
 n_data_init (NData * noop)
 {
+  (void) noop;
 }
 
 NData*
@@ -252,6 +254,7 @@ n_point_class_init (NPointClass * klass)
 static void
 n_point_init (NPoint * noop)
 {
+  (void) noop;
 }
 
 NPoint*
@@ -288,6 +291,7 @@ n_array_class_init (NArrayClass * klass)
 static void
 n_array_init (NArray * noop)
 {
+  (void) noop;
 }
 
 NArray*
@@ -357,6 +361,7 @@ n_text_class_init (NTextClass * klass)
 static void
 n_text_init (NText * noop)
 {
+  (void) noop;
 }
 
 NText*

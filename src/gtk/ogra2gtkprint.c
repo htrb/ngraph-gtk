@@ -66,6 +66,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   int dpi, id, r;
   struct gra2cairo_local *local;
   GtkPrintContext *gpc;
+  (void) rval;
 
   gpc = GTK_PRINT_CONTEXT(argv[2]);
 

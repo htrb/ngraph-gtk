@@ -67,6 +67,7 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct DefaultDialog *d;
   GtkWidget *w;
+  (void) wi;
 
   d = (struct DefaultDialog *) data;
 
@@ -100,6 +101,8 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 save_config_response(int ret, struct objlist *obj, int id, int type)
 {
+  (void) obj;
+  (void) id;
   if (! ret) {
     return;
   }
@@ -135,6 +138,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
     {NULL, SAVE_CONFIG_TYPE_EXTERNAL_VIEWER},
     {NULL, SAVE_CONFIG_TYPE_FONTS},
   };
+  (void) win;
 
   d = (struct DefaultDialog *) data;
 
@@ -175,6 +179,7 @@ active_script_changed(GtkWidget *widget, GParamSpec *spec,  gpointer user_data)
   struct SetScriptDialog *d;
   struct script *addin;
   int i, n;
+  (void) spec;
 
   d = (struct SetScriptDialog *) user_data;
 
@@ -227,7 +232,7 @@ remove_char(char *str, int c)
 }
 
 static void
-SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
+SetScriptDialogSetupItem(struct SetScriptDialog *d)
 {
   struct script *addin;
 
@@ -274,6 +279,8 @@ SetScriptDialogBrowse_response(char *file, gpointer user_data)
 static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
 {
+  (void) icon_pos;
+  (void) user_data;
   nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL, NULL, FALSE,
                    SetScriptDialogBrowse_response, w);
 }
@@ -314,7 +321,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_append(GTK_BOX(d->vbox), table);
   }
-  SetScriptDialogSetupItem(wi, d);
+  SetScriptDialogSetupItem(d);
 }
 
 static int
@@ -366,6 +373,7 @@ SetScriptDialogClose(GtkWidget *w, void *data)
 {
   int ret;
   struct SetScriptDialog *d;
+  (void) w;
 
   d = (struct SetScriptDialog *) data;
 
@@ -477,6 +485,7 @@ static void
 PrefScriptDialogClose(GtkWidget *w, void *data)
 {
   const struct PrefScriptDialog *d;
+  (void) w;
 
   d = (struct PrefScriptDialog *) data;
 
@@ -511,7 +520,7 @@ font_button_set_font (GtkWidget *btn, const char *font)
 }
 
 static void
-FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
+FontSettingDialogSetupItem(struct FontSettingDialog *d)
 {
   GtkSelectionModel *model;
   editable_set_init_text(d->alias, CHK_STR(d->alias_str));
@@ -551,6 +560,8 @@ AlternativeFontListSelCb(GtkSelectionModel *sel, guint position, guint n_items, 
 {
   int a, n;
   struct FontSettingDialog *d;
+  (void) position;
+  (void) n_items;
 
   d = (struct FontSettingDialog *) user_data;
 
@@ -585,12 +596,9 @@ FontSettingDialogAddAlternative_response(GObject *source_object, GAsyncResult *r
 }
 
 static void
-FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
+FontSettingDialogAddAlternative(struct FontSettingDialog *d)
 {
   GtkFontDialog *dialog;
-  struct FontSettingDialog *d;
-
-  d = (struct FontSettingDialog *) client_data;
 
   dialog = gtk_font_dialog_new ();
   gtk_font_dialog_set_title (dialog, _("Alternative font"));
@@ -600,14 +608,11 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 }
 
 static void
-FontSettingDialogRemoveAlternative(GtkWidget *w, gpointer client_data)
+FontSettingDialogRemoveAlternative(struct FontSettingDialog *d)
 {
-  struct FontSettingDialog *d;
   int sel;
   GtkStringList *list;
   GtkSelectionModel *model;
-
-  d = (struct FontSettingDialog *) client_data;
 
   sel = listview_get_active(d->list);
   if (sel < 0) {
@@ -621,14 +626,11 @@ FontSettingDialogRemoveAlternative(GtkWidget *w, gpointer client_data)
 }
 
 static void
-FontSettingDialogDownAlternative(GtkWidget *wi, gpointer data)
+FontSettingDialogDownAlternative(struct FontSettingDialog *d)
 {
-  struct FontSettingDialog *d;
   GtkSelectionModel *model;
   GtkStringList *list;
   int n, sel;
-
-  d = (struct FontSettingDialog *) data;
 
   sel = listview_get_active(d->list);
   if (sel < 0) {
@@ -645,18 +647,15 @@ FontSettingDialogDownAlternative(GtkWidget *wi, gpointer data)
   }
 
   gtk_selection_model_select_item (model, sel, TRUE);
-  AlternativeFontListSelCb(model, 0, 0, data);
+  AlternativeFontListSelCb(model, 0, 0, d);
 }
 
 static void
-FontSettingDialogUpAlternative(GtkWidget *wi, gpointer data)
+FontSettingDialogUpAlternative(struct FontSettingDialog *d)
 {
-  struct FontSettingDialog *d;
   GtkStringList *list;
   GtkSelectionModel *model;
   int sel;
-
-  d = (struct FontSettingDialog *) data;
 
   sel = listview_get_active(d->list);
   if (sel < 1) {
@@ -668,7 +667,7 @@ FontSettingDialogUpAlternative(GtkWidget *wi, gpointer data)
 
   model = gtk_list_view_get_model(GTK_LIST_VIEW(d->list));
   gtk_selection_model_select_item (model, sel - 1, TRUE);
-  AlternativeFontListSelCb(model, 0, 0, data);
+  AlternativeFontListSelCb(model, 0, 0, d);
 }
 
 static void
@@ -717,23 +716,23 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
 
     w = gtk_button_new_with_mnemonic(_("_Remove"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Down"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);
     d->down_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Up"));
-    g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_widget_set_sensitive(w, FALSE);
     d->up_b = w;
@@ -745,7 +744,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(d->vbox), frame);
   }
 
-  FontSettingDialogSetupItem(wi, d);
+  FontSettingDialogSetupItem(d);
 }
 
 static char *
@@ -787,6 +786,7 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
   GString *alt;
   GtkStringList *list;
   int i, n;
+  (void) wi;
 
   d = (struct FontSettingDialog *) data;
 
@@ -896,6 +896,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
   const struct fontmap *fcur;
   NText *text;
   const char *fontalias;
+  (void) w;
 
   d = (struct PrefFontDialog *) client_data;
 
@@ -920,6 +921,7 @@ PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
   struct PrefFontDialog *d;
   NText *text;
   const char *fontalias;
+  (void) w;
 
   d = (struct PrefFontDialog *) client_data;
 
@@ -936,6 +938,7 @@ static void
 PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
+  (void) w;
 
   d = (struct PrefFontDialog *) client_data;
 
@@ -979,6 +982,7 @@ static void
 PrefFontDialogClose(GtkWidget *w, void *data)
 {
   const struct PrefFontDialog *d;
+  (void) w;
 
   d = (struct PrefFontDialog *) data;
 
@@ -996,7 +1000,7 @@ PrefFontDialog(struct PrefFontDialog *data)
 }
 
 static void
-MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
+MiscDialogSetupItem(struct MiscDialog *d)
 {
   if (Menulocal.editor) {
     editable_set_init_text(d->editor, Menulocal.editor);
@@ -1064,6 +1068,7 @@ static void
 set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
 {
   struct MiscDialog *d;
+  (void) icon_pos;
 
   d = (struct MiscDialog *) user_data;
   nGetOpenFileName(d->widget, _("Select program"), NULL, NULL, NULL, FALSE,
@@ -1142,11 +1147,10 @@ edit_custom_palette_dialog_response(GtkDialog* self, gint response_id, gpointer 
 }
 
 static void
-edit_custom_palette(GtkWidget *w, gpointer data)
+edit_custom_palette(struct MiscDialog *d)
 {
   GtkWidget *dialog, *box, **btns;
-  struct MiscDialog *d;
-  d = data;
+
   dialog = gtk_dialog_new_with_buttons(_("custom palette"),
 				       GTK_WINDOW(d->widget),
 #if USE_HEADER_BAR
@@ -1308,7 +1312,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->use_custom_palette = w;
 
     w = gtk_button_new_with_mnemonic(_("_Edit custom palette"));
-    g_signal_connect(w, "clicked", G_CALLBACK(edit_custom_palette), d);
+    g_signal_connect_swapped(w, "clicked", G_CALLBACK(edit_custom_palette), d);
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
     w = gtk_source_style_scheme_chooser_button_new();
@@ -1335,7 +1339,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox2), vbox2);
     gtk_box_append(GTK_BOX(d->vbox), hbox2);
   }
-  MiscDialogSetupItem(wi, d);
+  MiscDialogSetupItem(d);
 }
 
 static int
@@ -1394,6 +1398,7 @@ MiscDialogClose(GtkWidget *w, void *data)
   const char *buf, *source_style_id;
   char *buf2;
   GtkSourceStyleScheme *source_style;
+  (void) w;
 
   d = (struct MiscDialog *) data;
 
@@ -1497,7 +1502,7 @@ MiscDialog(struct MiscDialog *data, struct objlist *obj, int id)
 }
 
 static void
-ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
+ExViewerDialogSetupItem(struct ExViewerDialog *d)
 {
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_external), Menulocal.exwin_use_external);
   gtk_range_set_value(GTK_RANGE(d->dpi), Menulocal.exwindpi);
@@ -1555,13 +1560,14 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_append(GTK_BOX(d->vbox), table);
   }
-  ExViewerDialogSetupItem(wi, d);
+  ExViewerDialogSetupItem(d);
 }
 
 static void
 ExViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ExViewerDialog *d;
+  (void) w;
 
   d = (struct ExViewerDialog *) data;
 
@@ -1591,6 +1597,7 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 {
   int a;
   GdkRGBA color;
+  (void) w;
 
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
@@ -1693,6 +1700,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   struct ViewerDialog *d;
   int ret, dpi, a, bg;
   GdkRGBA color;
+  (void) w;
 
   d = (struct ViewerDialog *) data;
 
@@ -1770,6 +1778,7 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
 static void
 save_default_axis_config_response(int ret, struct objlist *obj, int id, int modified)
 {
+  (void) modified;
   if (ret) {
     exeobj(obj, "save_config", id, 0, NULL);
   }

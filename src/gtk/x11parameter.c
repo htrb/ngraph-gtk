@@ -162,6 +162,7 @@ exchange_start_stop(GtkButton *btn, gpointer user_data)
   struct ParameterDialog *d;
   const char *str;
   char *start, *stop;
+  (void) btn;
 
   d = user_data;
 
@@ -261,6 +262,7 @@ parameter_type_changed(GtkWidget *combo, GParamSpec *spec, gpointer user_data)
 {
   struct ParameterDialog *d;
   int type;
+  (void) spec;
 
   d = user_data;
   type = combo_box_get_active(combo);
@@ -345,6 +347,7 @@ ParameterDialogClose(GtkWidget *w, void *data)
   int ret, type;
   char *text;
   double min, max, value, step;
+  (void) w;
 
   d = (struct ParameterDialog *) data;
 
@@ -426,6 +429,7 @@ void
 ParameterDialog(struct obj_list_data *data, int id, int user_data)
 {
   struct ParameterDialog *d;
+  (void) user_data;
 
   d = (struct ParameterDialog *) data->dialog;
 
@@ -641,14 +645,11 @@ parameter_update_response(struct response_callback *cb)
 }
 
 static void
-parameter_update(GtkButton *btn, gpointer data)
+parameter_update(struct parameter_data *d)
 {
-  struct parameter_data *d;
-
   if (Menulock || Globallock)
     return;
 
-  d = data;
   d->undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   ParameterDialog(d->obj_list_data, d->id, -1);
   response_callback_add(&DlgParameter, parameter_update_response, NULL, d);
@@ -659,6 +660,7 @@ static void
 parameter_up(GtkButton *btn, gpointer data)
 {
   struct parameter_data *d;
+  (void) btn;
 
   if (Menulock || Globallock)
     return;
@@ -674,6 +676,7 @@ static void
 parameter_down(GtkButton *btn, gpointer data)
 {
   struct parameter_data *d;
+  (void) btn;
 
   if (Menulock || Globallock)
     return;
@@ -689,6 +692,7 @@ static void
 parameter_delete(GtkButton *btn, gpointer data)
 {
   struct parameter_data *d;
+  (void) btn;
 
   if (Menulock || Globallock)
     return;
@@ -824,6 +828,7 @@ parameter_skip_backward(GtkButton *btn, gpointer user_data)
 {
   double start;
   struct parameter_data *data;
+  (void) btn;
 
   data = user_data;
 
@@ -840,6 +845,7 @@ parameter_skip_forward(GtkButton *btn, gpointer user_data)
 {
   double stop;
   struct parameter_data *data;
+  (void) btn;
 
   data = user_data;
 
@@ -976,6 +982,7 @@ static void
 switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
 {
   int active;
+  (void) pspec;
   if (Menulock || Globallock)
     return;
 
@@ -986,6 +993,9 @@ switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
 static gboolean
 switch_set(GtkSwitch *sw, gboolean state, gpointer user_data)
 {
+  (void) sw;
+  (void) state;
+  (void) user_data;
   return (Menulock || Globallock);
 }
 
@@ -993,6 +1003,7 @@ static void
 combo_changed(GtkWidget *combo_box, GParamSpec *spec, gpointer user_data)
 {
   int selected;
+  (void) spec;
   if (Menulock || Globallock)
     return;
 
@@ -1177,7 +1188,7 @@ create_widget(struct obj_list_data *d, int id, int n)
   col = 0;
   snprintf(buf, sizeof(buf), (id < 10) ? "_%d" : "%d", id);
   label = gtk_button_new_with_mnemonic(buf);
-  g_signal_connect(label, "clicked", G_CALLBACK(parameter_update), data);
+  g_signal_connect_swapped(label, "clicked", G_CALLBACK(parameter_update), data);
   g_object_set_data_full(G_OBJECT(label), "user-data", data, delete_parameter_data);
   gtk_grid_attach(GTK_GRID(d->text), label, col, id, 1, 1);
 
@@ -1225,12 +1236,11 @@ create_widget(struct obj_list_data *d, int id, int n)
 }
 
 static void
-save_as_default(GtkButton *button, gpointer user_data)
+save_as_default(struct obj_list_data *d)
 {
-  struct obj_list_data *d;
   int i, num, type, modified, undo;
   double parameter, value;
-  d = (struct obj_list_data *) user_data;
+
   num = chkobjlastinst(d->obj) + 1;
   modified = FALSE;
   undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
@@ -1277,12 +1287,12 @@ save_as_default(GtkButton *button, gpointer user_data)
 }
 
 static void
-reset_settings(GtkButton *button, gpointer user_data)
+reset_settings(struct obj_list_data *d)
 {
-  struct obj_list_data *d;
+  ;
   int i, num;
   GtkGrid *grid;
-  d = (struct obj_list_data *) user_data;
+
   num = chkobjlastinst(d->obj) + 1;
   grid = GTK_GRID (d->text);
   for (i = 0; i < num; i++) {
@@ -1327,13 +1337,13 @@ add_save_as_default_button(struct obj_list_data *d, int row, int width)
 {
   GtkWidget *button, *box;
   button = gtk_button_new_with_mnemonic(_("_Save as default"));
-  g_signal_connect(button, "clicked", G_CALLBACK(save_as_default), d);
+  g_signal_connect_swapped(button, "clicked", G_CALLBACK(save_as_default), d);
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(box), button);
 
   button = gtk_button_new_with_mnemonic(_("_Reset"));
-  g_signal_connect(button, "clicked", G_CALLBACK(reset_settings), d);
+  g_signal_connect_swapped(button, "clicked", G_CALLBACK(reset_settings), d);
   gtk_box_append(GTK_BOX(box), button);
 
   gtk_grid_attach(GTK_GRID(d->text), box, 1, row, width, 1);

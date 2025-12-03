@@ -72,7 +72,7 @@ static void output_emf(int type, char *file);
 #endif
 
 static void
-OutputDataDialogSetupItem(GtkWidget *w, struct OutputDataDialog *d)
+OutputDataDialogSetupItem(struct OutputDataDialog *d)
 {
   spin_entry_set_val(d->div_entry, d->div);
 }
@@ -81,6 +81,7 @@ static void
 OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct OutputDataDialog *d;
+  (void) wi;
 
   d = (struct OutputDataDialog *) data;
   if (makewidget) {
@@ -91,13 +92,14 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
   }
-  OutputDataDialogSetupItem(wi, d);
+  OutputDataDialogSetupItem(d);
 }
 
 static void
 OutputDataDialogClose(GtkWidget *w, void *data)
 {
   struct OutputDataDialog *d;
+  (void) w;
 
   d = (struct OutputDataDialog *) data;
 
@@ -246,6 +248,7 @@ OutputImageDialogClose(GtkWidget *w, void *data)
 {
   struct OutputImageDialog *d;
   int a;
+  (void) w;
 
   d = (struct OutputImageDialog *) data;
 
@@ -387,6 +390,8 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   struct print_obj *pobj;
   int id, r;
   N_VALUE *g2winst;
+  (void) operation;
+  (void) page_nr;
 
   pobj = (struct print_obj *) user_data;
   graobj = pobj->graobj;
@@ -794,6 +799,7 @@ print_gra_file_response(int res, gpointer user_data)
 static void
 CmPrintGRAFile_response(char *file, gpointer user_data)
 {
+  (void) user_data;
 
   if (file == NULL) {
     return;

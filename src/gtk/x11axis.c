@@ -396,6 +396,7 @@ GridDialogClose(GtkWidget *w, void *data)
   struct GridDialog *d;
   int ret;
   int i;
+  (void) w;
 
   d = (struct GridDialog *) data;
 
@@ -533,7 +534,7 @@ set_axis_id(GtkWidget *w, int id)
 }
 
 static void
-SectionDialogSetupItem(GtkWidget *w, struct SectionDialog *d)
+SectionDialogSetupItem(struct SectionDialog *d)
 {
   spin_entry_set_val(d->x, d->X);
   spin_entry_set_val(d->y, d->Y);
@@ -633,7 +634,7 @@ section_dialog_grid_response(struct response_callback *cb)
     menu_delete_undo(undo);
     set_graph_modified();
   }
-  SectionDialogSetupItem(d->widget, d);
+  SectionDialogSetupItem(d);
   g_clear_pointer(&cb->data, g_free);
 }
 
@@ -781,7 +782,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
   }
 
-  SectionDialogSetupItem(wi, d);
+  SectionDialogSetupItem(d);
 }
 
 static void
@@ -791,6 +792,7 @@ SectionDialogClose(GtkWidget *w, void *data)
   int ret;
   int type;
   struct narray group;
+  (void) w;
 
   d = (struct SectionDialog *) data;
   if (d->ret != IDOK)
@@ -856,7 +858,7 @@ SectionDialog(struct SectionDialog *data,
 }
 
 static void
-CrossDialogSetupItem(GtkWidget *w, struct CrossDialog *d)
+CrossDialogSetupItem(struct CrossDialog *d)
 {
   spin_entry_set_val(d->x, d->X);
   spin_entry_set_val(d->y, d->Y);
@@ -952,7 +954,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
   }
-  CrossDialogSetupItem(wi, d);
+  CrossDialogSetupItem(d);
 }
 
 static void
@@ -962,6 +964,7 @@ CrossDialogClose(GtkWidget *w, void *data)
   int ret;
   int type;
   struct narray group;
+  (void) w;
 
   d = (struct CrossDialog *) data;
   if (d->ret != IDOK)
@@ -1021,7 +1024,7 @@ CrossDialog(struct CrossDialog *data,
 }
 
 static void
-ZoomDialogSetupItem(GtkWidget *w, struct ZoomDialog *d)
+ZoomDialogSetupItem(struct ZoomDialog *d)
 {
   spin_entry_set_val(d->zoom_entry, d->zoom);
 }
@@ -1040,13 +1043,14 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->zoom_entry = w;
     gtk_box_append(GTK_BOX(d->vbox), vbox);
   }
-  ZoomDialogSetupItem(wi, d);
+  ZoomDialogSetupItem(d);
 }
 
 static void
 ZoomDialogClose(GtkWidget *w, void *data)
 {
   struct ZoomDialog *d;
+  (void) w;
 
   d = (struct ZoomDialog *) data;
   if (d->ret != IDOK)
@@ -1256,6 +1260,7 @@ file_button_show(GtkWidget *widget, gpointer user_data)
 {
   static struct objlist *file = NULL;
   int n;
+  (void) user_data;
 
   if (file == NULL) {
     file = chkobject("data");
@@ -1867,6 +1872,7 @@ num_direction_changed(GtkWidget *w, GParamSpec *pspec, gpointer client_data)
 {
   int dir, state;
   struct AxisDialog *d;
+  (void) pspec;
 
   d = (struct AxisDialog *) client_data;
 
@@ -1879,7 +1885,7 @@ num_direction_changed(GtkWidget *w, GParamSpec *pspec, gpointer client_data)
 }
 
 static GtkWidget *
-numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
+numbering_tab_create(struct AxisDialog *dd)
 {
   GtkWidget *w, *hbox, *vbox, *frame, *table;
   struct AxisNumbering *d;
@@ -2208,7 +2214,7 @@ position_tab_copy_clicked(struct AxisDialog *d)
 }
 
 static GtkWidget *
-position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
+position_tab_create(struct AxisDialog *dd)
 {
   GtkWidget *w, *vbox, *frame, *table;
   struct AxisPos *d;
@@ -2286,7 +2292,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Gauge"));
     d->gauge.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-    w = numbering_tab_create(wi, d);
+    w = numbering_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Numbering"));
     d->numbering.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
@@ -2294,7 +2300,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Font"));
     d->font.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-    w = position_tab_create(wi, d);
+    w = position_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Position"));
     d->position.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
@@ -2352,6 +2358,7 @@ AxisDialogClose(GtkWidget *w, void *data)
 {
   struct AxisDialog *d;
   int ret;
+  (void) w;
 
   d = (struct AxisDialog *) data;
 
@@ -2402,6 +2409,7 @@ void
 AxisDialog(struct obj_list_data *data, int id, int user_data)
 {
   struct AxisDialog *d;
+  (void) user_data;
 
   d = (struct AxisDialog *) data->dialog;
 
@@ -2416,6 +2424,9 @@ CmAxisAddFrame
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   enum TOOLBOX_MODE mode;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
   mode = get_toolbox_mode();
   CmAxisNewFrame(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
@@ -2425,6 +2436,9 @@ CmAxisAddSection
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   enum TOOLBOX_MODE mode;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
   mode = get_toolbox_mode();
   CmAxisNewSection(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
@@ -2434,6 +2448,9 @@ CmAxisAddCross
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   enum TOOLBOX_MODE mode;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
   mode = get_toolbox_mode();
   CmAxisNewCross(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
@@ -2664,6 +2681,9 @@ CmAxisAddSingle
 {
   struct objlist *obj;
   int id, undo;
+  (void) action;
+  (void) parameter;
+  (void) client_data;
 
   if (Menulock || Globallock)
     return;
@@ -2869,6 +2889,8 @@ axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer user_da
   struct obj_list_data *d;
   struct objlist *obj;
   int sel, num;
+  (void) action;
+  (void) parameter;
 
   if (Menulock || Globallock)
     return;
@@ -3125,6 +3147,7 @@ AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
 static void
 AxisDelCB(struct obj_list_data *data, int id)
 {
+  (void) data;
   AxisDel(id);
 }
 
@@ -3282,6 +3305,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   int sel, num, last_id, i;
   struct obj_list_data *d;
+  (void) widget;
 
   d = (struct obj_list_data *) user_data;
 
@@ -3341,6 +3365,8 @@ static void
 axis_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
   axiswin_delete_axis(d);
@@ -3351,6 +3377,8 @@ AxisWinAxisTop(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
 
@@ -3375,6 +3403,8 @@ AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer client_data
 {
   int sel, num;
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
 
@@ -3399,6 +3429,8 @@ AxisWinAxisUp(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
 
@@ -3423,6 +3455,8 @@ AxisWinAxisDown(GSimpleAction *action, GVariant *parameter, gpointer client_data
 {
   int sel, num;
   struct obj_list_data *d;
+  (void) action;
+  (void) parameter;
 
   d = (struct obj_list_data *) client_data;
 
