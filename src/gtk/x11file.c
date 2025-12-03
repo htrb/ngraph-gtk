@@ -4589,6 +4589,7 @@ FileDialogClose(GtkWidget *w, void *data)
 {
   struct FileDialog *d;
   int ret;
+  (void) w;
 
   d = (struct FileDialog *) data;
 
