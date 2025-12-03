@@ -3752,7 +3752,7 @@ plot_tab_create(struct FileDialog *d)
 }
 
 static void
-FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
+FileDialogSetupCommon(struct FileDialog *d)
 {
   GtkWidget *w, *hbox, *vbox2, *table, *frame, *notebook, *label;
   int row;
@@ -4276,7 +4276,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 
 
-    FileDialogSetupCommon(wi, d);
+    FileDialogSetupCommon(d);
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
@@ -4361,7 +4361,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 
-    FileDialogSetupCommon(wi, d);
+    FileDialogSetupCommon(d);
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
@@ -4435,7 +4435,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("di_ViSion:"), FALSE, i++);
     d->div = w;
 
-    FileDialogSetupCommon(wi, d);
+    FileDialogSetupCommon(d);
 
     gtk_grid_insert_column(GTK_GRID(d->comment_box), 0);
     gtk_grid_attach(GTK_GRID(d->comment_box), table, 0, 0, 1, 1);
@@ -4701,7 +4701,7 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileDialog *) data;
 
   if (makewidget) {
-    FileDialogSetupCommon(wi, d);
+    FileDialogSetupCommon(d);
     gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
   }
   FileDialogDefSetupItem(d);
