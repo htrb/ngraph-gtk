@@ -848,7 +848,7 @@ create_color_button(GtkWidget *win)
   w = gtk_color_button_new();
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(w), FALSE);
   g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
-  g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
+  g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), NULL);
   gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
 
