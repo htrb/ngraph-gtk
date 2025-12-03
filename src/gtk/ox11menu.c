@@ -1925,7 +1925,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
   h[i] = '\0';
 
   str = g_string_new("");
-  g_string_append_printf(str, "%sGTK+\n"
+  g_string_append_printf(str, "%sGTK\n"
 	       "%s compile: %d.%d.%d\n"
 	       "%s  linked: %d.%d.%d\n"
 	       "\n",
