@@ -94,7 +94,7 @@ scrollbar_set_increment(GtkWidget *w, double step, double page)
   GtkAdjustment *adj;
   adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
   gtk_adjustment_set_step_increment(adj, step);
-  gtk_adjustment_set_page_increment(adj, step);
+  gtk_adjustment_set_page_increment(adj, page);
 }
 
 void
