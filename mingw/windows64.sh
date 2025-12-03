@@ -31,6 +31,10 @@ BINFILES="libLerc.dll libbrotlidec.dll libbrotlicommon.dll
         libthai-0.dll libtiff-6.dll libwebp-7.dll libwinpthread-1.dll
         libxml2-16.dll libzstd.dll libgsl-28.dll zlib1.dll
         libngraph-0.dll gspawn-win64-helper-console.exe gdbus.exe
+        libgstgl-1.0-0.dll libgstallocators-1.0-0.dll libgstd3d12-1.0-0.dll
+        libgstreamer-1.0-0.dll libgstplay-1.0-0.dll libgstvideo-1.0-0.dll
+        libgstbase-1.0-0.dll liborc-0.4-0.dll libgsttag-1.0-0.dll
+        libgstpbutils-1.0-0.dll libgstaudio-1.0-0.dll libgstd3dshader-1.0-0.dll
         ngraph.exe ngp2"
 
 
