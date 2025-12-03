@@ -1672,6 +1672,7 @@ setupwindow(GtkApplication *app)
   gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.Win,     1, 1, 1, 1);
 
   vpane2 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_paned_set_wide_handle (GTK_PANED (vpane2), TRUE);
   NgraphApp.Viewer.side_pane2 = vpane2;
 
   w = gtk_notebook_new();
@@ -1692,6 +1693,7 @@ setupwindow(GtkApplication *app)
   NgraphApp.Viewer.side_pane3 = hpane2;
 
   vpane1 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_paned_set_wide_handle (GTK_PANED (vpane1), TRUE);
   gtk_paned_set_start_child(GTK_PANED(vpane1), vpane2);
   gtk_paned_set_end_child(GTK_PANED(vpane1), hpane2);
   NgraphApp.Viewer.side_pane1 = vpane1;
