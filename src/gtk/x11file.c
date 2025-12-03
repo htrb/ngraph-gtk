@@ -4698,6 +4698,7 @@ static void
 FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FileDialog *d;
+  (void) wi;
 
   d = (struct FileDialog *) data;
 
@@ -4713,6 +4714,7 @@ FileDefDialogClose(GtkWidget *w, void *data)
 {
   struct FileDialog *d;
   int ret;
+  (void) w;
 
   d = (struct FileDialog *) data;
 
