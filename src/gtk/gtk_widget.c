@@ -834,7 +834,7 @@ show_color_dialog(GtkColorChooser *btn)
 }
 
 GtkWidget *
-create_color_button(GtkWidget *win)
+create_color_button(void)
 {
   GtkGesture *gesture;
   GtkWidget *w;

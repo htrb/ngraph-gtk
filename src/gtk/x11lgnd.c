@@ -1239,7 +1239,7 @@ color_setup(struct LegendDialog *d, GtkWidget *table, int i)
 {
   GtkWidget *w;
 
-  w = create_color_button(d->widget);
+  w = create_color_button();
   d->color = w;
   add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
@@ -1249,7 +1249,7 @@ color2_setup(struct LegendDialog *d, GtkWidget *table, int i)
 {
   GtkWidget *w;
 
-  w = create_color_button(d->widget);
+  w = create_color_button();
   d->color2 = w;
   add_widget_to_table(table, w, _("_Color2:"), FALSE, i);
 }
@@ -1259,7 +1259,7 @@ fill_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
 {
   GtkWidget *w;
 
-  w = create_color_button(d->widget);
+  w = create_color_button();
   d->fill_color = w;
   add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
@@ -1269,7 +1269,7 @@ stroke_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
 {
   GtkWidget *w;
 
-  w = create_color_button(d->widget);
+  w = create_color_button();
   d->stroke_color = w;
   add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }

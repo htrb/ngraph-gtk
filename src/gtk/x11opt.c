@@ -1659,7 +1659,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Grid:"), FALSE, i++);
     d->grid = w;
 
-    w = create_color_button(wi);
+    w = create_color_button();
     add_widget_to_table(table, w, _("_Background Color:"), FALSE, i++);
     d->bgcol = w;
 

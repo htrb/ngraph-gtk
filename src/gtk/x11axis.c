@@ -339,7 +339,7 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     table = gtk_grid_new();
 
     j = 0;
-    w = create_color_button(wi);
+    w = create_color_button();
     add_widget_to_table(table, w, _("_Color:"), FALSE, j++);
     d->color = w;
 
@@ -352,7 +352,7 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     g_signal_connect(w, "toggled", G_CALLBACK(bg_button_toggled), d);
     d->background = w;
 
-    w = create_color_button(wi);
+    w = create_color_button();
     add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
     d->bcolor = w;
 
@@ -1465,7 +1465,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Line Width:"), FALSE, i++);
   d->width = w;
 
-  w = create_color_button(wi);
+  w = create_color_button();
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
 
@@ -1655,7 +1655,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table_sub(table, w, _("_Style:"), TRUE, 0, 3, 4, j++);
   d->style = w;
 
-  w = create_color_button(wi);
+  w = create_color_button();
   add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, 4, j++);
   d->color = w;
 
@@ -2128,7 +2128,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   add_widget_to_table(table, btn_box, "", FALSE, i++);
 
-  w = create_color_button(wi);
+  w = create_color_button();
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
 

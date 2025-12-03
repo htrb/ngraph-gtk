@@ -420,7 +420,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
     d->join = w;
 
-    w = create_color_button(wi);
+    w = create_color_button();
     add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
     d->color = w;
 

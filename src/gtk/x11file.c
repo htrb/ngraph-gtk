@@ -3678,7 +3678,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   table = gtk_grid_new();
 
   i = 0;
-  w = create_color_button(parent);
+  w = create_color_button();
   add_widget_to_table(table, w, _("_Color 1:"), FALSE, i++);
   d->col1 = w;
 
@@ -3686,7 +3686,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Alpha 1:"), FALSE, i++);
   d->alpha1 = w;
 
-  w = create_color_button(parent);
+  w = create_color_button();
   add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
   d->col2 = w;
 

@@ -2035,7 +2035,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_append(GTK_BOX(box), w);
   Widgets.line_style.widget = w;
 
-  w = create_color_button(NULL);
+  w = create_color_button();
   color.red = color.green = color.blue = 0;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
@@ -2044,7 +2044,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_name(Widgets.color1.widget, "StrokeColorButton");
   g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
 
-  w = create_color_button(NULL);
+  w = create_color_button();
   color.red = color.green = color.blue = 1;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
