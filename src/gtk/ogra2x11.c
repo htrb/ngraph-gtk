@@ -495,7 +495,7 @@ gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 }
 
 static double
-get_color(const struct gtklocal *gtklocal, int argc, char **argv)
+get_color(int argc, char **argv)
 {
   int c;
 
@@ -521,13 +521,13 @@ gtkbg(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
   field = argv[1];
   switch(field[1]) {
   case 'R':
-    gtklocal->bg_r = get_color(gtklocal, argc, argv);
+    gtklocal->bg_r = get_color(argc, argv);
     break;
   case 'G':
-    gtklocal->bg_g = get_color(gtklocal, argc, argv);
+    gtklocal->bg_g = get_color(argc, argv);
     break;
   case 'B':
-    gtklocal->bg_b = get_color(gtklocal, argc, argv);
+    gtklocal->bg_b = get_color(argc, argv);
     break;
   }
   return 0;
