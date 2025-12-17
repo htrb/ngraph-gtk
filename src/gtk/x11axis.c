@@ -677,6 +677,7 @@ static void
 SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SectionDialog *d;
+  (void) wi;
 
   d = (struct SectionDialog *) data;
 
@@ -892,6 +893,7 @@ static void
 CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct CrossDialog *d;
+  (void) wi;
 
   d = (struct CrossDialog *) data;
   if (makewidget) {
@@ -1033,6 +1035,7 @@ static void
 ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct ZoomDialog *d;
+  (void) wi;
 
   d = (struct ZoomDialog *) data;
   if (makewidget) {
@@ -1439,7 +1442,7 @@ baseline_tab_copy_clicked(struct AxisDialog *d)
 }
 
 static GtkWidget *
-baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
+baseline_tab_create(struct AxisDialog *dd)
 {
   GtkWidget *w, *hbox, *vbox, *frame, *table;
   struct AxisBase *d;
@@ -1615,7 +1618,7 @@ gauge_tab_copy_clicked(struct AxisDialog *d)
 }
 
 static GtkWidget *
-gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
+gauge_tab_create(struct AxisDialog *dd)
 {
   GtkWidget *parent_box, *w, *vbox, *frame, *table;
   struct AxisGauge *d;
@@ -2090,7 +2093,7 @@ font_tab_copy_clicked(struct AxisDialog *d)
 }
 
 static GtkWidget *
-font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
+font_tab_create(struct AxisDialog *dd)
 {
   GtkWidget *w, *vbox, *table, *frame, *btn_box;
   struct AxisFont *d;
@@ -2284,11 +2287,11 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Scale"));
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-    w = baseline_tab_create(wi, d);
+    w = baseline_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Baseline"));
     d->base.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-    w = gauge_tab_create(wi, d);
+    w = gauge_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Gauge"));
     d->gauge.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
@@ -2296,7 +2299,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Numbering"));
     d->numbering.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-    w = font_tab_create(wi, d);
+    w = font_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Font"));
     d->font.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
