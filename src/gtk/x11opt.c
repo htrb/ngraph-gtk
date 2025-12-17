@@ -289,6 +289,7 @@ static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SetScriptDialog *d;
+  (void) wi;
 
   d = (struct SetScriptDialog *) data;
   if (makewidget) {
@@ -674,6 +675,7 @@ static void
 FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FontSettingDialog *d;
+  (void) wi;
 
   d = (struct FontSettingDialog *) data;
 
@@ -1179,6 +1181,7 @@ static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct MiscDialog *d;
+  (void) wi;
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
@@ -1530,6 +1533,7 @@ static void
 ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct ExViewerDialog *d;
+  (void) wi;
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
