@@ -228,7 +228,7 @@ set_widget_visibility_with_label(GtkWidget *w, gboolean state)
 }
 
 GtkWidget *
-add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int col_max, int n)
+add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int n)
 {
   GtkWidget *label;
 
@@ -260,7 +260,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int e
 GtkWidget *
 add_widget_to_table(GtkWidget *table, GtkWidget *w, const char *title, int expand, int n)
 {
-  return add_widget_to_table_sub(table, w, title, expand, 0, (title) ? 1 : 2, 2, n);
+  return add_widget_to_table_sub(table, w, title, expand, 0, (title) ? 1 : 2, n);
 }
 
 GtkWidget *

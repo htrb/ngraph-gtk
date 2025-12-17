@@ -271,13 +271,13 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int insta
 
   snprintf(buf, sizeof(buf), _("_Style %d:"), n + 1);
   w = combo_box_entry_create();
-  add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, 4, j);
+  add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, j);
   d->style[n] = w;
 
   if (instance) {
     snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-    add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, 4, j);
+    add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, j);
   } else {
     w = NULL;
   }
@@ -1655,11 +1655,11 @@ gauge_tab_create(struct AxisDialog *dd)
 
   j = 0;
   w = combo_box_entry_create();
-  add_widget_to_table_sub(table, w, _("_Style:"), TRUE, 0, 3, 4, j++);
+  add_widget_to_table_sub(table, w, _("_Style:"), TRUE, 0, 3, j++);
   d->style = w;
 
   w = create_color_button();
-  add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, 4, j++);
+  add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, j++);
   d->color = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ALPHA, FALSE, TRUE);
@@ -1669,12 +1669,12 @@ gauge_tab_create(struct AxisDialog *dd)
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
     snprintf(buf, sizeof(buf), _("_Width %d:"), i + 1);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-    add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, 4, j);
+    add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, j);
     d->width[i] = w;
 
     snprintf(buf, sizeof(buf), _("_Length %d:"), i + 1);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-    add_widget_to_table_sub(table, w, buf, TRUE, 2, 1, 4, j++);
+    add_widget_to_table_sub(table, w, buf, TRUE, 2, 1, j++);
     d->length[i] = w;
   }
 

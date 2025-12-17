@@ -236,7 +236,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_check_button_new_with_mnemonic(_("L_andscape"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(w), GTK_CHECK_BUTTON(group));
-    add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, 1, i++);
+    add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, i++);
     d->landscape = w;
     g_signal_connect_swapped(w, "toggled", G_CALLBACK(PageDialogOrientation), d);
 

@@ -1670,17 +1670,17 @@ create_user_fit_frame(struct FitDialog *d)
 
   j = 0;
   w = create_text_entry(FALSE, TRUE);
-  add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
+  add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, j++);
   entry_completion_set_entry(NgraphApp.fit_list, w);
   g_signal_connect_swapped(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table_sub(table, w, _("_Converge (%):"), TRUE, 0, 1, 3, j);
+  add_widget_to_table_sub(table, w, _("_Converge (%):"), TRUE, 0, 1, j);
   d->converge = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Derivatives"));
-  add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, 3, j++);
+  add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, j++);
   d->derivatives = w;
 
   gtk_box_append(GTK_BOX(vbox), table);
@@ -1694,12 +1694,12 @@ create_user_fit_frame(struct FitDialog *d)
     dd[sizeof(dd) - 4] += i;
 
     w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table_sub(table, w, p, TRUE, 0, 1, 4, j);
+    add_widget_to_table_sub(table, w, p, TRUE, 0, 1, j);
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
     entry_completion_set_entry(NgraphApp.fit_list, w);
-    add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
+    add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, j++);
     d->d[i] = w;
   }
 
@@ -1805,7 +1805,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = combo_box_create();
-    add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
+    add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 0);
     d->type = w;
     enumlist = (char **) chkobjarglist(d->Obj, "type");
     for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
@@ -1813,7 +1813,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     w = combo_box_create();
-    add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
+    add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 0);
     d->dim = w;
     for (i = 0; i < FIT_PARM_NUM - 1; i++) {
       snprintf(mes, sizeof(mes), "%d", i + 1);
@@ -1821,12 +1821,12 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     w = gtk_label_new("");
-    add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 5, 0);
+    add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 0);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     d->func_label = w;
 
     w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
+    add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 1);
     d->weight = w;
 
     gtk_box_append(GTK_BOX(vbox), table);
@@ -2779,7 +2779,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, title);
   g_signal_connect_swapped(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
 
-  add_widget_to_table_sub(grid, tab, NULL, TRUE, 0, 4, 2, pos++);
+  add_widget_to_table_sub(grid, tab, NULL, TRUE, 0, 4, pos++);
   return pos;
 }
 
@@ -2799,7 +2799,7 @@ math_tab_create(struct FileDialog *d)
 
   w = combo_box_create();
   gtk_widget_set_hexpand(w, TRUE);
-  add_widget_to_table_sub(table, w, _("_Averaging type:"), FALSE, 2, 1, 2, i++);
+  add_widget_to_table_sub(table, w, _("_Averaging type:"), FALSE, 2, 1, i++);
   d->math.averaging_type = w;
 
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
