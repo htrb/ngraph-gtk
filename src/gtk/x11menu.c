@@ -1584,16 +1584,6 @@ create_object_tabs(void)
   }
 }
 
-static void
-clipboard_changed(GdkClipboard* self,  gpointer user_data)
-{
-  const struct Viewer *d;
-
-  d = (struct Viewer *) user_data;
-
-  set_focus_sensitivity(d);
-}
-
 #define USE_APP_HEADER_BAR 0
 static void
 setup_toolbar(GtkWidget *window)
@@ -2467,7 +2457,7 @@ create_toplevel_window(void)
     NgraphApp.Viewer.popup = popup;
   }
   clip = gtk_widget_get_clipboard(TopLevel);
-  g_signal_connect(clip, "changed", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
+  g_signal_connect_swapped(clip, "changed", G_CALLBACK(set_focus_sensitivity), &NgraphApp.Viewer);
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
