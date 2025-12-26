@@ -198,6 +198,7 @@ static void
 PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PageDialog *d;
+  (void) wi;
 
   d = (struct PageDialog *) data;
 
@@ -639,6 +640,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct SwitchDialog *d;
   int num2, num1, j, k, *obj_check;
   char **buf;
+  (void) wi;
 
   d = (struct SwitchDialog *) data;
 
