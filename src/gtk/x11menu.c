@@ -1093,6 +1093,9 @@ term_signal_handler(int sig)
 static gboolean
 CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
+  (void) w;
+  (void) event;
+  (void) user_data;
   CmGraphQuit();
 
   return TRUE;
