@@ -1585,16 +1585,6 @@ create_object_tabs(void)
 }
 
 static void
-edit_menu_shown(GtkWidget *w, gpointer user_data)
-{
-  const struct Viewer *d;
-
-  d = (struct Viewer *) user_data;
-
-  set_focus_sensitivity(d);
-}
-
-static void
 clipboard_changed(GdkClipboard* self,  gpointer user_data)
 {
   const struct Viewer *d;
@@ -1647,7 +1637,7 @@ setupwindow(GtkApplication *app)
   gtk_box_append(GTK_BOX(hbox), PToolbar);
 
   if (NgraphApp.Viewer.popup) {
-    g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+    g_signal_connect_swapped(NgraphApp.Viewer.popup, "show", G_CALLBACK(set_focus_sensitivity), &NgraphApp.Viewer);
   }
 
   NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
