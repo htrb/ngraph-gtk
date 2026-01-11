@@ -63,6 +63,14 @@
     <name>Hiroyuki Ito</name>
   </developer>
   <releases>
+    <release version="6.09.11" date="2026-01-11">
+      <description>
+	<ul>
+	  <li> Fixed a bug where titles were not displaying correctly in some dialogs.</li>
+	  <li> Fixed a bug where coordinate detection when clicking in "Evaluate Data" was overly strict.</li>
+	</ul>
+      </description>
+    </release>
     <release version="6.09.10" date="2025-09-15">
       <description>
 	<ul>
