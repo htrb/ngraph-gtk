@@ -51,7 +51,9 @@
 #define __VERSION__ ""
 #endif
 
-#define COMPILER_NAME (CCNAME " " __VERSION__)
+#define STRING(str) #str
+#define MACRO2STRING(str) STRING(str)
+#define COMPILER_NAME (MACRO2STRING(CCNAME) " " __VERSION__)
 
 #define MARK_TYPE_NUM 90
 
