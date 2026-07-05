@@ -2378,6 +2378,8 @@ create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallba
       gtk_box_append(GTK_BOX(box), menu);
       gtk_widget_add_css_class(menu, MENUBUTTON_CLASS);
       gtk_box_append(GTK_BOX(toolbar), box);
+
+      set_message_text(menu, gtk_widget_get_tooltip_text (menu));
     } else {
       gtk_box_append(GTK_BOX(toolbar), widget);
     }
