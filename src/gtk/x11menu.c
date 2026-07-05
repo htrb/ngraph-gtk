@@ -1390,13 +1390,21 @@ tool_button_leave_cb(GtkEventControllerMotion *self, gpointer data)
 }
 
 static GtkWidget *
-create_message_box(GtkWidget **label1, GtkWidget **label2)
+create_message_box(GtkWidget **message, GtkWidget **label1, GtkWidget **label2)
 {
   GtkWidget *frame, *w, *hbox;
 
   frame = gtk_frame_new(NULL);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  w = gtk_label_new(NULL);
+  gtk_widget_set_hexpand (w, TRUE);
+  gtk_widget_set_margin_top (w, 4);
+  gtk_widget_set_margin_bottom (w, 4);
+  gtk_widget_set_margin_start (w, 8);
+  gtk_widget_set_halign(w, GTK_ALIGN_START);
+  gtk_box_append(GTK_BOX(hbox), w);
+  *message = w;
 
   w = gtk_label_new(NULL);
   gtk_widget_set_halign(w, GTK_ALIGN_END);
@@ -1697,14 +1705,12 @@ setupwindow(GtkApplication *app)
   gtk_box_append(GTK_BOX(hbox2), hpane1);
   gtk_box_append(GTK_BOX(vbox2), hbox2);
 
-  NgraphApp.Message = gtk_statusbar_new();
+  NgraphApp.Message = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_hexpand(NgraphApp.Message, TRUE);
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_box_append(GTK_BOX(hbox), NgraphApp.Message);
-  gtk_box_append(GTK_BOX(hbox), create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos));
+  gtk_box_append(GTK_BOX(NgraphApp.Message), create_message_box(&NgraphApp.Message1, &NgraphApp.Message_extra, &NgraphApp.Message_pos));
   gtk_box_append(GTK_BOX(vbox2), hbox);
-
-  NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
 
   set_axis_undo_button_sensitivity(FALSE);
 
@@ -2732,19 +2738,19 @@ ChangePage(void)
 }
 
 static void
-SetStatusBarSub(const char *mes, guint id)
+SetStatusBarSub(const char *mes, GtkWidget *label)
 {
 
   if (NgraphApp.Message) {
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), id, mes);
+    gtk_label_set_text(GTK_LABEL(label), mes);
   }
 }
 
 static void
-ResetStatusBarSub(guint id)
+ResetStatusBarSub(GtkWidget *label)
 {
   if (NgraphApp.Message) {
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), id);
+    gtk_label_set_text(GTK_LABEL(label), "");
   }
 }
 
