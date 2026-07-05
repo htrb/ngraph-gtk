@@ -2259,6 +2259,22 @@ draw_notify(int notify)
   gtk_widget_queue_draw(DrawButton);
 }
 
+static void
+set_message_text(GtkWidget *widget, const char *caption)
+{
+  GtkEventController *ev;
+  ev = gtk_event_controller_motion_new();
+  g_signal_connect(ev,
+		   "enter",
+		   G_CALLBACK(tool_button_enter_cb),
+		   (gpointer) _(caption));
+
+  g_signal_connect(ev,
+		   "leave",
+		   G_CALLBACK(tool_button_leave_cb), NULL);
+  gtk_widget_add_controller(widget, ev);
+}
+
 static GtkWidget *
 create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb)
 {
@@ -2343,17 +2359,7 @@ create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallba
     }
 
     if (item[i].caption) {
-      GtkEventController *ev;
-      ev = gtk_event_controller_motion_new();
-      g_signal_connect(ev,
-		       "enter",
-		       G_CALLBACK(tool_button_enter_cb),
-		       (gpointer) _(item[i].caption));
-
-      g_signal_connect(ev,
-		       "leave",
-		       G_CALLBACK(tool_button_leave_cb), NULL);
-      gtk_widget_add_controller(widget, ev);
+      set_message_text(widget, item[i].caption);
     }
 
     if (item[i].button >= PointerModeOffset) {
