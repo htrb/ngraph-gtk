@@ -4065,7 +4065,12 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   GListStore *model;
   char *text[MAX_COLS + 2];
 
-  if (! d->initialized || s == NULL || max_lines < 1) {
+  if (! d->initialized) {
+    return;
+  }
+
+  columnview_clear(d->comment_table);
+  if (s == NULL || max_lines < 1) {
     return;
   }
 
