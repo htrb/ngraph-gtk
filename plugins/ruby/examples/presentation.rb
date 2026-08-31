@@ -9,6 +9,8 @@ class Presentation
   TITLE_LINE = RGBA.new(  0, 204, 129, 255)
   ENUM_COLOR = [  0,  78, 162].inject("") {|r, v| r + sprintf("%02x", v)}
   ENUM_CHAR  = "✵➢✲✔".chars
+  ENUM_NUMBER = '1a'
+  ENUM_POSTFIX = '. '
   LINE_SPACE = "%N{4}"
 
   MODE = [
@@ -21,6 +23,7 @@ class Presentation
     :TEXT,
     :QUOTE,
     :ENUM,
+    :SUB_ENUM,
     :TITLE,
     :COMMAND,
     :SLEEP,
@@ -225,11 +228,24 @@ class Presentation
     list_add_sub(str, ofst_x, @list_text_size, nil, false, "Sans-serif", 0x660000)
   end
 
+  def enum_string(nth, char)
+    nth.times.inject(char) { |r, _i| r.succ }
+  end
+
   def enum_add(str)
     ofst_x = @ofst_x
+    dot_char = ENUM_NUMBER[0]
+    dot_char = "#{enum_string(@enum, dot_char)}#{ENUM_POSTFIX}"
     @enum += 1
-    dot_char = "#{@enum}. "
     list_add_sub(str, ofst_x, @list_text_size, dot_char)
+  end
+
+  def sub_enum_add(str)
+    ofst_x = @ofst_x + @list_text_size / 2
+    dot_char = ENUM_NUMBER[1]
+    dot_char = "#{enum_string(@enum, dot_char)}#{ENUM_POSTFIX}"
+    @enum += 1
+    list_add_sub(str, ofst_x, @sub_list_text_size, dot_char)
   end
 
   def create_title_path
@@ -361,6 +377,8 @@ class Presentation
       quote_add(arg)
     when ENUM
       enum_add(arg)
+    when SUB_ENUM
+      sub_enum_add(arg)
     when TITLE
       title_add(arg)
     when VERB_INCLUDE
@@ -509,6 +527,9 @@ class Presentation
         page_item += 1
       when "@menu"
         show_menu
+        page_item += 1
+      when "@sub_enum"
+        mode = SUB_ENUM
         page_item += 1
       when "@pause"
         if (@pdf_out == PDF_EXPAND)
