@@ -135,9 +135,12 @@ combo_box_entry_set_width(GtkWidget *cbox, int width)
 }
 
 void
-combo_box_append_text(GtkWidget *cbox, const char *str)
+combo_box_append_text(GtkWidget *cbox, const char *ptr)
 {
   GtkStringList *list;
+  const char *str;
+
+  str = (ptr) ? ptr : "------";
   if (G_TYPE_CHECK_INSTANCE_TYPE(cbox, GTK_TYPE_ENTRY)) {
     list = get_string_list(cbox);
     gtk_string_list_append (list, str);
