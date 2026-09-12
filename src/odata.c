@@ -2145,6 +2145,48 @@ file_filename(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 static int
+file_sheet_name(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  const char *name;
+  GString *str;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  str = math_expression_get_string_variable_from_argument(exp, 0);
+  if (str == NULL) {
+    return 1;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    return 1;
+  }
+
+  if (fp->src != DATA_SOURCE_SPREADSHEET) {
+    return 1;
+  }
+
+  if (fp->spreadsheet == NULL) {
+    return 1;
+  }
+
+  rval->type = MATH_VALUE_NORMAL;
+
+  name = spreadsheet_get_name (fp->spreadsheet);
+  if (name == NULL) {
+    g_string_assign(str, "");
+    return 0;
+  }
+
+  g_string_assign(str, name);
+  rval->val = g_utf8_strlen (name, -1);
+
+  return 0;
+}
+
+static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
@@ -2230,6 +2272,10 @@ static enum MATH_FUNCTION_ARG_TYPE on_end_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_PROC,  /* 0: procedure */
 };
 
+static enum MATH_FUNCTION_ARG_TYPE sheetname_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 0: string variable */
+};
+
 static struct funcs FileFunc[] = {
   {"MTIME",     {0, 1, MATH_FUNCTION_TYPE_NORMAL, file_mtime,    NULL, NULL, NULL, NULL}},
   {"OBJ_ALPHA", {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_objalpha, NULL, NULL, NULL, NULL}},
@@ -2260,6 +2306,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_GET",   {G_N_ELEMENTS(text_obj_get_arg_type),  1, MATH_FUNCTION_TYPE_NORMAL, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {G_N_ELEMENTS(string_column_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
   {"FILENAME",       {G_N_ELEMENTS(filename_arg_type),      1, MATH_FUNCTION_TYPE_NORMAL, file_filename, filename_arg_type, NULL, NULL, NULL}},
+  {"SHEET_NAME",     {G_N_ELEMENTS(sheetname_arg_type),     1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_name, sheetname_arg_type, NULL, NULL, NULL}},
   {"ON_END",         {G_N_ELEMENTS(on_end_arg_type),        1, MATH_FUNCTION_TYPE_CALLBACK, file_on_end, on_end_arg_type, NULL, NULL, NULL}},
 };
 
