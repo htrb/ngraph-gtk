@@ -3103,6 +3103,7 @@ plot_tab_setup_item(struct FileDialog *d, int id)
   int a;
 
   SetWidgetFromObjField(d->type, d->Obj, id, "type");
+  combo_box_set_width(d->type);
 
   SetWidgetFromObjField(d->curve, d->Obj, id, "interpolation");
 
