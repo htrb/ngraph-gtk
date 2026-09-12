@@ -4903,29 +4903,29 @@ get_data_from_file(struct f2ddata *fp, int maxdim, MathValue *gdata)
   char *buf;
   int i, rcode;
 
-    rcode = fgetline(fp->fd, &buf);
-    if (rcode == 1 || rcode == -1) {
-      fp->eof = TRUE;
-      return rcode;
-    }
+  rcode = fgetline(fp->fd, &buf);
+  if (rcode == 1 || rcode == -1) {
+    fp->eof = TRUE;
+    return rcode;
+  }
 
-    fp->line++;
+  fp->line++;
 
-    clear_line_array(fp);
-    fp->line_array.line = g_strdup(buf);
-    if (fp->use_column_string_array) {
-      set_column_string_array(fp);
+  clear_line_array(fp);
+  fp->line_array.line = g_strdup(buf);
+  if (fp->use_column_string_array) {
+    set_column_string_array(fp);
+  }
+  for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
+  rcode = 2;
+  if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
+    rcode = getdataarray(fp, buf, maxdim, gdata);
+    if (rcode != -1) {
+      rcode = 0;
     }
-    for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
-    rcode = 2;
-    if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
-      rcode = getdataarray(fp, buf, maxdim, gdata);
-      if (rcode != -1) {
-	rcode = 0;
-      }
-    }
+  }
 
-    g_free(buf);
+  g_free(buf);
 
   return rcode;
 }
@@ -4979,24 +4979,24 @@ get_data_from_array(struct f2ddata *fp, int maxdim, MathValue *gdata)
   nonum.val = 0;
   nonum.type = MATH_VALUE_NONUM;
 
-    if (fp->line >= fp->array_data.data_num) {
-      fp->eof = TRUE;
-      return 1;
-    }
-    n = (fp->array_data.col_num > fp->maxdim) ? fp->maxdim : fp->array_data.col_num;
-    fp->count++;
-    gdata[0].val = fp->count;
-    gdata[0].type = MATH_VALUE_NORMAL;
-    for (i = 0; i < n; i++) {
-      array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
-    }
-    for (i = n; i < fp->maxdim; i++) {
-      gdata[i + 1] = nonum;
-    }
+  if (fp->line >= fp->array_data.data_num) {
+    fp->eof = TRUE;
+    return 1;
+  }
+  n = (fp->array_data.col_num > fp->maxdim) ? fp->maxdim : fp->array_data.col_num;
+  fp->count++;
+  gdata[0].val = fp->count;
+  gdata[0].type = MATH_VALUE_NORMAL;
+  for (i = 0; i < n; i++) {
+    array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
+  }
+  for (i = n; i < fp->maxdim; i++) {
+    gdata[i + 1] = nonum;
+  }
 
-    set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
-    set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
-    fp->line++;
+  set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
+  set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
+  fp->line++;
 
   return 0;
 }
@@ -5011,25 +5011,25 @@ get_data_from_range(struct f2ddata *fp, int maxdim, MathValue *gdata)
   nonum.val = 0;
   nonum.type = MATH_VALUE_NONUM;
 
-    if (fp->line > fp->range_div) {
-      fp->eof = TRUE;
-      return 1;
-    }
-    fp->count++;
-    gdata[0].val = fp->count;
-    gdata[0].type = MATH_VALUE_NORMAL;
-    x = fp->range_min + (fp->range_max - fp->range_min) / fp->range_div * fp->line;
-    gdata[1].val = x;
-    gdata[1].type = MATH_VALUE_NORMAL;
-    gdata[2].val = x;
-    gdata[2].type = MATH_VALUE_NORMAL;
-    for (i = 3; i <= fp->maxdim; i++) {
-      gdata[i] = nonum;
-    }
+  if (fp->line > fp->range_div) {
+    fp->eof = TRUE;
+    return 1;
+  }
+  fp->count++;
+  gdata[0].val = fp->count;
+  gdata[0].type = MATH_VALUE_NORMAL;
+  x = fp->range_min + (fp->range_max - fp->range_min) / fp->range_div * fp->line;
+  gdata[1].val = x;
+  gdata[1].type = MATH_VALUE_NORMAL;
+  gdata[2].val = x;
+  gdata[2].type = MATH_VALUE_NORMAL;
+  for (i = 3; i <= fp->maxdim; i++) {
+    gdata[i] = nonum;
+  }
 
-    fp->line++;
-    set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
-    set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
+  fp->line++;
+  set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
+  set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
 
   return 0;
 }
