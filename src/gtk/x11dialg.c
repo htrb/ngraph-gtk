@@ -1188,13 +1188,15 @@ static void
 SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int count, a;
+  enum ngraph_object_field_type type;
 
   if (w == NULL) {
     return;
   }
 
+  type = chkobjfieldtype(Obj, field);
   count = combo_box_get_num(w);
-  if (count == 0) {
+  if (type == NENUM && count == 0) {
     char **enumlist;
     int j;
     enumlist = (char **) chkobjarglist(Obj, field);
