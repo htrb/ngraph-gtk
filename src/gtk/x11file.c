@@ -4243,7 +4243,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     }
     text[j + 1] = NULL;
     if (is_spreadsheet) {
-      v = CHECK_VISIBILITY(i, skip, step, "", '\0');
+      v = CHECK_VISIBILITY_ARRAY(i, skip, step);
     } else {
       int c;
       str = arraynget_str(lines + i, 0);
