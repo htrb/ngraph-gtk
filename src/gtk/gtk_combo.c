@@ -18,6 +18,35 @@ combo_box_create(void)
   return gtk_drop_down_new(G_LIST_MODEL(list), NULL);
 }
 
+void
+combo_box_set_width(GtkWidget *combo)
+{
+  int max_width = 0;
+  int i, n, margin;
+  GListModel *list = gtk_drop_down_get_model(GTK_DROP_DOWN (combo));
+  PangoLayout *layout = gtk_widget_create_pango_layout(combo, NULL);
+
+  if (! list) {
+    return;
+  }
+
+  n = g_list_model_get_n_items(G_LIST_MODEL(list));
+  for (i = 0; i < n; i++) {
+    int w;
+    const char *text = gtk_string_list_get_string(GTK_STRING_LIST (list), i);
+    pango_layout_set_text(layout, text, -1);
+    pango_layout_get_pixel_size(layout, &w, NULL);
+    if (w > max_width) {
+      max_width = w;
+    }
+  }
+  margin = (n > 12) ? 40 : 20;
+  margin += gtk_drop_down_get_show_arrow (GTK_DROP_DOWN (combo)) ? 20 : 0;
+  gtk_widget_set_size_request(combo, max_width + margin, -1); // 余白分加算
+  g_object_unref(layout);
+}
+
+
 static void
 select_item_cb(GtkListView *self, guint position, gpointer user_data)
 {
