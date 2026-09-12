@@ -52,6 +52,7 @@
 #include "odata.h"
 #include "axis.h"
 #include "nconfig.h"
+#include "spreadsheet.h"
 
 #include "math/math_equation.h"
 
@@ -363,6 +364,8 @@ struct f2ddata {
   int id,src, GC;
   char *file;
   FILE *fd;
+  struct spreadsheet *spreadsheet;
+  int worksheet_index, worksheet_max_row, worksheet_max_column;
   int x,y;
   enum {TYPE_NORMAL, TYPE_DIAGONAL, TYPE_ERR_X, TYPE_ERR_Y} type;
 /*
@@ -2541,6 +2544,58 @@ add_file_prm(struct f2ddata *fp, MathEquationParametar *prm)
   }
 }
 
+void
+odata_worksheet_name_clear (struct objlist *obj, N_VALUE *inst)
+{
+  char *name = NULL;
+
+  if (obj == NULL) {
+    return;
+  }
+
+  if (_getobj(obj, "worksheet_name", inst, &name)) {
+    return;
+  }
+
+  if (name == NULL) {
+    return;
+  }
+
+  g_free (name);
+  name = NULL;
+  _putobj(obj, "worksheet_name", inst, &name);
+}
+
+int
+odata_worksheet_name_set (struct objlist *obj, N_VALUE *inst, struct spreadsheet *spreadsheet, int index)
+{
+  int r;
+  char *name = NULL;
+  const char *str;
+
+  if (obj == NULL || spreadsheet == NULL) {
+    return 1;
+  }
+
+  r = spreadsheet_select_sheet (spreadsheet, index);
+  if (r) {
+    return r;
+  }
+
+  odata_worksheet_name_clear (obj, inst);
+  str = spreadsheet_get_name (spreadsheet);
+  if (str == NULL) {
+    return 0;
+  }
+
+  name = g_strdup (str);
+  if (_putobj(obj, "worksheet_name", inst, name)) {
+    g_free (name);
+    return 1;
+  }
+  return 0;
+}
+
 static struct f2ddata *
 opendata(struct objlist *obj,N_VALUE *inst,
 	 struct f2dlocal *f2dlocal,int axis,int raw)
@@ -2561,7 +2616,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int dataclip;
   struct stat stat_buf;
   struct axis_prm ax_prm, ay_prm;
-  int div;
+  int div, sheet;
   double min, max;
 
   _getobj(obj, "source", inst, &src);
@@ -2573,6 +2628,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"csv",inst,&csv);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
+  _getobj(obj,"worksheet",inst,&sheet);
 
   /* for array source only */
   _getobj(obj,"array",inst,&array);
@@ -2611,6 +2667,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
 
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     if (file==NULL) {
       error(obj,ERRFILE);
       return NULL;
@@ -2662,13 +2719,15 @@ opendata(struct objlist *obj,N_VALUE *inst,
     ax_prm.type = AXIS_TYPE_LINEAR;
     ay_prm.type = AXIS_TYPE_LINEAR;
   }
-  if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
+  if ((fp=g_malloc0(sizeof(struct f2ddata)))==NULL) return NULL;
 
   fp->local = f2dlocal;
   fp->GC = -1;
   fp->src = src;
+  fp->worksheet_index = sheet;
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     fp->file=file;
     if ((fp->fd=nfopen(file,"rt"))==NULL) {
       error2(obj,ERROPEN,file);
@@ -2687,6 +2746,26 @@ opendata(struct objlist *obj,N_VALUE *inst,
       error(obj,ERRFILE);
       return NULL;
     }
+
+    if (src == DATA_SOURCE_SPREADSHEET) {
+      fclose(fp->fd);
+      fp->fd = NULL;
+      fp->spreadsheet = spreadsheet_open(file);
+      if (fp->spreadsheet == NULL) {
+	error2(obj, ERROPEN, file);
+	g_free(fp);
+	return NULL;
+      }
+      if (odata_worksheet_name_set (obj, inst, fp->spreadsheet, fp->worksheet_index)) {
+	spreadsheet_close (&fp->spreadsheet);
+	g_free(fp);
+	return NULL;
+      }
+      fp->worksheet_max_row = spreadsheet_max_row (fp->spreadsheet);
+      fp->worksheet_max_column = spreadsheet_max_column (fp->spreadsheet);
+    } else {
+      fp->spreadsheet = NULL;
+    }
     break;
   case DATA_SOURCE_ARRAY:
     open_array(array, &fp->array_data);
@@ -2697,11 +2776,13 @@ opendata(struct objlist *obj,N_VALUE *inst,
     }
     fp->file = NULL;
     fp->fd = NULL;
+    fp->spreadsheet = NULL;
     fp->mtime = 1;
     break;
   case DATA_SOURCE_RANGE:
     fp->file = NULL;
     fp->fd = NULL;
+    fp->spreadsheet = NULL;
     fp->range_min = min;
     fp->range_max = max;
     fp->range_div = div;
@@ -2964,6 +3045,9 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   if (fp->fd) {
     fclose(fp->fd);
     fp->fd = NULL;
+  }
+  if (fp->spreadsheet) {
+    spreadsheet_close (&fp->spreadsheet);
   }
   if ((inst=chkobjinst(fp->obj,fp->id))!=NULL)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
@@ -3375,7 +3459,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int x,y,rstep,final,msize,r2,g2,b2,a2,lwidth,miter,src,div;
   char *s1,*s2,*s3,*s4;
   struct f2dlocal *f2dlocal;
-  int stat,minmaxstat,dataclip,num,ljoin;
+  int stat,minmaxstat,dataclip,num,ljoin,worksheet;
   double min,max;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -3399,7 +3483,9 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   div = 512;
   min = 1;
   max = 10;
+  worksheet = 0;
   if (_putobj(obj,"source",inst,&src)) return 1;
+  if (_putobj(obj,"worksheet",inst,&worksheet)) return 1;
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"read_step",inst,&rstep)) return 1;
@@ -3545,7 +3631,7 @@ f2dfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	int argc, char **argv)
 {
   struct objlist *sys;
-  int ignorepath;
+  int ignorepath, src;
   char *file, *file2;
   int num2;
   struct f2dlocal *f2dlocal;
@@ -3576,6 +3662,19 @@ f2dfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   } else {
     argv[2] = file;
   }
+
+  _getobj(obj, "source", inst, &src);
+  if (src != DATA_SOURCE_FILE && src != DATA_SOURCE_SPREADSHEET) {
+    return 0;
+  }
+
+  if (spreadsheet_check (file)) {
+    src = DATA_SOURCE_SPREADSHEET;
+  } else {
+    src = DATA_SOURCE_FILE;
+    odata_worksheet_name_clear (obj, inst);
+  }
+  _putobj (obj, "source", inst, &src);
 
   return 0;
 }
@@ -3935,6 +4034,13 @@ hskipdata(struct f2ddata *fp)
       skip++;
     }
     break;
+  case DATA_SOURCE_SPREADSHEET:
+    if (fp->hskip >= fp->worksheet_max_row) {
+      fp->eof = TRUE;
+      return 0;
+    }
+    fp->line = fp->hskip;
+    break;
   case DATA_SOURCE_ARRAY:
     if (fp->hskip > fp->array_data.data_num) {
       fp->eof=TRUE;
@@ -4088,6 +4194,13 @@ getdata_skip_step(struct f2ddata *fp, int progress)
 	step++;
       }
       g_free(buf);
+    }
+    break;
+  case DATA_SOURCE_SPREADSHEET:
+    if (fp->line + fp->rstep - 1 > fp->worksheet_max_row) {
+      fp->eof = TRUE;
+    } else {
+      fp->line += fp->rstep - 1;
     }
     break;
   case DATA_SOURCE_ARRAY:
@@ -4757,19 +4870,39 @@ set_column_string_array(struct f2ddata *fp)
   set_column_string_array_equation(fp->column_string_array_id_y, fp->codey, line, data, n);
 }
 
+static void
+set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, MathEquation **code)
+{
+  int i, eqn, n;
+  if (id < 0) {
+    return;
+  }
+  n = fp->worksheet_max_column;
+  for (eqn = 0; eqn < EQUATION_NUM; eqn++) {
+    math_equation_clear_string_array(code[eqn], id);
+    math_equation_set_array_str(code[eqn], id, 0, "");
+    for (i = 0; i < n; i++) {
+      char *str;
+      str = spreadsheet_get_text (fp->spreadsheet, i, fp->line - 1, NULL);
+      math_equation_set_array_str(code[eqn], id, i + 1, str ? str : "");
+      g_free (str);
+    }
+  }
+}
+
+static void
+set_column_string_array_from_spreadsheet (struct f2ddata *fp)
+{
+  set_column_string_array_equation_from_spreadsheet(fp, fp->column_string_array_id_x, fp->codex);
+  set_column_string_array_equation_from_spreadsheet(fp, fp->column_string_array_id_y, fp->codey);
+}
+
 static int
-get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
+get_data_from_file(struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
   char *buf;
-  int i, rcode, n;
-  double x;
-  MathValue nonum;
+  int i, rcode;
 
-  nonum.val = 0;
-  nonum.type = MATH_VALUE_NONUM;
-  rcode = 0;
-  switch (fp->src) {
-  case DATA_SOURCE_FILE:
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1 || rcode == -1) {
       fp->eof = TRUE;
@@ -4793,8 +4926,59 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     }
 
     g_free(buf);
-    break;
-  case DATA_SOURCE_ARRAY:
+
+  return rcode;
+}
+
+static int
+get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
+{
+  int i, n;
+  MathValue nonum;
+
+  nonum.val = 0;
+  nonum.type = MATH_VALUE_NONUM;
+
+  fp->line++;
+  if (fp->line > fp->worksheet_max_row) {
+    fp->eof = TRUE;
+    return 1;
+  }
+  n = (fp->worksheet_max_column > fp->maxdim) ? fp->maxdim : fp->worksheet_max_column;
+  fp->count++;
+  gdata[0].val = fp->count;
+  gdata[0].type = MATH_VALUE_NORMAL;
+  for (i = 0; i < n; i++) {
+    spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, gdata + i + 1);
+  }
+  for (i = n; i < fp->maxdim; i++) {
+    gdata[i + 1] = nonum;
+  }
+  if (fp->use_column_string_array) {
+    set_column_string_array_from_spreadsheet (fp);
+  }
+  if (fp->use_column_array) {
+    MathValue val;
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
+    for (i = n; i < fp->worksheet_max_column; i++) {
+      spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, &val);
+      column_array_push(fp->codex, fp->column_array_id_x, &val);
+      column_array_push(fp->codey, fp->column_array_id_y, &val);
+    }
+  }
+  return 0;
+}
+
+static int
+get_data_from_array(struct f2ddata *fp, int maxdim, MathValue *gdata)
+{
+  int i, n;
+  MathValue nonum;
+
+  nonum.val = 0;
+  nonum.type = MATH_VALUE_NONUM;
+
     if (fp->line >= fp->array_data.data_num) {
       fp->eof = TRUE;
       return 1;
@@ -4806,15 +4990,27 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     for (i = 0; i < n; i++) {
       array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
     }
-    for (i = n + 1; i <= fp->maxdim; i++) {
-      gdata[i] = nonum;
+    for (i = n; i < fp->maxdim; i++) {
+      gdata[i + 1] = nonum;
     }
 
     set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
     set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
     fp->line++;
-    break;
-  case DATA_SOURCE_RANGE:
+
+  return 0;
+}
+
+static int
+get_data_from_range(struct f2ddata *fp, int maxdim, MathValue *gdata)
+{
+  int i;
+  double x;
+  MathValue nonum;
+
+  nonum.val = 0;
+  nonum.type = MATH_VALUE_NONUM;
+
     if (fp->line > fp->range_div) {
       fp->eof = TRUE;
       return 1;
@@ -4834,6 +5030,28 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     fp->line++;
     set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
     set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
+
+  return 0;
+}
+
+static int
+get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
+{
+  int rcode;
+
+  rcode = 0;
+  switch (fp->src) {
+  case DATA_SOURCE_FILE:
+    rcode = get_data_from_file (fp, maxdim, gdata);
+    break;
+  case DATA_SOURCE_SPREADSHEET:
+    rcode = get_data_from_spreadsheet (fp, maxdim, gdata);
+    break;
+  case DATA_SOURCE_ARRAY:
+    rcode = get_data_from_array (fp, maxdim, gdata);
+    break;
+  case DATA_SOURCE_RANGE:
+    rcode = get_data_from_range (fp, maxdim, gdata);
     break;
   }
   return rcode;
@@ -5614,7 +5832,7 @@ check_mtime(struct f2ddata *fp, const struct f2dlocal *local)
 }
 
 static int
-get_final_line(struct f2ddata *fp, struct f2dlocal *local)
+get_final_line_file(struct f2ddata *fp, struct f2dlocal *local)
 {
   int line = 0;
   while (TRUE) {
@@ -5634,6 +5852,61 @@ get_final_line(struct f2ddata *fp, struct f2dlocal *local)
       break;;
     }
     line++;
+  }
+  return 0;
+}
+
+static void
+get_final_line_common (struct f2ddata *fp, struct f2dlocal *local, int max)
+{
+  fp->final += max + 1;
+  local->total_line = max;
+  if (fp->final < 0) {
+    fp->final = 0;
+  }
+}
+
+static int
+get_final_line_spreadsheet(struct f2ddata *fp, struct f2dlocal *local)
+{
+  if (fp->spreadsheet == NULL) {
+    return -1;
+  }
+
+  get_final_line_common (fp, local, fp->worksheet_max_row);
+  return 0;
+}
+
+static int
+get_final_line_array(struct f2ddata *fp, struct f2dlocal *local)
+{
+  get_final_line_common (fp, local, fp->array_data.data_num);
+  return 0;
+}
+
+static int
+get_final_line_range(struct f2ddata *fp, struct f2dlocal *local)
+{
+  get_final_line_common (fp, local, fp->range_div);
+  return 0;
+}
+
+static int
+get_final_line(struct f2ddata *fp, struct f2dlocal *local)
+{
+  switch (fp->src) {
+  case DATA_SOURCE_FILE:
+    return get_final_line_file(fp, local);
+    break;
+  case DATA_SOURCE_SPREADSHEET:
+    return get_final_line_spreadsheet(fp, local);
+    break;
+  case DATA_SOURCE_ARRAY:
+    return get_final_line_array(fp, local);
+    break;
+  case DATA_SOURCE_RANGE:
+    return get_final_line_range(fp, local);
+    break;
   }
   return 0;
 }
@@ -6106,6 +6379,7 @@ f2derror(struct objlist *obj, const struct f2ddata *fp, int code, const char *s)
 
   switch (fp->src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     snprintf(buf, sizeof(buf), "#%d: %s (%d:%s)",fp->id,fp->file,fp->dline,s);
     break;
   case DATA_SOURCE_ARRAY:
@@ -7975,6 +8249,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
    _getobj(obj, "file", inst, &file);
    if (file == NULL){
      return 0;
@@ -8215,6 +8490,7 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   _getobj(obj,"source", inst, &src);
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     _getobj(obj, "file", inst, &str);
     if (str == NULL) {
       return 0;
@@ -8478,6 +8754,53 @@ f2dcolumn_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
 }
 
 static int
+f2dcolumn_spreadsheet(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int line, col, worksheet, max_row, max_column;
+  char *file;
+  struct spreadsheet *spreadsheet;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  line = *(int *)argv[2];
+  col = *(int *)argv[3];
+
+  _getobj (obj, "file", inst, &file);
+  _getobj (obj, "worksheet", inst, &worksheet);
+  if (file == NULL) {
+    return 0;
+  }
+  spreadsheet = spreadsheet_open (file);
+  if (spreadsheet == NULL) {
+    return 0;
+  }
+  if (odata_worksheet_name_set (obj, inst, spreadsheet, worksheet)) {
+    spreadsheet_close (&spreadsheet);
+    return 0;
+  }
+
+  max_row = spreadsheet_max_row (spreadsheet);
+  max_column = spreadsheet_max_column (spreadsheet);
+
+  if (col < 1 || col > max_column) {
+    spreadsheet_close (&spreadsheet);
+    return 0;
+  }
+
+  if (line < 1 || line > max_row) {
+    spreadsheet_close (&spreadsheet);
+    return 0;
+  }
+
+  rval->str = spreadsheet_get_text (spreadsheet, col - 1, line - 1, NULL);
+
+  spreadsheet_close (&spreadsheet);
+
+  return 0;
+}
+
+static int
 f2dcolumn_array(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct array_prm ary;
@@ -8494,13 +8817,13 @@ f2dcolumn_array(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
   _getobj(obj,"array", inst, &array);
   open_array(array, &ary);
 
-  if (col >= ary.col_num) {
+  if (col < 1 || col > ary.col_num) {
     return 0;
   }
 
   n = arraynum(ary.ary[col - 1]);
 
-  if (line < 1 || line >= n) {
+  if (line < 1 || line > n) {
     return 0;
   }
 
@@ -8552,6 +8875,9 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   switch (src) {
   case DATA_SOURCE_FILE:
     r = f2dcolumn_file(obj, inst, rval, argc, argv);
+    break;
+  case DATA_SOURCE_SPREADSHEET:
+    r = f2dcolumn_spreadsheet(obj, inst, rval, argc, argv);
     break;
   case DATA_SOURCE_ARRAY:
     r = f2dcolumn_array(obj, inst, rval, argc, argv);
@@ -8627,6 +8953,7 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case DATA_SOURCE_FILE:
     r = f2dhead_file(obj, inst, rval, argc, argv);
     break;
+  case DATA_SOURCE_SPREADSHEET:
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:
     break;
@@ -8933,6 +9260,7 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   case DATA_SOURCE_FILE:
     r = f2dsettings_file(obj, inst, rval, argc, argv);
     break;
+  case DATA_SOURCE_SPREADSHEET:
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:
     break;
@@ -8952,7 +9280,7 @@ f2dtime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str=NULL;
 
   _getobj(obj,"source", inst, &src);
-  if (src != DATA_SOURCE_FILE) {
+  if (src != DATA_SOURCE_FILE && src != DATA_SOURCE_SPREADSHEET) {
     error(obj, ERR_INVALID_SOURCE);
     return -1;
   }
@@ -8976,7 +9304,7 @@ f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str=NULL;
 
   _getobj(obj,"source", inst, &src);
-  if (src != DATA_SOURCE_FILE) {
+  if (src != DATA_SOURCE_FILE && src != DATA_SOURCE_SPREADSHEET) {
     error(obj, ERR_INVALID_SOURCE);
     return -1;
   }
@@ -9243,6 +9571,7 @@ get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
   _getobj(obj, "source", inst, &src);
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     break;
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:
@@ -10085,6 +10414,7 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case DATA_SOURCE_FILE:
     r = f2dstore_file(obj, inst, rval, argc, argv);
     break;
+  case DATA_SOURCE_SPREADSHEET:
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:
     break;
@@ -10248,6 +10578,7 @@ f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case DATA_SOURCE_FILE:
     r = load_file(obj, inst, rval, argc, argv);
     break;
+  case DATA_SOURCE_SPREADSHEET:
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:
     break;
@@ -11341,6 +11672,8 @@ static struct objtable file2d[] = {
 
   /* for file */
   {"file",NSTR,NREAD|NWRITE,f2dfile,NULL,0},
+  {"worksheet",NINT,NREAD|NWRITE,f2dput,NULL,0},
+  {"worksheet_name",NSTR,NREAD,NULL,NULL,0},
   {"save_path",NENUM,NREAD|NWRITE,NULL,pathchar,0},
   {"x",NINT,NREAD|NWRITE,f2dput,NULL,0},
   {"y",NINT,NREAD|NWRITE,f2dput,NULL,0},

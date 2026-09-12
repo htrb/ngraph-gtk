@@ -47,6 +47,7 @@
 #include "nconfig.h"
 #include "odata.h"
 #include "ofit.h"
+#include "spreadsheet.h"
 
 #include "math_equation.h"
 
@@ -1783,6 +1784,7 @@ fit_load_button_setup(GtkWidget *menu_button, struct FitDialog *d)
 
   gtk_menu_button_set_popover (GTK_MENU_BUTTON (menu_button), popover);
 }
+
 static void
 FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -2439,11 +2441,12 @@ load_tab_setup_item(struct FileDialog *d, int id)
 {
   char *ifs, *s;
   unsigned int i, j, l;
+  int stat;
 
   SetWidgetFromObjField(d->load.headskip, d->Obj, id, "head_skip");
   SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
   SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
-  if (d->source != DATA_SOURCE_FILE) {
+  if (d->source != DATA_SOURCE_FILE && d->source != DATA_SOURCE_SPREADSHEET) {
     return;
   }
 
@@ -2476,6 +2479,11 @@ load_tab_setup_item(struct FileDialog *d, int id)
   editable_set_init_text(d->load.ifs, s);
   g_free(s);
   g_free(ifs);
+
+  stat = (d->source != DATA_SOURCE_SPREADSHEET);
+  set_widget_sensitivity_with_label (d->load.remark, stat);
+  set_widget_sensitivity_with_label (d->load.csv, stat);
+  set_widget_sensitivity_with_label (d->load.ifs, stat);
 }
 
 static void
@@ -2515,7 +2523,7 @@ load_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Final line:"), FALSE, i++);
   d->load.finalline = w;
 
-  if (d->source == DATA_SOURCE_FILE) {
+  if (d->source == DATA_SOURCE_FILE || d->source == DATA_SOURCE_SPREADSHEET) {
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table(table, w, _("_Remark:"), TRUE, i++);
     d->load.remark = w;
@@ -2577,7 +2585,7 @@ load_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->load.finalline, d->Obj, d->Id, "final_line"))
     return 1;
 
-  if (d->source != DATA_SOURCE_FILE) {
+  if (d->source != DATA_SOURCE_FILE && d->source != DATA_SOURCE_SPREADSHEET) {
     return 0;
   }
 
@@ -3118,6 +3126,23 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 }
 
 static void
+set_worksheet_titles (struct FileDialog *d)
+{
+  struct spreadsheet *sheet;
+  int i;
+
+  combo_box_clear(d->worksheet);
+
+  sheet = d->spreadsheet;
+  if (sheet == NULL) {
+    return;
+  }
+  for (i = 0; i < sheet->num; i++) {
+    combo_box_append_text (d->worksheet, sheet->worksheet[i].name);
+  }
+}
+
+static void
 FileDialogSetupItem(struct FileDialog *d)
 {
   char *valstr;
@@ -3131,8 +3156,21 @@ FileDialogSetupItem(struct FileDialog *d)
 
   switch (d->source) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
+    if (d->source == DATA_SOURCE_SPREADSHEET) {
+      gtk_notebook_set_current_page (GTK_NOTEBOOK (d->preview_tab), 0);
+      /*
+	must be called befor SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
+	and after SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
+       */
+      set_worksheet_titles (d);
+    }
+    SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
+    gtk_widget_set_visible (d->load_settings, d->source == DATA_SOURCE_FILE);
+    gtk_widget_set_visible (d->worksheet, d->source == DATA_SOURCE_SPREADSHEET);
+    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (d->preview_tab), d->source == DATA_SOURCE_FILE);
     break;
   case DATA_SOURCE_ARRAY:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "array");
@@ -3403,11 +3441,15 @@ edit_file(const char *file)
   if (localize_name == NULL)
     return;
 
+  if (spreadsheet_check (file)) {
+    cmd = g_strdup_printf("%s \"%s\"", OPEN_COMMAND, localize_name);
+  } else {
 #if OSX
-  cmd = g_strdup_printf("%s \"%s\"", Menulocal.editor, localize_name);
+    cmd = g_strdup_printf("%s \"%s\"", Menulocal.editor, localize_name);
 #else
-  cmd = g_strdup_printf("\"%s\" \"%s\"", Menulocal.editor, localize_name);
+    cmd = g_strdup_printf("\"%s\" \"%s\"", Menulocal.editor, localize_name);
 #endif
+  }
   g_free(localize_name);
 
   system_bg(cmd);
@@ -4055,46 +4097,14 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
   hide_columns (d, m + 2);
 }
 
-static void
-set_headline_table(struct FileDialog *d, char *s, int max_lines)
+static int
+set_header_array_file (struct FileDialog *d, char *s, const char *remark, struct narray *lines, int max_lines)
 {
-  struct narray *lines;
-  int i, j, l, n, skip, step, csv, max_col, nrows;
-  const char *tmp, *remark, *po;
+  int n, csv;
+  const char *tmp, *po;
   GString *ifs;
-  GListStore *model;
-  char *text[MAX_COLS + 2];
-
-  if (! d->initialized) {
-    return;
-  }
-
-  columnview_clear(d->comment_table);
-  if (s == NULL || max_lines < 1) {
-    return;
-  }
-
-  lines = g_malloc0(sizeof(*lines) * max_lines);
-  if (lines == NULL) {
-    return;
-  }
-
-  skip = spin_entry_get_val(d->load.headskip);
-  if (skip < 0) {
-    skip = 0;
-  }
-
-  step = spin_entry_get_val(d->load.readstep);
-  if (step < 1) {
-    step = 1;
-  }
 
   csv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->load.csv));
-
-  remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
-  if (remark == NULL) {
-    remark = "";
-  }
 
   tmp = gtk_editable_get_text(GTK_EDITABLE(d->load.ifs));
   if (tmp == NULL) {
@@ -4114,6 +4124,99 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     }
   }
   g_string_free(ifs, TRUE);
+
+  return n;
+}
+
+static int
+set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int max_lines)
+{
+  int i, n, max_row, max_col;
+  struct spreadsheet *sheet;
+
+  sheet = d->spreadsheet;
+  if (sheet == NULL) {
+    return 0;
+  }
+
+  i = combo_box_get_active (d->worksheet);
+  if (i < 0) {
+    i = 0;
+  }
+  if (spreadsheet_select_sheet (sheet, i)) {
+    return 0;
+  }
+
+  max_row = spreadsheet_max_row (sheet);
+  max_row = (max_row < max_lines) ? max_row : max_lines;
+
+  max_col = spreadsheet_max_column (sheet);
+  max_col = (max_col < MAX_COLS) ? max_col : MAX_COLS;
+
+  for (n = 0; n < max_row; n++) {
+    enum spreadsheet_column_type type;
+    arrayinit(lines + n, sizeof(char *));
+    for (i = 0; i <= max_col; i++) {
+      char *str;
+      str = spreadsheet_get_text (sheet, i, n, &type);
+      if (str) {
+	arrayadd(lines + n, &str);
+      } else {
+	arrayadd2(lines + n, "");
+      }
+    }
+  }
+  return n;
+}
+
+static void
+set_headline_table(struct FileDialog *d, char *s, int max_lines)
+{
+  struct narray *lines;
+  int i, j, l, n, skip, step, max_col, nrows, is_spreadsheet;
+  const char *remark;
+  GListStore *model;
+  char *text[MAX_COLS + 2];
+
+  if (! d->initialized) {
+    return;
+  }
+
+  columnview_clear(d->comment_table);
+
+  is_spreadsheet = (d->source == DATA_SOURCE_SPREADSHEET);
+  if (s == NULL && ! is_spreadsheet) {
+    return;
+  }
+  if (max_lines < 1) {
+    return;
+  }
+
+  lines = g_malloc0(sizeof(*lines) * max_lines);
+  if (lines == NULL) {
+    return;
+  }
+
+  skip = spin_entry_get_val(d->load.headskip);
+  if (skip < 0) {
+    skip = 0;
+  }
+
+  step = spin_entry_get_val(d->load.readstep);
+  if (step < 1) {
+    step = 1;
+  }
+
+  remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
+  if (remark == NULL) {
+    remark = "";
+  }
+
+  if (is_spreadsheet) {
+    n = set_header_array_spreadsheet (d, lines, max_lines);
+  } else {
+    n = set_header_array_file (d, s, remark, lines, max_lines);
+  }
   if (n == 0) {
     goto exit;
   }
@@ -4127,7 +4230,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   l = 1;
   max_col = 0;
   for (i = 0; i < n; i++) {
-    int m, c, v;
+    int m, v;
     const char *str;
     char buf[64];
 
@@ -4138,13 +4241,18 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
       text[j + 1] = arraynget_str(lines + i, j);
     }
     text[j + 1] = NULL;
-    str = arraynget_str(lines + i, 0);
-    if (str) {
-      c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
+    if (is_spreadsheet) {
+      v = CHECK_VISIBILITY(i, skip, step, "", '\0');
     } else {
-      c = 0;
+      int c;
+      str = arraynget_str(lines + i, 0);
+      if (str) {
+	c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
+      } else {
+	c = 0;
+      }
+      v = CHECK_VISIBILITY(i, skip, step, remark, c);
     }
-    v = CHECK_VISIBILITY(i, skip, step, remark, c);
     if (v) {
       snprintf (buf, sizeof (buf), "%d", l);
       text[0] = buf;
@@ -4245,6 +4353,55 @@ update_table(struct FileDialog *d)
 }
 
 static void
+open_spreadsheet (struct FileDialog *d, const char *file)
+{
+  const char *name;
+  if (d->source != DATA_SOURCE_SPREADSHEET) {
+    return;
+  }
+
+  if (file) {
+    name = file;
+  } else {
+    name = NULL;
+    getobj(d->Obj, "file", d->Id, 0, NULL, &name);
+    if (name == NULL) {
+      return;
+    }
+  }
+  if (d->spreadsheet) {
+    spreadsheet_close (&d->spreadsheet);
+  }
+  d->spreadsheet = spreadsheet_open (name);
+}
+
+static void
+close_spreadsheet (struct FileDialog *d)
+{
+  N_VALUE *inst;
+  int source;
+
+  if (d->spreadsheet == NULL) {
+    return;
+  }
+
+  getobj(d->Obj, "source", d->Id, 0, NULL, &source);
+  inst = chkobjinst(d->Obj, d->Id);
+  if (inst == NULL) {
+    return;
+  }
+
+  if (source == DATA_SOURCE_SPREADSHEET) {
+    int worksheet;
+    getobj(d->Obj, "worksheet", d->Id, 0, NULL, &worksheet);
+    odata_worksheet_name_set (d->Obj, inst, d->spreadsheet, worksheet);
+  } else {
+    odata_worksheet_name_clear (d->Obj, inst);
+  }
+  spreadsheet_close (&d->spreadsheet);
+}
+
+static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct FileDialog *d;
@@ -4273,6 +4430,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->load_settings = w;
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogOption), d);
 
+    w = combo_box_create ();
+    gtk_box_append(GTK_BOX(hbox), w);
+    d->worksheet = w;
+
     w = gtk_button_new_with_mnemonic(_("_Edit"));
     gtk_box_append(GTK_BOX(hbox), w);
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogEdit), d);
@@ -4292,6 +4453,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     w = gtk_notebook_new();
+    d->preview_tab = w;
     gtk_notebook_set_tab_pos (GTK_NOTEBOOK (w), GTK_POS_LEFT);
 
     view = create_preview_table();
@@ -4317,6 +4479,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
 
+    g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(set_headline_table_header), d);
@@ -4332,6 +4495,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[0] = (char *) &line;
   argv[1] = NULL;
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
+  open_spreadsheet (d, NULL);
   FileDialogSetupItem(d);
 
   d->initialized = TRUE;
@@ -4611,7 +4775,11 @@ FileDialogClose(GtkWidget *w, void *data)
 
   switch (d->source) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file")) {
+      return;
+    }
+    if (SetObjFieldFromWidget(d->worksheet, d->Obj, d->Id, "worksheet")) {
       return;
     }
     break;
@@ -4652,6 +4820,7 @@ FileDialogClose(GtkWidget *w, void *data)
  End:
   g_free(d->head_lines);
   d->head_lines = NULL;
+  close_spreadsheet (d);
 }
 
 void
@@ -4663,6 +4832,7 @@ FileDialog(struct obj_list_data *data, int id, int multi)
   getobj(data->obj, "source", id, 0, NULL, &source);
   switch (source) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     d = &DlgFile;
     data->dialog = d;
     d->SetupWindow = FileDialogSetup;
@@ -4688,6 +4858,7 @@ FileDialog(struct obj_list_data *data, int id, int multi)
   d->multi_open = multi > 0;
   d->initialized = FALSE;
   d->head_lines = NULL;
+  d->spreadsheet = NULL;
 }
 
 static void
@@ -5238,7 +5409,7 @@ check_plot_obj_file(struct objlist *obj)
   last = chkobjlastinst(obj);
   for (i = 0; i < last; i++) {
     getobj(obj, "source", i, 0, NULL, &source);
-    if (source == DATA_SOURCE_FILE) {
+    if (source == DATA_SOURCE_FILE || source == DATA_SOURCE_SPREADSHEET) {
       return i;
     }
   }
@@ -6051,6 +6222,7 @@ get_plot_info_str(struct objlist *obj, int id, int src)
   str = NULL;
   switch (src) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     getobj(obj, "file", id, 0, NULL, &str);
     break;
   case DATA_SOURCE_RANGE:
@@ -6169,6 +6341,7 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
   str = get_plot_info_str(obj, id, src);
   gtk_widget_set_tooltip_text (w, str);
   gtk_label_set_use_markup (GTK_LABEL (w), FALSE);
+  gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
 
   if (str == NULL) {
     return g_strdup (FILL_STRING);
@@ -6178,10 +6351,19 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
   getobj(obj, "move_data", id, 0, NULL, &move);
   masked = ((arraynum(mask) != 0) || (arraynum(move) != 0));
 
-  if (src == DATA_SOURCE_FILE) {
+  if (src == DATA_SOURCE_FILE || src == DATA_SOURCE_SPREADSHEET) {
     char *bfile;
     bfile = getbasename(str);
-    gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_NONE);
+    if (src == DATA_SOURCE_SPREADSHEET) {
+      const char *name;;
+      getobj(obj, "worksheet_name", id, 0, NULL, &name);
+      if (name) {
+	char *str;
+	str = g_strdup_printf ("%s (%s)", bfile, name);
+	g_free (bfile);
+	bfile = str;
+      }
+    }
     if (bfile) {
       if (masked) {
 	gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
@@ -6198,7 +6380,6 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
     char *tmpstr;
     tmpstr = g_strdup(str);
     disconnect_handler (w, Flist + 2);
-    gtk_label_set_ellipsize (GTK_LABEL (w), PANGO_ELLIPSIZE_END);
     if (masked) {
       gtk_label_set_use_markup (GTK_LABEL (w), TRUE);
       rstr = g_markup_printf_escaped ("<i>%s</i>", tmpstr);
@@ -6555,7 +6736,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_EDIT:
       if (sel >= 0 && sel <= num) {
 	getobj(d->obj, "source", sel, 0, NULL, &source);
-	g_simple_action_set_enabled(G_SIMPLE_ACTION(action), source == DATA_SOURCE_FILE);
+	g_simple_action_set_enabled(G_SIMPLE_ACTION(action), source == DATA_SOURCE_FILE ||  source == DATA_SOURCE_SPREADSHEET);
       } else {
 	g_simple_action_set_enabled(G_SIMPLE_ACTION(action), FALSE);
       }

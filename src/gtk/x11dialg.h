@@ -144,9 +144,9 @@ struct FileDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
+  GtkWidget *file, *load_settings, *worksheet, *fit, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2, *alpha1, *alpha2, *math_input_tab,
-    *clip, *style, *size, *miter, *join, *min, *max, *div,
+    *clip, *style, *size, *miter, *join, *min, *max, *div, *preview_tab,
     *comment_box, *file_box, *fit_table, *width, *comment_view, *comment_table;
   GtkNotebook *tab, *math_tab;
   struct objlist *Obj;
@@ -157,6 +157,7 @@ struct FileDialog
   struct FileMask mask;
   struct FileMove move;
   char *head_lines;
+  struct spreadsheet *spreadsheet;
 };
 
 void FileDialog(struct obj_list_data *data, int id, int multi);

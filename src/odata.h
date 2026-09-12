@@ -6,6 +6,7 @@
 
 enum DATA_OBJ_SOURCE {
   DATA_SOURCE_FILE,
+  DATA_SOURCE_SPREADSHEET,
   DATA_SOURCE_ARRAY,
   DATA_SOURCE_RANGE,
 };
@@ -51,6 +52,7 @@ enum axis_instance_field_type{
 #include "config.h"
 #include <stdio.h>
 #include "math/math_equation.h"
+#include "spreadsheet.h"
 
 struct array_prm
 {
@@ -76,5 +78,8 @@ int load_file(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 int load_dummy(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 char *store_dummy(struct objlist *obj, N_VALUE *inst, int argc, char **argv);
 int store(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv, int *endstore, FILE **storefd);
+int odata_worksheet_name_set (struct objlist *obj, N_VALUE *inst, struct spreadsheet *spreadsheet, int index);
+void odata_worksheet_name_clear (struct objlist *obj, N_VALUE *inst);
+
 
 #endif

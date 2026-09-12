@@ -1422,6 +1422,16 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     gtk_file_filter_add_pattern(filter, "*.dat");
     gtk_file_filter_set_name(filter, "Data file (*.dat)");
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*.xlsx");
+    gtk_file_filter_set_name(filter, "Office Open XML Spreadsheet (*.xlsx)");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*.ods");
+    gtk_file_filter_set_name(filter, "OpenDocument Spreadsheet (*.ods)");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   }
 
   if (data->init_dir && *(data->init_dir)) {

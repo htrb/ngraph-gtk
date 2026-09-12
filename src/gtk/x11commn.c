@@ -1030,6 +1030,7 @@ save_data(struct objlist *ocur, int hFile, int storedata, int i, int *array_data
   getobj(ocur, "source", i, 0, NULL, &source);
   switch (source) {
   case DATA_SOURCE_FILE:
+  case DATA_SOURCE_SPREADSHEET:
     break;
   case DATA_SOURCE_ARRAY:
     array = arraynew(sizeof(char *));
@@ -1994,7 +1995,7 @@ get_plot_cb_str(struct objlist *obj, int id, int source)
     return g_strdup(FILL_STRING);
   }
 
-  if (source == DATA_SOURCE_FILE) {
+  if (source == DATA_SOURCE_FILE || source == DATA_SOURCE_SPREADSHEET) {
     char *valstr;
     valstr = getbasename(str);
     s = g_strdup_printf("%s", (valstr) ? valstr : FILL_STRING);
@@ -2039,7 +2040,7 @@ PlotFileCB(struct objlist *obj, int id)
   int source;
 
   getobj(obj, "source", id, 0, NULL, &source);
-  if (source != DATA_SOURCE_FILE) {
+  if (source != DATA_SOURCE_FILE && source != DATA_SOURCE_SPREADSHEET) {
     return NULL;
   }
   return get_plot_cb_str(obj, id, source);

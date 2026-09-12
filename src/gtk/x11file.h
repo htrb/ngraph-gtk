@@ -28,6 +28,14 @@ struct evaltype
   double x, y;
 };
 
+#if WINDOWS
+#define OPEN_COMMAND "start"
+#elif OSX
+#define OPEN_COMMAND "open"
+#else
+#define OPEN_COMMAND "xdg-open"
+#endif
+
 const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
 void load_data(const char *name);
