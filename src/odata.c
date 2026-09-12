@@ -3730,7 +3730,7 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 }
 
 static double
-my_strtod(const char *po, char **endptr)
+my_strtod(char *po, char **endptr)
 {
   char *decimalsign_ptr;
   double val;
