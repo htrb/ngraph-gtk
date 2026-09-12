@@ -4155,11 +4155,10 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
   max_col = (max_col < MAX_COLS) ? max_col : MAX_COLS;
 
   for (n = 0; n < max_row; n++) {
-    enum spreadsheet_column_type type;
     arrayinit(lines + n, sizeof(char *));
     for (i = 0; i <= max_col; i++) {
       char *str;
-      str = spreadsheet_get_text (sheet, i, n, &type);
+      str = spreadsheet_get_text (sheet, i, n);
       if (str) {
 	arrayadd(lines + n, &str);
       } else {

@@ -152,12 +152,11 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
 }
 
 char *
-spreadsheet_get_text (struct spreadsheet *sheet, int col, int row, enum spreadsheet_column_type *type)
+spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
 {
   int maxcol, maxrow, ret;
   FreeXL_CellValue cell;
   char *str;
-  enum spreadsheet_column_type t;
 
   if (sheet == NULL) {
     return NULL;
@@ -177,27 +176,20 @@ spreadsheet_get_text (struct spreadsheet *sheet, int col, int row, enum spreadsh
   switch (cell.type) {
   case FREEXL_CELL_INT:
     str = g_strdup_printf ("%d", cell.value.int_value);
-    t = SPREADSHEET_COLUMN_TYPE_INT;
     break;
   case FREEXL_CELL_DOUBLE:
     str = g_strdup_printf ("%g", cell.value.double_value);
-    t = SPREADSHEET_COLUMN_TYPE_FLOAT;
     break;
   case FREEXL_CELL_DATE:
   case FREEXL_CELL_DATETIME:
   case FREEXL_CELL_TIME:
   case FREEXL_CELL_TEXT:
   case FREEXL_CELL_SST_TEXT:
-    t = SPREADSHEET_COLUMN_TYPE_TEXT;
     str = g_strdup (cell.value.text_value);
     break;
   default:
-    t = SPREADSHEET_COLUMN_TYPE_UNKNOWN;
     str = NULL;
     break;
-  }
-  if (type) {
-    *type = t;
   }
   return str;
 }

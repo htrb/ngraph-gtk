@@ -4958,7 +4958,7 @@ set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, Ma
     math_equation_set_array_str(code[eqn], id, 0, "");
     for (i = 0; i < n; i++) {
       char *str;
-      str = spreadsheet_get_text (fp->spreadsheet, i, fp->line - 1, NULL);
+      str = spreadsheet_get_text (fp->spreadsheet, i, fp->line - 1);
       math_equation_set_array_str(code[eqn], id, i + 1, str ? str : "");
       g_free (str);
     }
@@ -8868,7 +8868,7 @@ f2dcolumn_spreadsheet(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,c
     return 0;
   }
 
-  rval->str = spreadsheet_get_text (spreadsheet, col - 1, line - 1, NULL);
+  rval->str = spreadsheet_get_text (spreadsheet, col - 1, line - 1);
 
   spreadsheet_close (&spreadsheet);
 
