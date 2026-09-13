@@ -341,6 +341,9 @@ entry_icon_file_select_response(char *file, gpointer user_data)
     entry_set_filename(w, file);
     g_free(file);
   }
+  if (! gtk_entry_get_activates_default (GTK_ENTRY (w))) {
+    g_signal_emit_by_name(w, "activate", NULL);
+  }
 }
 
 static void
