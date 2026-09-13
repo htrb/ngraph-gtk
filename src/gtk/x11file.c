@@ -3899,8 +3899,8 @@ set_headlines(struct FileDialog *d, const char *s)
   }
 }
 
-#define CHECK_VISIBILITY(i, skip, step, final, remark, c)    (! CHECK_CHR(remark, c) && (final > 0 && i < final) && (i >= skip && ! ((i - skip) % step)))
-#define CHECK_VISIBILITY_ARRAY(i, skip, step, final)    ((i >= skip && ! ((i - skip) % step) && (final > 0 && i < final)))
+#define CHECK_VISIBILITY(i, skip, step, final, remark, c)    (! CHECK_CHR(remark, c) && (final < 0 || i < final) && (i >= skip && ! ((i - skip) % step)))
+#define CHECK_VISIBILITY_ARRAY(i, skip, step, final)    ((i >= skip && ! ((i - skip) % step) && (final < 0 || i < final)))
 
 #define MAX_COLS 100
 
