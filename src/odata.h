@@ -80,6 +80,6 @@ char *store_dummy(struct objlist *obj, N_VALUE *inst, int argc, char **argv);
 int store(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv, int *endstore, FILE **storefd);
 int odata_worksheet_name_set (struct objlist *obj, N_VALUE *inst, struct spreadsheet *spreadsheet, int index);
 void odata_worksheet_name_clear (struct objlist *obj, N_VALUE *inst);
-
+char *file_head_lines (const char *file, int line);
 
 #endif
