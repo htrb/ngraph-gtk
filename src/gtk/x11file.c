@@ -4463,6 +4463,35 @@ close_spreadsheet (struct FileDialog *d)
   spreadsheet_close (&d->spreadsheet);
 }
 
+void
+file_changed (GtkEditable *editable, struct FileDialog *d)
+{
+  const char *file;
+
+  if (! d->initialized) {
+    return;
+  }
+
+  if (d->spreadsheet) {
+    spreadsheet_close (&d->spreadsheet);
+  }
+  if (d->head_lines) {
+    g_free(d->head_lines);
+    d->head_lines = NULL;
+  }
+
+  file = gtk_editable_get_text (editable);
+  if (spreadsheet_check (file)) {
+    d->source = DATA_SOURCE_SPREADSHEET;
+    d->spreadsheet = spreadsheet_open (file);
+  } else {
+    d->source = DATA_SOURCE_FILE;
+    d->head_lines = file_head_lines (file, Menulocal.data_head_lines);
+  }
+  setup_file_related_widgets (d);
+  update_table_all(d);
+}
+
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
