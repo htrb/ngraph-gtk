@@ -3899,8 +3899,8 @@ set_headlines(struct FileDialog *d, const char *s)
   }
 }
 
-#define CHECK_VISIBILITY_ARRAY(i, skip, step)    ((i >= skip && ! ((i - skip) % step)))
 #define CHECK_VISIBILITY(i, skip, step, final, remark, c)    (! CHECK_CHR(remark, c) && (final > 0 && i < final) && (i >= skip && ! ((i - skip) % step)))
+#define CHECK_VISIBILITY_ARRAY(i, skip, step, final)    ((i >= skip && ! ((i - skip) % step) && (final > 0 && i < final)))
 
 #define MAX_COLS 100
 
@@ -4077,7 +4077,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
       }
     }
     text[j + 1] = NULL;
-    v = CHECK_VISIBILITY_ARRAY(i, skip, step);
+    v = CHECK_VISIBILITY_ARRAY(i, skip, step, final);
     if (v) {
       text[0] = g_strdup_printf ("%d", l);
       l++;
@@ -4242,7 +4242,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     }
     text[j + 1] = NULL;
     if (is_spreadsheet) {
-      v = CHECK_VISIBILITY_ARRAY(i, skip, step);
+      v = CHECK_VISIBILITY_ARRAY(i, skip, step, final);
     } else {
       int c;
       str = arraynget_str(lines + i, 0);
