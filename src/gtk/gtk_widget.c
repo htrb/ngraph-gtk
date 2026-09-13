@@ -369,17 +369,23 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user
   nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, chd, entry_icon_file_select_response, w);
 }
 
-GtkWidget *
-create_file_entry_with_cb(GCallback cb, gpointer data)
+static GtkWidget *
+create_file_entry_with_cb_dfault_action(GCallback cb, gpointer data, int action)
 {
   GtkWidget *w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_text_entry(TRUE, action);
 
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "document-open-symbolic");
   g_signal_connect(w, "icon-release", cb, data);
 
   return w;
+}
+
+GtkWidget *
+create_file_entry_with_cb(GCallback cb, gpointer data)
+{
+  return create_file_entry_with_cb_dfault_action(cb, data, TRUE);
 }
 
 GtkWidget *
