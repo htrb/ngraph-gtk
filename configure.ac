@@ -201,7 +201,6 @@ AC_CONFIG_FILES([Makefile \
 		 plugins/ruby/Makefile \
 		 gtksourceview/Makefile \
 		 mingw/Makefile \
-		 osx/Makefile \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
 		 icons/scalable/apps/Makefile \
