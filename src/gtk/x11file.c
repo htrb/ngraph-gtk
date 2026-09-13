@@ -3144,6 +3144,18 @@ set_worksheet_titles (struct FileDialog *d)
 }
 
 static void
+setup_file_related_widgets (struct FileDialog *d)
+{
+  if (d->source == DATA_SOURCE_SPREADSHEET) {
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (d->preview_tab), 0);
+    set_worksheet_titles (d);
+  }
+  gtk_widget_set_visible (d->load_settings, d->source == DATA_SOURCE_FILE);
+  gtk_widget_set_visible (d->worksheet, d->source == DATA_SOURCE_SPREADSHEET);
+  gtk_notebook_set_show_tabs (GTK_NOTEBOOK (d->preview_tab), d->source == DATA_SOURCE_FILE);
+}
+
+static void
 FileDialogSetupItem(struct FileDialog *d)
 {
   char *valstr;
