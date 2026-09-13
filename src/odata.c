@@ -9022,8 +9022,11 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
 
+  g_free(rval->str);
+  rval->str = NULL;
+
   _getobj(obj,"source", inst, &src);
-  r = 1;
+  r = 0;
   switch (src) {
   case DATA_SOURCE_FILE:
     r = f2dhead_file(obj, inst, rval, argc, argv);
