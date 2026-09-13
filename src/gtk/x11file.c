@@ -3144,6 +3144,18 @@ set_worksheet_titles (struct FileDialog *d)
 }
 
 static void
+setup_file_related_widgets (struct FileDialog *d)
+{
+  if (d->source == DATA_SOURCE_SPREADSHEET) {
+    gtk_notebook_set_current_page (GTK_NOTEBOOK (d->preview_tab), 0);
+    set_worksheet_titles (d);
+  }
+  gtk_widget_set_visible (d->load_settings, d->source == DATA_SOURCE_FILE);
+  gtk_widget_set_visible (d->worksheet, d->source == DATA_SOURCE_SPREADSHEET);
+  gtk_notebook_set_show_tabs (GTK_NOTEBOOK (d->preview_tab), d->source == DATA_SOURCE_FILE);
+}
+
+static void
 FileDialogSetupItem(struct FileDialog *d)
 {
   char *valstr;
@@ -3159,19 +3171,13 @@ FileDialogSetupItem(struct FileDialog *d)
   case DATA_SOURCE_FILE:
   case DATA_SOURCE_SPREADSHEET:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
-    if (d->source == DATA_SOURCE_SPREADSHEET) {
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (d->preview_tab), 0);
-      /*
-	must be called befor SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
-	and after SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
-       */
-      set_worksheet_titles (d);
-    }
-    SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
+    /*
+      setup_file_related_widgets must be called befor SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
+      and after SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
+    */
+    setup_file_related_widgets (d);
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
-    gtk_widget_set_visible (d->load_settings, d->source == DATA_SOURCE_FILE);
-    gtk_widget_set_visible (d->worksheet, d->source == DATA_SOURCE_SPREADSHEET);
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (d->preview_tab), d->source == DATA_SOURCE_FILE);
+    SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
     break;
   case DATA_SOURCE_ARRAY:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "array");
@@ -4457,6 +4463,35 @@ close_spreadsheet (struct FileDialog *d)
   spreadsheet_close (&d->spreadsheet);
 }
 
+void
+file_changed (GtkEditable *editable, struct FileDialog *d)
+{
+  const char *file;
+
+  if (! d->initialized) {
+    return;
+  }
+
+  if (d->spreadsheet) {
+    spreadsheet_close (&d->spreadsheet);
+  }
+  if (d->head_lines) {
+    g_free(d->head_lines);
+    d->head_lines = NULL;
+  }
+
+  file = gtk_editable_get_text (editable);
+  if (spreadsheet_check (file)) {
+    d->source = DATA_SOURCE_SPREADSHEET;
+    d->spreadsheet = spreadsheet_open (file);
+  } else {
+    d->source = DATA_SOURCE_FILE;
+    d->head_lines = file_head_lines (file, Menulocal.data_head_lines);
+  }
+  setup_file_related_widgets (d);
+  update_table_all(d);
+}
+
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -4480,6 +4515,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_file_entry(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
     d->file = w;
+    g_signal_connect(d->file, "changed", G_CALLBACK(file_changed), d);
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_append(GTK_BOX(hbox), w);

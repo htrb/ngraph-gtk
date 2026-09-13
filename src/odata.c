@@ -8965,36 +8965,28 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int
-f2dhead_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+char *
+file_head_lines (const char *file, int line)
 {
-  int cline, line;
-  char *file, *ptr;
+  int cline;
+  char *ptr;
   GString *s;
   FILE *fd;
 
-  g_free(rval->str);
-
-  rval->str = NULL;
-
-  _getobj(obj, "file", inst, &file);
-
-  line = *(int *) argv[2];
-
   if (line <= 0)
-    return 0;
+    return NULL;
 
   if (file == NULL)
-    return 0;
+    return NULL;
 
   fd = nfopen(file, "rt");
   if (fd == NULL)
-    return 0;
+    return NULL;
 
   s = g_string_sized_new(256);
   if (s == NULL) {
     fclose(fd);
-    return 0;
+    return NULL;
   }
 
   for (cline = 0; cline < line; cline++) {
@@ -9012,7 +9004,20 @@ f2dhead_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
 
   fclose(fd);
 
-  rval->str = g_string_free(s, FALSE);
+  return g_string_free(s, FALSE);
+}
+
+static int
+f2dhead_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int line;
+  char *file;
+
+  _getobj(obj, "file", inst, &file);
+
+  line = *(int *) argv[2];
+
+  rval->str = file_head_lines (file, line);
 
   return 0;
 }
@@ -9022,8 +9027,11 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
 
+  g_free(rval->str);
+  rval->str = NULL;
+
   _getobj(obj,"source", inst, &src);
-  r = 1;
+  r = 0;
   switch (src) {
   case DATA_SOURCE_FILE:
     r = f2dhead_file(obj, inst, rval, argc, argv);
