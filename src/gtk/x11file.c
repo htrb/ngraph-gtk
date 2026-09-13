@@ -3171,19 +3171,13 @@ FileDialogSetupItem(struct FileDialog *d)
   case DATA_SOURCE_FILE:
   case DATA_SOURCE_SPREADSHEET:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
-    if (d->source == DATA_SOURCE_SPREADSHEET) {
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (d->preview_tab), 0);
-      /*
-	must be called befor SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
-	and after SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
-       */
-      set_worksheet_titles (d);
-    }
-    SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
+    /*
+      setup_file_related_widgets must be called befor SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
+      and after SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
+    */
+    setup_file_related_widgets (d);
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
-    gtk_widget_set_visible (d->load_settings, d->source == DATA_SOURCE_FILE);
-    gtk_widget_set_visible (d->worksheet, d->source == DATA_SOURCE_SPREADSHEET);
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (d->preview_tab), d->source == DATA_SOURCE_FILE);
+    SetWidgetFromObjField(d->worksheet, d->Obj, d->Id, "worksheet");
     break;
   case DATA_SOURCE_ARRAY:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "array");
