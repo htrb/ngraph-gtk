@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <glib.h>
+#include <pango/pango.h>
 
 #include "object.h"
 #include "strconv.h"
@@ -2698,6 +2699,34 @@ GRAdrawtextraw(int GC, char *s, char *font, int style,
     GRAouttext(GC, str->str);
   }
   g_string_free(str, TRUE);
+}
+
+static int
+count_grapheme_boundaries (const char *text)
+{
+  if (!text || *text == '\0') {
+    return 0;
+  }
+
+  glong len = g_utf8_strlen (text, -1);
+  PangoLogAttr *attrs = g_new0 (PangoLogAttr, len + 1);
+  PangoLanguage *lang = pango_language_get_default ();
+
+  pango_get_log_attrs (text, -1, -1, lang, attrs, len + 1);
+
+  int count = 0;
+  for (int i = 0; i <= len; i++) {
+    if (attrs[i].is_cursor_position) {
+      count++;
+    }
+  }
+  g_free (attrs);
+  if (count > 1) {
+    count -= 2;
+  } else {
+    count = 0;
+  }
+  return count;
 }
 
 void
