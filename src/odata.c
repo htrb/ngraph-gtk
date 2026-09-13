@@ -5058,14 +5058,14 @@ get_data_from_array(struct f2ddata *fp, int maxdim, MathValue *gdata)
     fp->eof = TRUE;
     return 1;
   }
-  n = (fp->array_data.col_num > fp->maxdim) ? fp->maxdim : fp->array_data.col_num;
+  n = (fp->array_data.col_num > maxdim) ? maxdim : fp->array_data.col_num;
   fp->count++;
   gdata[0].val = fp->count;
   gdata[0].type = MATH_VALUE_NORMAL;
   for (i = 0; i < n; i++) {
     array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
   }
-  for (i = n; i < fp->maxdim; i++) {
+  for (i = n; i < maxdim; i++) {
     gdata[i + 1] = nonum;
   }
 
