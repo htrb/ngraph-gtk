@@ -3899,8 +3899,8 @@ set_headlines(struct FileDialog *d, const char *s)
   }
 }
 
-#define CHECK_VISIBILITY(i, skip, step, remark, c)    (! CHECK_CHR(remark, c) && (i >= skip && ! ((i - skip) % step)))
 #define CHECK_VISIBILITY_ARRAY(i, skip, step)    ((i >= skip && ! ((i - skip) % step)))
+#define CHECK_VISIBILITY(i, skip, step, final, remark, c)    (! CHECK_CHR(remark, c) && (final > 0 && i < final) && (i >= skip && ! ((i - skip) % step)))
 
 #define MAX_COLS 100
 
@@ -4251,7 +4251,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
       } else {
 	c = 0;
       }
-      v = CHECK_VISIBILITY(i, skip, step, remark, c);
+      v = CHECK_VISIBILITY(i, skip, step, final, remark, c);
     }
     if (v) {
       snprintf (buf, sizeof (buf), "%d", l);
