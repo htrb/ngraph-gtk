@@ -5098,7 +5098,7 @@ get_data_from_range(struct f2ddata *fp, int maxdim, MathValue *gdata)
   gdata[1].type = MATH_VALUE_NORMAL;
   gdata[2].val = x;
   gdata[2].type = MATH_VALUE_NORMAL;
-  for (i = 3; i <= fp->maxdim; i++) {
+  for (i = 3; i <= maxdim; i++) {
     gdata[i] = nonum;
   }
 
