@@ -4188,10 +4188,10 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
 }
 
 static void
-set_headline_table(struct FileDialog *d, char *s, int max_lines)
+set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
 {
   struct narray *lines;
-  int i, j, l, n, skip, step, max_col, nrows, is_spreadsheet;
+  int i, j, l, n, skip, step, final, max_col, nrows, is_spreadsheet;
   const char *remark;
   GListStore *model;
   char *text[MAX_COLS + 2];
@@ -4200,7 +4200,9 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     return;
   }
 
-  columnview_clear(d->comment_table);
+  if (clear) {
+    columnview_clear(d->comment_table);
+  }
 
   is_spreadsheet = (d->source == DATA_SOURCE_SPREADSHEET);
   if (s == NULL && ! is_spreadsheet) {
@@ -4225,6 +4227,8 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     step = 1;
   }
 
+  final = spin_entry_get_val(d->load.finalline);
+
   remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
   if (remark == NULL) {
     remark = "";
@@ -4243,6 +4247,9 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   nrows = g_list_model_get_n_items (G_LIST_MODEL (model));
   if (nrows > n) {
     g_list_store_splice (model, 2, nrows - n, NULL, 0);
+  }
+  if (n < max_lines && final < 0) {
+    final += n + 1;
   }
 
   l = 1;
@@ -4367,7 +4374,15 @@ create_preview_table(void)
 static void
 update_table(struct FileDialog *d)
 {
-  set_headline_table(d, d->head_lines, Menulocal.data_head_lines);
+  set_headline_table(d, d->head_lines, Menulocal.data_head_lines, FALSE);
+}
+
+static void
+update_table_all(struct FileDialog *d)
+{
+  set_headline_table(d, d->head_lines, Menulocal.data_head_lines, TRUE);
+}
+
 static void
 update_table_array(struct FileDialog *d)
 {
@@ -4494,12 +4509,13 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Plain"));
     gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
 
-    g_signal_connect_swapped(d->load.ifs, "changed", G_CALLBACK(update_table), d);
-    g_signal_connect_swapped(d->load.csv, "toggled", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.ifs, "changed", G_CALLBACK(update_table_all), d);
+    g_signal_connect_swapped(d->load.csv, "toggled", G_CALLBACK(update_table_all), d);
 
     g_signal_connect_swapped(d->load.remark, "changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.finalline, "value-changed", G_CALLBACK(update_table), d);
 
     g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
@@ -4523,7 +4539,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d->initialized = TRUE;
   set_headlines(d, s);
   set_headline_table_header(d);
-  set_headline_table(d, s, line);
+  set_headline_table(d, s, line, TRUE);
   d->head_lines = g_strdup(s);
 }
 
