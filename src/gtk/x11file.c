@@ -4515,7 +4515,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_file_entry_no_default_action(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
     d->file = w;
-    g_signal_connect(d->file, "changed", G_CALLBACK(file_changed), d);
+    g_signal_connect(d->file, "activate", G_CALLBACK(file_changed), d);
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_append(GTK_BOX(hbox), w);
