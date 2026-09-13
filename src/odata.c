@@ -5019,14 +5019,14 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
     fp->eof = TRUE;
     return 1;
   }
-  n = (fp->worksheet_max_column > fp->maxdim) ? fp->maxdim : fp->worksheet_max_column;
+  n = (fp->worksheet_max_column > maxdim) ? maxdim : fp->worksheet_max_column;
   fp->count++;
   gdata[0].val = fp->count;
   gdata[0].type = MATH_VALUE_NORMAL;
   for (i = 0; i < n; i++) {
     spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, gdata + i + 1);
   }
-  for (i = n; i < fp->maxdim; i++) {
+  for (i = n; i < maxdim; i++) {
     gdata[i + 1] = nonum;
   }
   if (fp->use_column_string_array) {
