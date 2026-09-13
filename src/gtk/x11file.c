@@ -4512,7 +4512,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-    w = create_file_entry(d->Obj);
+    w = create_file_entry_no_default_action(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
     d->file = w;
     g_signal_connect(d->file, "changed", G_CALLBACK(file_changed), d);
