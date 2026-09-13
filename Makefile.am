@@ -4,7 +4,7 @@ EXTRA_DIST = config.rpath pathconv.sh
 
 doc_DATA = README AUTHORS ChangeLog NEWS COPYING
 
-SUBDIRS = m4 src initfile driver addin demo doc zsh test mingw icons misc plugins osx gtksourceview po
+SUBDIRS = m4 src initfile driver addin demo doc zsh test mingw icons misc plugins gtksourceview po
 
 ACLOCAL_AMFLAGS = -I m4
 
