@@ -394,6 +394,12 @@ create_file_entry(struct objlist *obj)
   return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
 }
 
+GtkWidget *
+create_file_entry_no_default_action(struct objlist *obj)
+{
+  return create_file_entry_with_cb_dfault_action(G_CALLBACK(entry_icon_file_select), obj, FALSE);
+}
+
 static void
 direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos)
 {
