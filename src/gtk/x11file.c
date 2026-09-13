@@ -4330,6 +4330,24 @@ transform_label (GBinding* binding, const GValue* from_value, GValue* to_value, 
 }
 
 static gboolean
+transform_halign (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
+{
+  NText *text;
+  const char *str;
+  int col;
+  MathValue val = {0, MATH_VALUE_NONUM};
+  (void) from_value;
+
+  col = GPOINTER_TO_INT (user_data);
+  text = N_TEXT (g_binding_dup_source (binding));
+  str = n_text_get_string (text, col);
+  n_strtod (str, &val);
+  g_value_set_enum (to_value, (val.type == MATH_VALUE_NONUM) ? GTK_ALIGN_START : GTK_ALIGN_END);
+  g_object_unref (text);
+  return TRUE;
+}
+
+static gboolean
 transform_ellipsize (GBinding* binding, const GValue* from_value, GValue* to_value, gpointer user_data)
 {
   int attribute;
@@ -4351,6 +4369,7 @@ bind_table (GtkListItemFactory *factory, GtkListItem *list_item, gpointer user_d
   label = gtk_list_item_get_child (list_item);
   text = N_TEXT (gtk_list_item_get_item (list_item));
   g_object_bind_property_full (G_OBJECT (text), "text", label, "label", G_BINDING_SYNC_CREATE, transform_label, NULL, user_data, NULL);
+  g_object_bind_property_full (G_OBJECT (text), "text", label, "halign", G_BINDING_SYNC_CREATE, transform_halign, NULL, user_data, NULL);
   g_object_bind_property_full (G_OBJECT (text), "attribute", label, "ellipsize", G_BINDING_SYNC_CREATE, transform_ellipsize, NULL, NULL, NULL);
   g_object_bind_property (G_OBJECT (text), "attribute", label, "sensitive", G_BINDING_SYNC_CREATE);
 }
