@@ -2842,8 +2842,10 @@ GRAtextextent(char *s, char *font, int style,
     }
 
     if (str->len > 0) {
+      int slen = count_grapheme_boundaries (str->str);
+
       w = GRAstrwidth(str->str, font2, style2, size2)
-	+ nround(space2 / 72.0 * 25.4) * (str->len - 1);
+        + nround(space2 / 72.0 * 25.4) * slen;
       h = GRAcharascent(font2, style2, size2);
       d = GRAchardescent(font2, style2, size2);
 
@@ -3019,25 +3021,33 @@ void
 GRAtextextentraw(char *s,char *font, int style,
 		 int size,int space,int *gx0,int *gy0,int *gx1,int *gy1)
 {
-  int i, n, len, ha, hd;
+  int n, ha, hd, slen, width, maxwidth;
+  char **strv;
   *gx0 = *gy0 = *gx1 = *gy1 = 0;
   if (s == NULL || font == NULL) return;
 
-  len = strlen(s);
-  if (len < 1) {
-    return;
-  }
-  *gx1 = GRAstrwidth(s, font, style, size)
-    + nround(space / 72.0 * 25.4) * (len - 1);
-  for (n = 0, i = 0; i < len; i++) {
-    if (s[i] == '\n') {
-      n++;
+  maxwidth = 0;
+  strv = g_strsplit (s, "\n", 0);
+  for (n = 0; strv[n]; n++) {
+    int len;
+    const char *str;
+    str = strv[n];
+    len = strlen(str);
+    if (len < 1) {
+      continue;
+    }
+    slen = count_grapheme_boundaries (str);
+    width = GRAstrwidth(str, font, style, size) + nround(space / 72.0 * 25.4) * slen;
+    if (width > maxwidth) {
+      maxwidth = width;
     }
   }
+  g_strfreev (strv);
+  *gx1 = maxwidth;
   ha = GRAcharascent(font, style, size);
   *gy0 = - ha;
   hd = GRAchardescent(font, style, size);
-  *gy1 = hd + (ha + hd) * n;
+  *gy1 = hd + (ha + hd) * (n - 1);
 }
 
 
