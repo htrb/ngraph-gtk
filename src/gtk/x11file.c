@@ -4034,13 +4034,21 @@ hide_columns (struct FileDialog *d, int max_col)
 }
 
 static void
-set_headline_table_array(struct FileDialog *d, int max_lines)
+set_headline_table_array(struct FileDialog *d, int max_lines, int clear)
 {
   struct array_prm ary;
-  int i, j, l, m, n, skip, step, nrows;
+  int i, j, l, m, n, skip, step, final, nrows;
   char *array;
   GListStore *model;
   char *text[MAX_COLS + 2];
+
+  if (! d->initialized) {
+    return;
+  }
+
+  if (clear) {
+    columnview_clear(d->comment_table);
+  }
 
   getobj(d->Obj, "array", d->Id, 0, NULL, &array);
   open_array(array, &ary);
@@ -4055,10 +4063,20 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
     step = 1;
   }
 
+  final = spin_entry_get_val(d->load.finalline);
+
   model = columnview_get_list (d->comment_table);
   nrows = g_list_model_get_n_items (G_LIST_MODEL (model));
 
-  n = (ary.data_num > max_lines) ? max_lines : ary.data_num;
+  if (ary.data_num > max_lines) {
+    n = max_lines;
+  } else {
+    n = ary.data_num;
+    if (final < 0) {
+      final += n + 1;
+    }
+  }
+
   m = (ary.col_num < MAX_COLS) ? ary.col_num : MAX_COLS;
   if (nrows > n) {
     g_list_store_splice (model, 2, nrows - n, NULL, 0);
@@ -4350,6 +4368,10 @@ static void
 update_table(struct FileDialog *d)
 {
   set_headline_table(d, d->head_lines, Menulocal.data_head_lines);
+static void
+update_table_array(struct FileDialog *d)
+{
+  set_headline_table_array(d, Menulocal.data_head_lines, FALSE);
 }
 
 static void
@@ -4546,8 +4568,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
     d->comment_table = view;
 
-    g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
-    g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table_array), d);
+    g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table_array), d);
+    g_signal_connect_swapped(d->load.finalline, "value-changed", G_CALLBACK(update_table_array), d);
 
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
@@ -4566,7 +4589,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d->initialized = TRUE;
   set_headline_table_header(d);
-  set_headline_table_array(d, Menulocal.data_head_lines);
+  set_headline_table_array(d, Menulocal.data_head_lines, TRUE);
 }
 
 static void
