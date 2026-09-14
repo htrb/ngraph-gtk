@@ -209,7 +209,7 @@ spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
   case FREEXL_CELL_TIME:
   case FREEXL_CELL_TEXT:
   case FREEXL_CELL_SST_TEXT:
-    str = g_strdup (cell.value.text_value);
+    str = str2utf8 (cell.value.text_value);
     break;
   default:
     str = NULL;
