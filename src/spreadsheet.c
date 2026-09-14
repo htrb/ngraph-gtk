@@ -151,6 +151,30 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
   }
 }
 
+static char *
+str2utf8(const char *str)
+{
+  int valid;
+  char *new_str;
+
+  if (str == NULL) {
+    return NULL;
+  }
+
+  valid = g_utf8_validate (str, -1, NULL);
+  if (valid) {
+    return g_strdup (str);
+  }
+
+  new_str = g_locale_to_utf8 (str, -1, NULL, NULL, NULL);
+  if (new_str) {
+    return new_str;
+  }
+
+  new_str = g_utf8_make_valid (str, -1);
+  return new_str;
+}
+
 char *
 spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
 {
