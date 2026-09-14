@@ -4572,7 +4572,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.finalline, "value-changed", G_CALLBACK(update_table), d);
 
-    g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table_all), d);
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(set_headline_table_header), d);
