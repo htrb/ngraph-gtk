@@ -29,7 +29,7 @@ struct evaltype
 };
 
 #if WINDOWS
-#define OPEN_COMMAND "start"
+#define OPEN_COMMAND "cmd /c start \"\""
 #elif OSX
 #define OPEN_COMMAND "open"
 #else
