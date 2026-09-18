@@ -1165,7 +1165,7 @@ static void
 delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer user_data)
 {
   int i;
-  char *s, *ptr, *profile;
+  char *s, *profile;
   struct copy_settings_to_fitobj_data *data;
 
   profile = g_strdup(str);
@@ -1185,6 +1185,7 @@ delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer use
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
+      char *ptr;
       data->i = i;
       ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
       response_message_box(d->widget, ptr, "Confirm", RESPONS_YESNO,
@@ -2111,7 +2112,7 @@ sort_by_line (const NData *item, gpointer user_data)
 }
 
 static double
-sort_by_data (NData *item, gpointer user_data)
+sort_by_data (const NData *item, gpointer user_data)
 {
   int col = GPOINTER_TO_INT (user_data);
   switch (col) {
@@ -2200,7 +2201,7 @@ move_tab_create(struct FileDialog *d)
 static int
 move_tab_set_value(struct FileDialog *d)
 {
-  int line, a, i, n;
+  int a, i, n;
   struct narray *move, *movex, *movey;
   GListStore *list;
 
@@ -2251,7 +2252,7 @@ move_tab_set_value(struct FileDialog *d)
       movenum = arraynum(movey);
 
     for (j = 0; j < movenum; j++) {
-      line = arraynget_int(move, j);
+      int line = arraynget_int(move, j);
 
       if (line == a)
 	break;
@@ -4123,7 +4124,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines, int clear)
 }
 
 static int
-set_header_array_file (struct FileDialog *d, char *s, const char *remark, struct narray *lines, int max_lines)
+set_header_array_file (struct FileDialog *d, const char *s, struct narray *lines, int max_lines)
 {
   int n, csv;
   const char *tmp, *po;
@@ -4194,7 +4195,7 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
 }
 
 static void
-set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
+set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear)
 {
   struct narray *lines;
   int i, j, l, n, skip, step, final, max_col, nrows, is_spreadsheet;
@@ -4243,7 +4244,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
   if (is_spreadsheet) {
     n = set_header_array_spreadsheet (d, lines, max_lines);
   } else {
-    n = set_header_array_file (d, s, remark, lines, max_lines);
+    n = set_header_array_file (d, s, lines, max_lines);
   }
   if (n == 0) {
     goto exit;
@@ -4262,7 +4263,6 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
   max_col = 0;
   for (i = 0; i < n; i++) {
     int m, v;
-    const char *str;
     char buf[64];
 
     m = arraynum(lines + i);
@@ -4276,6 +4276,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
       v = CHECK_VISIBILITY_ARRAY(i, skip, step, final);
     } else {
       int c;
+      const char *str;
       str = arraynget_str(lines + i, 0);
       if (str) {
 	c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
@@ -6452,10 +6453,10 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
       const char *name;;
       getobj(obj, "worksheet_name", id, 0, NULL, &name);
       if (name) {
-	char *str;
-	str = g_strdup_printf ("%s (%s)", bfile, name);
+	char *new_str;
+	new_str = g_strdup_printf ("%s (%s)", bfile, name);
 	g_free (bfile);
-	bfile = str;
+	bfile = new_str;
       }
     }
     if (bfile) {
