@@ -232,6 +232,7 @@ static char *f2derrorlist[]={
 
 static char *data_type[]={
   N_("file"),
+  N_("spreadsheet"),
   N_("array"),
   N_("range"),
   NULL
