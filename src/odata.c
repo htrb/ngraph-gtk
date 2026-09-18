@@ -546,6 +546,7 @@ static int
 line_number(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -1018,6 +1019,7 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   int file_id, r;
   double x, y;
   static struct objlist *file_obj = NULL;
+  (void) eq;
 
   rval->val = 0;
 
@@ -1059,6 +1061,7 @@ file_fit_solve(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   char *argv[5], *ptr, *field;
   struct narray args;
   struct savedstdio save;
+  (void) eq;
 
   rval->type = MATH_VALUE_ERROR;
   rval->val = 0;
@@ -1118,6 +1121,7 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   char *argv[2], *ptr;
   struct savedstdio save;
   static struct objlist *file_obj = NULL;
+  (void) eq;
 
   rval->val = 0;
 
@@ -1979,6 +1983,7 @@ file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   const char *str;
   char *tmp;
   struct objlist *text_obj;
+  (void) eq;
 
   if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
     return 0;
@@ -2015,6 +2020,7 @@ file_text_obj_get(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   char *str;
   struct objlist *text_obj;
   GString *gstr;
+  (void) eq;
 
   if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
     return 0;
@@ -2191,6 +2197,7 @@ static int
 file_sheet_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_ERROR;
@@ -2218,6 +2225,7 @@ static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
