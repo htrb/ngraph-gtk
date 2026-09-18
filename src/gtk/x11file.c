@@ -4873,7 +4873,7 @@ FileDialogClose(GtkWidget *w, void *data)
     if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file")) {
       return;
     }
-    if (SetObjFieldFromWidget(d->worksheet, d->Obj, d->Id, "worksheet")) {
+    if (d->source == DATA_SOURCE_SPREADSHEET && SetObjFieldFromWidget(d->worksheet, d->Obj, d->Id, "worksheet")) {
       return;
     }
     break;
