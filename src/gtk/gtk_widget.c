@@ -954,7 +954,11 @@ set_widget_font(GtkWidget *w, const char *font)
 			    "   font-style: %s;\n"
 			    "   font-weight: %d;\n"
 			    "   font-size: %d%s;\n"
+#if WINDOWS
+			    "   font-family: \"%s\", sans-serif;\n"
+#else
 			    "   font-family: \"%s\";\n"
+#endif
 			    "}",
 			    style_str,
 			    weight_val,
