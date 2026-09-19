@@ -4490,6 +4490,7 @@ file_changed (GtkEditable *editable, struct FileDialog *d)
     d->head_lines = file_head_lines (file, Menulocal.data_head_lines);
   }
   setup_file_related_widgets (d);
+  set_headlines(d, d->head_lines);
   update_table_all(d);
 }
 
