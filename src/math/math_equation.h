@@ -22,20 +22,22 @@ typedef struct _math_common_value MathCommonValue;
 
 #define MATH_EQUATION_ARRAY_INDEX_MAX 65535
 
+enum MATH_VALUE_TYPE {
+  MATH_VALUE_NORMAL = 0,
+  MATH_VALUE_ERROR  = 1,
+  MATH_VALUE_NAN    = 2,
+  MATH_VALUE_UNDEF  = 3,
+  //    MATH_VALUE_SYNTAX = 4,
+  MATH_VALUE_CONT   = 5,
+  MATH_VALUE_BREAK  = 6,
+  MATH_VALUE_NONUM  = 7,
+  MATH_VALUE_MEOF   = 8,
+  MATH_VALUE_INTERRUPT = 9,
+};
+
 struct _math_value {
   double val;
-  enum {
-    MATH_VALUE_NORMAL = 0,
-    MATH_VALUE_ERROR  = 1,
-    MATH_VALUE_NAN    = 2,
-    MATH_VALUE_UNDEF  = 3,
-    //    MATH_VALUE_SYNTAX = 4,
-    MATH_VALUE_CONT   = 5,
-    MATH_VALUE_BREAK  = 6,
-    MATH_VALUE_NONUM  = 7,
-    MATH_VALUE_MEOF   = 8,
-    MATH_VALUE_INTERRUPT = 9,
-  } type;
+  enum MATH_VALUE_TYPE type;
 };
 
 struct _math_array {
