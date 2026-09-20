@@ -29,13 +29,11 @@ extern "C" {
 
 #include "orcus.h"
 
-using namespace orcus;
-
 struct n_orcus {
-  spreadsheet::document *doc;
-  spreadsheet::import_factory *factory;
-  orcus_xlsx *xlsx_loader;
-  orcus_ods *ods_loader;
+  orcus::spreadsheet::document *doc;
+  orcus::spreadsheet::import_factory *factory;
+  orcus::orcus_xlsx *xlsx_loader;
+  orcus::orcus_ods *ods_loader;
   int n_sheet, current_sheet;
 };
 
@@ -66,16 +64,16 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
   struct n_orcus *norcus = NULL;
   norcus = (struct n_orcus *) g_malloc0(sizeof (*norcus));
   try {
-    spreadsheet::range_size_t ss{1048576, 16384};
-    norcus->doc = new spreadsheet::document{ss};
-    norcus->factory = new spreadsheet::import_factory(*norcus->doc);
+    orcus::spreadsheet::range_size_t ss{1048576, 16384};
+    norcus->doc = new orcus::spreadsheet::document{ss};
+    norcus->factory = new orcus::spreadsheet::import_factory(*norcus->doc);
     switch (type) {
     case SPREADSHEET_TYPE_XLSX:
-      norcus->xlsx_loader = new orcus_xlsx (norcus->factory);
+      norcus->xlsx_loader = new orcus::orcus_xlsx (norcus->factory);
       norcus->xlsx_loader->read_file(filename);
       break;
     case SPREADSHEET_TYPE_ODS:
-      norcus->ods_loader = new orcus_ods (norcus->factory);
+      norcus->ods_loader = new orcus::orcus_ods (norcus->factory);
       norcus->ods_loader->read_file(filename);
       break;
     default:
@@ -258,12 +256,12 @@ show_value (const ixion::model_context& model, const ixion::abs_address_t &pos)
 }
 
 void
-cell_format(const spreadsheet::document &doc, const ixion::model_context& model, const ixion::abs_address_t &pos)
+cell_format(const orcus::spreadsheet::document &doc, const ixion::model_context& model, const ixion::abs_address_t &pos)
 {
-  const spreadsheet::sheet *sheet = doc.get_sheet ((spreadsheet::sheet_t) pos.sheet);
+  const orcus::spreadsheet::sheet *sheet = doc.get_sheet ((orcus::spreadsheet::sheet_t) pos.sheet);
   auto format_id = sheet->get_cell_format(pos.row, pos.column);
-  const spreadsheet::styles &styles = doc.get_styles();
-  const spreadsheet::number_format_t *format = styles.get_number_format (format_id);
+  const orcus::spreadsheet::styles &styles = doc.get_styles();
+  const orcus::spreadsheet::number_format_t *format = styles.get_number_format (format_id);
   if (format) {
     const char *format_str;
     format_str = format->format_string->data();
