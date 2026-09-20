@@ -137,23 +137,29 @@ else
 fi
 
 PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
+PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
+PKG_CHECK_MODULES([LIBORCUS_010], [liborcus-0.19 >= 0.19], LIBORCUS_019="yes", LIBORCUS_019="no")
 if test "$LIBORCUS_021" = yes; then
    AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_021_LIBS)
    AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_021_CFLAGS)
    PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.21 >= 0.21])
    AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+   PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+elif test "$LIBORCUS_020" = yes; then
+   AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_020_LIBS)
+   AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_020_CFLAGS)
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
+   AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+   PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+elif test "$LIBORCUS_019" = yes; then
+   AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_019_LIBS)
+   AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_019_CFLAGS)
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.19 >= 0.19])
+   AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+   PKG_CHECK_MODULES([LIBIXION], [libixion-0.19 >= 0.19])
 else
-   PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
-   if test "$LIBORCUS_020" = yes; then
-      AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_020_LIBS)
-      AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_020_CFLAGS)
-      PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
-      AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
-    else
-      AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
-    fi
+   AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
 fi
-PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
 
 # Checks for header files.
 AC_PATH_X
