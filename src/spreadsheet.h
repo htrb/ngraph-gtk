@@ -1,12 +1,19 @@
 #ifndef SPREADSHEET_HEADER
 #define SPREADSHEET_HEADER
 
+#include "common.h"
+#include "math/math_equation.h"
+
 struct spreadsheet {
+#if HAVE_LIBORCUS
+  struct n_orcus *handle;
+#else
   const void *handle;
+#endif
   int num, selected;
   struct sheet {
     int maxcol, maxrow;
-    const char *name;
+    char *name;
   } *worksheet;
 };
 

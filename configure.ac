@@ -136,6 +136,26 @@ else
    AC_MSG_ERROR((Test for GtkSourceview failed.),)
 fi
 
+PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
+if test "$GTKSOURCEVIEW5" = yes; then
+   AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_021_LIBS)
+   AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_021_CFLAGS)
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.21 >= 0.21])
+   AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+else
+   PKG_CHECK_MODULES([LIBORCUS], [liborcus-0.20 >= 0.20], LIBORCUS_021="yes", LIBORCUS_021="no")
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
+   if test "$GTKSOURCEVIEW5" = yes; then
+      AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_021_LIBS)
+      AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_021_CFLAGS)
+      PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.21 >= 0.21])
+       AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+    else
+       AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
+    fi
+fi
+PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+
 # Checks for header files.
 AC_PATH_X
 AC_HEADER_DIRENT

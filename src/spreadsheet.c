@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if HAVE_LIBORCUS
+#include "orcus.h"
+#else
 #include <freexl.h>
+#endif
 #include "odata.h"
 #include "spreadsheet.h"
 #include "math/math_equation.h"
-
-static struct spreadsheet *spreadsheet_init (const void *handle);
 
 enum spreadsheet_type
 spreadsheet_check (const char *file)
@@ -37,6 +39,184 @@ spreadsheet_check (const char *file)
 
   return FALSE;
 }
+
+const char *
+spreadsheet_get_name (struct spreadsheet *sheet)
+{
+  if (sheet == NULL) {
+    return NULL;
+  }
+  return sheet->worksheet[sheet->selected].name;
+}
+
+int
+spreadsheet_max_column (struct spreadsheet *sheet)
+{
+  if (sheet == NULL) {
+    return 0;
+  }
+  return sheet->worksheet[sheet->selected].maxcol;
+}
+
+int
+spreadsheet_max_row (struct spreadsheet *sheet)
+{
+  if (sheet == NULL) {
+    return 0;
+  }
+  return sheet->worksheet[sheet->selected].maxrow;
+}
+
+#if HAVE_LIBORCUS
+static struct spreadsheet *spreadsheet_init (struct n_orcus *norcus);
+
+struct spreadsheet *
+spreadsheet_open (const char *file)
+{
+  struct n_orcus *norcus = NULL;
+  enum spreadsheet_type type;
+
+  type = spreadsheet_check (file);
+  switch (type) {
+  case SPREADSHEET_TYPE_XLSX:
+  case SPREADSHEET_TYPE_ODS:
+    norcus = n_orcus_open (file, type);
+    break;
+  default:
+    break;
+  }
+
+  if (norcus == NULL) {
+    return NULL;
+  }
+
+  return spreadsheet_init (norcus);
+}
+
+void
+spreadsheet_close (struct spreadsheet **sheet_ptr)
+{
+  struct spreadsheet *sheet;
+  int i;
+  if (sheet_ptr == NULL) {
+    return;
+  }
+
+  sheet = *sheet_ptr;
+  if (sheet == NULL) {
+    return;
+  }
+
+  *sheet_ptr = NULL;
+  n_orcus_close (sheet->handle);
+  for (i = 0; i < sheet->num; i++) {
+    g_free (sheet->worksheet[i].name);
+  }
+  g_free (sheet);
+}
+
+void
+spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data)
+{
+  int maxcol, maxrow;
+
+  if (data == NULL) {
+    return;
+  }
+  data->val = 0;
+  data->type = MATH_VALUE_NAN;
+  if (sheet == NULL) {
+    return;
+  }
+
+  maxcol = spreadsheet_max_column (sheet);
+  maxrow = spreadsheet_max_row (sheet);
+  if (row >= maxrow || col >= maxcol) {
+    return;
+  }
+
+  n_orcus_get_double (sheet->handle, col, row, data);
+}
+
+char *
+spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
+{
+  int maxcol, maxrow;
+  char *str;
+
+  if (sheet == NULL) {
+    return NULL;
+  }
+
+  maxcol = spreadsheet_max_column (sheet);
+  maxrow = spreadsheet_max_row (sheet);
+  if (row >= maxrow || col >= maxcol) {
+    return NULL;
+  }
+
+  str = n_orcus_get_text (sheet->handle, col, row);
+  return str;
+}
+
+int
+spreadsheet_select_sheet (struct spreadsheet *sheet, int index)
+{
+  int ret;
+
+  if (sheet == NULL) {
+    return 1;
+  }
+
+  if (index >= sheet->num) {
+    return 1;
+  }
+
+  ret = n_orcus_select_sheet (sheet->handle, index);
+  if (ret) {
+    return 1;
+  }
+  sheet->selected = index;
+
+  return 0;
+}
+
+static struct spreadsheet *
+spreadsheet_init (struct n_orcus *handle)
+{
+  struct spreadsheet *sheet;
+  char *name;
+  int rows, columns, i, num, ret;
+
+  sheet = g_malloc (sizeof (*sheet));
+  sheet->handle = handle;
+  num = n_orcus_sheet_count (handle);
+  sheet->worksheet = g_malloc (sizeof (*sheet->worksheet) * num);
+  sheet->num = num;
+  for (i = 0; i < num; i++) {
+    sheet->worksheet[i].maxcol = 0;
+    sheet->worksheet[i].maxrow = 0;
+    sheet->worksheet[i].name = NULL;
+    ret = n_orcus_select_sheet (handle, i);
+    if (ret) {
+      continue;
+    }
+    name = n_orcus_get_sheet_name (handle);
+    sheet->worksheet[i].name = name;
+    sheet->selected = i;
+
+    ret = n_orcus_get_dimension (handle, &columns, &rows);
+    if (ret) {
+      continue;
+    }
+    columns++;
+    rows++;
+    sheet->worksheet[i].maxcol = (columns > FILE_OBJ_MAXCOL) ? FILE_OBJ_MAXCOL : columns;
+    sheet->worksheet[i].maxrow = rows;
+  }
+  return sheet;
+}
+#else
+static struct spreadsheet *spreadsheet_init (const void *handle);
 
 struct spreadsheet *
 spreadsheet_open (const char *file)
@@ -79,6 +259,7 @@ void
 spreadsheet_close (struct spreadsheet **sheet_ptr)
 {
   struct spreadsheet *sheet;
+  int i;
   if (sheet_ptr == NULL) {
     return;
   }
@@ -89,17 +270,11 @@ spreadsheet_close (struct spreadsheet **sheet_ptr)
   }
 
   *sheet_ptr = NULL;
-  freexl_close (sheet->handle);
-  g_free (sheet);
-}
-
-const char *
-spreadsheet_get_name (struct spreadsheet *sheet)
-{
-  if (sheet == NULL) {
-    return NULL;
+  n_orcus_close (sheet->handle);
+  for (i = 0; i < sheet->num; i++) {
+    g_free (sheet->worksheet[i].name);
   }
-  return sheet->worksheet[sheet->selected].name;
+  g_free (sheet);
 }
 
 void
@@ -287,7 +462,7 @@ spreadsheet_init (const void *handle)
       continue;
     }
     freexl_get_worksheet_name (handle, i, &name);
-    sheet->worksheet[i].name = name;
+    sheet->worksheet[i].name = g_strdup (name);
     sheet->selected = i;
 
     ret = freexl_worksheet_dimensions(handle, &rows, &columns);
@@ -299,3 +474,4 @@ spreadsheet_init (const void *handle)
   }
   return sheet;
 }
+#endif

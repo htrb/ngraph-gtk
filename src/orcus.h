@@ -1,0 +1,27 @@
+#include "common.h"
+
+#ifndef __ORCUS__
+#define __ORCUS__ 1
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#include "spreadsheet.h"
+#include "math/math_equation.h"
+
+  struct n_orcus;
+
+  void n_orcus_close (struct n_orcus *norcus);
+  struct n_orcus *n_orcus_open (const char *filename, enum spreadsheet_type type);
+  int n_orcus_select_sheet (struct n_orcus *norcus, int sheet);
+  int n_orcus_get_dimension (struct n_orcus *norcus, int *column, int *row);
+  char *n_orcus_get_sheet_name (struct n_orcus *norcus);
+  char *n_orcus_get_text (struct n_orcus *norcus, int col, int row);
+  void n_orcus_get_double (struct n_orcus *norcus, int col, int row, MathValue *data);
+  int n_orcus_sheet_count (struct n_orcus *norcus);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif
