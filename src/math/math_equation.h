@@ -96,6 +96,12 @@ struct _math_stack {
   } stack;
 };
 
+enum EOEQ_ASSIGN_TYPE {
+  EOEQ_ASSIGN_TYPE_BOTH,
+  EOEQ_ASSIGN_TYPE_EOEQ,
+  EOEQ_ASSIGN_TYPE_ASSIGN,
+};
+
 struct _math_equation {
   MathStack stack, string_stack;
   MathArray array, string_array;
@@ -105,11 +111,7 @@ struct _math_equation {
   MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
-  enum EOEQ_ASSIGN_TYPE {
-		       EOEQ_ASSIGN_TYPE_BOTH,
-		       EOEQ_ASSIGN_TYPE_EOEQ,
-		       EOEQ_ASSIGN_TYPE_ASSIGN,
-  } eoeq_assign_type;
+  enum EOEQ_ASSIGN_TYPE eoeq_assign_type;
   int use_eoeq_assign;
   struct narray *scope_info;
   struct {
