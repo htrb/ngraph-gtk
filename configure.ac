@@ -143,7 +143,7 @@ if test "$LIBORCUS_021" = yes; then
    PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.21 >= 0.21])
    AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
 else
-   PKG_CHECK_MODULES([LIBORCUS], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
+   PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
    if test "$LIBORCUS_020" = yes; then
       AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_020_LIBS)
       AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_020_CFLAGS)
