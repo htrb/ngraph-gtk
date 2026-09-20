@@ -144,14 +144,13 @@ if test "$LIBORCUS_021" = yes; then
    AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
 else
    PKG_CHECK_MODULES([LIBORCUS], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
-   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
-   if test "$LIBORCUS_020_CFLAGS" = yes; then
+   if test "$LIBORCUS_020" = yes; then
       AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_020_LIBS)
       AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_020_CFLAGS)
       PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
-       AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+      AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
     else
-       AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
+      AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
     fi
 fi
 PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
