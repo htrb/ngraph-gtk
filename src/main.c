@@ -48,20 +48,20 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
   if (argc > 1 && strcmp(argv[1], "-i") == 0) {
     ofst++;
     if (argc > 2) {
-#if WINDOWS
+#if _WIN32
       int i;
-#endif  /* WINDOWS */
+#endif  /* _WIN32 */
       inifile = ngraph_strdup(argv[2]);
       if (inifile == NULL) {
 	exit(1);
       }
-#if WINDOWS
+#if _WIN32
       for (i = 0; inifile[i] != '\0'; i++) {
 	if (inifile[i] == '\\') {
 	  inifile[i] = '/';
 	}
       }
-#endif  /* WINDOWS */
+#endif  /* _WIN32 */
       ofst++;
     } else {
       inifile = NULL;
