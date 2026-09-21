@@ -1,4 +1,4 @@
-#include "common.h"
+#include "config.h"
 
 #ifdef HAVE_LIBORCUS
 #include <ixion/model_context.hpp>
