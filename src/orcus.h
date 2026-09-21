@@ -1,5 +1,7 @@
 #include "common.h"
 
+#ifdef HAVE_LIBORCUS
+
 #ifndef __ORCUS__
 #define __ORCUS__ 1
 
@@ -24,4 +26,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+#endif
 #endif

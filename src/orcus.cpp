@@ -1,5 +1,6 @@
 #include "common.h"
 
+#ifdef HAVE_LIBORCUS
 #include <ixion/model_context.hpp>
 #include <ixion/types.hpp>
 #include <orcus/spreadsheet/document.hpp>
@@ -275,3 +276,4 @@ cell_format(const orcus::spreadsheet::document &doc, const ixion::model_context&
     show_value (model, pos);
   }
 }
+#endif
