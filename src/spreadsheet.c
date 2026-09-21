@@ -392,24 +392,6 @@ spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
 }
 
 int
-spreadsheet_n_columns (struct spreadsheet *sheet)
-{
-  if (sheet == NULL) {
-    return 0;
-  }
-  return sheet->worksheet[sheet->selected].n_columns;
-}
-
-int
-spreadsheet_n_rows (struct spreadsheet *sheet)
-{
-  if (sheet == NULL) {
-    return 0;
-  }
-  return sheet->worksheet[sheet->selected].n_rows;
-}
-
-int
 spreadsheet_select_sheet (struct spreadsheet *sheet, int index)
 {
   int ret;
