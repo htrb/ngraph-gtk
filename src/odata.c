@@ -366,7 +366,7 @@ struct f2ddata {
   char *file;
   FILE *fd;
   struct spreadsheet *spreadsheet;
-  int worksheet_index, worksheet_max_row, worksheet_max_column;
+  int worksheet_index, worksheet_n_rows, worksheet_n_columns;
   int x,y;
   enum {TYPE_NORMAL, TYPE_DIAGONAL, TYPE_ERR_X, TYPE_ERR_Y} type;
 /*
@@ -2845,8 +2845,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	g_free(fp);
 	return NULL;
       }
-      fp->worksheet_max_row = spreadsheet_max_row (fp->spreadsheet);
-      fp->worksheet_max_column = spreadsheet_max_column (fp->spreadsheet);
+      fp->worksheet_n_rows = spreadsheet_n_rows (fp->spreadsheet);
+      fp->worksheet_n_columns = spreadsheet_n_columns (fp->spreadsheet);
     } else {
       fp->spreadsheet = NULL;
     }
@@ -4119,7 +4119,7 @@ hskipdata(struct f2ddata *fp)
     }
     break;
   case DATA_SOURCE_SPREADSHEET:
-    if (fp->hskip >= fp->worksheet_max_row) {
+    if (fp->hskip >= fp->worksheet_n_rows) {
       fp->eof = TRUE;
       return 0;
     }
@@ -4281,7 +4281,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
     }
     break;
   case DATA_SOURCE_SPREADSHEET:
-    if (fp->line + fp->rstep - 1 > fp->worksheet_max_row) {
+    if (fp->line + fp->rstep - 1 > fp->worksheet_n_rows) {
       fp->eof = TRUE;
     } else {
       fp->line += fp->rstep - 1;
@@ -4961,7 +4961,7 @@ set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, Ma
   if (id < 0) {
     return;
   }
-  n = fp->worksheet_max_column;
+  n = fp->worksheet_n_columns;
   for (eqn = 0; eqn < EQUATION_NUM; eqn++) {
     math_equation_clear_string_array(code[eqn], id);
     math_equation_set_array_str(code[eqn], id, 0, "");
@@ -5024,11 +5024,11 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
   nonum.type = MATH_VALUE_NONUM;
 
   fp->line++;
-  if (fp->line > fp->worksheet_max_row) {
+  if (fp->line > fp->worksheet_n_rows) {
     fp->eof = TRUE;
     return 1;
   }
-  n = (fp->worksheet_max_column > maxdim) ? maxdim : fp->worksheet_max_column;
+  n = (fp->worksheet_n_columns > maxdim) ? maxdim : fp->worksheet_n_columns;
   fp->count++;
   gdata[0].val = fp->count;
   gdata[0].type = MATH_VALUE_NORMAL;
@@ -5045,7 +5045,7 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
     MathValue val;
     set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
     set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
-    for (i = n; i < fp->worksheet_max_column; i++) {
+    for (i = n; i < fp->worksheet_n_columns; i++) {
       spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, &val);
       column_array_push(fp->codex, fp->column_array_id_x, &val);
       column_array_push(fp->codey, fp->column_array_id_y, &val);
@@ -5957,7 +5957,7 @@ get_final_line_spreadsheet(struct f2ddata *fp, struct f2dlocal *local)
     return -1;
   }
 
-  get_final_line_common (fp, local, fp->worksheet_max_row);
+  get_final_line_common (fp, local, fp->worksheet_n_rows);
   return 0;
 }
 
@@ -8864,8 +8864,8 @@ f2dcolumn_spreadsheet(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,c
     return 0;
   }
 
-  max_row = spreadsheet_max_row (spreadsheet);
-  max_column = spreadsheet_max_column (spreadsheet);
+  max_row = spreadsheet_n_rows (spreadsheet);
+  max_column = spreadsheet_n_columns (spreadsheet);
 
   if (col < 1 || col > max_column) {
     spreadsheet_close (&spreadsheet);

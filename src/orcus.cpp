@@ -128,11 +128,11 @@ n_orcus_get_dimension (struct n_orcus *norcus, int *column, int *row)
   try {
     const ixion::model_context& model = norcus->doc->get_model_context();
     ixion::abs_range_t size = model.get_data_range(norcus->current_sheet);
-    if (row) {
-      *row = size.last.row;
+    if (row && size.last.row >= 0) {
+      *row = size.last.row + 1;
     }
-    if (column) {
-      *column = size.last.column;
+    if (column && size.last.column >= 0) {
+      *column = size.last.column + 1;
     }
   } catch  (const std::exception& e) {
   }

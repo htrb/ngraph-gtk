@@ -4157,7 +4157,7 @@ set_header_array_file (struct FileDialog *d, const char *s, struct narray *lines
 static int
 set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int max_lines)
 {
-  int i, n, max_row, max_col;
+  int i, n, n_rows, n_cols;
   struct spreadsheet *sheet;
 
   sheet = d->spreadsheet;
@@ -4173,15 +4173,15 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
     return 0;
   }
 
-  max_row = spreadsheet_max_row (sheet);
-  max_row = (max_row < max_lines) ? max_row : max_lines;
+  n_rows = spreadsheet_n_rows (sheet);
+  n_rows = (n_rows < max_lines) ? n_rows : max_lines;
 
-  max_col = spreadsheet_max_column (sheet);
-  max_col = (max_col < MAX_COLS) ? max_col : MAX_COLS;
+  n_cols = spreadsheet_n_columns (sheet);
+  n_cols = (n_cols < MAX_COLS) ? n_cols : MAX_COLS;
 
-  for (n = 0; n < max_row; n++) {
+  for (n = 0; n < n_rows; n++) {
     arrayinit(lines + n, sizeof(char *));
-    for (i = 0; i <= max_col; i++) {
+    for (i = 0; i <= n_cols; i++) {
       char *str;
       str = spreadsheet_get_text (sheet, i, n);
       if (str) {
