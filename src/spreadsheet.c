@@ -268,7 +268,7 @@ spreadsheet_close (struct spreadsheet **sheet_ptr)
   }
 
   *sheet_ptr = NULL;
-  n_orcus_close (sheet->handle);
+  freexl_close (sheet->handle);
   for (i = 0; i < sheet->num; i++) {
     g_free (sheet->worksheet[i].name);
   }
