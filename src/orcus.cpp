@@ -32,8 +32,6 @@ extern "C" {
 struct n_orcus {
   orcus::spreadsheet::document *doc;
   orcus::spreadsheet::import_factory *factory;
-  orcus::orcus_xlsx *xlsx_loader;
-  orcus::orcus_ods *ods_loader;
   int n_sheet, current_sheet;
 };
 
@@ -42,12 +40,6 @@ n_orcus_close (struct n_orcus *norcus)
 {
   if (norcus == NULL) {
     return;
-  }
-  if (norcus->xlsx_loader) {
-    delete norcus->xlsx_loader;
-  }
-  if (norcus->ods_loader) {
-    delete norcus->ods_loader;
   }
   if (norcus->factory) {
     delete norcus->factory;
@@ -72,12 +64,16 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
     norcus->factory = new orcus::spreadsheet::import_factory(*norcus->doc);
     switch (type) {
     case SPREADSHEET_TYPE_XLSX:
-      norcus->xlsx_loader = new orcus::orcus_xlsx (norcus->factory);
-      norcus->xlsx_loader->read_file(filename);
+      {
+	orcus::orcus_xlsx loader(norcus->factory);
+	loader.read_file(filename);
+      }
       break;
     case SPREADSHEET_TYPE_ODS:
-      norcus->ods_loader = new orcus::orcus_ods (norcus->factory);
-      norcus->ods_loader->read_file(filename);
+      {
+	orcus::orcus_ods loader(norcus->factory);
+	loader.read_file(filename);
+      }
       break;
     default:
       n_orcus_close (norcus);
