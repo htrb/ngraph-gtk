@@ -62,6 +62,9 @@ struct n_orcus *
 n_orcus_open (const char *filename, enum spreadsheet_type type)
 {
   struct n_orcus *norcus = NULL;
+  if (filename == NULL) {
+    return NULL;
+  }
   norcus = (struct n_orcus *) g_malloc0(sizeof (*norcus));
   try {
     orcus::spreadsheet::range_size_t ss{1048576, 16384};
