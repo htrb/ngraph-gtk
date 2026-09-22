@@ -184,7 +184,7 @@ static void
 set_lacale(void)
 {
   wchar_t wLocaleName[LOCALE_NAME_MAX_LENGTH * 2];
-  char *current_lang = getenv("LANG");
+  const char *current_lang = getenv("LANG");
 
   if (current_lang) {
     return;
