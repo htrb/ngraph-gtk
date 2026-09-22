@@ -12,6 +12,7 @@
 
 #include <ixion/address.hpp>
 #include <ixion/model_context.hpp>
+#include <ixion/cell.hpp>
 
 #include <iostream>
 #include <cstdlib>
