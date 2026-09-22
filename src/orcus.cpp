@@ -49,7 +49,7 @@ n_orcus_close (struct n_orcus *norcus)
   if (norcus->doc) {
     delete norcus->doc;
   }
-  g_free (norcus);
+  delete norcus;
 }
 
 struct n_orcus *
@@ -59,7 +59,7 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
   if (filename == NULL) {
     return NULL;
   }
-  norcus = (struct n_orcus *) g_malloc0(sizeof (*norcus));
+  norcus = new struct n_orcus();
   try {
     orcus::spreadsheet::range_size_t ss{1048576, 16384};
     norcus->doc = new orcus::spreadsheet::document{ss};
@@ -94,7 +94,7 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
 }
 
 int
-n_orcus_sheet_count (struct n_orcus *norcus)
+n_orcus_sheet_count (const struct n_orcus *norcus)
 {
   if (norcus == NULL) {
     return 0;
@@ -161,8 +161,6 @@ n_orcus_get_sheet_name (struct n_orcus *norcus)
 static char *
 get_text_formula (const ixion::model_context& model, const ixion::formula_result &result)
 {
-  bool state;
-  ixion::formula_result::result_type type = result.get_type();
   std::string str = result.str(model);
   return g_strdup(str.c_str());
 }
