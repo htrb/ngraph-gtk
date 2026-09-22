@@ -46,8 +46,8 @@ parts:
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
        cp misc/com.github.htrb.ngraph-gtk.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps
-       cp osx/ngraph.iconset/icon_256x256.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps/ngraph.png
-       cp osx/ngraph.iconset/icon_256x256.png $SNAPCRAFT_PRIME/meta/gui/ngraph.png
+       cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps/
+       cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PRIME/meta/gui/
     build-packages:
       - libgsl-dev
       - gettext
