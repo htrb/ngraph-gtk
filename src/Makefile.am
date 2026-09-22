@@ -2,11 +2,11 @@ SUBDIRS = math gtk
 
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
-libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS) $(FREEXL_LIBS)
 if HAVE_LIBORCUS
   libngraph_ldflags += $(LIBORCUS_LIBS) $(LIBIXION_LIBS) $(LIBORCUS_SPREADSHEET_LIBS)
 endif
-libngraph_cflags =
+libngraph_cflags = $(FREEXL_CFLAGS)
 ngraph_ldflags = -lngraph
 ngraph_lib = libngraph.la
 

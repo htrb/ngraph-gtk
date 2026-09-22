@@ -87,7 +87,6 @@ AM_GNU_GETTEXT([external])
 
 dnl Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
-AC_CHECK_LIB([freexl], [freexl_open_xlsx])
 AC_CHECK_LIB([readline], [rl_completion_matches],
 			  [
 			  AC_DEFINE([HAVE_LIBREADLINE], 1, [have readline library])
@@ -136,6 +135,8 @@ else
    AC_MSG_ERROR((Test for GtkSourceview failed.),)
 fi
 
+PKG_CHECK_MODULES([FREEXL], [freexl >= 2.0.0])
+
 PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
 PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
 if test "$LIBORCUS_021" = yes; then
@@ -166,7 +167,7 @@ AC_HEADER_DIRENT
 AC_PROG_EGREP
 
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h freexl.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
