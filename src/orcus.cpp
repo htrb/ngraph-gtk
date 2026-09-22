@@ -158,6 +158,15 @@ n_orcus_get_sheet_name (struct n_orcus *norcus)
   return sheetname;
 }
 
+static char *
+get_text_formula (const ixion::model_context& model, const ixion::formula_result &result)
+{
+  bool state;
+  ixion::formula_result::result_type type = result.get_type();
+  std::string str = result.str(model);
+  return g_strdup(str.c_str());
+}
+
 char *
 n_orcus_get_text (struct n_orcus *norcus, int col, int row)
 {
