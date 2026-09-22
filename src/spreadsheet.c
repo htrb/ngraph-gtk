@@ -167,7 +167,7 @@ spreadsheet_select_sheet (struct spreadsheet *sheet, int index)
     return 1;
   }
 
-  if (index >= sheet->num) {
+  if (index < 0 || index >= sheet->num) {
     return 1;
   }
 
