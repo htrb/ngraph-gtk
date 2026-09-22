@@ -21,7 +21,7 @@ extern "C" {
   char *n_orcus_get_sheet_name (struct n_orcus *norcus);
   char *n_orcus_get_text (struct n_orcus *norcus, int col, int row);
   void n_orcus_get_double (struct n_orcus *norcus, int col, int row, MathValue *data);
-  int n_orcus_sheet_count (struct n_orcus *norcus);
+  int n_orcus_sheet_count (const struct n_orcus *norcus);
 
 #ifdef __cplusplus
 }
