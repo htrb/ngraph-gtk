@@ -167,6 +167,40 @@ get_text_formula (const ixion::model_context& model, const ixion::formula_result
   return g_strdup(str.c_str());
 }
 
+static void
+get_double_formula (const ixion::formula_result &result, MathValue *data)
+{
+  ixion::formula_result::result_type type = result.get_type();
+  switch (type) {
+  case ixion::formula_result::result_type::matrix:
+    data->type = MATH_VALUE_NONUM;
+    break;
+  case ixion::formula_result::result_type::string:
+    {
+      const std::string &s = result.get_string ();
+      n_strtod (s.c_str(), data);
+    }
+    break;
+  case ixion::formula_result::result_type::value:
+    data->val = result.get_value ();
+    data->type = MATH_VALUE_NORMAL;
+    break;
+  case ixion::formula_result::result_type::error:
+    data->type = MATH_VALUE_ERROR;
+    break;
+  case ixion::formula_result::result_type::boolean:
+    {
+      bool state = result.get_boolean ();
+      data->val = state ? 1 : 0;
+      data->type = MATH_VALUE_NORMAL;
+    }
+    break;
+  default:
+    data->type = MATH_VALUE_UNDEF;
+    break;
+  }
+}
+
 char *
 n_orcus_get_text (struct n_orcus *norcus, int col, int row)
 {
