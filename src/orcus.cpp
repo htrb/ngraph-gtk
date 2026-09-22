@@ -215,21 +215,25 @@ n_orcus_get_text (struct n_orcus *norcus, int col, int row)
     double val;
     bool state;
     ixion::string_id_t str_id;
-    ixion::cell_value_t type = model.get_cell_value_type(pos);
+    ixion::cell_t type = model.get_celltype(pos);
     switch (type) {
-    case ixion::cell_value_t::string:
+    case ixion::cell_t::string:
       str_id = model.get_string_identifier(pos);
       s = model.get_string(str_id);
       text = g_strdup (s->c_str());
       break;
-    case ixion::cell_value_t::numeric:
+    case ixion::cell_t::numeric:
       val = model.get_numeric_value (pos);
       text = g_strdup_printf ("%g", val);
       break;
-    case ixion::cell_value_t::error:
-      text = g_strdup ("Err");
+    case ixion::cell_t::formula:
+      {
+	const ixion::formula_cell *fc = model.get_formula_cell(pos);
+	const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
+	text = get_text_formula (model, result);
+      }
       break;
-    case ixion::cell_value_t::boolean:
+    case ixion::cell_t::boolean:
       state = model.get_boolean_value (pos);
       text = g_strdup (state ? "1" : "0");
       break;
