@@ -229,8 +229,10 @@ n_orcus_get_text (struct n_orcus *norcus, int col, int row)
     case ixion::cell_t::formula:
       {
 	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
-	text = get_text_formula (model, result);
+	if (fc) {
+	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
+	  text = get_text_formula (model, result);
+	}
       }
       break;
     case ixion::cell_t::boolean:
