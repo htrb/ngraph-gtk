@@ -1,6 +1,8 @@
 #include "config.h"
 
 #if HAVE_LIBORCUS
+#include "common.h"
+
 #include <ixion/model_context.hpp>
 #include <ixion/types.hpp>
 #include <orcus/spreadsheet/document.hpp>
