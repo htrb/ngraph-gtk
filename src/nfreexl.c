@@ -49,7 +49,7 @@ n_freexl_close (const void *handle)
 static int
 date_to_serial (const char *date)
 {
-  int year, month, day, n;
+  int year, month, day, mjd, n, serial;
   if (date == NULL) {
     return 0;
   }
@@ -57,7 +57,12 @@ date_to_serial (const char *date)
   if (n != 3) {
     return 0;
   }
-  return date_to_mjd (year, month, day);
+  mjd = date_to_mjd (year, month, day);
+  serial = mjd - 15018;
+  if (serial <= 60) {
+    serial--;
+  }
+  return serial;
 }
 
 static double
@@ -78,7 +83,7 @@ static double
 datetime_to_serial (const char *datetime)
 {
   const char *time;
-  double mjd, t = 0;
+  double serial, t = 0;
 
   if (datetime == NULL) {
     return 0;
@@ -87,8 +92,8 @@ datetime_to_serial (const char *datetime)
   if (time) {
     t = time_to_serial (time);
   }
-  mjd = date_to_serial (datetime);
-  return mjd + t;
+  serial = date_to_serial (datetime);
+  return serial + t;
 }
 
 void
