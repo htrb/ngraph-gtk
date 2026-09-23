@@ -4936,7 +4936,8 @@ math_func_strftime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 int
 math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int excel, mjd, is_1904;
+  double excel, mjd;
+  int is_1904;
 
   rval->val = 0;
   rval->type = MATH_VALUE_ERROR;
@@ -4950,7 +4951,7 @@ math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   if (is_1904) {
     mjd = excel + 16479;
   } else {
-    mjd = excel + (excel < 60) ? 15019 : 15018;
+    mjd = excel + ((excel <= 60) ? 15019 : 15018);
   }
 
   rval->type = MATH_VALUE_NORMAL;
