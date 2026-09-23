@@ -4944,3 +4944,28 @@ math_func_strftime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   rval->type = MATH_VALUE_NORMAL;
   return 0;
 }
+
+int
+math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int excel, mjd, is_1904;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  excel = exp->buf[0].val.val;
+  is_1904 = exp->buf[1].val.val;
+
+  if (is_1904) {
+    mjd = excel + 16479;
+  } else {
+    mjd = excel + (excel < 60) ? 15019 : 15018;
+  }
+
+  rval->type = MATH_VALUE_NORMAL;
+  rval->val = mjd;
+  return 0;
+}

@@ -14,6 +14,7 @@
 #        22: MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON
 #        30: MATH_FUNCTION_ARG_TYPE_PROC
 #
+excel2mjd	2	0	0	NULL
 abs		1	0	0	NULL
 sign		1	0	0	NULL
 int		1	0	0	NULL
