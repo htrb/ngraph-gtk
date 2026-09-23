@@ -68,7 +68,7 @@ spreadsheet_n_rows (struct spreadsheet *sheet)
 }
 
 #if HAVE_LIBORCUS
-static struct spreadsheet *spreadsheet_init (struct n_orcus *norcus);
+static struct spreadsheet *n_orcus_init (struct n_orcus *norcus);
 
 struct spreadsheet *
 spreadsheet_open (const char *file)
@@ -90,7 +90,7 @@ spreadsheet_open (const char *file)
     return NULL;
   }
 
-  return spreadsheet_init (norcus);
+  return n_orcus_init (norcus);
 }
 
 void
@@ -108,7 +108,7 @@ spreadsheet_close (struct spreadsheet **sheet_ptr)
   }
 
   *sheet_ptr = NULL;
-  n_orcus_close (sheet->handle);
+  n_orcus_close (sheet);
   for (i = 0; i < sheet->num; i++) {
     g_free (sheet->worksheet[i].name);
   }
@@ -135,7 +135,7 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
     return;
   }
 
-  n_orcus_get_double (sheet->handle, col, row, data);
+  n_orcus_get_double (sheet, col, row, data);
 }
 
 char *
@@ -154,7 +154,7 @@ spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
     return NULL;
   }
 
-  str = n_orcus_get_text (sheet->handle, col, row);
+  str = n_orcus_get_text (sheet, col, row);
   return str;
 }
 
@@ -171,7 +171,7 @@ spreadsheet_select_sheet (struct spreadsheet *sheet, int index)
     return 1;
   }
 
-  ret = n_orcus_select_sheet (sheet->handle, index);
+  ret = n_orcus_select_sheet (sheet, index);
   if (ret) {
     return 1;
   }
@@ -181,30 +181,30 @@ spreadsheet_select_sheet (struct spreadsheet *sheet, int index)
 }
 
 static struct spreadsheet *
-spreadsheet_init (struct n_orcus *handle)
+n_orcus_init (struct n_orcus *handle)
 {
   struct spreadsheet *sheet;
   char *name;
   int rows, columns, i, num, ret;
 
   sheet = g_malloc (sizeof (*sheet));
-  sheet->handle = handle;
-  num = n_orcus_sheet_count (handle);
+  sheet->norcus = handle;
+  num = n_orcus_sheet_count (sheet);
   sheet->worksheet = g_malloc (sizeof (*sheet->worksheet) * num);
   sheet->num = num;
   for (i = 0; i < num; i++) {
     sheet->worksheet[i].n_columns = 0;
     sheet->worksheet[i].n_rows = 0;
     sheet->worksheet[i].name = NULL;
-    ret = n_orcus_select_sheet (handle, i);
+    ret = n_orcus_select_sheet (sheet, i);
     if (ret) {
       continue;
     }
-    name = n_orcus_get_sheet_name (handle);
+    name = n_orcus_get_sheet_name (sheet, i);
     sheet->worksheet[i].name = name;
     sheet->selected = i;
 
-    ret = n_orcus_get_dimension (handle, &columns, &rows);
+    ret = n_orcus_get_dimension (sheet, &columns, &rows);
     if (ret) {
       continue;
     }

@@ -6,10 +6,9 @@
 
 struct spreadsheet {
 #if HAVE_LIBORCUS
-  struct n_orcus *handle;
-#else
-  const void *handle;
+  struct n_orcus *norcus;
 #endif
+  const void *handle;
   int num, selected;
   struct sheet {
     int n_columns, n_rows;
