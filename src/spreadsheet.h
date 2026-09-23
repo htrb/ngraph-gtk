@@ -8,12 +8,15 @@ struct spreadsheet {
 #if HAVE_LIBORCUS
   struct n_orcus *norcus;
 #endif
-  const void *handle;
+  const void *freexl;
   int num, selected;
   struct sheet {
     int n_columns, n_rows;
     char *name;
   } *worksheet;
+  int (* select_sheet) (struct spreadsheet *, int);
+  char * (* get_text) (struct spreadsheet *, int, int);
+  void (* get_double) (struct spreadsheet *, int, int, MathValue *);
 };
 
 enum spreadsheet_type {

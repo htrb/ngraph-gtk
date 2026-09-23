@@ -40,7 +40,7 @@ struct n_orcus {
 };
 
 void
-n_orcus_close_private (struct n_orcus *norcus)
+n_orcus_close (struct n_orcus *norcus)
 {
   if (norcus == NULL) {
     return;
@@ -52,16 +52,6 @@ n_orcus_close_private (struct n_orcus *norcus)
     delete norcus->doc;
   }
   delete norcus;
-}
-
-void
-n_orcus_close (struct spreadsheet *sheet)
-{
-  struct n_orcus *norcus;
-  if (sheet == NULL) {
-    return;
-  }
-  n_orcus_close_private (sheet->norcus);
 }
 
 struct n_orcus *
@@ -90,7 +80,7 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
       }
       break;
     default:
-      n_orcus_close_private (norcus);
+      n_orcus_close (norcus);
       norcus = NULL;
       break;
     }
@@ -99,20 +89,15 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
       norcus->n_sheet = model.get_sheet_count();
     }
   } catch  (const std::exception& e) {
-    n_orcus_close_private (norcus);
+    n_orcus_close (norcus);
     norcus = NULL;
   }
   return norcus;
 }
 
 int
-n_orcus_sheet_count (const struct spreadsheet *sheet)
+n_orcus_sheet_count (const struct n_orcus *norcus)
 {
-  struct n_orcus *norcus;
-  if (sheet == NULL) {
-    return 0;
-  }
-  norcus = sheet->norcus;
   if (norcus == NULL) {
     return 0;
   }
@@ -138,13 +123,8 @@ n_orcus_select_sheet (struct spreadsheet *sheet, int index)
 }
 
 int
-n_orcus_get_dimension (struct spreadsheet *sheet, int *column, int *row)
+n_orcus_get_dimension (struct n_orcus *norcus, int *column, int *row)
 {
-  struct n_orcus *norcus;
-  if (sheet == NULL) {
-    return 1;
-  }
-  norcus = sheet->norcus;
   if (norcus == NULL) {
     return 1;
   }
@@ -169,15 +149,10 @@ n_orcus_get_dimension (struct spreadsheet *sheet, int *column, int *row)
 }
 
 char *
-n_orcus_get_sheet_name (struct spreadsheet *sheet, int index)
+n_orcus_get_sheet_name (struct n_orcus *norcus)
 {
   char *sheetname = NULL;
-  struct n_orcus *norcus;
-  (void) index;
-  if (sheet == NULL) {
-    return NULL;
-  }
-  norcus = sheet->norcus;
+
   if (norcus == NULL) {
     return NULL;
   }
