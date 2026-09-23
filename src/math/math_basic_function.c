@@ -1288,23 +1288,11 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static double
 mjd(int y, int m, int d, int hh, int mm, int ss)
 {
-  int d0, d1, d2, d3, d4;
+  int mjd;
 
-  if (m < 1) {
-    m = 1;
-  }
+  mjd = date_to_mjd(y, m, d);
 
-  if (d < 1) {
-    d = 1;
-  }
-
-  d0 = (14 - m) / 12;
-  d1 = (y - d0) * 365.25;
-  d2 = (m + d0 * 12 - 2) * 30.59;
-  d3 = (y - d0) / 100;
-  d4 = (y - d0) / 400;
-
-  return  d1 + d2 - d3 + d4 + d + 1721088 - 2400000 + hh / 24.0 + mm / 1440.0  + ss / 86400.0;
+  return mjd + hh / 24.0 + mm / 1440.0  + ss / 86400.0;
 }
 
 int
