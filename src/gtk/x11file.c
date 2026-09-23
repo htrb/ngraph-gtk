@@ -4181,7 +4181,7 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
 
   for (n = 0; n < n_rows; n++) {
     arrayinit(lines + n, sizeof(char *));
-    for (i = 0; i <= n_cols; i++) {
+    for (i = 0; i < n_cols; i++) {
       char *str;
       str = spreadsheet_get_text (sheet, i, n);
       if (str) {
