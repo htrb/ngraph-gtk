@@ -66,9 +66,9 @@ mark_tab=4
 text_tab=5
 
 [gra2cairo]
-font=Sans-serif,arial,noto sans jp,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
-font=Serif,times new roman,noto serif jp,angsana new,mingliu,simsun,batangche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
-font=Monospace,courier new,BIZ UDGothic,courier monothai,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
+font=Sans-serif,Arial,Segoe UI Historic,Yu Gothic,Meiryo,Microsoft YaHei,Microsoft JhengHei,Malgun Gothic,Leelawadee,Nirmala UI,Gadugi,Ebrima,sans-serif
+font=Serif,Times New Roman,Georgia,Yu Mincho,MS PMincho,SimSun,MingLiU,Batang,Angsana New,Sylfaen,serif
+font=Monospace,Consolas,Courier New,BIZ UDGothic,MS Gothic,SimSun,MingLiU,Gulimche,monospace
 
 [axis]
 width=40
