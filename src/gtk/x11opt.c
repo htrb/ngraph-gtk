@@ -1044,7 +1044,7 @@ MiscDialogSetupItem(struct MiscDialog *d)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->icon_size), Menulocal.icon_size_local == GTK_ICON_SIZE_LARGE);
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
+  combo_box_set_active(d->use_dark_theme, Menulocal.use_dark_theme);
 
   if (Menulocal.source_style_id) {
     GtkSourceStyleSchemeManager *sman;
@@ -1333,8 +1333,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->icon_size = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("use _Dark theme"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Appearance:"), FALSE, i++);
+    combo_box_append_text(w, _("Light"));
+    combo_box_append_text(w, _("Dark"));
+    combo_box_append_text(w, _("Default"));
     d->use_dark_theme = w;
 
     gtk_frame_set_child(GTK_FRAME(frame), table);
@@ -1473,7 +1476,7 @@ MiscDialogClose(GtkWidget *w, void *data)
   arraydel(&(d->tmp_palette));
 
   Menulocal.icon_size_local = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->icon_size)) ? GTK_ICON_SIZE_LARGE : GTK_ICON_SIZE_NORMAL;
-  menu_use_dark_theme_set(gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_dark_theme)));
+  menu_use_dark_theme_set(combo_box_get_active(d->use_dark_theme));
 
   d->ret = ret;
 
