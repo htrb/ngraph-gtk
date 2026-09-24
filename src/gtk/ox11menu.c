@@ -1272,7 +1272,21 @@ menu_use_dark_theme_set(int state)
   GtkSettings *settings;
 
   settings = gtk_settings_get_default();
+#if GTK_CHECK_VERSION(4, 20, 0)
+  switch (state) {
+  case 0:
+    g_object_set(G_OBJECT(settings), "gtk-interface-color-scheme", GTK_INTERFACE_COLOR_SCHEME_LIGHT, NULL);
+    break;
+  case 1:
+    g_object_set(G_OBJECT(settings), "gtk-interface-color-scheme", GTK_INTERFACE_COLOR_SCHEME_DARK, NULL);
+    break;
+  default:
+    g_object_set(G_OBJECT(settings), "gtk-interface-color-scheme", GTK_INTERFACE_COLOR_SCHEME_DEFAULT, NULL);
+    break;
+  }
+#else
   g_object_set(G_OBJECT(settings), "gtk-application-prefer-dark-theme", state, NULL);
+#endif
   Menulocal.use_dark_theme = state;
 }
 
