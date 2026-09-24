@@ -1329,16 +1329,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->decimalsign = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("use _Large Icons (requires restart)"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->icon_size = w;
-
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Appearance:"), FALSE, i++);
     combo_box_append_text(w, _("Light"));
     combo_box_append_text(w, _("Dark"));
     combo_box_append_text(w, _("Default"));
     d->use_dark_theme = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("use _Large Icons (requires restart)"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->icon_size = w;
 
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
