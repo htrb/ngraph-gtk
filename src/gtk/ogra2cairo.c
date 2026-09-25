@@ -856,17 +856,11 @@ loadfont(char *fontalias, int font_style, int *symbol)
   } else {
     gchar *ptr;
     pfont = pango_font_description_new();
-
-    if (fcur->alternative) {
-      char **sary, *tmp;
-      sary = g_strsplit (fcur->alternative, ",", -1);
-      tmp = g_strjoinv ("','", sary);
-      g_strfreev (sary);
-      ptr = g_strdup_printf("'%s','%s'", fcur->fontname, tmp);
-      g_free (tmp);
-    } else {
-      ptr = g_strdup_printf("'%s'", fcur->fontname);
-    }
+#if WINDOW
+    ptr = quote_fonts(fcur->fontname, fcur->alternative);
+#else
+    ptr = g_strdup_printf("%s%s%s", fcur->fontname, (fcur->alternative) ? "," : "", CHK_STR(fcur->alternative));
+#endif
     if (ptr) {
       pango_font_description_set_family(pfont, ptr);
       g_free(ptr);
