@@ -58,9 +58,6 @@ parts:
     stage-packages:
       - ruby
       - xterm
-      - aspell
-      - aspell-en
-      - raspell
     parse-info: [usr/share/metainfo/com.github.htrb.ngraph-gtk.metainfo.xml]
 
   libraries:
