@@ -5015,6 +5015,20 @@ get_data_from_file(struct f2ddata *fp, int maxdim, MathValue *gdata)
 }
 
 static int
+check_remark_spreadsheet (struct f2ddata *fp)
+{
+  char *col;
+  int comment;
+  col = spreadsheet_get_text (fp->spreadsheet, 0, fp->line - 1);
+  if (col == NULL) {
+    return FALSE;
+  }
+  comment = CHECK_REMARK(fp->remark, fp->ifs_buf, col[0]);
+  g_free (col);
+  return comment;
+}
+
+static int
 get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
   int i, n;
