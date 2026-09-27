@@ -4271,9 +4271,7 @@ set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear
       text[j + 1] = arraynget_str(lines + i, j);
     }
     text[j + 1] = NULL;
-    if (is_spreadsheet) {
-      v = CHECK_VISIBILITY_ARRAY(i, skip, step, final);
-    } else {
+    {
       int c;
       const char *str;
       str = arraynget_str(lines + i, 0);
