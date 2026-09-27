@@ -5042,6 +5042,9 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
     fp->eof = TRUE;
     return 1;
   }
+  if (check_remark_spreadsheet (fp)) {
+    return 2;
+  }
   n = (fp->worksheet_n_columns > maxdim) ? maxdim : fp->worksheet_n_columns;
   fp->count++;
   gdata[0].val = fp->count;
