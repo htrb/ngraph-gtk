@@ -54,6 +54,7 @@ parts:
       - libreadline-dev
       - ruby-dev
       - libgtksourceview-5-dev
+      - autoconf-archive
     stage-packages:
       - ruby
       - xterm
