@@ -2482,7 +2482,6 @@ load_tab_setup_item(struct FileDialog *d, int id)
   g_free(ifs);
 
   stat = (d->source != DATA_SOURCE_SPREADSHEET);
-  set_widget_sensitivity_with_label (d->load.remark, stat);
   set_widget_sensitivity_with_label (d->load.csv, stat);
   set_widget_sensitivity_with_label (d->load.ifs, stat);
 }
