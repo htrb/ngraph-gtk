@@ -1333,7 +1333,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Appearance:"), FALSE, i++);
     combo_box_append_text(w, _("Light"));
     combo_box_append_text(w, _("Dark"));
-    combo_box_append_text(w, _("Default"));
     d->use_dark_theme = w;
 
     w = gtk_check_button_new_with_mnemonic(_("use _Large Icons (requires restart)"));
