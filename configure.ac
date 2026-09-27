@@ -75,6 +75,7 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 AC_PROG_INSTALL
 AC_PROG_SED
 AC_PROG_MKDIR_P
