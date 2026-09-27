@@ -497,11 +497,12 @@ markup_message_box_cb(GtkWidget *dlg, int res, gpointer user_data)
 }
 
 void
-markup_message_box_full(GtkWidget *parent, const char *message, const char *title, int mode, int markup, response_cb cb, gpointer user_data)
+markup_message_box_full(GtkWidget *parent, const char *msg, const char *title, int mode, int markup, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg;
   GtkMessageType dlg_type;
   struct markup_message_box_data *data;
+  char *message;
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
@@ -515,6 +516,16 @@ markup_message_box_full(GtkWidget *parent, const char *message, const char *titl
 
   if (title == NULL) {
     title = _("Error");
+  }
+
+  if (msg) {
+    if (g_utf8_validate (msg, -1, NULL)) {
+      message = g_strdup (msg);
+    } else {
+      message = g_utf8_make_valid (msg, -1);
+    }
+  } else {
+    message = g_strdup("");
   }
 
   switch (mode) {
@@ -538,6 +549,7 @@ markup_message_box_full(GtkWidget *parent, const char *message, const char *titl
     gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dlg), message);
   }
 
+  g_free(message);
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
