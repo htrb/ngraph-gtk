@@ -165,7 +165,7 @@ static char *FileConstant[MATH_CONST_SIZE] = {
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[data]"
 #define COLUMN_ARRAY_NAME "COL"
-#define HEADER_ARRAY_NAME "$header"
+#define HEADER_ARRAY_NAME "$HEADER"
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -8344,6 +8344,15 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
   }
 
   return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
+}
+
+static void
+set_header_array_spreadsheet (struct f2ddata *fp)
+{
+  if (! fp->use_header_array) {
+    return;
+  }
+  set_string_array_from_spreadsheet (fp, &fp->array_id.header, 0);
 }
 
 static int
