@@ -208,6 +208,49 @@ get_double_formula (const ixion::formula_result &result, MathValue *data)
 }
 
 char *
+n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row)
+{
+  char *text = NULL;
+  struct n_orcus *norcus;
+  if (sheet == NULL) {
+    return NULL;
+  }
+  norcus = sheet->norcus;
+  if (norcus == NULL) {
+    return NULL;
+  }
+  try {
+    const ixion::model_context& model = norcus->doc->get_model_context();
+    ixion::abs_address_t pos(norcus->current_sheet, row, col);
+    const std::string *s;
+    ixion::string_id_t str_id;
+    ixion::cell_t type = model.get_celltype(pos);
+    switch (type) {
+    case ixion::cell_t::string:
+      str_id = model.get_string_identifier(pos);
+      s = model.get_string(str_id);
+      text = g_strdup (s->c_str());
+      break;
+    case ixion::cell_t::formula:
+      {
+	const ixion::formula_cell *fc = model.get_formula_cell(pos);
+	if (fc) {
+	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
+	  text = get_text_formula (model, result);
+	}
+      }
+      break;
+    default:
+      text = NULL;
+      break;
+    }
+  } catch  (const std::exception& e) {
+    text = NULL;
+  }
+  return text;
+}
+
+char *
 n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
 {
   char *text = NULL;

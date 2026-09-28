@@ -19,6 +19,7 @@ extern "C" {
   int n_orcus_select_sheet (struct spreadsheet *sheet, int index);
   int n_orcus_get_dimension (struct n_orcus *norcus, int *column, int *row);
   char *n_orcus_get_sheet_name (struct n_orcus *norcus);
+  char *n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row);
   char *n_orcus_get_text (struct spreadsheet *sheet, int col, int row);
   void n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data);
   int n_orcus_sheet_count (const struct n_orcus *norcus);
