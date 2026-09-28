@@ -8434,6 +8434,12 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (set_const_all(fp))
     return 1;
 
+  switch (fp->src) {
+  case DATA_SOURCE_SPREADSHEET:
+    set_header_array_spreadsheet (fp);
+    break;
+  }
+
   GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
   switch (type) {
