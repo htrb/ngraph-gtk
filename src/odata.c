@@ -4974,7 +4974,7 @@ set_column_string_array(struct f2ddata *fp)
 }
 
 static void
-set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, MathEquation **code)
+set_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, int line, MathEquation **code)
 {
   int i, eqn, n;
   if (id < 0) {
@@ -4986,7 +4986,7 @@ set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, Ma
     math_equation_set_array_str(code[eqn], id, 0, "");
     for (i = 0; i < n; i++) {
       char *str;
-      str = spreadsheet_get_text (fp->spreadsheet, i, fp->line - 1);
+      str = spreadsheet_get_text (fp->spreadsheet, i, line);
       math_equation_set_array_str(code[eqn], id, i + 1, str ? str : "");
       g_free (str);
     }
@@ -4994,10 +4994,16 @@ set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, Ma
 }
 
 static void
+set_string_array_from_spreadsheet (struct f2ddata *fp, struct xy_id *id, int line)
+{
+  set_string_array_equation_from_spreadsheet(fp, id->x, line, fp->codex);
+  set_string_array_equation_from_spreadsheet(fp, id->y, line, fp->codey);
+}
+
+static void
 set_column_string_array_from_spreadsheet (struct f2ddata *fp)
 {
-  set_column_string_array_equation_from_spreadsheet(fp, fp->array_id.string.x, fp->codex);
-  set_column_string_array_equation_from_spreadsheet(fp, fp->array_id.string.y, fp->codey);
+  set_string_array_from_spreadsheet (fp, &fp->array_id.string, fp->line - 1);
 }
 
 static int
