@@ -162,6 +162,39 @@ n_freexl_get_double (struct spreadsheet *sheet, int col, int row, MathValue *dat
 }
 
 char *
+n_freexl_get_text_raw (struct spreadsheet *sheet, int col, int row)
+{
+  int ret;
+  FreeXL_CellValue cell;
+  char *str;
+  const void *handle;
+
+  if (sheet == NULL) {
+    return NULL;
+  }
+  handle = sheet->freexl;
+  if (handle == NULL) {
+    return NULL;
+  }
+
+  ret = freexl_get_cell_value (handle, row, col, &cell);
+  if (ret != FREEXL_OK) {
+    return NULL;
+  }
+
+  switch (cell.type) {
+  case FREEXL_CELL_TEXT:
+  case FREEXL_CELL_SST_TEXT:
+    str = g_strdup (cell.value.text_value);
+    break;
+  default:
+    str = NULL;
+    break;
+  }
+  return str;
+}
+
+char *
 n_freexl_get_text (struct spreadsheet *sheet, int col, int row)
 {
   int ret;
