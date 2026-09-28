@@ -5019,7 +5019,7 @@ check_remark_spreadsheet (struct f2ddata *fp)
 {
   char *col;
   int comment;
-  col = spreadsheet_get_text (fp->spreadsheet, 0, fp->line - 1);
+  col = spreadsheet_get_text_raw (fp->spreadsheet, 0, fp->line - 1);
   if (col == NULL) {
     return FALSE;
   }
