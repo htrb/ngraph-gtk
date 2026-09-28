@@ -16,6 +16,7 @@ struct spreadsheet {
   } *worksheet;
   int (* select_sheet) (struct spreadsheet *, int);
   char * (* get_text) (struct spreadsheet *, int, int);
+  char * (* get_text_raw) (struct spreadsheet *, int, int);
   void (* get_double) (struct spreadsheet *, int, int, MathValue *);
 };
 
@@ -32,6 +33,7 @@ int spreadsheet_select_sheet (struct spreadsheet *sheet, int index);
 int spreadsheet_n_columns (struct spreadsheet *sheet);
 int spreadsheet_n_rows (struct spreadsheet *sheet);
 enum spreadsheet_type spreadsheet_check (const char *file);
+char *spreadsheet_get_text_raw (struct spreadsheet *sheet, int col, int row);
 char *spreadsheet_get_text (struct spreadsheet *sheet, int col, int row);
 void spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data);
 const char *spreadsheet_get_name (struct spreadsheet *sheet);

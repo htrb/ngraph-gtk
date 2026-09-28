@@ -163,6 +163,26 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
 }
 
 char *
+spreadsheet_get_text_raw (struct spreadsheet *sheet, int col, int row)
+{
+  int n_columns, n_rows;
+  char *str;
+
+  if (sheet == NULL) {
+    return NULL;
+  }
+
+  n_columns = spreadsheet_n_columns (sheet);
+  n_rows = spreadsheet_n_rows (sheet);
+  if (row >= n_rows || col >= n_columns) {
+    return NULL;
+  }
+
+  str = sheet->get_text_raw (sheet, col, row);
+  return str;
+}
+
+char *
 spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
 {
   int n_columns, n_rows;
@@ -241,6 +261,7 @@ n_orcus_init (struct n_orcus *handle)
     sheet->worksheet[i].n_rows = rows;
   }
   sheet->select_sheet = n_orcus_select_sheet;
+  sheet->get_text_raw = n_orcus_get_text_raw;
   sheet->get_text = n_orcus_get_text;
   sheet->get_double = n_orcus_get_double;
   return sheet;
@@ -286,6 +307,7 @@ n_freexl_init (const void *handle)
     sheet->worksheet[i].n_rows = rows;
   }
   sheet->select_sheet = n_freexl_select_sheet;
+  sheet->get_text_raw = n_freexl_get_text_raw;
   sheet->get_text = n_freexl_get_text;
   sheet->get_double = n_freexl_get_double;
   return sheet;
