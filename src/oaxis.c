@@ -3034,22 +3034,13 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
   _getobj(obj,"A",inst,&fa);
-  _getobj(obj,"x",inst,&aconf.x0);
-  _getobj(obj,"y",inst,&aconf.y0);
-  _getobj(obj,"direction",inst,&aconf.direction);
   _getobj(obj,"baseline",inst,&bline);
-  _getobj(obj,"length",inst,&aconf.length);
-  _getobj(obj,"width",inst,&aconf.width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"clip",inst,&clip);
+  aconf_init (obj, inst, &aconf);
 
   snum=arraynum(style);
   sdata=arraydata(style);
-
-  aconf.dir=aconf.direction/18000.0*MPI;
-  aconf.x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
-  aconf.y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
-  alloc_axis_math(obj, inst, &aconf);
 
   GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
