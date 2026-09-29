@@ -101,6 +101,21 @@ enum AXIS_NUM_POS {
   AXIS_NUM_POS_RIGHT,
 };
 
+static char *axistitleposchar[]={
+  N_("auto"),
+  N_("begin"),
+  N_("middle"),
+  N_("end"),
+  NULL
+};
+
+enum AXIS_TITLE_POS {
+  AXIS_TITLE_POS_AUTO,
+  AXIS_TITLE_POS_BEGIN,
+  AXIS_TITLE_POS_MIDDLE,
+  AXIS_TITLE_POS_END,
+};
+
 static char *anumalignchar[]={
   N_("center"),
   N_("left"),
@@ -252,7 +267,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
-  int autonorm,num,gnum,margin;
+  int autonorm,num,gnum,margin,title_offset;
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -277,6 +292,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=-1;
   alpha=255;
   margin=500;
+  title_offset=0;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"auto_scale_margin",inst,&margin)) return 1;
@@ -299,6 +315,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
   if (_putobj(obj,"num_A",inst,&alpha)) return 1;
+  if (_putobj(obj,"title_offset",inst,&title_offset)) return 1;
 
   font = group = name = NULL;
 
@@ -2200,6 +2217,97 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
   return 0;
 }
 
+static void
+rotate_rect (int *pos, double dir)
+{
+  int pivot_x, pivot_y;
+  int i;
+  pivot_x = pos[0];
+  pivot_y = pos[1];
+  for (i = 1; i < 4; i++) {
+    double x, y;
+    pos[i * 2] -= pivot_x;
+    pos[i * 2 + 1] -= pivot_y;
+    x = pos[i * 2] * cos(-dir) - pos[i * 2 + 1] * sin(-dir);
+    y = pos[i * 2] * sin(-dir) + pos[i * 2 + 1] * cos(-dir);
+    pos[i * 2] = pivot_x + x;
+    pos[i * 2 + 1] = pivot_y + y;
+  }
+}
+
+static int
+check_side(const double *a, const double *b, const int *c) {
+  double cross_product;
+  cross_product = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  if (cross_product > 0.0) {
+    return AXIS_NUM_POS_RIGHT;
+  } else if (cross_product < 0.0) {
+    return AXIS_NUM_POS_LEFT;
+  } else {
+    return AXIS_NUM_POS_NONE;
+  }
+}
+
+static double
+distance_to_line(const double *p0, const double *p1, const int *p)
+{
+  double a = p1[1] - p0[1];
+  double b = -(p1[0] - p0[0]);
+  double c = p1[0] * p0[1] - p1[1] * p0[0];
+
+  if (a == 0 && b == 0) {
+    return sqrt((p[0] - p0[0]) * (p[0] - p0[0]) + (p[1] - p0[1]) * (p[0] - p0[1]));
+  }
+
+  double numerator = fabs(a * p[0] + b * p[1] + c);
+  double denominator = sqrt(a * a + b * b);
+
+  return numerator / denominator;
+}
+
+static int
+get_distance (struct axis_config *aconf, int *pos, int target)
+{
+  int i, distance_max;
+  double baseline[4];
+  baseline[0] = aconf->x0;
+  baseline[1] = aconf->y0;
+  baseline[2] = aconf->x1;
+  baseline[3] = aconf->y1;
+  distance_max = 0;
+  for (i = 0; i < 4; i++) {
+    int distance;
+    int side;
+    side = check_side(baseline, baseline + 2, pos + i * 2);
+    if (side == target) {
+      distance = distance_to_line (baseline, baseline + 2, pos + i * 2);
+    } else {
+      distance = 0;
+    }
+    if (distance > distance_max) {
+      distance_max = distance;
+    }
+  }
+  return distance_max;
+}
+
+static int
+num_distance (struct axis_config *aconf, int side, int *pos)
+{
+  int distance;
+  distance = 0;
+  switch (side) {
+  case AXIS_NUM_POS_LEFT:
+  case AXIS_NUM_POS_RIGHT:
+    distance = get_distance (aconf, pos, side);
+    break;
+  default:
+    return 0;
+    break;
+  }
+  return distance;
+}
+
 static int
 draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	       int GC, int side, int align, int ndir, int ilenmax, int plen,
@@ -2216,7 +2324,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
   double nndir, po, min1, max1, value;
   int numlen,i;
   char *text, ch;
-  int sx, sy, ndirection, cstep;
+  int sx, sy, ndirection, cstep, distance_max;
 
   _getobj(obj,"num_shift_p",inst,&sx);
   _getobj(obj,"num_shift_n",inst,&sy);
@@ -2306,6 +2414,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
   cstep = step - begin + 1;
   numcount = 0;
 
+  distance_max = 0;
   while ((rcode=getaxisposition(alocal,&po))!=-2) {
     if (rcode>=2) {
       gx0=aconf->x0+(po-min1)*aconf->length/(max1-min1)*cos(aconf->dir);
@@ -2315,6 +2424,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
 	numcount++;
 	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
+	  int point[8], distance;
 	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format, nozero);
 	  if (text == NULL) {
 	    return 1;
@@ -2372,6 +2482,19 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	    arrayadd(array, &s);
 	  }
 	  g_free(text);
+	  point[0] = gx0 - px1 + fx0;
+	  point[1] = gy0 - py1 + fy1;
+	  point[2] = gx0 - px1 + fx1;
+	  point[3] = gy0 - py1 + fy1;
+	  point[4] = gx0 - px1 + fx1;
+	  point[5] = gy0 - py1 + fy0;
+	  point[6] = gx0 - px1 + fx0;
+	  point[7] = gy0 - py1 + fy0;
+	  rotate_rect (point, nndir);
+	  distance = num_distance (aconf, side, point);
+	  if (distance > distance_max) {
+	    distance_max = distance;
+	  }
 	}
 
 	if ((alocal->atype==AXISLOGSMALL) && (rcode==3)) {
@@ -2383,6 +2506,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       cstep++;
     }
   }
+  _putobj(obj, "title_offset", inst, &distance_max);
 
   if (norm != 1 && array == NULL) {
     draw_numbering_normalize(GC, side, aconf, font, norm, maxlen, sx, sy, dlx2, dly2, ndir, nndir, ndirection);
@@ -2987,6 +3111,107 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, 
 }
 
 static void
+calculate_perpendicular_point(struct axis_config *aconf, double distance, int side, int *px, int *py)
+{
+  double mx = (aconf->x0 + aconf->x1) / 2.0;
+  double my = (aconf->y0 + aconf->y1) / 2.0;
+  double dx = aconf->x1 - aconf->x0;
+  double dy = aconf->y1 - aconf->y0;
+  double length = sqrt(dx * dx + dy * dy);
+
+  if (length == 0.0) {
+    *px = mx;
+    *py = my;
+    return;
+  }
+
+  double ux = dx / length;
+  double uy = dy / length;
+  double nx =  uy * side;
+  double ny = -ux * side;
+
+  *px = mx + nx * distance;
+  *py = my + ny * distance;
+}
+
+static void
+draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf)
+{
+  char *title, *group;
+  int title_offset, side, x, y, dir, bbox[4], position, space;
+  struct font_config font;
+  double rdir, si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
+  int arrow, arrow_length;
+
+  _getobj(obj, "group", inst, &group);
+  _getobj(obj, "title", inst, &title);
+  _getobj(obj, "title_position", inst, &position);
+  _getobj(obj, "title_offset", inst, &title_offset);
+  _getobj(obj, "num", inst, &side);
+  _getobj(obj, "arrow", inst, &arrow);
+  _getobj(obj, "arrow_length", inst, &arrow_length);
+  font_info (obj, inst, &font);
+  alen = aconf->width * (double) arrow_length / 10000;
+
+  margin = font.pt * 0.3528 / 2;
+
+  si = sin(aconf->dir);
+  co = cos(aconf->dir);
+
+  if (side == AXIS_NUM_POS_NONE || title == NULL || title[0] == '\0') {
+    return;
+  }
+  if (position == AXIS_TITLE_POS_AUTO) {
+    if (group  && group[0] == 'c') {
+      position = AXIS_TITLE_POS_END;
+    } else {
+      position = AXIS_TITLE_POS_MIDDLE;
+    }
+  }
+  switch (position) {
+  case AXIS_TITLE_POS_BEGIN:
+    x = aconf->x0;
+    y = aconf->y0;
+    space = margin;
+    if (arrow == ARROW_POSITION_BOTH || arrow == ARROW_POSITION_BEGIN) {
+      space += alen;
+    }
+    x -= space * co;
+    y += space * si;
+    align_x = 1;
+    align_y = 0.5;
+    break;
+  case AXIS_TITLE_POS_END:
+    x = aconf->x1;
+    y = aconf->y1;
+    space = margin;
+    if (arrow == ARROW_POSITION_BOTH || arrow == ARROW_POSITION_END) {
+      space += alen;
+    }
+    x += alen * co;
+    y -= alen * si;
+    align_x = 0;
+    align_y = 0.5;
+    break;
+  default:
+    calculate_perpendicular_point(aconf, title_offset + margin, (side == AXIS_NUM_POS_RIGHT) ? -1 : 1, &x, &y);
+    align_x = 0.5;
+    align_y = ((side == AXIS_NUM_POS_RIGHT) ? 1 : 0);
+    break;
+  }
+  text_get_bbox(0, 0, title, font.font, font.style, font.pt, 0, font.space, font.scriptsize, 0, bbox);
+  w = bbox[2] - bbox[0] + margin;
+  h = bbox[3] - bbox[1];
+  h_shift = bbox[0] + w * align_x;
+  v_shift = bbox[1] + h * (1 - align_y);
+  x = x - h_shift * co - v_shift * si;
+  y = y + h_shift * si - v_shift * co;
+  GRAcolor(GC, font.r, font.g, font.b, font.a);
+  GRAmoveto(GC, x, y);
+  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, aconf->direction, font.scriptsize);
+}
+
+static void
 aconf_init (struct objlist *obj, N_VALUE *inst, struct axis_config *aconf)
 {
   aconf->code = NULL;
@@ -3078,6 +3303,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (aconf.min != aconf.max && aconf.inc != 0) {
     numbering(obj, inst, GC, &aconf, NULL);
   }
+  draw_title (obj, inst, GC, &aconf);
 
 exit:
   free_axis_math(&aconf);
@@ -4141,6 +4367,9 @@ static struct objtable axis_obj[] = {
   {"num_A",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_date_format",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"num_math",NSTR,NREAD|NWRITE,num_put_math,NULL,0},
+  {"title",NSTR,NREAD|NWRITE,NULL,NULL,0},
+  {"title_position",NENUM,NREAD|NWRITE,NULL,axistitleposchar,0},
+  {"title_offset",NINT,NREAD,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},
