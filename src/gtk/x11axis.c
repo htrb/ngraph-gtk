@@ -2177,6 +2177,12 @@ position_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->adjustpos, axis->Obj, axis->Id, "adjust_position"))
     return 1;
 
+  if (SetObjFieldFromWidget(d->title_position, axis->Obj, axis->Id, "title_position"))
+    return 1;
+
+  if (SetObjFieldFromWidget(d->title, axis->Obj, axis->Id, "title"))
+    return 1;
+
   return 0;
 }
 
@@ -2198,6 +2204,10 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
   axis_combo_box_setup(d->adjust, axis->Obj, id, "adjust_axis");
 
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
+
+  SetWidgetFromObjField(d->title_position, axis->Obj, id, "title_position");
+
+  SetWidgetFromObjField(d->title, axis->Obj, id, "title");
 }
 
 static void
@@ -2253,12 +2263,32 @@ position_tab_create(struct AxisDialog *dd)
 
 
   frame = gtk_frame_new(_("Position"));
-  gtk_widget_set_vexpand(frame, TRUE);
+  gtk_widget_set_vexpand(frame, FALSE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX(vbox), frame);
+
+
+  table = gtk_grid_new();
+
+  i = 0;
+
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("title _Position:"), FALSE, i++);
+  d->title_position = w;
+
+  w = create_text_entry(FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Title:"), TRUE, i++);
+  d->title = w;
+
+  frame = gtk_frame_new(_("Title"));
+  gtk_widget_set_vexpand(frame, TRUE);
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
+  gtk_box_append(GTK_BOX(vbox), frame);
+
 
   add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
 

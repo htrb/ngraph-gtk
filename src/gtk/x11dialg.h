@@ -264,7 +264,7 @@ struct AxisBase
 
 struct AxisPos
 {
-  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos;
+  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos, *title, *title_position;
   int tab_id;
 };
 
