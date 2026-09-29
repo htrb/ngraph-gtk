@@ -2986,6 +2986,23 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, 
   return 0;
 }
 
+static void
+aconf_init (struct objlist *obj, N_VALUE *inst, struct axis_config *aconf)
+{
+  aconf->code = NULL;
+
+  _getobj(obj, "x", inst, &aconf->x0);
+  _getobj(obj, "y", inst, &aconf->y0);
+  _getobj(obj, "direction", inst, &aconf->direction);
+  _getobj(obj, "length", inst, &aconf->length);
+  _getobj(obj, "width", inst, &aconf->width);
+
+  aconf->dir=aconf->direction/18000.0*MPI;
+  aconf->x1=aconf->x0+nround(aconf->length*cos(aconf->dir));
+  aconf->y1=aconf->y0-nround(aconf->length*sin(aconf->dir));
+  alloc_axis_math(obj, inst, aconf);
+}
+
 static int
 axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
