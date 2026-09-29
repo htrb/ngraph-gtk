@@ -1608,7 +1608,7 @@ get_num_pos_oblique(int align, int plen, double nndir, int fx0, int fy0, int fx1
 
 struct font_config {
   char *font;
-  int style, pt, space, scriptsize;
+  int style, pt, space, scriptsize, r, g, b, a;
 };
 
 struct axis_config {
@@ -2464,6 +2464,20 @@ get_step(struct axislocal *alocal, int step, int *begin)
   }
 
   return step;
+}
+
+static void
+font_info (struct objlist *obj, N_VALUE *inst, struct font_config *font)
+{
+  _getobj(obj, "num_space", inst, &font->space);
+  _getobj(obj, "num_script_size", inst, &font->scriptsize);
+  _getobj(obj, "num_pt", inst, &font->pt);
+  _getobj(obj, "num_font", inst, &font->font);
+  _getobj(obj, "num_font_style", inst, &font->style);
+  _getobj(obj, "num_R", inst, &font->r);
+  _getobj(obj, "num_G", inst, &font->g);
+  _getobj(obj, "num_B", inst, &font->b);
+  _getobj(obj, "num_A", inst, &font->a);
 }
 
 static int
