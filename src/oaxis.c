@@ -2483,7 +2483,6 @@ font_info (struct objlist *obj, N_VALUE *inst, struct font_config *font)
 static int
 numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf, struct narray *array)
 {
-  int fr,fg,fb,fa;
   int side, begin,step,nnum,numcount,cstep;
   int autonorm,align,nozero;
   char *format,*head,*tail,*text,*date_format;
@@ -2501,13 +2500,6 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   if (side == AXIS_NUM_POS_NONE)
     return 0;
 
-  _getobj(obj, "num_R", inst, &fr);
-  _getobj(obj, "num_G", inst, &fg);
-  _getobj(obj, "num_B", inst, &fb);
-  _getobj(obj, "num_A", inst, &fa);
-  _getobj(obj, "num_pt", inst, &font.pt);
-  _getobj(obj, "num_space", inst, &font.space);
-  _getobj(obj, "num_script_size", inst, &font.scriptsize);
   _getobj(obj, "num_begin", inst, &begin);
   _getobj(obj, "num_step", inst, &step);
   _getobj(obj, "num_num", inst, &nnum);
@@ -2519,11 +2511,10 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   _getobj(obj, "num_log_pow", inst, &logpow);
   _getobj(obj, "num_align", inst, &align);
   _getobj(obj, "num_no_zero", inst, &nozero);
-  _getobj(obj, "num_font", inst, &font.font);
-  _getobj(obj, "num_font_style", inst, &font.style);
   _getobj(obj, "num_direction",inst, &ndir);
+  font_info (obj, inst, &font);
 
-  GRAcolor(GC, fr, fg, fb, fa);
+  GRAcolor(GC, font.r, font.g, font.b, font.a);
 
   headlen = (head) ? strlen(head) : 0;
 
