@@ -2271,7 +2271,7 @@ distance_to_line(const double *p0, const double *p1, const int *p)
 }
 
 static int
-get_distance (struct axis_config *aconf, int *pos, int target)
+get_distance (const struct axis_config *aconf, const int *pos, int target)
 {
   int i, distance_max;
   double baseline[4];
