@@ -2614,7 +2614,7 @@ font_info (struct objlist *obj, N_VALUE *inst, struct font_config *font)
 static int
 numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf, struct narray *array)
 {
-  int side, begin,step,nnum,numcount,cstep;
+  int side, begin,step,nnum,numcount,cstep,distance;
   int autonorm,align,nozero;
   char *format,*head,*tail,*text,*date_format;
   int headlen,numlen;
@@ -2626,6 +2626,9 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   int ilenmax,flenmax,plen;
   struct font_config font;
   struct axislocal alocal;
+
+  distance = 0;
+  _putobj(obj, "title_offset", inst, &distance);
 
   _getobj(obj, "num", inst, &side);
   if (side == AXIS_NUM_POS_NONE)
