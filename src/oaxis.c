@@ -3147,7 +3147,7 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *acon
   char *title, *group;
   int title_offset, side, x, y, dir, bbox[4], position, space;
   struct font_config font;
-  double rdir, si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
+  double si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
   int arrow, arrow_length;
 
   _getobj(obj, "group", inst, &group);
