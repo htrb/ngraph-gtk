@@ -221,12 +221,12 @@ static int get_axis_group_type(struct objlist *obj, N_VALUE *inst, N_VALUE **ins
 static N_VALUE *
 check_group(struct objlist *obj, char type, N_VALUE *inst, int num)
 {
-  int n;
   char *group, *endptr;
 
   while (inst) {
     _getobj(obj, "group", inst, &group);
     if (group && group[0] == type) {
+      int n;
       n = strtol(group + 2, &endptr, 10);
       if (num == n)
 	break;
@@ -2325,10 +2325,9 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
   int dlx,dly,dlx2,dly2,maxlen;
   int rcode;
-  int gx0,gy0;
-  double nndir, po, min1, max1, value;
+  double nndir, po, min1, max1;
   int numlen,i;
-  char *text, ch;
+  char *text;
   int sx, sy, ndirection, cstep, distance_max;
 
   _getobj(obj,"num_shift_p",inst,&sx);
@@ -2422,6 +2421,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
   distance_max = 0;
   while ((rcode=getaxisposition(alocal,&po))!=-2) {
     if (rcode>=2) {
+      int gx0,gy0;
       gx0=aconf->x0+(po-min1)*aconf->length/(max1-min1)*cos(aconf->dir);
       gy0=aconf->y0-(po-min1)*aconf->length/(max1-min1)*sin(aconf->dir);
       gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx;
@@ -2430,11 +2430,13 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	numcount++;
 	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
 	  int point[8], distance;
+	  double value;
 	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format, nozero);
 	  if (text == NULL) {
 	    return 1;
 	  }
 	  if (align == AXIS_NUM_ALIGN_POINT) {
+	    char ch;
 	    for (i = headlen; i < headlen + numlen; i++) {
 	      if (text[i]=='.') {
 		break;
@@ -2774,7 +2776,6 @@ draw_gauge(struct objlist *obj,N_VALUE *inst, int GC, struct axis_config *aconf)
   int len1,wid1,len2,wid2,len3,wid3,len,wid;
   int limit;
   int rcode;
-  int gx0,gy0,gx1,gy1;
   int gauge;
 
   _getobj(obj,"gauge",inst,&gauge);
@@ -2836,6 +2837,7 @@ draw_gauge(struct objlist *obj,N_VALUE *inst, int GC, struct axis_config *aconf)
 
   while ((rcode=getaxisposition(&alocal,&po))!=-2) {
     if ((rcode>=0) && (!limit || ((min2-po)*(max2-po)<=0))) {
+      int gx0,gy0,gx1,gy1;
       gx0=aconf->x0+(po-min1)*aconf->length/(max1-min1)*cos(aconf->dir);
       gy0=aconf->y0-(po-min1)*aconf->length/(max1-min1)*sin(aconf->dir);
       if (rcode==1) {
