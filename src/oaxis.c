@@ -3118,7 +3118,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, 
 }
 
 static void
-calculate_perpendicular_point(struct axis_config *aconf, double distance, int side, int *px, int *py)
+calculate_perpendicular_point(const struct axis_config *aconf, double distance, int side, int *px, int *py)
 {
   double mx = (aconf->x0 + aconf->x1) / 2.0;
   double my = (aconf->y0 + aconf->y1) / 2.0;
