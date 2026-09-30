@@ -3173,10 +3173,10 @@ check_side_title (const char *group, int side)
 }
 
 static void
-draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf)
+draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config *aconf)
 {
   char *title, *group;
-  int title_offset, side, x, y, dir, bbox[4], position, space;
+  int title_offset, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
   struct font_config font;
   double si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
   int arrow, arrow_length;
@@ -3192,11 +3192,12 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *acon
   alen = aconf->width * (double) arrow_length / 10000;
 
   margin = font.pt * 0.3528 / 2;
+  dir_cond = (aconf->direction > 9000 && aconf->direction < 27000);
 
   si = sin(aconf->dir);
   co = cos(aconf->dir);
 
-  if (side == AXIS_NUM_POS_NONE || title == NULL || title[0] == '\0') {
+  if (title == NULL || title[0] == '\0') {
     return;
   }
   if (position == AXIS_TITLE_POS_AUTO) {
@@ -3216,7 +3217,7 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *acon
     }
     x -= space * co;
     y += space * si;
-    align_x = 1;
+    align_x = ((dir_cond) ? 0 : 1);
     align_y = 0.5;
     break;
   case AXIS_TITLE_POS_END:
@@ -3226,28 +3227,40 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *acon
     if (arrow == ARROW_POSITION_BOTH || arrow == ARROW_POSITION_END) {
       space += alen;
     }
-    x += alen * co;
-    y -= alen * si;
-    align_x = 0;
+    x += space * co;
+    y -= space * si;
+    align_x = ((dir_cond) ? 1 : 0);
     align_y = 0.5;
     break;
   default:
-    calculate_perpendicular_point(aconf, title_offset + margin, (side == AXIS_NUM_POS_RIGHT) ? -1 : 1, &x, &y);
+    title_side = check_side_title (group, side);
+    calculate_perpendicular_point(aconf, title_offset + margin, title_side, &x, &y);
     align_x = 0.5;
-    align_y = ((side == AXIS_NUM_POS_RIGHT) ? 1 : 0);
+    if (dir_cond) {
+      align_y = ((title_side == -1) ? 0 : 1);
+    } else {
+      align_y = ((title_side == -1) ? 1 : 0);
+    }
     break;
   }
-  text_get_bbox(0, 0, title, font.font, font.style, font.pt, 0, font.space, font.scriptsize, 0, bbox);
-  w = bbox[2] - bbox[0] + margin;
+   text_get_bbox(0, 0, title, font.font, font.style, font.pt, 0, font.space, font.scriptsize, 0, bbox);
+  w = bbox[2] - bbox[0];
   h = bbox[3] - bbox[1];
   h_shift = bbox[0] + w * align_x;
-  v_shift = bbox[1] + h * (1 - align_y);
-  x = x - h_shift * co - v_shift * si;
-  y = y + h_shift * si - v_shift * co;
+  v_shift = -bbox[3] + h * align_y;
+  if (dir_cond) {
+    x = x + h_shift * co - v_shift * si;
+    y = y - h_shift * si - v_shift * co;
+    dir = aconf->direction - 18000;
+  } else {
+    x = x - h_shift * co + v_shift * si;
+    y = y + h_shift * si + v_shift * co;
+    dir = aconf->direction;
+  }
   GRAcolor(GC, font.r, font.g, font.b, font.a);
   GRAmoveto(GC, x, y);
-  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, aconf->direction, font.scriptsize);
-}
+  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, dir, font.scriptsize);
+ }
 
 static void
 aconf_init (struct objlist *obj, N_VALUE *inst, struct axis_config *aconf)
