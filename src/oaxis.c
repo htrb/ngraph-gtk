@@ -483,6 +483,16 @@ axisgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
 }
 
 static int
+direction_normalize(int dir)
+{
+  dir %= 36000;
+  if (dir < 0) {
+    dir += 36000;
+  }
+  return dir;
+}
+
+static int
 axisdirection(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int dir;
