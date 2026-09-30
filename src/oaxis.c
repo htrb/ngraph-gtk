@@ -1041,9 +1041,7 @@ axisrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   px = *(int *) argv[4];
   py = *(int *) argv[5];
 
-  angle %= 36000;
-  if (angle < 0)
-    angle += 36000;
+  angle = direction_normalize (angle);
 
   type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
