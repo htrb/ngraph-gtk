@@ -3640,7 +3640,7 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
   int fnum;
   int *fdata;
   struct narray iarray;
-  double min,max,min1,max1;
+  double min,max;
   int i,id,set;
   char buf[20], msgbuf[64], *group;
   char *argv2[4];
@@ -3666,6 +3666,7 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
     getobj(fobj,"bounding",fdata[i],1,argv2,&minmax);
 
     if (arraynum(minmax)>=2) {
+      double min1, max1;
       min1=arraynget_double(minmax,0);
       max1=arraynget_double(minmax,1);
       if (!set) {
