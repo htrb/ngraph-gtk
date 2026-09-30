@@ -272,8 +272,8 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   width=DEFAULT_LINE_WIDTH;
-  alen=72426;
-  awid=60000;
+  alen=HEADLEN;
+  awid=HEADWIDTH;
   wlen=300;
   wwid=DEFAULT_LINE_WIDTH;
   len1=100;
