@@ -3227,6 +3227,7 @@ aconf_init (struct objlist *obj, N_VALUE *inst, struct axis_config *aconf)
   _getobj(obj, "length", inst, &aconf->length);
   _getobj(obj, "width", inst, &aconf->width);
 
+  aconf->direction = direction_normalize (aconf->direction);
   aconf->dir=aconf->direction/18000.0*MPI;
   aconf->x1=aconf->x0+nround(aconf->length*cos(aconf->dir));
   aconf->y1=aconf->y0-nround(aconf->length*sin(aconf->dir));
