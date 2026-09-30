@@ -1129,8 +1129,7 @@ axisflip2(struct objlist *obj, N_VALUE *inst, int px, int py, enum FLIP_DIRECTIO
     break;
   }
 
-  a %= 36000;
-  a += (a < 0) ? 36000 : 0;
+  a = direction_normalize (a);
 
   flip(p, dir, &x, &y);
 
