@@ -2297,7 +2297,7 @@ get_distance (const struct axis_config *aconf, const int *pos, int target)
 }
 
 static int
-num_distance (struct axis_config *aconf, int side, int *pos)
+num_distance (const struct axis_config *aconf, const int *pos, int side)
 {
   int distance;
   distance = 0;
@@ -2498,7 +2498,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	  point[6] = gx0 - px1 + fx0;
 	  point[7] = gy0 - py1 + fy0;
 	  rotate_rect (point, nndir);
-	  distance = num_distance (aconf, side, point);
+	  distance = num_distance (aconf, point, side);
 	  if (distance > distance_max) {
 	    distance_max = distance;
 	  }
