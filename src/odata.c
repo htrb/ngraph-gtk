@@ -7375,10 +7375,7 @@ static int
 draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
 {
   int gx0, gy0, gx1, gy1;
-  double d2, d3, headlen, headwidth;
-
-  headlen = 72426;
-  headwidth = 60000;
+  double d2, d3;
 
   d2 = x1;
   d3 = y1;
