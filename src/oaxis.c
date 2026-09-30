@@ -1018,7 +1018,7 @@ axisrotate2(struct objlist *obj, N_VALUE *inst, int px, int py, int angle)
 
   rotate(px, py, angle, &x, &y);
   dir += angle;
-  dir %= 36000;
+  dir = direction_normalize (dir);
 
   if (_putobj(obj, "x", inst, &x)) return 1;
   if (_putobj(obj, "y", inst, &y)) return 1;
