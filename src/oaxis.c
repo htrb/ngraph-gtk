@@ -499,9 +499,7 @@ axisdirection(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 
   dir = * (int *) argv[2];
 
-  dir %= 36000;
-  if (dir < 0)
-    dir += 36000;
+  dir = direction_normalize (dir);
 
   * (int *) argv[2] = dir;
 
