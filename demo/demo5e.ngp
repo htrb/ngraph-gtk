@@ -2,7 +2,7 @@
 #
 new text
 text::x=3000
-text::y=6500  
+text::y=6500
 text::font="Sans-serif"
 text::style=1
 text::text="Demo #5E: AXIS"
@@ -28,6 +28,8 @@ do
   axis::num_no_zero=true
   axis::num_pt=1200
   axis::arrow=end
+  axis::title=${axis::name}
+  axis::title_position=end
 done
 #
 for i in `seq 18000 3000 33000`
@@ -51,6 +53,8 @@ do
   axis::num_no_zero=true
   axis::num_pt=1200
   axis::arrow=end
+  axis::title=${axis::name}
+  axis::title_position=end
 done
 #
 new gra
