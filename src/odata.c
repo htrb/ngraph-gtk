@@ -7387,7 +7387,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
   if ((x1 == d2) && (y1 == d3) && (msize > 0)) {
     double dx, dy, len, alen, awidth;
     alen = msize;
-    awidth = alen * headwidth / headlen / 2.0;
+    awidth = alen * HEADWIDTH / HEADLEN / 2.0;
     dx = gx1-gx0;
     dy = gy1-gy0;
     len = sqrt(dx*dx+dy*dy);
