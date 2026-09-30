@@ -3144,6 +3144,34 @@ calculate_perpendicular_point(const struct axis_config *aconf, double distance, 
   *py = my + ny * distance;
 }
 
+static int
+check_side_title (const char *group, int side)
+{
+  switch (side) {
+  case AXIS_NUM_POS_RIGHT:
+    return -1;
+    break;
+  case AXIS_NUM_POS_LEFT:
+    return 1;
+    break;
+  }
+  switch (group[1]) {
+  case 'X':
+    return -1;
+    break;
+  case 'Y':
+    return 1;
+    break;
+  case 'R':
+    return -1;
+    break;
+  case 'U':
+    return 1;
+    break;
+  }
+  return 1;
+}
+
 static void
 draw_title (struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf)
 {
