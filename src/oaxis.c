@@ -3428,7 +3428,7 @@ axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct axislocal alocal;
   int rcode;
   int first;
-  int gx,gy,gx0,gy0,count;
+  int gx0,gy0,count;
 
   _getobj(obj,"x",inst,&posx1);
   _getobj(obj,"y",inst,&posy1);
@@ -3472,6 +3472,7 @@ axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   count=0;
   while ((rcode=getaxisposition(&alocal,&po))!=-2) {
     if (rcode>=2) {
+      int gx, gy;
       count++;
       gx=posx+(po-min)*len/(max-min)*cos(dir);
       gy=posy-(po-min)*len/(max-min)*sin(dir);
