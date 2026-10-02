@@ -233,11 +233,8 @@ n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row)
       break;
     case ixion::cell_t::formula:
       {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
-	  text = get_text_formula (model, result);
-	}
+         const ixion::formula_result &result = model.get_formula_result(pos);
+	 text = get_text_formula (model, result);
       }
       break;
     default:
@@ -282,11 +279,8 @@ n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
       break;
     case ixion::cell_t::formula:
       {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
+          const ixion::formula_result &result = model.get_formula_result(pos);
 	  text = get_text_formula (model, result);
-	}
       }
       break;
     case ixion::cell_t::boolean:
@@ -340,11 +334,8 @@ n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data
       break;
     case ixion::cell_t::formula:
       {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
+          const ixion::formula_result &result = model.get_formula_result(pos);
 	  get_double_formula (result, data);
-	}
       }
       break;
     case ixion::cell_t::boolean:
