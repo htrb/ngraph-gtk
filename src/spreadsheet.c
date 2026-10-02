@@ -78,6 +78,22 @@ spreadsheet_open (const char *file)
   const void *handle = NULL;
 
   type = spreadsheet_check (file);
+#if HAVE_LIBORCUS
+  struct n_orcus *norcus = NULL;
+  switch (type) {
+  case SPREADSHEET_TYPE_XLSX:
+  case SPREADSHEET_TYPE_ODS:
+    norcus = n_orcus_open (file, type);
+    break;
+  default:
+    break;
+  }
+
+  if (norcus) {
+    return n_orcus_init (norcus);
+  }
+
+#endif
   switch (type) {
   case SPREADSHEET_TYPE_XLSX:
   case SPREADSHEET_TYPE_XLS:
@@ -91,23 +107,7 @@ spreadsheet_open (const char *file)
     return n_freexl_init (handle);
   }
 
-#if HAVE_LIBORCUS
-  struct n_orcus *norcus = NULL;
-  switch (type) {
-  case SPREADSHEET_TYPE_XLSX:
-  case SPREADSHEET_TYPE_ODS:
-    norcus = n_orcus_open (file, type);
-    break;
-  default:
-    break;
-  }
-
-  if (norcus == NULL) {
-    return NULL;
-  }
-
-  return n_orcus_init (norcus);
-#endif
+  return NULL;
 }
 
 void
