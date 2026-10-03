@@ -6,7 +6,6 @@ libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LI
 if HAVE_LIBORCUS
   libngraph_ldflags += $(LIBORCUS_LIBS) $(LIBIXION_LIBS) $(LIBORCUS_SPREADSHEET_LIBS)
 endif
-libngraph_cflags = ""
 ngraph_ldflags = -lngraph
 ngraph_lib = libngraph.la
 
@@ -38,11 +37,6 @@ terminal_SOURCES = terminal.c
 terminal_CFLAGS = $(GTK_CFLAGS)
 endif
 
-if OS_OSX
-  libngraph_ldflags += $(MAC_INTEGRATION_LIBS)
-  libngraph_cflags += $(MAC_INTEGRATION_CFLAGS)
-endif
-
 lib_LTLIBRARIES = $(ngraph_lib)
 
 libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
@@ -60,7 +54,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ngraph_api.c oparameter.c oparameter.h spreadsheet.c		\
 	spreadsheet.h orcus.cpp orcus.h nfreexl.c nfreexl.h
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME="$(CC)" $(GTKSOURCEVIEW_CFLAGS)
+libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I$(top_builddir) -DCCNAME="$(CC)" $(GTKSOURCEVIEW_CFLAGS)
 if HAVE_LIBORCUS
   libngraph_la_CXXFLAGS = $(libngraph_la_CFLAGS) $(LIBORCUS_CFLAGS) $(LIBIXION_CFLAGS) $(LIBORCUS_SPREADSHEET_CFLAGS)
 endif
