@@ -75,6 +75,7 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 AC_PROG_INSTALL
 AC_PROG_SED
 AC_PROG_MKDIR_P
@@ -87,8 +88,6 @@ AM_GNU_GETTEXT([external])
 
 dnl Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
-# use patched freeXL
-#AC_CHECK_LIB([freexl], [freexl_open_xlsx])
 AC_CHECK_LIB([readline], [rl_completion_matches],
 			  [
 			  AC_DEFINE([HAVE_LIBREADLINE], 1, [have readline library])
@@ -137,6 +136,30 @@ else
    AC_MSG_ERROR((Test for GtkSourceview failed.),)
 fi
 
+# use patched freeXL
+# PKG_CHECK_MODULES([FREEXL], [freexl >= 2.0.0])
+
+PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
+PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
+if test "$LIBORCUS_021" = yes; then
+   AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_021_LIBS)
+   AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_021_CFLAGS)
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.21 >= 0.21])
+   AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+   AM_CONDITIONAL([HAVE_LIBORCUS], [true])
+   PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+elif test "$LIBORCUS_020" = yes; then
+   AC_SUBST(LIBORCUS_LIBS, $LIBORCUS_020_LIBS)
+   AC_SUBST(LIBORCUS_CFLAGS, $LIBORCUS_020_CFLAGS)
+   PKG_CHECK_MODULES([LIBORCUS_SPREADSHEET], [liborcus-spreadsheet-model-0.20 >= 0.20])
+   AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
+   AM_CONDITIONAL([HAVE_LIBORCUS], [true])
+   PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+else
+   AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
+   AM_CONDITIONAL([HAVE_LIBORCUS], [false])
+fi
+
 # Checks for header files.
 AC_PATH_X
 AC_HEADER_DIRENT
@@ -146,7 +169,7 @@ AC_HEADER_DIRENT
 AC_PROG_EGREP
 
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h freexl.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h])
 
 # for freeXL
 AC_CHECK_HEADERS(iconv.h,, [AC_MSG_ERROR([cannot find iconv.h, bailing out])])
@@ -216,7 +239,6 @@ AC_CONFIG_FILES([Makefile \
 		 plugins/ruby/Makefile \
 		 gtksourceview/Makefile \
 		 mingw/Makefile \
-		 osx/Makefile \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
 		 icons/scalable/apps/Makefile \

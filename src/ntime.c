@@ -38,6 +38,28 @@ char *weekstr[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
                     "Jul","Aug","Sep","Oct","Nov","Dec"};
 
+int
+date_to_mjd(int y, int m, int d)
+{
+  int d0, d1, d2, d3, d4;
+
+  if (m < 1) {
+    m = 1;
+  }
+
+  if (d < 1) {
+    d = 1;
+  }
+
+  d0 = (14 - m) / 12;
+  d1 = (y - d0) * 365.25;
+  d2 = (m + d0 * 12 - 2) * 30.59;
+  d3 = (y - d0) / 100;
+  d4 = (y - d0) / 400;
+
+  return  d1 + d2 - d3 + d4 + d + 1721088 - 2400000;
+}
+
 char *
 ndate(const time_t *timep, int style)
 {

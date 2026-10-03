@@ -341,6 +341,9 @@ entry_icon_file_select_response(char *file, gpointer user_data)
     entry_set_filename(w, file);
     g_free(file);
   }
+  if (! gtk_entry_get_activates_default (GTK_ENTRY (w))) {
+    g_signal_emit_by_name(w, "activate", NULL);
+  }
 }
 
 static void
@@ -366,12 +369,12 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user
   nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, chd, entry_icon_file_select_response, w);
 }
 
-GtkWidget *
-create_file_entry_with_cb(GCallback cb, gpointer data)
+static GtkWidget *
+create_file_entry_with_cb_dfault_action(GCallback cb, gpointer data, int action)
 {
   GtkWidget *w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_text_entry(TRUE, action);
 
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "document-open-symbolic");
   g_signal_connect(w, "icon-release", cb, data);
@@ -380,9 +383,21 @@ create_file_entry_with_cb(GCallback cb, gpointer data)
 }
 
 GtkWidget *
+create_file_entry_with_cb(GCallback cb, gpointer data)
+{
+  return create_file_entry_with_cb_dfault_action(cb, data, TRUE);
+}
+
+GtkWidget *
 create_file_entry(struct objlist *obj)
 {
   return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
+}
+
+GtkWidget *
+create_file_entry_no_default_action(struct objlist *obj)
+{
+  return create_file_entry_with_cb_dfault_action(G_CALLBACK(entry_icon_file_select), obj, FALSE);
 }
 
 static void
@@ -939,7 +954,11 @@ set_widget_font(GtkWidget *w, const char *font)
 			    "   font-style: %s;\n"
 			    "   font-weight: %d;\n"
 			    "   font-size: %d%s;\n"
+#if WINDOWS
+			    "   font-family: \"%s\", sans-serif;\n"
+#else
 			    "   font-family: \"%s\";\n"
+#endif
 			    "}",
 			    style_str,
 			    weight_val,

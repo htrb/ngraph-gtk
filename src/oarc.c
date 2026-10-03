@@ -60,8 +60,8 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   join = JOIN_TYPE_BEVEL;
   stroke = TRUE;
   alpha = 255;
-  headlen = 72426;
-  headwidth = 60000;
+  headlen = HEADLEN;
+  headwidth = HEADWIDTH;
 
   if (_putobj(obj, "pieslice", inst, &pieslice)) return 1;
   if (_putobj(obj, "angle2", inst, &angle2)) return 1;

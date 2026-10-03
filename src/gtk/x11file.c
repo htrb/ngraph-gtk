@@ -1165,7 +1165,7 @@ static void
 delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer user_data)
 {
   int i;
-  char *s, *ptr, *profile;
+  char *s, *profile;
   struct copy_settings_to_fitobj_data *data;
 
   profile = g_strdup(str);
@@ -1185,6 +1185,7 @@ delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer use
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
+      char *ptr;
       data->i = i;
       ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
       response_message_box(d->widget, ptr, "Confirm", RESPONS_YESNO,
@@ -2111,7 +2112,7 @@ sort_by_line (const NData *item, gpointer user_data)
 }
 
 static double
-sort_by_data (NData *item, gpointer user_data)
+sort_by_data (const NData *item, gpointer user_data)
 {
   int col = GPOINTER_TO_INT (user_data);
   switch (col) {
@@ -2200,7 +2201,7 @@ move_tab_create(struct FileDialog *d)
 static int
 move_tab_set_value(struct FileDialog *d)
 {
-  int line, a, i, n;
+  int a, i, n;
   struct narray *move, *movex, *movey;
   GListStore *list;
 
@@ -2251,7 +2252,7 @@ move_tab_set_value(struct FileDialog *d)
       movenum = arraynum(movey);
 
     for (j = 0; j < movenum; j++) {
-      line = arraynget_int(move, j);
+      int line = arraynget_int(move, j);
 
       if (line == a)
 	break;
@@ -2481,7 +2482,6 @@ load_tab_setup_item(struct FileDialog *d, int id)
   g_free(ifs);
 
   stat = (d->source != DATA_SOURCE_SPREADSHEET);
-  set_widget_sensitivity_with_label (d->load.remark, stat);
   set_widget_sensitivity_with_label (d->load.csv, stat);
   set_widget_sensitivity_with_label (d->load.ifs, stat);
 }
@@ -4123,7 +4123,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines, int clear)
 }
 
 static int
-set_header_array_file (struct FileDialog *d, char *s, const char *remark, struct narray *lines, int max_lines)
+set_header_array_file (struct FileDialog *d, const char *s, struct narray *lines, int max_lines)
 {
   int n, csv;
   const char *tmp, *po;
@@ -4156,7 +4156,7 @@ set_header_array_file (struct FileDialog *d, char *s, const char *remark, struct
 static int
 set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int max_lines)
 {
-  int i, n, max_row, max_col;
+  int i, n, n_rows, n_cols;
   struct spreadsheet *sheet;
 
   sheet = d->spreadsheet;
@@ -4172,15 +4172,15 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
     return 0;
   }
 
-  max_row = spreadsheet_max_row (sheet);
-  max_row = (max_row < max_lines) ? max_row : max_lines;
+  n_rows = spreadsheet_n_rows (sheet);
+  n_rows = (n_rows < max_lines) ? n_rows : max_lines;
 
-  max_col = spreadsheet_max_column (sheet);
-  max_col = (max_col < MAX_COLS) ? max_col : MAX_COLS;
+  n_cols = spreadsheet_n_columns (sheet);
+  n_cols = (n_cols < MAX_COLS) ? n_cols : MAX_COLS;
 
-  for (n = 0; n < max_row; n++) {
+  for (n = 0; n < n_rows; n++) {
     arrayinit(lines + n, sizeof(char *));
-    for (i = 0; i <= max_col; i++) {
+    for (i = 0; i < n_cols; i++) {
       char *str;
       str = spreadsheet_get_text (sheet, i, n);
       if (str) {
@@ -4194,7 +4194,7 @@ set_header_array_spreadsheet (struct FileDialog *d, struct narray *lines, int ma
 }
 
 static void
-set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
+set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear)
 {
   struct narray *lines;
   int i, j, l, n, skip, step, final, max_col, nrows, is_spreadsheet;
@@ -4243,7 +4243,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
   if (is_spreadsheet) {
     n = set_header_array_spreadsheet (d, lines, max_lines);
   } else {
-    n = set_header_array_file (d, s, remark, lines, max_lines);
+    n = set_header_array_file (d, s, lines, max_lines);
   }
   if (n == 0) {
     goto exit;
@@ -4262,7 +4262,6 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
   max_col = 0;
   for (i = 0; i < n; i++) {
     int m, v;
-    const char *str;
     char buf[64];
 
     m = arraynum(lines + i);
@@ -4272,10 +4271,9 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines, int clear)
       text[j + 1] = arraynget_str(lines + i, j);
     }
     text[j + 1] = NULL;
-    if (is_spreadsheet) {
-      v = CHECK_VISIBILITY_ARRAY(i, skip, step, final);
-    } else {
+    {
       int c;
+      const char *str;
       str = arraynget_str(lines + i, 0);
       if (str) {
 	c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
@@ -4489,6 +4487,7 @@ file_changed (GtkEditable *editable, struct FileDialog *d)
     d->head_lines = file_head_lines (file, Menulocal.data_head_lines);
   }
   setup_file_related_widgets (d);
+  set_headlines(d, d->head_lines);
   update_table_all(d);
 }
 
@@ -4512,10 +4511,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-    w = create_file_entry(d->Obj);
+    w = create_file_entry_no_default_action(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
     d->file = w;
-    g_signal_connect(d->file, "changed", G_CALLBACK(file_changed), d);
+    g_signal_connect(d->file, "activate", G_CALLBACK(file_changed), d);
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_append(GTK_BOX(hbox), w);
@@ -4572,7 +4571,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.finalline, "value-changed", G_CALLBACK(update_table), d);
 
-    g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table_all), d);
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->ycol, "changed", G_CALLBACK(set_headline_table_header), d);
     g_signal_connect_swapped(d->type, "notify::selected", G_CALLBACK(set_headline_table_header), d);
@@ -4873,7 +4872,7 @@ FileDialogClose(GtkWidget *w, void *data)
     if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file")) {
       return;
     }
-    if (SetObjFieldFromWidget(d->worksheet, d->Obj, d->Id, "worksheet")) {
+    if (d->source == DATA_SOURCE_SPREADSHEET && SetObjFieldFromWidget(d->worksheet, d->Obj, d->Id, "worksheet")) {
       return;
     }
     break;
@@ -6452,10 +6451,10 @@ bind_file (GtkWidget *w, struct objlist *obj, const char *field, int id)
       const char *name;;
       getobj(obj, "worksheet_name", id, 0, NULL, &name);
       if (name) {
-	char *str;
-	str = g_strdup_printf ("%s (%s)", bfile, name);
+	char *new_str;
+	new_str = g_strdup_printf ("%s (%s)", bfile, name);
 	g_free (bfile);
-	bfile = str;
+	bfile = new_str;
       }
     }
     if (bfile) {

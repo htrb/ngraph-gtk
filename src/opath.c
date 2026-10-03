@@ -114,8 +114,8 @@ arrowinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   width = DEFAULT_LINE_WIDTH;
-  headlen = 72426;
-  headwidth = 60000;
+  headlen = HEADLEN;
+  headwidth = HEADWIDTH;
   miter = 1000;
   join = JOIN_TYPE_BEVEL;
   stroke = 1;

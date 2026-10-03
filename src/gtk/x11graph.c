@@ -1395,9 +1395,8 @@ CmHelpAbout(void)
 {
   struct objlist *obj;
   char *web, *copyright;
-  struct objlist *system;
   GdkTexture *logo;
-  char *lib_version, *compiler, *str;
+  char *lib_version, *compiler, *str, *lib, *home;
 
   if (Menulock || Globallock)
     return;
@@ -1407,17 +1406,22 @@ CmHelpAbout(void)
 
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
+  getobj(obj, "compiler", 0, 0, NULL, &compiler);
+  getobj(obj, "lib_dir", 0, 0, NULL, &lib);
+  getobj(obj, "home_dir", 0, 0, NULL, &home);
 
   logo = gdk_texture_new_from_resource(NGRAPH_ICON128_FILE);
 
-  system = getobject("system");
-  getobj(system, "compiler", 0, 0, NULL, &compiler);
   getobj(Menulocal.obj, "lib_version", 0, 0, NULL, &lib_version);
-  str = g_strdup_printf("compiler:\n"
+  str = g_strdup_printf("NGRAPHLIB=%s\n"
+			"NGRAPHHOME=%s\n\n"
+			"compiler:\n"
 			"%s\n"
 			"\n"
 			"library:\n"
 			"%s\n",
+			lib,
+			home,
 			compiler,
 			lib_version);
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),

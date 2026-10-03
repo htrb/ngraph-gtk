@@ -48,20 +48,20 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
   if (argc > 1 && strcmp(argv[1], "-i") == 0) {
     ofst++;
     if (argc > 2) {
-#if WINDOWS
+#if _WIN32
       int i;
-#endif  /* WINDOWS */
+#endif  /* _WIN32 */
       inifile = ngraph_strdup(argv[2]);
       if (inifile == NULL) {
 	exit(1);
       }
-#if WINDOWS
+#if _WIN32
       for (i = 0; inifile[i] != '\0'; i++) {
 	if (inifile[i] == '\\') {
 	  inifile[i] = '/';
 	}
       }
-#endif  /* WINDOWS */
+#endif  /* _WIN32 */
       ofst++;
     } else {
       inifile = NULL;
@@ -176,6 +176,38 @@ osx_set_env(const char *app)
 }
 #endif
 
+#if _WIN32
+#include <windows.h>
+#include <stdio.h>
+
+static void
+set_lacale(void)
+{
+  wchar_t wLocaleName[LOCALE_NAME_MAX_LENGTH * 2];
+  const char *current_lang = getenv("LANG");
+
+  if (current_lang) {
+    return;
+  }
+
+  if (GetUserDefaultLocaleName(wLocaleName, LOCALE_NAME_MAX_LENGTH) == 0) {
+    return;
+  }
+
+  char localeName[LOCALE_NAME_MAX_LENGTH * 2];
+  snprintf(localeName, sizeof(localeName), "%ls", wLocaleName);
+  for (int i = 0; localeName[i] != '\0'; i++) {
+    if (localeName[i] == '-') {
+      localeName[i] = '_';
+    }
+  }
+
+  char langValue[LOCALE_NAME_MAX_LENGTH * 2];
+  snprintf(langValue, sizeof(langValue), "%s.UTF-8", localeName);
+  _putenv_s("LANG", langValue);
+}
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -197,6 +229,9 @@ main(int argc, char **argv)
     argc = newargc;
   }
   osx_set_env(argv[0]);
+#endif
+#ifdef _WIN32
+  set_lacale();
 #endif
   if (ngraph_initialize(&argc, &argv)) {
     exit(1);

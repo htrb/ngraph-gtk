@@ -165,6 +165,7 @@ static char *FileConstant[MATH_CONST_SIZE] = {
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[data]"
 #define COLUMN_ARRAY_NAME "COL"
+#define HEADER_ARRAY_NAME "$HEADER"
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -232,6 +233,7 @@ static char *f2derrorlist[]={
 
 static char *data_type[]={
   N_("file"),
+  N_("spreadsheet"),
   N_("array"),
   N_("range"),
   NULL
@@ -359,13 +361,29 @@ struct line_array {
   struct narray line_array;
 };
 
+struct xy_id
+{
+  int x, y;
+};
+
+struct array_id
+{
+  struct xy_id numeric, string, header;
+};
+
+struct array_id ArrayIdInit = {
+  {-1, -1},
+  {-1, -1},
+  {-1, -1}
+};
+
 struct f2ddata {
   struct objlist *obj;
   int id,src, GC;
   char *file;
   FILE *fd;
   struct spreadsheet *spreadsheet;
-  int worksheet_index, worksheet_max_row, worksheet_max_column;
+  int worksheet_index, worksheet_n_rows, worksheet_n_columns;
   int x,y;
   enum {TYPE_NORMAL, TYPE_DIAGONAL, TYPE_ERR_X, TYPE_ERR_Y} type;
 /*
@@ -398,8 +416,8 @@ struct f2ddata {
   int *needx, *needy;
   int dxstat,dystat,d2stat,d3stat;
   double dx,dy,d2,d3;
-  int maxdim, use_column_array, use_column_string_array;
-  int column_array_id_x, column_array_id_y, column_string_array_id_x, column_string_array_id_y;
+  int maxdim, use_column_array, use_column_string_array, use_header_array;
+  struct array_id array_id;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
@@ -440,7 +458,8 @@ struct f2dlocal {
   MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int const_id[MATH_CONST_SIZE];
-  int maxdimx,maxdimy, column_array_id_x, column_array_id_y, column_string_array_id_x, column_string_array_id_y;
+  int maxdimx,maxdimy;
+  struct array_id array_id;
   int need2passx,need2passy,total_line;
   struct f2ddata *data;
   int coord,idx,idy,id2,id3,icx,icy,ic2,ic3,isx,isy,is2,is3,iline;
@@ -545,6 +564,7 @@ static int
 line_number(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -1017,6 +1037,7 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   int file_id, r;
   double x, y;
   static struct objlist *file_obj = NULL;
+  (void) eq;
 
   rval->val = 0;
 
@@ -1058,6 +1079,7 @@ file_fit_solve(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   char *argv[5], *ptr, *field;
   struct narray args;
   struct savedstdio save;
+  (void) eq;
 
   rval->type = MATH_VALUE_ERROR;
   rval->val = 0;
@@ -1117,6 +1139,7 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   char *argv[2], *ptr;
   struct savedstdio save;
   static struct objlist *file_obj = NULL;
+  (void) eq;
 
   rval->val = 0;
 
@@ -1978,6 +2001,7 @@ file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   const char *str;
   char *tmp;
   struct objlist *text_obj;
+  (void) eq;
 
   if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
     return 0;
@@ -2014,6 +2038,7 @@ file_text_obj_get(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   char *str;
   struct objlist *text_obj;
   GString *gstr;
+  (void) eq;
 
   if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
     return 0;
@@ -2190,6 +2215,7 @@ static int
 file_sheet_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_ERROR;
@@ -2217,6 +2243,7 @@ static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
+  (void) exp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -2671,6 +2698,8 @@ odata_worksheet_name_set (struct objlist *obj, N_VALUE *inst, struct spreadsheet
   return 0;
 }
 
+#define CHECK_ARRAY(id) ((id).x >=0 || (id).y >= 0)
+
 static struct f2ddata *
 opendata(struct objlist *obj,N_VALUE *inst,
 	 struct f2dlocal *f2dlocal,int axis,int raw)
@@ -2836,8 +2865,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	g_free(fp);
 	return NULL;
       }
-      fp->worksheet_max_row = spreadsheet_max_row (fp->spreadsheet);
-      fp->worksheet_max_column = spreadsheet_max_column (fp->spreadsheet);
+      fp->worksheet_n_rows = spreadsheet_n_rows (fp->spreadsheet);
+      fp->worksheet_n_columns = spreadsheet_n_columns (fp->spreadsheet);
     } else {
       fp->spreadsheet = NULL;
     }
@@ -2970,10 +2999,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->codey[i] = f2dlocal->codey[i];
   }
   fp->const_id = f2dlocal->const_id;
-  fp->column_array_id_x = -1;
-  fp->column_array_id_y = -1;
-  fp->column_string_array_id_x = -1;
-  fp->column_string_array_id_y = -1;
+  fp->array_id = ArrayIdInit;
   fp->use_column_array = FALSE;
   fp->use_column_string_array = FALSE;
   switch (fp->type) {
@@ -3041,12 +3067,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
       add_file_prm(fp, prm);
     }
 
-    fp->column_array_id_x = f2dlocal->column_array_id_x;
-    fp->column_array_id_y = f2dlocal->column_array_id_y;
-    fp->use_column_array = (f2dlocal->column_array_id_x >=0 || f2dlocal->column_array_id_y >= 0);
-    fp->column_string_array_id_x = f2dlocal->column_string_array_id_x;
-    fp->column_string_array_id_y = f2dlocal->column_string_array_id_y;
-    fp->use_column_string_array = (f2dlocal->column_string_array_id_x >=0 || f2dlocal->column_string_array_id_y >= 0);
+    fp->array_id = f2dlocal->array_id;
+    fp->use_column_array = CHECK_ARRAY(f2dlocal->array_id.numeric);
+    fp->use_column_string_array = CHECK_ARRAY(f2dlocal->array_id.string);
+    fp->use_header_array = CHECK_ARRAY(f2dlocal->array_id.header);
   }
   return fp;
 }
@@ -3361,8 +3385,9 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
   }
 
   if (strcmp(field,"math_x")==0) {
-    f2dlocal->column_array_id_x = -1;
-    f2dlocal->column_string_array_id_x = -1;
+    f2dlocal->array_id.numeric.x = -1;
+    f2dlocal->array_id.string.x = -1;
+    f2dlocal->array_id.header.x = -1;
     f2dlocal->maxdimx = 0;
     if (f2dlocal->codex[0]) {
       const MathEquationParametar *prm;
@@ -3375,12 +3400,16 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
 
       f2dlocal->maxdimx = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codex[0], COLUMN_ARRAY_NAME);
-      f2dlocal->column_array_id_x = array_id;
+      f2dlocal->array_id.numeric.x = array_id;
       array_id = math_equation_check_string_array(f2dlocal->codex[0], "$" COLUMN_ARRAY_NAME);
-      f2dlocal->column_string_array_id_x = array_id;
+      f2dlocal->array_id.string.x = array_id;
+      array_id = math_equation_check_string_array(f2dlocal->codex[0], HEADER_ARRAY_NAME);
+      f2dlocal->array_id.header.x = array_id;
     }
   } else if (strcmp(field,"math_y")==0) {
-    f2dlocal->column_array_id_y = -1;
+    f2dlocal->array_id.numeric.y = -1;
+    f2dlocal->array_id.string.y = -1;
+    f2dlocal->array_id.header.y = -1;
     f2dlocal->maxdimy = 0;
     if (f2dlocal->codey[0]) {
       const MathEquationParametar *prm;
@@ -3392,9 +3421,11 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
       }
       f2dlocal->maxdimy = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codey[0], COLUMN_ARRAY_NAME);
-      f2dlocal->column_array_id_y = array_id;
+      f2dlocal->array_id.numeric.y = array_id;
       array_id = math_equation_check_string_array(f2dlocal->codey[0], "$" COLUMN_ARRAY_NAME);
-      f2dlocal->column_string_array_id_y = array_id;
+      f2dlocal->array_id.string.y = array_id;
+      array_id = math_equation_check_string_array(f2dlocal->codey[0], HEADER_ARRAY_NAME);
+      f2dlocal->array_id.header.y = array_id;
     }
   }
   return 0;
@@ -3617,10 +3648,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->codey[0] = NULL;
   f2dlocal->codey[1] = NULL;
   f2dlocal->codey[2] = NULL;
-  f2dlocal->column_array_id_x = -1;
-  f2dlocal->column_array_id_y = -1;
-  f2dlocal->column_string_array_id_x = -1;
-  f2dlocal->column_string_array_id_y = -1;
+  f2dlocal->array_id = ArrayIdInit;
   f2dlocal->maxdimx=0;
   f2dlocal->maxdimy=0;
   f2dlocal->need2passx=FALSE;
@@ -3996,10 +4024,10 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   data[dim].type = MATH_VALUE_NORMAL;
   po=buf;
   if (fp->use_column_array) {
-    column_array_clear(fp->codex, fp->column_array_id_x);
-    column_array_clear(fp->codey, fp->column_array_id_y);
-    column_array_push(fp->codex, fp->column_array_id_x, data);
-    column_array_push(fp->codey, fp->column_array_id_y, data);
+    column_array_clear(fp->codex, fp->array_id.numeric.x);
+    column_array_clear(fp->codey, fp->array_id.numeric.y);
+    column_array_push(fp->codex, fp->array_id.numeric.x, data);
+    column_array_push(fp->codey, fp->array_id.numeric.y, data);
   }
   while (*po!='\0') {
     int hex;
@@ -4072,8 +4100,8 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
       data[dim] = v;
     }
     if (fp->use_column_array) {
-      column_array_push(fp->codex, fp->column_array_id_x, &v);
-      column_array_push(fp->codey, fp->column_array_id_y, &v);
+      column_array_push(fp->codex, fp->array_id.numeric.x, &v);
+      column_array_push(fp->codey, fp->array_id.numeric.y, &v);
     }
   }
   for (i=dim+1;i<=maxdim;i++) {
@@ -4110,7 +4138,7 @@ hskipdata(struct f2ddata *fp)
     }
     break;
   case DATA_SOURCE_SPREADSHEET:
-    if (fp->hskip >= fp->worksheet_max_row) {
+    if (fp->hskip >= fp->worksheet_n_rows) {
       fp->eof = TRUE;
       return 0;
     }
@@ -4272,7 +4300,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
     }
     break;
   case DATA_SOURCE_SPREADSHEET:
-    if (fp->line + fp->rstep - 1 > fp->worksheet_max_row) {
+    if (fp->line + fp->rstep - 1 > fp->worksheet_n_rows) {
       fp->eof = TRUE;
     } else {
       fp->line += fp->rstep - 1;
@@ -4941,24 +4969,24 @@ set_column_string_array(struct f2ddata *fp)
   parse_data_line(array, line, fp->ifs, fp->csv);
   n = arraynum(array);
   data = arraydata(array);
-  set_column_string_array_equation(fp->column_string_array_id_x, fp->codex, line, data, n);
-  set_column_string_array_equation(fp->column_string_array_id_y, fp->codey, line, data, n);
+  set_column_string_array_equation(fp->array_id.string.x, fp->codex, line, data, n);
+  set_column_string_array_equation(fp->array_id.string.y, fp->codey, line, data, n);
 }
 
 static void
-set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, MathEquation **code)
+set_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, int line, MathEquation **code)
 {
   int i, eqn, n;
   if (id < 0) {
     return;
   }
-  n = fp->worksheet_max_column;
+  n = fp->worksheet_n_columns;
   for (eqn = 0; eqn < EQUATION_NUM; eqn++) {
     math_equation_clear_string_array(code[eqn], id);
     math_equation_set_array_str(code[eqn], id, 0, "");
     for (i = 0; i < n; i++) {
       char *str;
-      str = spreadsheet_get_text (fp->spreadsheet, i, fp->line - 1);
+      str = spreadsheet_get_text (fp->spreadsheet, i, line);
       math_equation_set_array_str(code[eqn], id, i + 1, str ? str : "");
       g_free (str);
     }
@@ -4966,10 +4994,16 @@ set_column_string_array_equation_from_spreadsheet(struct f2ddata *fp, int id, Ma
 }
 
 static void
+set_string_array_from_spreadsheet (struct f2ddata *fp, struct xy_id *id, int line)
+{
+  set_string_array_equation_from_spreadsheet(fp, id->x, line, fp->codex);
+  set_string_array_equation_from_spreadsheet(fp, id->y, line, fp->codey);
+}
+
+static void
 set_column_string_array_from_spreadsheet (struct f2ddata *fp)
 {
-  set_column_string_array_equation_from_spreadsheet(fp, fp->column_string_array_id_x, fp->codex);
-  set_column_string_array_equation_from_spreadsheet(fp, fp->column_string_array_id_y, fp->codey);
+  set_string_array_from_spreadsheet (fp, &fp->array_id.string, fp->line - 1);
 }
 
 static int
@@ -5006,6 +5040,20 @@ get_data_from_file(struct f2ddata *fp, int maxdim, MathValue *gdata)
 }
 
 static int
+check_remark_spreadsheet (struct f2ddata *fp)
+{
+  char *col;
+  int comment;
+  col = spreadsheet_get_text_raw (fp->spreadsheet, 0, fp->line - 1);
+  if (col == NULL) {
+    return FALSE;
+  }
+  comment = CHECK_REMARK(fp->remark, fp->ifs_buf, col[0]);
+  g_free (col);
+  return comment;
+}
+
+static int
 get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
   int i, n;
@@ -5015,11 +5063,14 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
   nonum.type = MATH_VALUE_NONUM;
 
   fp->line++;
-  if (fp->line > fp->worksheet_max_row) {
+  if (fp->line > fp->worksheet_n_rows) {
     fp->eof = TRUE;
     return 1;
   }
-  n = (fp->worksheet_max_column > maxdim) ? maxdim : fp->worksheet_max_column;
+  if (check_remark_spreadsheet (fp)) {
+    return 2;
+  }
+  n = (fp->worksheet_n_columns > maxdim) ? maxdim : fp->worksheet_n_columns;
   fp->count++;
   gdata[0].val = fp->count;
   gdata[0].type = MATH_VALUE_NORMAL;
@@ -5034,12 +5085,12 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
   }
   if (fp->use_column_array) {
     MathValue val;
-    set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
-    set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
-    for (i = n; i < fp->worksheet_max_column; i++) {
+    set_column_array(fp->codex, fp->array_id.numeric.x, gdata, n);
+    set_column_array(fp->codey, fp->array_id.numeric.y, gdata, n);
+    for (i = n; i < fp->worksheet_n_columns; i++) {
       spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, &val);
-      column_array_push(fp->codex, fp->column_array_id_x, &val);
-      column_array_push(fp->codey, fp->column_array_id_y, &val);
+      column_array_push(fp->codex, fp->array_id.numeric.x, &val);
+      column_array_push(fp->codey, fp->array_id.numeric.y, &val);
     }
   }
   return 0;
@@ -5069,8 +5120,8 @@ get_data_from_array(struct f2ddata *fp, int maxdim, MathValue *gdata)
     gdata[i + 1] = nonum;
   }
 
-  set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
-  set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
+  set_column_array(fp->codex, fp->array_id.numeric.x, gdata, n);
+  set_column_array(fp->codey, fp->array_id.numeric.y, gdata, n);
   fp->line++;
 
   return 0;
@@ -5103,8 +5154,8 @@ get_data_from_range(struct f2ddata *fp, int maxdim, MathValue *gdata)
   }
 
   fp->line++;
-  set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
-  set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
+  set_column_array(fp->codex, fp->array_id.numeric.x, gdata, 2);
+  set_column_array(fp->codey, fp->array_id.numeric.y, gdata, 2);
 
   return 0;
 }
@@ -5948,7 +5999,7 @@ get_final_line_spreadsheet(struct f2ddata *fp, struct f2dlocal *local)
     return -1;
   }
 
-  get_final_line_common (fp, local, fp->worksheet_max_row);
+  get_final_line_common (fp, local, fp->worksheet_n_rows);
   return 0;
 }
 
@@ -7324,10 +7375,7 @@ static int
 draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
 {
   int gx0, gy0, gx1, gy1;
-  double d2, d3, headlen, headwidth;
-
-  headlen = 72426;
-  headwidth = 60000;
+  double d2, d3;
 
   d2 = x1;
   d3 = y1;
@@ -7339,7 +7387,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
   if ((x1 == d2) && (y1 == d3) && (msize > 0)) {
     double dx, dy, len, alen, awidth;
     alen = msize;
-    awidth = alen * headwidth / headlen / 2.0;
+    awidth = alen * HEADWIDTH / HEADLEN / 2.0;
     dx = gx1-gx0;
     dy = gy1-gy0;
     len = sqrt(dx*dx+dy*dy);
@@ -8295,6 +8343,15 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
   return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
 }
 
+static void
+set_header_array_spreadsheet (struct f2ddata *fp)
+{
+  if (! fp->use_header_array) {
+    return;
+  }
+  set_string_array_from_spreadsheet (fp, &fp->array_id.header, 0);
+}
+
 static int
 f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -8373,6 +8430,12 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (set_const_all(fp))
     return 1;
+
+  switch (fp->src) {
+  case DATA_SOURCE_SPREADSHEET:
+    set_header_array_spreadsheet (fp);
+    break;
+  }
 
   GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
@@ -8855,8 +8918,8 @@ f2dcolumn_spreadsheet(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,c
     return 0;
   }
 
-  max_row = spreadsheet_max_row (spreadsheet);
-  max_column = spreadsheet_max_column (spreadsheet);
+  max_row = spreadsheet_n_rows (spreadsheet);
+  max_column = spreadsheet_n_columns (spreadsheet);
 
   if (col < 1 || col > max_column) {
     spreadsheet_close (&spreadsheet);

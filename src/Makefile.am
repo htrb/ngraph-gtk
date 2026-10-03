@@ -3,7 +3,10 @@ SUBDIRS = math gtk freexl
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
-libngraph_cflags =
+if HAVE_LIBORCUS
+  libngraph_ldflags += $(LIBORCUS_LIBS) $(LIBIXION_LIBS) $(LIBORCUS_SPREADSHEET_LIBS)
+endif
+libngraph_cflags = ""
 ngraph_ldflags = -lngraph
 ngraph_lib = libngraph.la
 
@@ -55,9 +58,12 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h	\
 	ngraph_api.c oparameter.c oparameter.h spreadsheet.c		\
-	spreadsheet.h
+	spreadsheet.h orcus.cpp orcus.h nfreexl.c nfreexl.h
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME="$(CC)" $(GTKSOURCEVIEW_CFLAGS)
+if HAVE_LIBORCUS
+  libngraph_la_CXXFLAGS = $(libngraph_la_CFLAGS) $(LIBORCUS_CFLAGS) $(LIBIXION_CFLAGS) $(LIBORCUS_SPREADSHEET_CFLAGS)
+endif
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la freexl/libfreexl.la
 libngraph_la_LDFLAGS = $(libngraph_ldflags)
 if OS_WIN32

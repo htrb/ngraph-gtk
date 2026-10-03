@@ -22,20 +22,22 @@ typedef struct _math_common_value MathCommonValue;
 
 #define MATH_EQUATION_ARRAY_INDEX_MAX 65535
 
+enum MATH_VALUE_TYPE {
+  MATH_VALUE_NORMAL = 0,
+  MATH_VALUE_ERROR  = 1,
+  MATH_VALUE_NAN    = 2,
+  MATH_VALUE_UNDEF  = 3,
+  //    MATH_VALUE_SYNTAX = 4,
+  MATH_VALUE_CONT   = 5,
+  MATH_VALUE_BREAK  = 6,
+  MATH_VALUE_NONUM  = 7,
+  MATH_VALUE_MEOF   = 8,
+  MATH_VALUE_INTERRUPT = 9,
+};
+
 struct _math_value {
   double val;
-  enum {
-    MATH_VALUE_NORMAL = 0,
-    MATH_VALUE_ERROR  = 1,
-    MATH_VALUE_NAN    = 2,
-    MATH_VALUE_UNDEF  = 3,
-    //    MATH_VALUE_SYNTAX = 4,
-    MATH_VALUE_CONT   = 5,
-    MATH_VALUE_BREAK  = 6,
-    MATH_VALUE_NONUM  = 7,
-    MATH_VALUE_MEOF   = 8,
-    MATH_VALUE_INTERRUPT = 9,
-  } type;
+  enum MATH_VALUE_TYPE type;
 };
 
 struct _math_array {
@@ -94,6 +96,12 @@ struct _math_stack {
   } stack;
 };
 
+enum EOEQ_ASSIGN_TYPE {
+  EOEQ_ASSIGN_TYPE_BOTH,
+  EOEQ_ASSIGN_TYPE_EOEQ,
+  EOEQ_ASSIGN_TYPE_ASSIGN,
+};
+
 struct _math_equation {
   MathStack stack, string_stack;
   MathArray array, string_array;
@@ -103,11 +111,7 @@ struct _math_equation {
   MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
-  enum EOEQ_ASSIGN_TYPE {
-		       EOEQ_ASSIGN_TYPE_BOTH,
-		       EOEQ_ASSIGN_TYPE_EOEQ,
-		       EOEQ_ASSIGN_TYPE_ASSIGN,
-  } eoeq_assign_type;
+  enum EOEQ_ASSIGN_TYPE eoeq_assign_type;
   int use_eoeq_assign;
   struct narray *scope_info;
   struct {

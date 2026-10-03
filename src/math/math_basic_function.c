@@ -1288,23 +1288,11 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static double
 mjd(int y, int m, int d, int hh, int mm, int ss)
 {
-  int d0, d1, d2, d3, d4;
+  int mjd;
 
-  if (m < 1) {
-    m = 1;
-  }
+  mjd = date_to_mjd(y, m, d);
 
-  if (d < 1) {
-    d = 1;
-  }
-
-  d0 = (14 - m) / 12;
-  d1 = (y - d0) * 365.25;
-  d2 = (m + d0 * 12 - 2) * 30.59;
-  d3 = (y - d0) / 100;
-  d4 = (y - d0) / 400;
-
-  return  d1 + d2 - d3 + d4 + d + 1721088 - 2400000 + hh / 24.0 + mm / 1440.0  + ss / 86400.0;
+  return mjd + hh / 24.0 + mm / 1440.0  + ss / 86400.0;
 }
 
 int
@@ -4942,5 +4930,31 @@ math_func_strftime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   }
 
   rval->type = MATH_VALUE_NORMAL;
+  return 0;
+}
+
+int
+math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double excel, mjd;
+  int is_1904;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  excel = exp->buf[0].val.val;
+  is_1904 = exp->buf[1].val.val;
+
+  if (is_1904) {
+    mjd = excel + 16479;
+  } else {
+    mjd = excel + ((excel <= 60) ? 15019 : 15018);
+  }
+
+  rval->type = MATH_VALUE_NORMAL;
+  rval->val = mjd;
   return 0;
 }

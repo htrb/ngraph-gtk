@@ -803,6 +803,30 @@ get_font_style(struct objlist *obj, N_VALUE *inst, const char *field, const char
   return style;
 }
 
+#if WINDOW
+static char *
+quote_fonts(const char *font, const char *alt)
+{
+  GString *str;
+  str = g_string_new (font);
+  if (alt) {
+    int i;
+    char **sary;
+    sary = g_strsplit (alt, ",", -1);
+    for (i = 0; sary[i]; i++) {
+      const char *ptr = sary[i];
+      if (strchr (ptr, ' ')) {
+	g_string_append_printf (str, ",'%s'", ptr);
+      } else {
+	g_string_append_printf (str, ",%s", ptr);
+      }
+    }
+    g_strfreev (sary);
+  }
+  return g_string_free (str, FALSE);
+}
+#endif
+
 static struct fontmap *
 loadfont(char *fontalias, int font_style, int *symbol)
 {
@@ -832,8 +856,11 @@ loadfont(char *fontalias, int font_style, int *symbol)
   } else {
     gchar *ptr;
     pfont = pango_font_description_new();
-
+#if WINDOW
+    ptr = quote_fonts(fcur->fontname, fcur->alternative);
+#else
     ptr = g_strdup_printf("%s%s%s", fcur->fontname, (fcur->alternative) ? "," : "", CHK_STR(fcur->alternative));
+#endif
     if (ptr) {
       pango_font_description_set_family(pfont, ptr);
       g_free(ptr);
