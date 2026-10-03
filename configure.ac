@@ -87,7 +87,8 @@ AM_GNU_GETTEXT([external])
 
 dnl Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
-AC_CHECK_LIB([freexl], [freexl_open_xlsx])
+# use patched freeXL
+#AC_CHECK_LIB([freexl], [freexl_open_xlsx])
 AC_CHECK_LIB([readline], [rl_completion_matches],
 			  [
 			  AC_DEFINE([HAVE_LIBREADLINE], 1, [have readline library])
@@ -147,6 +148,19 @@ AC_PROG_EGREP
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h freexl.h])
 
+# for freeXL
+AC_CHECK_HEADERS(iconv.h,, [AC_MSG_ERROR([cannot find iconv.h, bailing out])])
+AC_SEARCH_LIBS(iconv,iconv,,
+	AC_SEARCH_LIBS(libiconv,iconv,,AC_MSG_ERROR(['libiconv' is required but it doesn't seem to be installed on this system.]),))
+AC_SEARCH_LIBS(locale_charset,charset,,
+	AC_SEARCH_LIBS(nl_langinfo,c,,AC_MSG_ERROR(['libcharset' is required but it doesn't seem to be installed on this system.]),))
+
+AC_CHECK_HEADERS(minizip/unzip.h,, [AC_MSG_ERROR([cannot find minizip/unzip.h, bailing out])])
+AC_SEARCH_LIBS(unzLocateFile, minizip,,AC_MSG_ERROR(['libminizip' is required but it doesn't seem to be installed on this system.]))
+
+AC_CHECK_HEADERS(expat.h,, [AC_MSG_ERROR([cannot find expat.h, bailing out])])
+AC_CHECK_LIB(expat,XML_ParserCreate,,AC_MSG_ERROR(['expat' is required but it doesn't seem to be installed on this system.]))
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
@@ -183,6 +197,7 @@ AC_CONFIG_FILES([Makefile \
 		 src/Makefile \
 		 src/gtk/Makefile \
 		 src/math/Makefile \
+		 src/freexl/Makefile \
 		 driver/Makefile \
 		 addin/Makefile \
 		 po/Makefile.in \

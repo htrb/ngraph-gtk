@@ -1,4 +1,4 @@
-SUBDIRS = math gtk
+SUBDIRS = math gtk freexl
 
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
@@ -58,7 +58,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	spreadsheet.h
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME="$(CC)" $(GTKSOURCEVIEW_CFLAGS)
-libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
+libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la freexl/libfreexl.la
 libngraph_la_LDFLAGS = $(libngraph_ldflags)
 if OS_WIN32
   libngraph_la_LIBADD += -lgdi32 -lgdiplus $(STDCPPLIB)
