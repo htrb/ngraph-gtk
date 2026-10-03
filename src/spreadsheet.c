@@ -102,12 +102,12 @@ spreadsheet_open (const char *file)
     break;
   }
 
-  if (norcus == NULL) {
-    return NULL;
+  if (norcus) {
+    return n_orcus_init (norcus);
   }
-
-  return n_orcus_init (norcus);
 #endif
+
+  return NULL;
 }
 
 void
