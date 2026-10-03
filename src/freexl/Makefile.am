@@ -7,3 +7,5 @@ libfreexl_la_SOURCES = freexl.c freexl_xlsx.c freexl_ods.c freexl.h freexl_inter
 libfreexl_la_LIBADD = -lm
 
 MOSTLYCLEANFILES = *.gcna *.gcno *.gcda
+
+EXTRA_DIST = AUTHORS COPYING README_LICENSE.txt
