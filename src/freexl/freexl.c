@@ -5279,6 +5279,11 @@ get_cell_value_xlsx (xlsx_workbook * workbook, unsigned int row,
 				  val->value.text_value =
 				      *(workbook->strings + p_col->str_index);
 			      }
+			    if (p_col->type == XLSX_STR)
+			      {
+				  val->type = FREEXL_CELL_TEXT;
+				  val->value.text_value = p_col->str;
+			      }
 			}
 		      return FREEXL_OK;
 		  }

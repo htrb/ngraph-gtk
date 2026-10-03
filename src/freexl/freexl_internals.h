@@ -89,6 +89,7 @@
 #define XLSX_DOUBLE		3
 #define XLSX_STR_INDEX	4
 #define XLSX_DATETIME	5
+#define XLSX_STR	6
 
 #define XLSX_DATE_NONE		0
 #define XLSX_DATE_SIMPLE	1
@@ -324,6 +325,7 @@ typedef struct xlsx_cell_struct
     int int_value;
     double dbl_value;
     int str_index;
+    char *str;
     struct xlsx_cell_struct *next;
 } xlsx_cell;
 
@@ -341,6 +343,7 @@ typedef struct xlsx_worksheet_struct
 {
 /* a struct representing a XLSX Worksheet */
     int id;
+    char *rid;
     char *name;
     xlsx_row *first;
     xlsx_row *last;
@@ -383,12 +386,19 @@ typedef struct xml_datetime_struct
     struct xml_datetime_struct *next;
 } xml_datetime;
 
+typedef struct xlsx_file_relation_struct
+{
+  char *rid, *filename;
+  struct xlsx_file_relation_struct *next;
+} xlsx_file_relation;
+
 typedef struct xlsx_workbook_struct
 {
 /* a struct representing a XLSX Workbook */
     xlsx_worksheet *first;
     xlsx_worksheet *last;
     xlsx_worksheet *active_sheet;	/* currently active SHEET */
+    xlsx_file_relation *relation_first;
     int n_strings;
     int xml_strings;
     char **strings;
@@ -404,11 +414,14 @@ typedef struct xlsx_workbook_struct
     char *SharedStringsZipEntry;
     char *WorkbookZipEntry;
     char *StylesZipEntry;
+    char *WorksheetFileEntry;
     char *CharData;
     int CharDataLen;
     int CharDataMax;
     int CharDataStep;
     int SharedStringsOk;
+    char *shared_string_buf;
+    int shared_string_buf_len;
     int WorksheetsOk;
     int StylesOk;
     int FormatsOk;
