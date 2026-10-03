@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "frfreexl/freexl.h"
+#include "freexl/freexl.h"
 #include "odata.h"
 #include "ntime.h"
 #include "spreadsheet.h"
