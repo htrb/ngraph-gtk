@@ -422,6 +422,7 @@ typedef struct xlsx_workbook_struct
     int SharedStringsOk;
     char *shared_string_buf;
     int shared_string_buf_len;
+    int in_rph;
     int WorksheetsOk;
     int StylesOk;
     int FormatsOk;

@@ -1059,6 +1059,8 @@ shared_strings_start_tag (void *data, const char *el, const char **attr)
 	    }
 	  workbook->SharedStringsOk = 1;
       }
+    if (strcmp (el, "rPh") == 0)
+      workbook->in_rph = 1;
     *(workbook->CharData) = '\0';
     workbook->CharDataLen = 0;
 }
@@ -1096,7 +1098,7 @@ shared_strings_end_tag (void *data, const char *el)
 	      workbook->error = 1;
 	  workbook->SharedStringsOk = 0;
       }
-    if (strcmp (el, "t") == 0)
+    if (workbook->in_rph == 0 && strcmp (el, "t") == 0)
       {
 	*(workbook->CharData + workbook->CharDataLen) = '\0';
 	shared_strings_add_string (workbook, workbook->CharData);
@@ -1129,6 +1131,8 @@ shared_strings_end_tag (void *data, const char *el)
 	  else
 	      workbook->error = 1;
       }
+    if (strcmp (el, "rPh") == 0)
+      workbook->in_rph = 0;
 }
 
 static void
@@ -1146,6 +1150,7 @@ do_parse_xlsx_shared_strings (xlsx_workbook * workbook, unsigned char *buf,
 	  return;
       }
 
+    workbook->in_rph = 0;
     XML_SetUserData (parser, workbook);
     XML_SetElementHandler (parser, shared_strings_start_tag,
 			   shared_strings_end_tag);
