@@ -11,7 +11,7 @@
 const void *
 n_freexl_open (const char *file, enum spreadsheet_type type)
 {
-  const void *handle;
+  const void *handle = NULL;
   int ret;
 
   switch (type) {
