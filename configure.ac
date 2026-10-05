@@ -178,8 +178,7 @@ AC_SEARCH_LIBS(iconv,iconv,,
 AC_SEARCH_LIBS(locale_charset,charset,,
 	AC_SEARCH_LIBS(nl_langinfo,c,,AC_MSG_ERROR(['libcharset' is required but it doesn't seem to be installed on this system.]),))
 
-AC_CHECK_HEADERS(minizip/unzip.h,, [AC_MSG_ERROR([cannot find minizip/unzip.h, bailing out])])
-AC_SEARCH_LIBS(unzLocateFile, minizip,,AC_MSG_ERROR(['libminizip' is required but it doesn't seem to be installed on this system.]))
+PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.3])
 
 AC_CHECK_HEADERS(expat.h,, [AC_MSG_ERROR([cannot find expat.h, bailing out])])
 AC_CHECK_LIB(expat,XML_ParserCreate,,AC_MSG_ERROR(['expat' is required but it doesn't seem to be installed on this system.]))
