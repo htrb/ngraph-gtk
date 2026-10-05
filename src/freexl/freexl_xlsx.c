@@ -1660,12 +1660,6 @@ worksheet_file_start_tag (void *data, const char *el, const char **attr)
 }
 
 static void
-worksheet_file_end_tag (void *data, const char *el)
-{
-/* some generic XML tag ends here */
-}
-
-static void
 do_parse_xlsx_worksheet_files (xlsx_workbook * workbook, unsigned char *buf,
 		      uint64_t size_buf)
 {
@@ -1681,7 +1675,7 @@ do_parse_xlsx_worksheet_files (xlsx_workbook * workbook, unsigned char *buf,
       }
 
     XML_SetUserData (parser, workbook);
-    XML_SetElementHandler (parser, worksheet_file_start_tag, worksheet_file_end_tag);
+    XML_SetElementHandler (parser, worksheet_file_start_tag, NULL);
     XML_SetCharacterDataHandler (parser, xmlCharData);
     if (!XML_Parse (parser, (char *) buf, size_buf, done))
 	workbook->error = 1;
