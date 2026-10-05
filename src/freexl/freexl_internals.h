@@ -339,6 +339,12 @@ typedef struct xlsx_row_struct
     struct xlsx_row_struct *next;
 } xlsx_row;
 
+typedef struct string_buffer
+{
+  char *str;
+  int len, slen;
+} string_buffer;
+
 typedef struct xlsx_worksheet_struct
 {
 /* a struct representing a XLSX Worksheet */

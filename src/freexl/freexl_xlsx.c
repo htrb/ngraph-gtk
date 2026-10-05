@@ -136,6 +136,59 @@ xmlCharDataSheet (void *data, const XML_Char * s, int len)
     worksheet->CharDataLen += len;
 }
 
+static void
+string_buffer_init (string_buffer *buf)
+{
+  buf->str = NULL;
+  buf->len = 0;
+  buf->slen = 0;
+}
+
+static void
+string_buffer_free (string_buffer *buf)
+{
+  if (buf->str)
+    free (buf->str);
+  string_buffer_init (buf);
+}
+
+static void
+string_buffer_clear (string_buffer *buf)
+{
+  if (buf->str)
+    buf->str[0] = '\0';
+  buf->slen = 0;
+}
+
+static void
+string_buffer_append_string (string_buffer *buf, const char *t)
+{
+  int len;
+  if (t == NULL)
+    return;
+
+  len = strlen (t) + 1;
+  if (buf->str == NULL)
+    {
+      buf->str = strdup (t);
+      buf->len = len;
+      buf->slen = len - 1;
+      return;
+    }
+  if (buf->len < buf->slen + len)
+    {
+      char * tmp;
+      tmp = realloc (buf->str, buf->slen + len);
+      if (tmp == NULL)
+	return;
+
+      buf->str = tmp;
+    }
+  buf->len = buf->slen + len;
+  strcpy (buf->str + buf->slen, t);
+  buf->slen += len - 1;
+}
+
 static xlsx_workbook *
 alloc_workbook ()
 {
