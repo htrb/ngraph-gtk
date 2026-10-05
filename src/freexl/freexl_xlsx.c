@@ -274,6 +274,7 @@ destroy_worksheet (xlsx_worksheet * ws)
 	free (ws->rows);
     if (ws->CharData != NULL)
 	free (ws->CharData);
+    string_buffer_free (&ws->inline_string);
     free (ws);
 }
 
@@ -586,6 +587,7 @@ sheet_start_tag (void *data, const char *el, const char **attr)
       }
     if (strcmp (el, "c") == 0)
       {
+	  string_buffer_clear (&worksheet->inline_string);
 	  if (worksheet->RowOk == 3)
 	    {
 		const char *r = NULL;
@@ -635,6 +637,8 @@ sheet_start_tag (void *data, const char *el, const char **attr)
 			    if (strcmp (t, "n") == 0)
 				type = XLSX_INTEGER;
 			    if (strcmp (t, "str") == 0)
+				type = XLSX_STR;
+			    if (strcmp (t, "inlineStr") == 0)
 				type = XLSX_STR;
 			}
 		      add_xlsx_col (worksheet, col_no, type, is_datetime);
@@ -746,6 +750,21 @@ sheet_end_tag (void *data, const char *el)
 	  else
 	      worksheet->error = 1;
       }
+    if (strcmp (el, "t") == 0)
+      {
+	const char *in;
+	*(worksheet->CharData + worksheet->CharDataLen) = '\0';
+	in = worksheet->CharData;
+	string_buffer_append_string (&worksheet->inline_string, in);
+      }
+    if (strcmp (el, "is") == 0)
+    {
+      if (worksheet->inline_string.str && worksheet->inline_string.str[0])
+      {
+	set_xlsx_cell_value (worksheet, worksheet->inline_string.str);
+      }
+      string_buffer_clear (&worksheet->inline_string);
+    }
 }
 
 static void
@@ -903,6 +922,7 @@ do_add_worksheet (xlsx_workbook * workbook, int id, char *rid, char *name)
     ws->ColOk = 0;
     ws->wbRef = workbook;
     ws->next = NULL;
+    string_buffer_init (&ws->inline_string);
     if (workbook->first == NULL)
 	workbook->first = ws;
     if (workbook->last != NULL)

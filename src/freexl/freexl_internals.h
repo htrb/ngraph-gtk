@@ -364,6 +364,7 @@ typedef struct xlsx_worksheet_struct
     int RowOk;
     int ColOk;
     int CellValueOk;
+    string_buffer inline_string;
     struct xlsx_workbook_struct *wbRef;
     struct xlsx_worksheet_struct *next;
 } xlsx_worksheet;
