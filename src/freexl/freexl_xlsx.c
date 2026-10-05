@@ -225,7 +225,7 @@ alloc_workbook ()
     wb->StylesOk = 0;
     wb->FormatsOk = 0;
     wb->CellStylesOk = 0;
-    wb->shared_string_buf = NULL;
+    string_buffer_init (&wb->shared_string);
     return wb;
 }
 
@@ -340,8 +340,7 @@ destroy_workbook (xlsx_workbook * wb)
 	free (wb->WorksheetFileEntry);
     if (wb->CharData != NULL)
 	free (wb->CharData);
-    if (wb->shared_string_buf != NULL)
-	free (wb->shared_string_buf);
+    string_buffer_free (&wb->shared_string);
     free (wb);
 }
 
@@ -1119,28 +1118,6 @@ shared_strings_start_tag (void *data, const char *el, const char **attr)
 }
 
 static void
-shared_strings_add_string (xlsx_workbook *workbook, char *t)
-{
-  int len, len2;
-  if (t == NULL)
-    return;
-
-  len = strlen (t) + 1;
-  if (workbook->shared_string_buf == NULL)
-    {
-      workbook->shared_string_buf = strdup (t);
-      workbook->shared_string_buf_len = len;
-      return;
-    }
-  len2 = strlen (workbook->shared_string_buf);
-  if (workbook->shared_string_buf_len < len + len2)
-    {
-      workbook->shared_string_buf = realloc (workbook->shared_string_buf, len + len2);
-    }
-  strcat (workbook->shared_string_buf, t);
-}
-
-static void
 shared_strings_end_tag (void *data, const char *el)
 {
 /* some generic XML tag ends here */
@@ -1154,7 +1131,7 @@ shared_strings_end_tag (void *data, const char *el)
     if (workbook->in_rph == 0 && strcmp (el, "t") == 0)
       {
 	*(workbook->CharData + workbook->CharDataLen) = '\0';
-	shared_strings_add_string (workbook, workbook->CharData);
+	string_buffer_append_string (&workbook->shared_string, workbook->CharData);
       }
     if (strcmp (el, "si") == 0)
       {
@@ -1165,14 +1142,14 @@ shared_strings_end_tag (void *data, const char *el)
 	    }
 	  if (workbook->xml_strings < workbook->n_strings)
 	    {
-	      if (workbook->shared_string_buf)
+	      if (workbook->shared_string.slen > 0)
 		{
-		  *(workbook->strings + workbook->xml_strings) = strdup (workbook->shared_string_buf);
-		  workbook->shared_string_buf[0] = '\0';
+		  *(workbook->strings + workbook->xml_strings) = strdup (workbook->shared_string.str);
+		  string_buffer_clear (&workbook->shared_string);
 		}
 	      else
 		{
-		char *in;
+		const char *in;
 		*(workbook->CharData + workbook->CharDataLen) = '\0';
 		in = workbook->CharData;
 		*(workbook->strings + workbook->xml_strings) =
