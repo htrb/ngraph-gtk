@@ -1633,20 +1633,21 @@ worksheet_file_start_tag (void *data, const char *el, const char **attr)
 	    }
 	  if (relation.rid && relation.filename)
 	    {
-		/* allocating the SharedStrings array */
-		int i;
 		xlsx_file_relation *rel;
 		rel = malloc (sizeof (*rel));
-		* rel = relation;
-		rel->next = NULL;
-		if (workbook->relation_first)
+		if (rel)
+		{
+		  * rel = relation;
+		  rel->next = NULL;
+		  if (workbook->relation_first)
 		  {
 		    xlsx_file_relation *ptr;
 		    for (ptr = workbook->relation_first; ptr->next; ptr = ptr->next);
 		    ptr->next = rel;
 		  }
-		else
-		  workbook->relation_first = rel;
+		  else
+		    workbook->relation_first = rel;
+		}
 	    }
 	  else
 	    {
