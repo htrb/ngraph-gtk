@@ -75,7 +75,6 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 AC_PROG_INSTALL
 AC_PROG_SED
 AC_PROG_MKDIR_P
@@ -139,6 +138,15 @@ fi
 # use patched freeXL
 # PKG_CHECK_MODULES([FREEXL], [freexl >= 2.0.0])
 
+AC_ARG_ENABLE([orcus],
+  [AS_HELP_STRING([--enable-orcus], [use orcus to open xlsx file])],
+  [enable_orcus=$enableval],
+  [enable_orcus=no])
+
+AS_IF([test "x$enable_orcus" = xyes],
+  [AC_MSG_NOTICE([use orcus to open xlsx file])])
+
+if test "$enable_orcus" = yes; then
 PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
 PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
 if test "$LIBORCUS_021" = yes; then
@@ -155,6 +163,11 @@ elif test "$LIBORCUS_020" = yes; then
    AC_DEFINE([HAVE_LIBORCUS], 1, [have orcus library])
    AM_CONDITIONAL([HAVE_LIBORCUS], [true])
    PKG_CHECK_MODULES([LIBIXION], [libixion-0.20 >= 0.20])
+else
+   AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
+   AM_CONDITIONAL([HAVE_LIBORCUS], [false])
+fi
+#AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 else
    AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
    AM_CONDITIONAL([HAVE_LIBORCUS], [false])
