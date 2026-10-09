@@ -267,7 +267,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
-  int autonorm,num,gnum,margin,title_offset;
+  int autonorm,num,gnum,margin,title_distance;
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -292,7 +292,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=-1;
   alpha=255;
   margin=500;
-  title_offset=0;
+  title_distance=0;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"auto_scale_margin",inst,&margin)) return 1;
@@ -315,7 +315,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
   if (_putobj(obj,"num_A",inst,&alpha)) return 1;
-  if (_putobj(obj,"title_offset",inst,&title_offset)) return 1;
+  if (_putobj(obj,"title_distance",inst,&title_distance)) return 1;
 
   font = group = name = NULL;
 
@@ -2513,7 +2513,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       cstep++;
     }
   }
-  _putobj(obj, "title_offset", inst, &distance_max);
+  _putobj(obj, "title_distance", inst, &distance_max);
 
   if (norm != 1 && array == NULL) {
     draw_numbering_normalize(GC, side, aconf, font, norm, maxlen, sx, sy, dlx2, dly2, ndir, nndir, ndirection);
@@ -2628,7 +2628,7 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   struct axislocal alocal;
 
   distance = 0;
-  _putobj(obj, "title_offset", inst, &distance);
+  _putobj(obj, "title_distance", inst, &distance);
 
   _getobj(obj, "num", inst, &side);
   if (side == AXIS_NUM_POS_NONE)
@@ -3176,7 +3176,7 @@ static void
 draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config *aconf)
 {
   char *title, *group;
-  int title_offset, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
+  int title_distance, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
   struct font_config font;
   double si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
   int arrow, arrow_length;
@@ -3184,7 +3184,7 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
   _getobj(obj, "group", inst, &group);
   _getobj(obj, "title", inst, &title);
   _getobj(obj, "title_position", inst, &position);
-  _getobj(obj, "title_offset", inst, &title_offset);
+  _getobj(obj, "title_distance", inst, &title_distance);
   _getobj(obj, "num", inst, &side);
   _getobj(obj, "arrow", inst, &arrow);
   _getobj(obj, "arrow_length", inst, &arrow_length);
@@ -3234,7 +3234,7 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
     break;
   default:
     title_side = check_side_title (group, side);
-    calculate_perpendicular_point(aconf, title_offset + margin, title_side, &x, &y);
+    calculate_perpendicular_point(aconf, title_distance + margin, title_side, &x, &y);
     align_x = 0.5;
     if (dir_cond) {
       align_y = ((title_side == -1) ? 0 : 1);
@@ -4423,7 +4423,7 @@ static struct objtable axis_obj[] = {
   {"num_math",NSTR,NREAD|NWRITE,num_put_math,NULL,0},
   {"title",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"title_position",NENUM,NREAD|NWRITE,NULL,axistitleposchar,0},
-  {"title_offset",NINT,NREAD,NULL,NULL,0},
+  {"title_distance",NINT,NREAD,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},
