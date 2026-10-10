@@ -39,9 +39,18 @@ MSGID_BUGS_ADDRESS =ZXB01226@nifty.com
 # This is the list of locale categories, beyond LC_MESSAGES, for which the
 # message catalogs shall be used.  It is usually empty.
 EXTRA_LOCALE_CATEGORIES =
+
+XGETTEXT_OPTIONS = \
+  --keyword=_ \
+  --keyword=N_ \
+  --keyword=C_:1c,2 \
+  --keyword=NC_:1c,2 \
+  --flag=N_:1:pass-c-format \
+  --flag=NC_:2:pass-c-format
+
 force-update-po:
 	xgettext --default-domain=$(DOMAIN) --directory=.. \
-	  --add-comments=TRANSLATORS: --keyword=_ --keyword=N_ \
+	  --add-comments=TRANSLATORS: $(XGETTEXT_OPTIONS) \
 	  --files-from=POTFILES.in --output=$(DOMAIN).pot
 	msgmerge --update ja.po $(DOMAIN).pot
 	touch stamp-po
