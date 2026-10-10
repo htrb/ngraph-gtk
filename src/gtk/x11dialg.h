@@ -262,9 +262,15 @@ struct AxisBase
   int tab_id;
 };
 
+struct AxisTitle
+{
+  GtkWidget *title, *title_position, *title_offset, *title_orientation, *title_delta;
+  int tab_id;
+};
+
 struct AxisPos
 {
-  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos, *title, *title_position;
+  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos;
   int tab_id;
 };
 
@@ -301,6 +307,7 @@ struct AxisDialog
   struct AxisBase base;
   struct AxisFont font;
   struct AxisPos position;
+  struct AxisTitle title;
   struct AxisGauge gauge;
   struct AxisNumbering numbering;
 };
