@@ -3210,7 +3210,7 @@ title_position (struct objlist *obj, N_VALUE *inst, const struct axis_config *ac
 
   alen = aconf->width * (double) arrow_length / 10000;
 
-  margin = (font->pt / 2.0) * 0.3528 + title_offset;
+  margin = (font->pt / 3.0) * 0.3528 + title_offset;
   if (orientation == AXIS_TITLE_ORIENTATION_PARALLEL) {
   dir_cond = (aconf->direction > 9000 && aconf->direction < 27000);
   } else {
