@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 20:39+0900\n"
+"POT-Creation-Date: 2026-10-10 12:40+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1489 src/gtk/x11axis.c:1511
+#: src/gtk/x11axis.c:1489 src/gtk/x11axis.c:1511 src/gtk/x11axis.c:2340
 msgid "_Position:"
 msgstr ""
 
@@ -359,7 +359,7 @@ msgstr ""
 msgid "_Align:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1935 src/gtk/x11axis.c:2253 src/gtk/x11lgnd.c:2000
+#: src/gtk/x11axis.c:1935 src/gtk/x11axis.c:2243 src/gtk/x11lgnd.c:2000
 msgid "_Direction:"
 msgstr ""
 
@@ -371,7 +371,7 @@ msgstr ""
 msgid "shift (_N):"
 msgstr ""
 
-#: src/gtk/x11axis.c:1947 src/gtk/x11axis.c:2265
+#: src/gtk/x11axis.c:1947 src/gtk/x11axis.c:2255
 msgid "Position"
 msgstr ""
 
@@ -443,84 +443,106 @@ msgstr ""
 msgid "Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2250
+#: src/gtk/x11axis.c:2240
 msgid "_Length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2257
+#: src/gtk/x11axis.c:2247
 msgid "_Adjust:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2261
+#: src/gtk/x11axis.c:2251
 msgid "Adjust _Position:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2279
-msgid "title _Position:"
+#: src/gtk/x11axis.c:2345 src/gtk/x11graph.c:235
+msgid "_Orientation:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2283 src/gtk/x11parameter.c:312
+#: src/gtk/x11axis.c:2349
+msgid "_Offset:"
+msgstr ""
+
+#: src/gtk/x11axis.c:2350
+msgid ""
+"Finely adjust the distance from the axis (mm). Default is 0. Negative values "
+"are allowed."
+msgstr ""
+
+#: src/gtk/x11axis.c:2354
+msgid "Font _Size Offset:"
+msgstr ""
+
+#: src/gtk/x11axis.c:2358 src/gtk/x11parameter.c:312
 msgid "_Title:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2286
+#: src/gtk/x11axis.c:2359
+msgid "Leave blank to hide"
+msgstr ""
+
+#: src/gtk/x11axis.c:2362
 msgid "Title"
 msgstr ""
 
-#: src/gtk/x11axis.c:2308
+#: src/gtk/x11axis.c:2384
 #, c-format
 msgid "Axis %d %s"
 msgstr ""
 
-#: src/gtk/x11axis.c:2317
+#: src/gtk/x11axis.c:2393
 msgid "_Scale"
 msgstr ""
 
-#: src/gtk/x11axis.c:2321
+#: src/gtk/x11axis.c:2397
 msgid "_Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:2325
+#: src/gtk/x11axis.c:2401
 msgid "_Gauge"
 msgstr ""
 
-#: src/gtk/x11axis.c:2329
+#: src/gtk/x11axis.c:2405
 msgid "_Numbering"
 msgstr ""
 
-#: src/gtk/x11axis.c:2333
+#: src/gtk/x11axis.c:2409
 msgid "_Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2337
+#: src/gtk/x11axis.c:2413
 msgid "_Position"
 msgstr ""
 
-#: src/gtk/x11axis.c:2767
+#: src/gtk/x11axis.c:2417
+msgid "_Title"
+msgstr ""
+
+#: src/gtk/x11axis.c:2853
 msgid "delete axis (single select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:2815
+#: src/gtk/x11axis.c:2901
 msgid "axis property (single select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:2898
+#: src/gtk/x11axis.c:2984
 msgid "scale zoom (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:2990
+#: src/gtk/x11axis.c:3076
 msgid "scale clear (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3076
+#: src/gtk/x11axis.c:3162
 msgid "delete grid (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3150
+#: src/gtk/x11axis.c:3236
 msgid "grid property (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3331
+#: src/gtk/x11axis.c:3417
 msgid "scale undo (multi select)"
 msgstr ""
 
@@ -605,7 +627,7 @@ msgstr ""
 msgid "dot 2-dash"
 msgstr ""
 
-#: src/gtk/x11dialg.c:64 src/oaxis.c:105
+#: src/gtk/x11dialg.c:64
 msgid "auto"
 msgstr ""
 
@@ -1296,10 +1318,6 @@ msgstr ""
 
 #: src/gtk/x11graph.c:232
 msgid "_Portrait"
-msgstr ""
-
-#: src/gtk/x11graph.c:235
-msgid "_Orientation:"
 msgstr ""
 
 #: src/gtk/x11graph.c:238
@@ -2142,7 +2160,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:56 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:121
+#: src/gtk/x11merge.c:56 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:132
 msgid "left"
 msgstr ""
 
@@ -5152,11 +5170,11 @@ msgstr ""
 msgid "relative"
 msgstr ""
 
-#: src/odraw.c:81 src/oaxis.c:108
+#: src/odraw.c:81
 msgid "end"
 msgstr ""
 
-#: src/odraw.c:82 src/oaxis.c:106
+#: src/odraw.c:82
 msgid "begin"
 msgstr ""
 
@@ -5220,59 +5238,83 @@ msgstr ""
 msgid "MJD"
 msgstr ""
 
-#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:122
+#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:133
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:107
-msgid "middle"
+#: src/oaxis.c:105
+msgctxt "title"
+msgid "auto"
 msgstr ""
 
-#: src/oaxis.c:120
+#: src/oaxis.c:106
+msgctxt "title"
+msgid "start"
+msgstr ""
+
+#: src/oaxis.c:107
+msgctxt "title"
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:123
+#: src/oaxis.c:108
+msgctxt "title"
+msgid "end"
+msgstr ""
+
+#: src/oaxis.c:120
+msgid "parallel"
+msgstr ""
+
+#: src/oaxis.c:121
+msgid "orthogonal"
+msgstr ""
+
+#: src/oaxis.c:131
+msgid "center"
+msgstr ""
+
+#: src/oaxis.c:134
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:136
+#: src/oaxis.c:147
 msgid "regular"
 msgstr ""
 
-#: src/oaxis.c:137
+#: src/oaxis.c:148
 msgid "no_zero"
 msgstr ""
 
-#: src/oaxis.c:138
+#: src/oaxis.c:149
 msgid "no_floating_point"
 msgstr ""
 
-#: src/oaxis.c:152
+#: src/oaxis.c:163
 msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:153
+#: src/oaxis.c:164
 msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:154
+#: src/oaxis.c:165
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:155
+#: src/oaxis.c:166
 msgid "normal1"
 msgstr ""
 
-#: src/oaxis.c:156
+#: src/oaxis.c:167
 msgid "normal2"
 msgstr ""
 
-#: src/oaxis.c:157
+#: src/oaxis.c:168
 msgid "oblique1"
 msgstr ""
 
-#: src/oaxis.c:158
+#: src/oaxis.c:169
 msgid "oblique2"
 msgstr ""
 
