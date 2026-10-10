@@ -17,6 +17,7 @@ void combo_box_set_active(GtkWidget *cbox, int i);
 void combo_box_clear(GtkWidget *cbox);
 int combo_box_get_num(GtkWidget *cbox);
 void combo_box_append_text(GtkWidget *cbox, const char *str);
+int combo_box_set_enum_context (GtkWidget *w, struct objlist *obj, char *field, const char *context);
 int combo_box_get_selected_row(GtkWidget *view, gchar *path, GtkTreeIter *iter, int col);
 
 #endif

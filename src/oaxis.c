@@ -102,18 +102,29 @@ enum AXIS_NUM_POS {
 };
 
 static char *axistitleposchar[]={
-  N_("auto"),
-  N_("begin"),
-  N_("middle"),
-  N_("end"),
+  NC_("title", "auto"),
+  NC_("title", "start"),
+  NC_("title", "center"),
+  NC_("title", "end"),
   NULL
 };
 
 enum AXIS_TITLE_POS {
   AXIS_TITLE_POS_AUTO,
-  AXIS_TITLE_POS_BEGIN,
-  AXIS_TITLE_POS_MIDDLE,
+  AXIS_TITLE_POS_START,
+  AXIS_TITLE_POS_CENTER,
   AXIS_TITLE_POS_END,
+};
+
+static char *axistitleorientation[]={
+  N_("parallel"),
+  N_("orthogonal"),
+  NULL
+};
+
+enum AXIS_TITLE_ORIENTATION {
+  AXIS_TITLE_ORIENTATION_PARALLEL,
+  AXIS_TITLE_ORIENTATION_ORTHOGONAL,
 };
 
 static char *anumalignchar[]={
@@ -267,7 +278,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
-  int autonorm,num,gnum,margin,title_offset;
+  int autonorm,num,gnum,margin,title_distance,title_delta;
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -292,7 +303,8 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=-1;
   alpha=255;
   margin=500;
-  title_offset=0;
+  title_distance=0;
+  title_delta=200;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"auto_scale_margin",inst,&margin)) return 1;
@@ -315,7 +327,9 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
   if (_putobj(obj,"num_A",inst,&alpha)) return 1;
-  if (_putobj(obj,"title_offset",inst,&title_offset)) return 1;
+  if (_putobj(obj,"title_distance",inst,&title_distance)) return 1;
+  if (_putobj(obj,"title_offset",inst,&title_distance)) return 1;
+  if (_putobj(obj,"title_delta",inst,&title_delta)) return 1;
 
   font = group = name = NULL;
 
@@ -2513,7 +2527,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       cstep++;
     }
   }
-  _putobj(obj, "title_offset", inst, &distance_max);
+  _putobj(obj, "title_distance", inst, &distance_max);
 
   if (norm != 1 && array == NULL) {
     draw_numbering_normalize(GC, side, aconf, font, norm, maxlen, sx, sy, dlx2, dly2, ndir, nndir, ndirection);
@@ -2628,7 +2642,7 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   struct axislocal alocal;
 
   distance = 0;
-  _putobj(obj, "title_offset", inst, &distance);
+  _putobj(obj, "title_distance", inst, &distance);
 
   _getobj(obj, "num", inst, &side);
   if (side == AXIS_NUM_POS_NONE)
@@ -3172,43 +3186,49 @@ check_side_title (const char *group, int side)
   return 1;
 }
 
-static void
-draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config *aconf)
+struct title_position
 {
-  char *title, *group;
-  int title_offset, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
-  struct font_config font;
+  int x, y, dir;
+};
+
+static void
+title_position (struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, struct font_config *font, char *title, struct title_position *pos)
+{
+  char *group;
+  int title_distance, title_offset, orientation, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
   double si, co, v_shift, h_shift, align_x, align_y, alen, w, h, margin;
   int arrow, arrow_length;
 
   _getobj(obj, "group", inst, &group);
-  _getobj(obj, "title", inst, &title);
   _getobj(obj, "title_position", inst, &position);
+  _getobj(obj, "title_distance", inst, &title_distance);
+  _getobj(obj, "title_orientation", inst, &orientation);
   _getobj(obj, "title_offset", inst, &title_offset);
   _getobj(obj, "num", inst, &side);
   _getobj(obj, "arrow", inst, &arrow);
   _getobj(obj, "arrow_length", inst, &arrow_length);
-  font_info (obj, inst, &font);
+
   alen = aconf->width * (double) arrow_length / 10000;
 
-  margin = font.pt * 0.3528 / 2;
+  margin = (font->pt / 2.0) * 0.3528 + title_offset;
+  if (orientation == AXIS_TITLE_ORIENTATION_PARALLEL) {
   dir_cond = (aconf->direction > 9000 && aconf->direction < 27000);
+  } else {
+    dir_cond = (aconf->direction > 18000 && aconf->direction < 36000);
+  }
 
   si = sin(aconf->dir);
   co = cos(aconf->dir);
 
-  if (title == NULL || title[0] == '\0') {
-    return;
-  }
   if (position == AXIS_TITLE_POS_AUTO) {
     if (group  && group[0] == 'c') {
       position = AXIS_TITLE_POS_END;
     } else {
-      position = AXIS_TITLE_POS_MIDDLE;
+      position = AXIS_TITLE_POS_CENTER;
     }
   }
   switch (position) {
-  case AXIS_TITLE_POS_BEGIN:
+  case AXIS_TITLE_POS_START:
     x = aconf->x0;
     y = aconf->y0;
     space = margin;
@@ -3234,18 +3254,27 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
     break;
   default:
     title_side = check_side_title (group, side);
-    calculate_perpendicular_point(aconf, title_offset + margin, title_side, &x, &y);
+    calculate_perpendicular_point(aconf, title_distance + margin, title_side, &x, &y);
     align_x = 0.5;
+    if (orientation == AXIS_TITLE_ORIENTATION_PARALLEL) {
     if (dir_cond) {
       align_y = ((title_side == -1) ? 0 : 1);
     } else {
       align_y = ((title_side == -1) ? 1 : 0);
     }
+    } else {
+      if (dir_cond) {
+	align_y = ((title_side == -1) ? 1 : 0);
+      } else {
+	align_y = ((title_side == -1) ? 0 : 1);
+      }
+    }
     break;
   }
-   text_get_bbox(0, 0, title, font.font, font.style, font.pt, 0, font.space, font.scriptsize, 0, bbox);
+  text_get_bbox(0, 0, title, font->font, font->style, font->pt, 0, font->space, font->scriptsize, 0, bbox);
   w = bbox[2] - bbox[0];
   h = bbox[3] - bbox[1];
+  if (orientation == AXIS_TITLE_ORIENTATION_PARALLEL) {
   h_shift = bbox[0] + w * align_x;
   v_shift = -bbox[3] + h * align_y;
   if (dir_cond) {
@@ -3257,9 +3286,50 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
     y = y + h_shift * si + v_shift * co;
     dir = aconf->direction;
   }
+  } else {
+    h_shift = bbox[0] + w * align_y;
+    v_shift = -bbox[3] + h * align_x;
+    if (dir_cond) {
+      x = x + h_shift * si + v_shift * co;
+      y = y + h_shift * co - v_shift * si;
+      dir = aconf->direction - 27000;
+    } else {
+      x = x - h_shift * si - v_shift * co;
+      y = y - h_shift * co + v_shift * si;
+      dir = aconf->direction - 9000;
+    }
+  }
+  pos->x = x;
+  pos->y = y;
+  pos->dir = dir;
+}
+
+static void
+draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config *aconf)
+{
+  char *title;
+  struct font_config font;
+  struct title_position pos;
+  int title_delta;
+
+  _getobj(obj, "title", inst, &title);
+  _getobj(obj, "title_delta", inst, &title_delta);
+  font_info (obj, inst, &font);
+  if (font.pt + title_delta > 100) {
+    double scale;
+    font.pt += title_delta;
+    scale = (font.pt + title_delta) / (font.pt * 1.0);
+    font.space *= scale;
+  }
+
+  if (title == NULL || title[0] == '\0') {
+    return;
+  }
+  title_position (obj, inst, aconf, &font, title, &pos);
+
   GRAcolor(GC, font.r, font.g, font.b, font.a);
-  GRAmoveto(GC, x, y);
-  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, dir, font.scriptsize);
+  GRAmoveto(GC, pos.x, pos.y);
+  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, pos.dir, font.scriptsize);
  }
 
 static void
@@ -4423,7 +4493,10 @@ static struct objtable axis_obj[] = {
   {"num_math",NSTR,NREAD|NWRITE,num_put_math,NULL,0},
   {"title",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"title_position",NENUM,NREAD|NWRITE,NULL,axistitleposchar,0},
-  {"title_offset",NINT,NREAD,NULL,NULL,0},
+  {"title_offset",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"title_orientation",NENUM,NREAD|NWRITE,NULL,axistitleorientation,0},
+  {"title_delta",NINT,NREAD|NWRITE,NULL,0},
+  {"title_distance",NINT,NREAD,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},

@@ -2177,12 +2177,6 @@ position_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->adjustpos, axis->Obj, axis->Id, "adjust_position"))
     return 1;
 
-  if (SetObjFieldFromWidget(d->title_position, axis->Obj, axis->Id, "title_position"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->title, axis->Obj, axis->Id, "title"))
-    return 1;
-
   return 0;
 }
 
@@ -2204,10 +2198,6 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
   axis_combo_box_setup(d->adjust, axis->Obj, id, "adjust_axis");
 
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
-
-  SetWidgetFromObjField(d->title_position, axis->Obj, id, "title_position");
-
-  SetWidgetFromObjField(d->title, axis->Obj, id, "title");
 }
 
 static void
@@ -2263,34 +2253,120 @@ position_tab_create(struct AxisDialog *dd)
 
 
   frame = gtk_frame_new(_("Position"));
-  gtk_widget_set_vexpand(frame, FALSE);
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX(vbox), frame);
+  add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
 
+  return vbox;
+}
+
+static int
+title_tab_set_value(struct AxisDialog *axis)
+{
+  struct AxisTitle *d;
+
+  d = &axis->title;
+
+  if (SetObjFieldFromWidget(d->title_position, axis->Obj, axis->Id, "title_position"))
+    return 1;
+
+  if (SetObjFieldFromWidget(d->title_orientation, axis->Obj, axis->Id, "title_orientation"))
+    return 1;
+
+  if (SetObjFieldFromWidget(d->title_offset, axis->Obj, axis->Id, "title_offset"))
+    return 1;
+
+  if (SetObjFieldFromWidget(d->title_delta, axis->Obj, axis->Id, "title_delta"))
+    return 1;
+
+  if (SetObjFieldFromWidget(d->title, axis->Obj, axis->Id, "title"))
+    return 1;
+
+  return 0;
+}
+
+static void
+title_tab_setup_item(struct AxisDialog *axis, int id)
+{
+  struct AxisTitle *d;
+
+  d = &axis->title;
+
+  SetWidgetFromObjField(d->title_position, axis->Obj, id, "title_position");
+
+  SetWidgetFromObjField(d->title_orientation, axis->Obj, id, "title_orientation");
+
+  SetWidgetFromObjField(d->title_offset, axis->Obj, id, "title_offset");
+
+  SetWidgetFromObjField(d->title_delta, axis->Obj, id, "title_delta");
+
+  SetWidgetFromObjField(d->title, axis->Obj, id, "title");
+}
+
+static void
+title_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    title_tab_setup_item(d, sel);
+  }
+}
+
+static void
+title_tab_copy_clicked(struct AxisDialog *d)
+{
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, title_tab_copy_click_response, d);
+}
+
+static GtkWidget *
+title_tab_create(struct AxisDialog *dd)
+{
+  GtkWidget *w, *vbox, *frame, *table;
+  struct AxisTitle *d;
+  int i;
+
+  d = &dd->title;
 
   table = gtk_grid_new();
 
   i = 0;
 
   w = combo_box_create();
-  add_widget_to_table(table, w, _("title _Position:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Position:"), FALSE, i++);
+  combo_box_set_enum_context (w, dd->Obj, "title_position", "title");
   d->title_position = w;
+
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("_Orientation:"), FALSE, i++);
+  d->title_orientation = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Offset:"), FALSE, i++);
+  gtk_widget_set_tooltip_text(w, _("Finely adjust the distance from the axis (mm). Default is 0. Negative values are allowed."));
+  d->title_offset = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
+  add_widget_to_table(table, w, _("Font _Size Offset:"), FALSE, i++);
+  d->title_delta = w;
 
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table(table, w, _("_Title:"), TRUE, i++);
+  gtk_entry_set_placeholder_text(GTK_ENTRY(w), _("Leave blank to hide"));
   d->title = w;
 
   frame = gtk_frame_new(_("Title"));
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
+
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX(vbox), frame);
-
-
-  add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
+  add_copy_button_to_box(vbox, G_CALLBACK(title_tab_copy_clicked), dd, "axis");
 
   return vbox;
 }
@@ -2337,11 +2413,16 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Position"));
     d->position.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
+    w = title_tab_create(d);
+    label = gtk_label_new_with_mnemonic(_("_Title"));
+    d->title.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
+
     gtk_box_append(GTK_BOX(d->vbox), notebook);
 
     d->tab = GTK_NOTEBOOK(notebook);
   }
 
+  title_tab_setup_item(d, d->Id);
   position_tab_setup_item(d, d->Id);
   font_tab_setup_item(d, d->Id);
   gauge_tab_setup_item(d, d->Id);
@@ -2432,6 +2513,11 @@ AxisDialogClose(GtkWidget *w, void *data)
 
   if (position_tab_set_value(d)){
     gtk_notebook_set_current_page(d->tab, d->position.tab_id);
+    return;
+  }
+
+  if (title_tab_set_value(d)){
+    gtk_notebook_set_current_page(d->tab, d->title.tab_id);
     return;
   }
 

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 17:47+0900\n"
-"PO-Revision-Date: 2026-09-29 18:14+0900\n"
+"POT-Creation-Date: 2026-10-10 12:40+0900\n"
+"PO-Revision-Date: 2026-10-10 13:36+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -321,7 +321,7 @@ msgstr "線幅(_W):"
 msgid "Baseline"
 msgstr "軸基線"
 
-#: src/gtk/x11axis.c:1489 src/gtk/x11axis.c:1511
+#: src/gtk/x11axis.c:1489 src/gtk/x11axis.c:1511 src/gtk/x11axis.c:2340
 msgid "_Position:"
 msgstr "位置(_P):"
 
@@ -386,7 +386,7 @@ msgstr "個数(_N):"
 msgid "_Align:"
 msgstr "位置合わせ(_A):"
 
-#: src/gtk/x11axis.c:1935 src/gtk/x11axis.c:2253 src/gtk/x11lgnd.c:2000
+#: src/gtk/x11axis.c:1935 src/gtk/x11axis.c:2243 src/gtk/x11lgnd.c:2000
 msgid "_Direction:"
 msgstr "方向(_D):"
 
@@ -398,7 +398,7 @@ msgstr "並行シフト量(_P):"
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:1947 src/gtk/x11axis.c:2265
+#: src/gtk/x11axis.c:1947 src/gtk/x11axis.c:2255
 msgid "Position"
 msgstr "位置"
 
@@ -470,84 +470,107 @@ msgstr "斜体(_I)"
 msgid "Font"
 msgstr "フォント"
 
-#: src/gtk/x11axis.c:2250
+#: src/gtk/x11axis.c:2240
 msgid "_Length:"
 msgstr "長さ(_L):"
 
-#: src/gtk/x11axis.c:2257
+#: src/gtk/x11axis.c:2247
 msgid "_Adjust:"
 msgstr "交差軸(_A):"
 
-#: src/gtk/x11axis.c:2261
+#: src/gtk/x11axis.c:2251
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
-#: src/gtk/x11axis.c:2279
-msgid "title _Position:"
-msgstr "タイトル位置(_P):"
+#: src/gtk/x11axis.c:2345 src/gtk/x11graph.c:235
+msgid "_Orientation:"
+msgstr "向き(_O):"
 
-#: src/gtk/x11axis.c:2283 src/gtk/x11parameter.c:312
+#: src/gtk/x11axis.c:2349
+msgid "_Offset:"
+msgstr "微調整(_O):"
+
+#: src/gtk/x11axis.c:2350
+msgid ""
+"Finely adjust the distance from the axis (mm). Default is 0. Negative values "
+"are allowed."
+msgstr ""
+"軸からの距離を微調整します。デフォルトは0です。マイナス値も入力可能です。"
+
+#: src/gtk/x11axis.c:2354
+msgid "Font _Size Offset:"
+msgstr "文字サイズ調整(_S):"
+
+#: src/gtk/x11axis.c:2358 src/gtk/x11parameter.c:312
 msgid "_Title:"
 msgstr "タイトル(_T):"
 
-#: src/gtk/x11axis.c:2286
+#: src/gtk/x11axis.c:2359
+msgid "Leave blank to hide"
+msgstr "空欄で非表示"
+
+#: src/gtk/x11axis.c:2362
 msgid "Title"
 msgstr "タイトル"
 
-#: src/gtk/x11axis.c:2308
+#: src/gtk/x11axis.c:2384
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2317
+#: src/gtk/x11axis.c:2393
 msgid "_Scale"
 msgstr "スケール(_S)"
 
-#: src/gtk/x11axis.c:2321
+#: src/gtk/x11axis.c:2397
 msgid "_Baseline"
 msgstr "軸基線(_B)"
 
-#: src/gtk/x11axis.c:2325
+#: src/gtk/x11axis.c:2401
 msgid "_Gauge"
 msgstr "目盛線(_G)"
 
-#: src/gtk/x11axis.c:2329
+#: src/gtk/x11axis.c:2405
 msgid "_Numbering"
 msgstr "目盛数字(_N)"
 
-#: src/gtk/x11axis.c:2333
+#: src/gtk/x11axis.c:2409
 msgid "_Font"
 msgstr "フォント(_F)"
 
-#: src/gtk/x11axis.c:2337
+#: src/gtk/x11axis.c:2413
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:2767
+#: src/gtk/x11axis.c:2417
+msgid "_Title"
+msgstr "タイトル(_T)"
+
+#: src/gtk/x11axis.c:2853
 msgid "delete axis (single select)"
 msgstr "軸削除 (単一選択)"
 
-#: src/gtk/x11axis.c:2815
+#: src/gtk/x11axis.c:2901
 msgid "axis property (single select)"
 msgstr "軸プロパティ (単一選択)"
 
-#: src/gtk/x11axis.c:2898
+#: src/gtk/x11axis.c:2984
 msgid "scale zoom (multi select)"
 msgstr "スケールズーム (複数選択)"
 
-#: src/gtk/x11axis.c:2990
+#: src/gtk/x11axis.c:3076
 msgid "scale clear (multi select)"
 msgstr "スケールクリア (複数選択)"
 
-#: src/gtk/x11axis.c:3076
+#: src/gtk/x11axis.c:3162
 msgid "delete grid (multi select)"
 msgstr "グリッド削除 (複数選択)"
 
-#: src/gtk/x11axis.c:3150
+#: src/gtk/x11axis.c:3236
 msgid "grid property (multi select)"
 msgstr "グリッドプロパティ (複数選択)"
 
-#: src/gtk/x11axis.c:3331
+#: src/gtk/x11axis.c:3417
 msgid "scale undo (multi select)"
 msgstr "スケールアンドゥ (複数選択)"
 
@@ -634,7 +657,7 @@ msgstr "二点鎖線"
 msgid "dot 2-dash"
 msgstr "一点二鎖線"
 
-#: src/gtk/x11dialg.c:64 src/oaxis.c:105
+#: src/gtk/x11dialg.c:64
 msgid "auto"
 msgstr "自動"
 
@@ -1326,10 +1349,6 @@ msgstr "用紙(_P):"
 #: src/gtk/x11graph.c:232
 msgid "_Portrait"
 msgstr "縦(_P)"
-
-#: src/gtk/x11graph.c:235
-msgid "_Orientation:"
-msgstr "向き(_O):"
 
 #: src/gtk/x11graph.c:238
 msgid "L_andscape"
@@ -2174,7 +2193,7 @@ msgstr "元に戻す(_U)"
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:56 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:121
+#: src/gtk/x11merge.c:56 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:132
 msgid "left"
 msgstr "左"
 
@@ -5864,11 +5883,11 @@ msgstr "コンマ"
 msgid "relative"
 msgstr "相対パス"
 
-#: src/odraw.c:81 src/oaxis.c:108
+#: src/odraw.c:81
 msgid "end"
 msgstr "終点"
 
-#: src/odraw.c:82 src/oaxis.c:106
+#: src/odraw.c:82
 msgid "begin"
 msgstr "始点"
 
@@ -5932,59 +5951,83 @@ msgstr "逆数"
 msgid "MJD"
 msgstr "MJD"
 
-#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:122
+#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:133
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:107
-msgid "middle"
-msgstr "中点"
+#: src/oaxis.c:105
+msgctxt "title"
+msgid "auto"
+msgstr "自動"
 
-#: src/oaxis.c:120
+#: src/oaxis.c:106
+msgctxt "title"
+msgid "start"
+msgstr "始点"
+
+#: src/oaxis.c:107
+msgctxt "title"
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:123
+#: src/oaxis.c:108
+msgctxt "title"
+msgid "end"
+msgstr "終点"
+
+#: src/oaxis.c:120
+msgid "parallel"
+msgstr "平行"
+
+#: src/oaxis.c:121
+msgid "orthogonal"
+msgstr "垂直"
+
+#: src/oaxis.c:131
+msgid "center"
+msgstr "中央"
+
+#: src/oaxis.c:134
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:136
+#: src/oaxis.c:147
 msgid "regular"
 msgstr "通常表示"
 
-#: src/oaxis.c:137
+#: src/oaxis.c:148
 msgid "no_zero"
 msgstr "ゼロ非表示"
 
-#: src/oaxis.c:138
+#: src/oaxis.c:149
 msgid "no_floating_point"
 msgstr "整数表示"
 
-#: src/oaxis.c:152
+#: src/oaxis.c:163
 msgid "horizontal"
 msgstr "水平"
 
-#: src/oaxis.c:153
+#: src/oaxis.c:164
 msgid "parallel1"
 msgstr "軸と平行1"
 
-#: src/oaxis.c:154
+#: src/oaxis.c:165
 msgid "parallel2"
 msgstr "軸と平行2"
 
-#: src/oaxis.c:155
+#: src/oaxis.c:166
 msgid "normal1"
 msgstr "軸と直交1"
 
-#: src/oaxis.c:156
+#: src/oaxis.c:167
 msgid "normal2"
 msgstr "軸と直交2"
 
-#: src/oaxis.c:157
+#: src/oaxis.c:168
 msgid "oblique1"
 msgstr "軸と斜交1"
 
-#: src/oaxis.c:158
+#: src/oaxis.c:169
 msgid "oblique2"
 msgstr "軸と斜交2"
 
@@ -6010,7 +6053,7 @@ msgstr "データ"
 
 #: src/odata.c:236
 msgid "spreadsheet"
-msgstr ""
+msgstr "スプレッドシート"
 
 #: src/odata.c:238
 msgid "range"
@@ -6156,6 +6199,12 @@ msgstr "ワインディング"
 #: src/otext.c:43
 msgid "text"
 msgstr "テキスト"
+
+#~ msgid "title _Position:"
+#~ msgstr "タイトル位置(_P):"
+
+#~ msgid "middle"
+#~ msgstr "中点"
 
 #~ msgid "use _Dark theme"
 #~ msgstr "ダークテーマを使う (_D)"

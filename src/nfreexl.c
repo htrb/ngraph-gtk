@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <freexl.h>
+#include "freexl/freexl.h"
 #include "odata.h"
 #include "ntime.h"
 #include "spreadsheet.h"
@@ -11,7 +11,7 @@
 const void *
 n_freexl_open (const char *file, enum spreadsheet_type type)
 {
-  const void *handle;
+  const void *handle = NULL;
   int ret;
 
   switch (type) {

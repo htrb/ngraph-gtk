@@ -75,7 +75,6 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 AC_PROG_INSTALL
 AC_PROG_SED
 AC_PROG_MKDIR_P
@@ -136,8 +135,18 @@ else
    AC_MSG_ERROR((Test for GtkSourceview failed.),)
 fi
 
-PKG_CHECK_MODULES([FREEXL], [freexl >= 2.0.0])
+# use patched freeXL
+# PKG_CHECK_MODULES([FREEXL], [freexl >= 2.0.0])
 
+AC_ARG_ENABLE([orcus],
+  [AS_HELP_STRING([--enable-orcus], [use orcus to open xlsx file])],
+  [enable_orcus=$enableval],
+  [enable_orcus=no])
+
+AS_IF([test "x$enable_orcus" = xyes],
+  [AC_MSG_NOTICE([use orcus to open xlsx file])])
+
+if test "$enable_orcus" = yes; then
 PKG_CHECK_MODULES([LIBORCUS_021], [liborcus-0.21 >= 0.21], LIBORCUS_021="yes", LIBORCUS_021="no")
 PKG_CHECK_MODULES([LIBORCUS_020], [liborcus-0.20 >= 0.20], LIBORCUS_020="yes", LIBORCUS_020="no")
 if test "$LIBORCUS_021" = yes; then
@@ -158,6 +167,11 @@ else
    AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
    AM_CONDITIONAL([HAVE_LIBORCUS], [false])
 fi
+#AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
+else
+   AC_DEFINE([HAVE_LIBORCUS], 0, [no orcus library])
+   AM_CONDITIONAL([HAVE_LIBORCUS], [false])
+fi
 
 # Checks for header files.
 AC_PATH_X
@@ -169,6 +183,18 @@ AC_PROG_EGREP
 
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h])
+
+# for freeXL
+AC_CHECK_HEADERS(iconv.h,, [AC_MSG_ERROR([cannot find iconv.h, bailing out])])
+AC_SEARCH_LIBS(iconv,iconv,,
+	AC_SEARCH_LIBS(libiconv,iconv,,AC_MSG_ERROR(['libiconv' is required but it doesn't seem to be installed on this system.]),))
+AC_SEARCH_LIBS(locale_charset,charset,,
+	AC_SEARCH_LIBS(nl_langinfo,c,,AC_MSG_ERROR(['libcharset' is required but it doesn't seem to be installed on this system.]),))
+
+PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.3])
+
+AC_CHECK_HEADERS(expat.h,, [AC_MSG_ERROR([cannot find expat.h, bailing out])])
+AC_CHECK_LIB(expat,XML_ParserCreate,,AC_MSG_ERROR(['expat' is required but it doesn't seem to be installed on this system.]))
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -206,6 +232,7 @@ AC_CONFIG_FILES([Makefile \
 		 src/Makefile \
 		 src/gtk/Makefile \
 		 src/math/Makefile \
+		 src/freexl/Makefile \
 		 driver/Makefile \
 		 addin/Makefile \
 		 po/Makefile.in \

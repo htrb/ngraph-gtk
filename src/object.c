@@ -158,28 +158,12 @@ error(struct objlist *obj,int code)
   Globallock=FALSE;
 }
 
-static char *
-get_localized_str(const char *str)
-{
-  char *local_str;
-  if (g_utf8_validate(str, -1, NULL)) {
-    local_str = g_locale_from_utf8(str, -1, NULL, NULL, NULL);
-  } else {
-    local_str = g_strdup(str);
-  }
-  return local_str;
-}
-
-
 void
 error2(struct objlist *obj,int code, const char *mes)
 {
 
   if (mes!=NULL) {
-    char *local_msg;
-    local_msg = get_localized_str(mes);
-    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", CHK_STR(local_msg));
-    g_free(local_msg);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", mes);
   } else {
     sprintf(errormsg2,".");
   }
@@ -189,19 +173,13 @@ error2(struct objlist *obj,int code, const char *mes)
 void
 error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
-  char *local_msg;
-
   if (mes1!=NULL) {
-    local_msg = get_localized_str(mes1);
-    snprintf(errormsg1, sizeof(errormsg1), "%.256s: ", CHK_STR(local_msg));
-    g_free(local_msg);
+    snprintf(errormsg1, sizeof(errormsg1), "%.256s: ", mes1);
   } else {
     errormsg1[0]='\0';
   }
   if (mes2!=NULL) {
-    local_msg = get_localized_str(mes2);
-    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", CHK_STR(local_msg));
-    g_free(local_msg);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", mes2);
   } else {
     sprintf(errormsg2,".");
   }

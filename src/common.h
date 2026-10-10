@@ -11,11 +11,15 @@
 #include "gettext.h"
 #define _(String)   gettext(String)
 #define N_(String)  gettext_noop(String)
+#define p_(Context, String) pgettext (Context, String)
+#define NC_(Context, String) gettext_noop(String)
 
 #else /* HAVE_GETTEXT */
 
 #define _(String)   (String)
 #define N_(String)  (String)
+#define p_(Context, String) pgettext (Context, String)
+#define NC_(Context, String) gettext_noop(String)
 
 #endif /* HAVE_GETTEXT */
 
