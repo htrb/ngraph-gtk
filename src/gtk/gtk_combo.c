@@ -153,6 +153,23 @@ combo_box_append_text(GtkWidget *cbox, const char *ptr)
 }
 
 int
+combo_box_set_enum_context (GtkWidget *w, struct objlist *obj, char *field, const char *context)
+{
+  int count;
+  count = combo_box_get_num(w);
+  if (count > 0) {
+    return 0;
+  }
+  char **enumlist;
+  int i;
+  enumlist = (char **) chkobjarglist(obj, field);
+  for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
+    combo_box_append_text(w, pgettext_expr(context, enumlist[i]));
+  }
+  return 0;
+}
+
+int
 combo_box_get_active(GtkWidget *cbox)
 {
   guint active;
