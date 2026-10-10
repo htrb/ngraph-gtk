@@ -278,7 +278,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
-  int autonorm,num,gnum,margin,title_distance;
+  int autonorm,num,gnum,margin,title_distance,title_delta;
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -304,6 +304,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   alpha=255;
   margin=500;
   title_distance=0;
+  title_delta=200;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"auto_scale_margin",inst,&margin)) return 1;
@@ -328,6 +329,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_A",inst,&alpha)) return 1;
   if (_putobj(obj,"title_distance",inst,&title_distance)) return 1;
   if (_putobj(obj,"title_offset",inst,&title_distance)) return 1;
+  if (_putobj(obj,"title_delta",inst,&title_delta)) return 1;
 
   font = group = name = NULL;
 
@@ -3308,9 +3310,17 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
   char *title;
   struct font_config font;
   struct title_position pos;
+  int title_delta;
 
   _getobj(obj, "title", inst, &title);
+  _getobj(obj, "title_delta", inst, &title_delta);
   font_info (obj, inst, &font);
+  if (font.pt + title_delta > 100) {
+    double scale;
+    font.pt += title_delta;
+    scale = (font.pt + title_delta) / (font.pt * 1.0);
+    font.space *= scale;
+  }
 
   if (title == NULL || title[0] == '\0') {
     return;
@@ -4485,6 +4495,7 @@ static struct objtable axis_obj[] = {
   {"title_position",NENUM,NREAD|NWRITE,NULL,axistitleposchar,0},
   {"title_offset",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"title_orientation",NENUM,NREAD|NWRITE,NULL,axistitleorientation,0},
+  {"title_delta",NINT,NREAD|NWRITE,NULL,0},
   {"title_distance",NINT,NREAD,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
