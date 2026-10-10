@@ -1402,7 +1402,7 @@ static int
 read_fat_sector (FILE * xls, fat_chain * chain, unsigned int sector)
 {
 /* reading a FAT chain sector */
-    long where = (sector + 1) * chain->sector_size;
+    long where = (long) (sector + 1) * chain->sector_size;
     unsigned char buf[4096];
     unsigned char *p_buf = buf;
     int i_fat;
@@ -1441,7 +1441,7 @@ read_difat_sectors (FILE * xls, fat_chain * chain, unsigned int sector,
 /* reading a DIFAT (DoubleIndirect) chain sector */
     unsigned int next_sector = sector;
     unsigned int blocks = 0;
-    long where = (sector + 1) * chain->sector_size;
+    long where = (long) (sector + 1) * chain->sector_size;
     biff_word32 difat[1024];
     int i_difat;
     int max_difat;
@@ -1454,7 +1454,7 @@ read_difat_sectors (FILE * xls, fat_chain * chain, unsigned int sector,
 
     while (1)
       {
-	  where = (next_sector + 1) * chain->sector_size;
+	  where = (long) (next_sector + 1) * chain->sector_size;
 	  if (fseek (xls, where, SEEK_SET) != 0)
 	      return FREEXL_CFBF_SEEK_ERROR;
 	  /* reading a DIFAT sector */
@@ -1502,7 +1502,7 @@ read_miniFAT_sectors (FILE * xls, fat_chain * chain, unsigned int sector,
 		      unsigned int num_sectors)
 {
 /* reading miniFAT chain sectors */
-    long where = (sector - 1) * chain->sector_size;
+    long where = (long) (sector - 1) * chain->sector_size;
     unsigned char buf[4096];
     int i_fat;
     int max_fat;
@@ -1689,7 +1689,7 @@ read_mini_stream (biff_workbook * workbook, int *errcode)
       {
 	  /* reading one sector */
 	  unsigned int size;
-	  long where = (sector + 1) * workbook->fat->sector_size;
+	  long where = (long) (sector + 1) * workbook->fat->sector_size;
 	  if (fseek (workbook->xls, where, SEEK_SET) != 0)
 	    {
 		*errcode = FREEXL_CFBF_SEEK_ERROR;
@@ -3709,7 +3709,7 @@ static int
 read_cfbf_sector (biff_workbook * workbook, unsigned char *buf)
 {
 /* attempting to read a physical sector from the CFBF stream */
-    long where = (workbook->current_sector + 1) * workbook->fat->sector_size;
+    long where = (long) (workbook->current_sector + 1) * workbook->fat->sector_size;
     if (fseek (workbook->xls, where, SEEK_SET) != 0)
 	return FREEXL_CFBF_SEEK_ERROR;
     if (xls_fread
@@ -4022,7 +4022,7 @@ get_workbook_stream (biff_workbook * workbook)
     else
 	max_entries = 4;
 
-    where = (sector + 1) * workbook->fat->sector_size;
+    where = (long) (sector + 1) * workbook->fat->sector_size;
     if (fseek (workbook->xls, where, SEEK_SET) != 0)
 	return FREEXL_CFBF_SEEK_ERROR;
 /* reading a FAT Directory block [sector] */
