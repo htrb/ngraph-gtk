@@ -14,7 +14,6 @@
 
 #include <ixion/address.hpp>
 #include <ixion/model_context.hpp>
-#include <ixion/cell.hpp>
 
 #include <iostream>
 #include <cstdlib>
@@ -68,17 +67,17 @@ n_orcus_open (const char *filename, enum spreadsheet_type type)
     norcus->factory = new orcus::spreadsheet::import_factory(*norcus->doc);
     switch (type) {
     case SPREADSHEET_TYPE_XLSX:
-      {
-	orcus::orcus_xlsx loader(norcus->factory);
-	loader.read_file(filename);
-      }
-      break;
+    {
+      orcus::orcus_xlsx loader(norcus->factory);
+      loader.read_file(filename);
+    }
+    break;
     case SPREADSHEET_TYPE_ODS:
-      {
-	orcus::orcus_ods loader(norcus->factory);
-	loader.read_file(filename);
-      }
-      break;
+    {
+      orcus::orcus_ods loader(norcus->factory);
+      loader.read_file(filename);
+    }
+    break;
     default:
       n_orcus_close (norcus);
       norcus = NULL;
@@ -182,11 +181,11 @@ get_double_formula (const ixion::formula_result &result, MathValue *data)
     data->type = MATH_VALUE_NONUM;
     break;
   case ixion::formula_result::result_type::string:
-    {
-      const std::string &s = result.get_string ();
-      n_strtod (s.c_str(), data);
-    }
-    break;
+  {
+    const std::string &s = result.get_string ();
+    n_strtod (s.c_str(), data);
+  }
+  break;
   case ixion::formula_result::result_type::value:
     data->val = result.get_value ();
     data->type = MATH_VALUE_NORMAL;
@@ -195,12 +194,12 @@ get_double_formula (const ixion::formula_result &result, MathValue *data)
     data->type = MATH_VALUE_ERROR;
     break;
   case ixion::formula_result::result_type::boolean:
-    {
-      bool state = result.get_boolean ();
-      data->val = state ? 1 : 0;
-      data->type = MATH_VALUE_NORMAL;
-    }
-    break;
+  {
+    bool state = result.get_boolean ();
+    data->val = state ? 1 : 0;
+    data->type = MATH_VALUE_NORMAL;
+  }
+  break;
   default:
     data->type = MATH_VALUE_UNDEF;
     break;
@@ -232,14 +231,11 @@ n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row)
       text = g_strdup (s->c_str());
       break;
     case ixion::cell_t::formula:
-      {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
-	  text = get_text_formula (model, result);
-	}
-      }
-      break;
+    {
+      const ixion::formula_result &result = model.get_formula_result(pos);
+      text = get_text_formula (model, result);
+    }
+    break;
     default:
       text = NULL;
       break;
@@ -281,14 +277,11 @@ n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
       text = g_strdup_printf ("%g", val);
       break;
     case ixion::cell_t::formula:
-      {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
-	  text = get_text_formula (model, result);
-	}
-      }
-      break;
+    {
+      const ixion::formula_result &result = model.get_formula_result(pos);
+      text = get_text_formula (model, result);
+    }
+    break;
     case ixion::cell_t::boolean:
       state = model.get_boolean_value (pos);
       text = g_strdup (state ? "1" : "0");
@@ -339,14 +332,11 @@ n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data
       data->type = MATH_VALUE_NORMAL;
       break;
     case ixion::cell_t::formula:
-      {
-	const ixion::formula_cell *fc = model.get_formula_cell(pos);
-	if (fc) {
-	  const ixion::formula_result &result = fc->get_result_cache(ixion::formula_result_wait_policy_t::throw_exception);
-	  get_double_formula (result, data);
-	}
-      }
-      break;
+    {
+      const ixion::formula_result &result = model.get_formula_result(pos);
+      get_double_formula (result, data);
+    }
+    break;
     case ixion::cell_t::boolean:
       state = model.get_boolean_value (pos);
       val = state ? 1 : 0;

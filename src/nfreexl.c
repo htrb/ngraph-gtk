@@ -251,7 +251,7 @@ n_freexl_select_sheet (struct spreadsheet *sheet, int index)
   if (sheet == NULL) {
     return 1;
   }
- handle = sheet->freexl;
+  handle = sheet->freexl;
   if (handle == NULL) {
     return 1;
   }
