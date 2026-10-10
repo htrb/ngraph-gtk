@@ -270,7 +270,7 @@ struct NgraphApp
   char *FileName;
   GtkWidget *Message, *Message_pos, *Message_extra, *Message1;
   GtkRecentManager *recent_manager;
-  GtkTreeModel *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
+  GtkTreeModel *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list, *axis_title_list;
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;
