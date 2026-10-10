@@ -58,6 +58,7 @@
 #include "x11view.h"
 
 #define TEXT_HISTORY     "text_history"
+#define AXIS_TITLE_HISTORY "axis_title_history"
 #define MATH_X_HISTORY   "math_x_history"
 #define MATH_Y_HISTORY   "math_y_history"
 #define FUNCTION_HISTORY "function_history"
@@ -1755,6 +1756,7 @@ load_hist(void)
   NgraphApp.y_math_list = load_hist_file(home, MATH_Y_HISTORY);
   NgraphApp.func_list = load_hist_file(home, FUNCTION_HISTORY);
   NgraphApp.fit_list = load_hist_file(home, FIT_HISTORY);
+  NgraphApp.axis_title_list = load_hist_file(home, AXIS_TITLE_HISTORY);
 }
 
 static void
@@ -1765,12 +1767,14 @@ unref_entry_history(void)
   g_object_unref(NgraphApp.y_math_list);
   g_object_unref(NgraphApp.func_list);
   g_object_unref(NgraphApp.fit_list);
+  g_object_unref(NgraphApp.axis_title_list);
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
   NgraphApp.fit_list = NULL;
+  NgraphApp.axis_title_list = NULL;
 }
 
 static void
@@ -1787,6 +1791,7 @@ save_entry_history(void)
   save_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
   save_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
   save_hist_file(NgraphApp.fit_list, home, FIT_HISTORY);
+  save_hist_file(NgraphApp.axis_title_list, home, AXIS_TITLE_HISTORY);
 }
 
 static void
@@ -1833,6 +1838,7 @@ init_ngraph_app_struct(void)
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
   NgraphApp.fit_list = NULL;
+  NgraphApp.axis_title_list = NULL;
 }
 
 void

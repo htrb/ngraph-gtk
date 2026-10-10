@@ -40,6 +40,7 @@
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 #include "gtk_presettings.h"
+#include "gtk_entry_completion.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -2268,6 +2269,7 @@ static int
 title_tab_set_value(struct AxisDialog *axis)
 {
   struct AxisTitle *d;
+  const char *str;
 
   d = &axis->title;
 
@@ -2285,6 +2287,11 @@ title_tab_set_value(struct AxisDialog *axis)
 
   if (SetObjFieldFromWidget(d->title, axis->Obj, axis->Id, "title"))
     return 1;
+
+  str = gtk_editable_get_text(GTK_EDITABLE(d->title));
+  if (str) {
+    entry_completion_append(NgraphApp.axis_title_list, str);
+  }
 
   return 0;
 }
@@ -2357,6 +2364,7 @@ title_tab_create(struct AxisDialog *dd)
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table(table, w, _("_Title:"), TRUE, i++);
   gtk_entry_set_placeholder_text(GTK_ENTRY(w), _("Leave blank to hide"));
+  entry_completion_set_entry(NgraphApp.axis_title_list, w);
   d->title = w;
 
   frame = gtk_frame_new(_("Title"));
