@@ -8460,7 +8460,7 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
 }
 
 static void
-set_string_array_equation(struct f2ddata *fp, int id, int line, MathEquation **code)
+set_string_array_equation(struct f2ddata *fp, int id, MathEquation **code)
 {
   int i, eqn, n;
   if (id < 0) {
@@ -8478,10 +8478,10 @@ set_string_array_equation(struct f2ddata *fp, int id, int line, MathEquation **c
 }
 
 static void
-set_string_array (struct f2ddata *fp, struct xy_id *id, int line)
+set_string_array (struct f2ddata *fp, struct xy_id *id)
 {
-  set_string_array_equation(fp, id->x, line, fp->codex);
-  set_string_array_equation(fp, id->y, line, fp->codey);
+  set_string_array_equation(fp, id->x, fp->codex);
+  set_string_array_equation(fp, id->y, fp->codey);
 }
 
 static void
@@ -8490,7 +8490,7 @@ set_header_eq_array (struct f2ddata *fp)
   if (! fp->use_header_array) {
     return;
   }
-  set_string_array (fp, &fp->array_id.header, 0);
+  set_string_array (fp, &fp->array_id.header);
 }
 
 static int
