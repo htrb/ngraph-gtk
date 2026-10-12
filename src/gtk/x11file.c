@@ -5432,7 +5432,9 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
     return;
   }
 
-  data_save_undo(UNDO_TYPE_EDIT);
+  if (! new_file) {
+    data_save_undo(UNDO_TYPE_EDIT);
+  }
   data = NgraphApp.FileWin.data.data;
 
   rdata = g_malloc0(sizeof(*rdata));
