@@ -1079,8 +1079,10 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_append(GTK_BOX(d->vbox), vbox);
   }
   combo_box_set_active(d->path, Menulocal.savepath);
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_data), Menulocal.savewithdata);
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_merge), Menulocal.savewithmerge);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_data), d->file_exists ? Menulocal.savewithdata : FALSE);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_merge), d->merge_exists ? Menulocal.savewithmerge : FALSE);
+  gtk_widget_set_sensitive (d->include_data, d->file_exists);
+  gtk_widget_set_sensitive (d->include_merge, d->merge_exists);
 }
 
 static void
@@ -1103,12 +1105,14 @@ SaveDialogClose(GtkWidget *w, void *data)
 }
 
 void
-SaveDialog(struct SaveDialog *data)
+SaveDialog(struct SaveDialog *data, int file_exists, int merge_exists)
 {
   data->SetupWindow = SaveDialogSetup;
   data->CloseWindow = SaveDialogClose;
   data->SaveData = FALSE;
   data->SaveMerge = FALSE;
+  data->file_exists = file_exists;
+  data->merge_exists = merge_exists;
 }
 
 static void

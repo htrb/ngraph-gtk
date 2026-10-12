@@ -451,9 +451,10 @@ struct SaveDialog
   /****** local member *******/
   GtkWidget *path, *include_data, *include_merge;
   int Path;
+  int file_exists, merge_exists;
   int SaveData, SaveMerge;
 };
-void SaveDialog(struct SaveDialog *data);
+void SaveDialog(struct SaveDialog *data, int file_exists, int merge_exists);
 
 struct OutputDataDialog
 {

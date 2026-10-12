@@ -1241,7 +1241,7 @@ get_save_opt_response(struct response_callback *cb)
 static void
 get_save_opt(struct GraphSave_data *save_data)
 {
-  int fnum, mnum, i, src;
+  int fnum, mnum, i, src, spreadsheet, file;
   struct objlist *fobj, *mobj;
 
   fobj = chkobject("data");
@@ -1257,18 +1257,23 @@ get_save_opt(struct GraphSave_data *save_data)
   }
 
   /* check source field of data objects */
+  file = spreadsheet = 0;
   for (i = 0; i < fnum; i++) {
     getobj(fobj, "source", i, 0, NULL, &src);
     if (src ==  DATA_SOURCE_FILE) {
+      file++;
       break;
     }
+    if (src ==  DATA_SOURCE_SPREADSHEET) {
+      spreadsheet++;
+    }
   }
-  if (fnum > 0 && mnum < 1 && i == fnum) {
+  if (fnum > 0 && mnum < 1 && i == fnum && spreadsheet == 0) {
     GraphSave_response(IDOK, save_data);
     return;
   }
 
-  SaveDialog(&DlgSave);
+  SaveDialog(&DlgSave, file, mnum);
   response_callback_add(&DlgSave, get_save_opt_response, NULL, save_data);
   DialogExecute(TopLevel, &DlgSave);
 }
