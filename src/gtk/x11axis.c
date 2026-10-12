@@ -297,7 +297,6 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     gtk_window_set_title(GTK_WINDOW(wi), title);
   }
 
-  d = (struct GridDialog *) data;
   if (makewidget) {
     GtkWidget *frame, *w, *hbox, *table;
     int i, j;
