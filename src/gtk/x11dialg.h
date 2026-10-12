@@ -264,8 +264,8 @@ struct AxisBase
 
 struct AxisTitle
 {
-  int tab_id;
   GtkWidget *title, *title_position, *title_offset, *title_orientation, *title_delta, *raw;
+  int tab_id, data_id;
 };
 
 struct AxisPos

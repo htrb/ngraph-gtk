@@ -1323,6 +1323,7 @@ scale_tab_create(struct AxisDialog *d)
   gtk_box_append(GTK_BOX(hbox), w);
 
   w = gtk_button_new_with_mnemonic(_("_Data"));
+  gtk_widget_set_tooltip_text(w, _("Calculates and sets the axis range based on the selected dataset(s)."));
   g_signal_connect_swapped(w, "clicked", G_CALLBACK(AxisDialogFile), d);
   g_signal_connect(w, "map", G_CALLBACK(file_button_show), NULL);
   gtk_box_append(GTK_BOX(hbox), w);
@@ -2317,6 +2318,8 @@ title_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->raw, axis->Obj, id, "title_raw");
 
   SetWidgetFromObjField(d->title, axis->Obj, id, "title");
+
+  d->data_id = 0;
 }
 
 static void
@@ -2335,6 +2338,74 @@ title_tab_copy_clicked(struct AxisDialog *d)
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, title_tab_copy_click_response, d);
 }
 
+static int
+check_data_axis (struct objlist *dobj, int did, const char *field, int id)
+{
+  char *ax;
+  struct narray iarray;
+  int aid;
+  struct objlist *aobj;
+
+  getobj (dobj, field, did, 0, NULL, &ax);
+  arrayinit (&iarray, sizeof(int));
+  if (chkobjilist(ax, &aobj, &iarray, TRUE, NULL)) {
+    arraydel (&iarray);
+    return FALSE;
+  }
+  aid = arraynget_int (&iarray, 0);
+  arraydel (&iarray);
+  return aid == id;
+}
+
+static int
+set_title_text (struct objlist *dobj, int id, const char *field, GtkWidget *entry)
+{
+  const char *title, *cur;
+  if (exeobj (dobj, field, id, 0, NULL)) {
+    return FALSE;
+  }
+  getobj (dobj, field, id, 0, NULL, &title);
+  cur = gtk_editable_get_text (GTK_EDITABLE(entry));
+  if (title && *title && g_strcmp0 (title, cur)) {
+    gtk_editable_set_text (GTK_EDITABLE(entry), title);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+static void
+set_title_from_data(struct AxisDialog *d)
+{
+  int i, n;
+  struct objlist *dobj;
+
+  dobj = chkobject ("data");
+  if (dobj == NULL) {
+    return;
+  }
+
+  n = chkobjlastinst(dobj) + 1;
+  for (i = 0; i < n; i++) {
+    int id;
+    id = d->title.data_id + i;
+    if (id >= n) {
+      id -= n;
+    }
+    if (check_data_axis (dobj, id, "axis_x", d->Id)) {
+      if (set_title_text (dobj, id, "header_column_x", d->title.title)) {
+	d->title.data_id = id;
+	return;
+      }
+    }
+    if (check_data_axis (dobj, id, "axis_y", d->Id)) {
+      if (set_title_text (dobj, id, "header_column_y", d->title.title)) {
+	d->title.data_id = id;
+	return;
+      }
+    }
+  }
+}
+
 static GtkWidget *
 title_tab_create(struct AxisDialog *dd)
 {
@@ -2347,6 +2418,17 @@ title_tab_create(struct AxisDialog *dd)
   table = gtk_grid_new();
 
   i = 0;
+
+  w = create_text_entry(FALSE, TRUE);
+  add_widget_to_table(table, w, _("_Title:"), TRUE, i);
+  gtk_entry_set_placeholder_text(GTK_ENTRY(w), _("Leave blank to hide"));
+  entry_completion_set_entry(NgraphApp.axis_title_list, w);
+  d->title = w;
+
+  w = gtk_button_new_with_mnemonic(_("_Data"));
+  gtk_widget_set_tooltip_text(w, _("Applies the text from the data column header as the axis title."));
+  g_signal_connect_swapped(w, "clicked", G_CALLBACK(set_title_from_data), dd);
+  add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, i++);
 
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Position:"), FALSE, i++);
@@ -2366,11 +2448,6 @@ title_tab_create(struct AxisDialog *dd)
   add_widget_to_table(table, w, _("Font _Size Offset:"), FALSE, i++);
   d->title_delta = w;
 
-  w = create_text_entry(FALSE, TRUE);
-  add_widget_to_table(table, w, _("_Title:"), TRUE, i++);
-  gtk_entry_set_placeholder_text(GTK_ENTRY(w), _("Leave blank to hide"));
-  entry_completion_set_entry(NgraphApp.axis_title_list, w);
-  d->title = w;
   w = gtk_check_button_new_with_mnemonic(_("_Raw"));
   gtk_widget_set_tooltip_text(w, _("Renders text literally, ignoring control characters and escape sequences."));
   add_widget_to_table(table, w, NULL, FALSE, i++);
