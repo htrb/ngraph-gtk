@@ -2441,11 +2441,12 @@ title_tab_create(struct AxisDialog *dd)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Offset:"), FALSE, i++);
-  gtk_widget_set_tooltip_text(w, _("Finely adjust the distance from the axis (mm). Default is 0. Negative values are allowed."));
+  gtk_widget_set_tooltip_text(w, _("Finely adjust the distance from the axis (mm). Negative values are allowed."));
   d->title_offset = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
   add_widget_to_table(table, w, _("Font _Size Offset:"), FALSE, i++);
+  gtk_widget_set_tooltip_text(w, _("Sets a font size offset added to the tick label text size."));
   d->title_delta = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Raw"));
