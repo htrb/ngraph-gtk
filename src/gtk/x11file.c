@@ -2444,9 +2444,11 @@ load_tab_setup_item(struct FileDialog *d, int id)
   unsigned int i, j, l;
   int stat;
 
+  gtk_spin_button_set_range (GTK_SPIN_BUTTON (d->load.headerline), 0, INT_MAX);
   SetWidgetFromObjField(d->load.headskip, d->Obj, id, "head_skip");
   SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
   SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
+  SetWidgetFromObjField(d->load.headerline, d->Obj, id, "header_line");
   if (d->source != DATA_SOURCE_FILE && d->source != DATA_SOURCE_SPREADSHEET) {
     return;
   }
@@ -2524,6 +2526,10 @@ load_tab_create(struct FileDialog *d)
   d->load.finalline = w;
 
   if (d->source == DATA_SOURCE_FILE || d->source == DATA_SOURCE_SPREADSHEET) {
+    w = create_spin_entry(0, INT_MAX, 1, TRUE, TRUE);
+    add_widget_to_table(table, w, _("header _Line:"), FALSE, i++);
+    d->load.headerline = w;
+
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table(table, w, _("_Remark:"), TRUE, i++);
     d->load.remark = w;
@@ -2588,6 +2594,9 @@ load_tab_set_value(struct FileDialog *d)
   if (d->source != DATA_SOURCE_FILE && d->source != DATA_SOURCE_SPREADSHEET) {
     return 0;
   }
+
+  if (SetObjFieldFromWidget(d->load.headerline, d->Obj, d->Id, "header_line"))
+    return 1;
 
   if (SetObjFieldFromWidget(d->load.remark, d->Obj, d->Id, "remark"))
     return 1;
@@ -4197,7 +4206,7 @@ static void
 set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear)
 {
   struct narray *lines;
-  int i, j, l, n, skip, step, final, max_col, nrows, is_spreadsheet;
+  int i, j, l, n, skip, step, final, header, max_col, nrows, is_spreadsheet;
   const char *remark;
   GListStore *model;
   char *text[MAX_COLS + 2];
@@ -4234,6 +4243,7 @@ set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear
   }
 
   final = spin_entry_get_val(d->load.finalline);
+  header = spin_entry_get_val(d->load.headerline);
 
   remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
   if (remark == NULL) {
@@ -4289,6 +4299,9 @@ set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear
     } else {
       text[0] = "";
     }
+    if (header <= skip && header == i + 1) {
+      v = TRUE;
+    }
     if (i < nrows) {
       NText *tobj;
       tobj = N_TEXT (g_list_model_get_object (G_LIST_MODEL (model), i));
@@ -4298,6 +4311,9 @@ set_headline_table(struct FileDialog *d, const char *s, int max_lines, int clear
     }
   }
   hide_columns (d, max_col + 2);
+
+  set_widget_sensitivity_with_label (d->load.headerline, skip > 0);
+  gtk_spin_button_set_range (GTK_SPIN_BUTTON (d->load.headerline), 0, skip);
 
  exit:
   for (i = 0; i < n; i++) {
@@ -4570,6 +4586,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect_swapped(d->load.readstep, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.headskip, "value-changed", G_CALLBACK(update_table), d);
     g_signal_connect_swapped(d->load.finalline, "value-changed", G_CALLBACK(update_table), d);
+    g_signal_connect_swapped(d->load.headerline, "value-changed", G_CALLBACK(update_table), d);
 
     g_signal_connect_swapped(d->worksheet, "notify::selected", G_CALLBACK(update_table_all), d);
     g_signal_connect_swapped(d->xcol, "changed", G_CALLBACK(set_headline_table_header), d);

@@ -124,7 +124,7 @@ struct FileMath
 
 struct FileLoad
 {
-  GtkWidget *headskip, *readstep, *finalline, *remark, *ifs, *csv;
+  GtkWidget *headskip, *readstep, *finalline, *headerline, *remark, *ifs, *csv;
   int tab_id;
 };
 
