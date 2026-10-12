@@ -2001,6 +2001,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   d->direction = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Raw"));
+  gtk_widget_set_tooltip_text(w, _("Renders text literally, ignoring control characters and escape sequences."));
   add_widget_to_table(table, w, NULL, FALSE, i++);
   d->raw = w;
 }
