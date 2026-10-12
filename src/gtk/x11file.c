@@ -5213,6 +5213,7 @@ file_open_response(int ret, gpointer user_data)
 
   if (ret) {
     menu_delete_undo(undo);
+    undo = -1;
   }
 
   if (n == chkobjlastinst(obj)) {
