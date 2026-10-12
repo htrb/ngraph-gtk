@@ -3192,7 +3192,7 @@ struct title_position
 };
 
 static void
-title_position (struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, struct font_config *font, char *title, struct title_position *pos)
+title_position (struct objlist *obj, N_VALUE *inst, const struct axis_config *aconf, struct font_config *font, int raw, char *title, struct title_position *pos)
 {
   char *group;
   int title_distance, title_offset, orientation, side, title_side, x, y, dir, bbox[4], position, space, dir_cond;
@@ -3271,7 +3271,7 @@ title_position (struct objlist *obj, N_VALUE *inst, const struct axis_config *ac
     }
     break;
   }
-  text_get_bbox(0, 0, title, font->font, font->style, font->pt, 0, font->space, font->scriptsize, 0, bbox);
+  text_get_bbox(0, 0, title, font->font, font->style, font->pt, 0, font->space, font->scriptsize, raw, bbox);
   w = bbox[2] - bbox[0];
   h = bbox[3] - bbox[1];
   if (orientation == AXIS_TITLE_ORIENTATION_PARALLEL) {
@@ -3310,10 +3310,11 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
   char *title;
   struct font_config font;
   struct title_position pos;
-  int title_delta;
+  int title_delta, raw;
 
   _getobj(obj, "title", inst, &title);
   _getobj(obj, "title_delta", inst, &title_delta);
+  _getobj(obj, "title_raw", inst, &raw);
   font_info (obj, inst, &font);
   if (font.pt + title_delta > 100) {
     double scale;
@@ -3325,11 +3326,15 @@ draw_title (struct objlist *obj, N_VALUE *inst, int GC, const struct axis_config
   if (title == NULL || title[0] == '\0') {
     return;
   }
-  title_position (obj, inst, aconf, &font, title, &pos);
+  title_position (obj, inst, aconf, &font, raw, title, &pos);
 
   GRAcolor(GC, font.r, font.g, font.b, font.a);
   GRAmoveto(GC, pos.x, pos.y);
-  GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, pos.dir, font.scriptsize);
+  if (raw) {
+    GRAdrawtextraw(GC, title, font.font, font.style, font.pt, font.space, pos.dir);
+  } else {
+    GRAdrawtext(GC, title, font.font, font.style, font.pt, font.space, pos.dir, font.scriptsize);
+  }
  }
 
 static void
@@ -4495,6 +4500,7 @@ static struct objtable axis_obj[] = {
   {"title_position",NENUM,NREAD|NWRITE,NULL,axistitleposchar,0},
   {"title_offset",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"title_orientation",NENUM,NREAD|NWRITE,NULL,axistitleorientation,0},
+  {"title_raw",NINT,NREAD|NWRITE,NULL,0},
   {"title_delta",NINT,NREAD|NWRITE,NULL,0},
   {"title_distance",NINT,NREAD,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
