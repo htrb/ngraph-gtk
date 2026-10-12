@@ -2285,6 +2285,9 @@ title_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->title_delta, axis->Obj, axis->Id, "title_delta"))
     return 1;
 
+  if (SetObjFieldFromWidget(d->raw, axis->Obj, axis->Id, "title_raw"))
+    return 1;
+
   if (SetObjFieldFromWidget(d->title, axis->Obj, axis->Id, "title"))
     return 1;
 
@@ -2310,6 +2313,8 @@ title_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->title_offset, axis->Obj, id, "title_offset");
 
   SetWidgetFromObjField(d->title_delta, axis->Obj, id, "title_delta");
+
+  SetWidgetFromObjField(d->raw, axis->Obj, id, "title_raw");
 
   SetWidgetFromObjField(d->title, axis->Obj, id, "title");
 }
@@ -2366,6 +2371,10 @@ title_tab_create(struct AxisDialog *dd)
   gtk_entry_set_placeholder_text(GTK_ENTRY(w), _("Leave blank to hide"));
   entry_completion_set_entry(NgraphApp.axis_title_list, w);
   d->title = w;
+  w = gtk_check_button_new_with_mnemonic(_("_Raw"));
+  gtk_widget_set_tooltip_text(w, _("Renders text literally, ignoring control characters and escape sequences."));
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  d->raw = w;
 
   frame = gtk_frame_new(_("Title"));
   gtk_widget_set_vexpand(frame, TRUE);
