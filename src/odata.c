@@ -53,6 +53,7 @@
 #include "axis.h"
 #include "nconfig.h"
 #include "spreadsheet.h"
+#include "oiarray.h"
 
 #include "math/math_equation.h"
 
@@ -395,6 +396,8 @@ struct f2ddata {
   int hskip;
   int rstep;
   int final;
+  int header_line;
+  struct narray *header;
   int csv;
   char *remark,*ifs, ifs_buf[256];
   int line,dline;
@@ -2707,10 +2710,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int fid;
   char *file;
   struct rgba fg, bg;
-  int x,y,type,hskip,rstep,final,csv,src;
+  int x,y,type,hskip,rstep,final,csv,src,hline;
   char *remark,*ifs, *array;
   int smoothx,smoothy,averaging_type;
-  struct narray *mask;
+  struct narray *mask, *header;
   struct narray *move,*movex,*movey;
   struct f2ddata *fp;
   int i;
@@ -2748,6 +2751,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"head_skip",inst,&hskip);
   _getobj(obj,"read_step",inst,&rstep);
   _getobj(obj,"final_line",inst,&final);
+  _getobj(obj,"header_line",inst,&hline);
+  _getobj(obj,"header",inst,&header);
   _getobj(obj,"smooth_x",inst,&smoothx);
   _getobj(obj,"smooth_y",inst,&smoothy);
   _getobj(obj,"averaging_type",inst,&averaging_type);
@@ -2953,6 +2958,9 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->hskip=hskip;
   fp->rstep=rstep;
   fp->final=final;
+  fp->header_line=hline;
+  fp->header=header;
+  arrayclear2(fp->header);
   fp->remark=remark;
   fp->ifs=ifs;
   check_ifs_init(fp);
@@ -3832,6 +3840,23 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
   return 0;
 }
 
+static int
+f2dput_header_line(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
+{
+  int header_line, cur;
+  struct narray *header;
+
+  header_line = * (int *) (argv[2]);
+
+  _getobj(obj, "header_line", inst, &cur);
+  if (header_line == cur) {
+    return 0;
+  }
+  _getobj(obj, "header", inst, &header);
+  arrayclear2 (header);
+  return 0;
+}
+
 static double
 my_strtod(char *po, char **endptr)
 {
@@ -4000,6 +4025,53 @@ column_array_push(MathEquation **code, int id, MathValue *val)
 }
 
 static int
+set_header_array_file (struct f2ddata *fp, char *buf)
+{
+  char *po, *po2, *ptr;
+  const char *ifs;
+  char csv;
+  ifs = fp->ifs_buf;
+  csv = fp->csv;
+  po = buf;
+  arrayadd2 (fp->header, po);
+  while (*po) {
+    if (csv) {
+      for (; *po == ' '; po++);
+      if (*po == '\0') break;
+      if (CHECK_IFS(ifs, *po)) {
+        po2 = po;
+	arrayadd2 (fp->header, "");
+        ptr = po2 + 1;
+      } else {
+        for (po2 = po; (*po2 != '\0') && ! CHECK_IFS(ifs, *po2) && (*po2!=' ');po2++);
+	if (*po2) {
+	  *po2 = '\0';
+	  ptr = po2 + 1;
+	} else {
+	  ptr = po2;
+	}
+	arrayadd2 (fp->header, po);
+        for (;*po2==' ';po2++);
+        if (CHECK_IFS(ifs, *po2)) po2++;
+      }
+    } else {
+      for (;(*po!='\0') && CHECK_IFS(ifs, *po); po++);
+      if (*po == '\0') break;
+      for (po2 = po; (*po2 != '\0') && ! CHECK_IFS(ifs, *po2); po2++);
+      if (*po2) {
+	*po2 = '\0';
+	ptr = po2 + 1;
+      } else {
+	ptr = po2;
+      }
+      arrayadd2 (fp->header, po);
+    }
+    po = ptr;
+  }
+  return 0;
+}
+
+static int
 getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 {
 /*
@@ -4111,6 +4183,44 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   return r;
 }
 
+static void
+init_header_array (struct f2ddata *fp)
+{
+  struct narray *header;
+  if (fp->header == NULL) {
+    N_VALUE *inst;
+    inst = chkobjinst(fp->obj, fp->id);
+    header = arraynew(sizeof (char *));
+    _putobj (fp->obj, "header", inst, header);
+    fp->header = header;
+  }
+  arrayclear2(fp->header);
+}
+
+static void
+set_header_line_file (struct f2ddata *fp, char *buf)
+{
+  init_header_array (fp);
+  set_header_array_file (fp, buf);
+}
+
+static void
+set_header_line_spreadsheet (struct f2ddata *fp)
+{
+  int i, n;
+  init_header_array (fp);
+  n = fp->worksheet_n_columns;
+  arrayadd2 (fp->header, "");
+  for (i = 0; i < n; i++) {
+    char *str;
+    str = spreadsheet_get_text (fp->spreadsheet, i, fp->header_line - 1);
+    if (str) {
+      arrayadd (fp->header, &str);
+    } else {
+      arrayadd2 (fp->header, "");
+    }
+  }
+}
 
 static int
 hskipdata(struct f2ddata *fp)
@@ -4132,6 +4242,9 @@ hskipdata(struct f2ddata *fp)
 	fp->eof=TRUE;
 	return 0;
       }
+      if (fp->header_line > 0 && fp->header_line <= fp->hskip && fp->header_line == fp->line + 1) {
+	set_header_line_file (fp, buf);
+      }
       g_free(buf);
       fp->line++;
       skip++;
@@ -4141,6 +4254,9 @@ hskipdata(struct f2ddata *fp)
     if (fp->hskip >= fp->worksheet_n_rows) {
       fp->eof = TRUE;
       return 0;
+    }
+    if (fp->header_line > 0 && fp->header_line <= fp->hskip) {
+      set_header_line_spreadsheet (fp);
     }
     fp->line = fp->hskip;
     break;
@@ -8344,12 +8460,37 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
 }
 
 static void
-set_header_array_spreadsheet (struct f2ddata *fp)
+set_string_array_equation(struct f2ddata *fp, int id, int line, MathEquation **code)
+{
+  int i, eqn, n;
+  if (id < 0) {
+    return;
+  }
+  n = arraynum (fp->header);
+  for (eqn = 0; eqn < EQUATION_NUM; eqn++) {
+    math_equation_clear_string_array(code[eqn], id);
+    for (i = 0; i < n; i++) {
+      const char *str;
+      str = arraynget_str(fp->header, i);
+      math_equation_set_array_str(code[eqn], id, i, str);
+    }
+  }
+}
+
+static void
+set_string_array (struct f2ddata *fp, struct xy_id *id, int line)
+{
+  set_string_array_equation(fp, id->x, line, fp->codex);
+  set_string_array_equation(fp, id->y, line, fp->codey);
+}
+
+static void
+set_header_eq_array (struct f2ddata *fp)
 {
   if (! fp->use_header_array) {
     return;
   }
-  set_string_array_from_spreadsheet (fp, &fp->array_id.header, 0);
+  set_string_array (fp, &fp->array_id.header, 0);
 }
 
 static int
@@ -8431,11 +8572,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (set_const_all(fp))
     return 1;
 
-  switch (fp->src) {
-  case DATA_SOURCE_SPREADSHEET:
-    set_header_array_spreadsheet (fp);
-    break;
-  }
+  set_header_eq_array (fp);
 
   GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
@@ -9106,6 +9243,102 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 
   return r;
+}
+
+static struct narray *
+check_header_line (struct objlist *obj, N_VALUE *inst)
+{
+  struct f2dlocal *f2dlocal;
+  struct f2ddata *fp;
+  struct narray *array;
+  int n, hskip, hline, source;
+
+  _getobj(obj, "source", inst, &source);
+  if (source != DATA_SOURCE_FILE && source != DATA_SOURCE_SPREADSHEET) {
+    return NULL;
+  }
+
+  _getobj(obj, "head_skip", inst, &hskip);
+  _getobj(obj, "header_line", inst, &hline);
+  if (hskip < 1 || hline > hskip) {
+    return NULL;
+  }
+
+  _getobj(obj, "header", inst, &array);
+  n = arraynum (array);
+  if (n > 0) {
+    return array;
+  }
+
+  _getobj(obj, "_local", inst, &f2dlocal);
+  fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
+  if (fp == NULL) {
+    return NULL;
+  }
+  hskipdata(fp);
+  closedata(fp, f2dlocal);
+
+  _getobj(obj, "header", inst, &array);
+  n = arraynum (array);
+  if (n > 0) {
+    return array;
+  }
+
+  return NULL;
+}
+
+static int
+f2dheader_column_internal(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int column)
+{
+  struct narray *array;
+  int i;
+  char **po;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  array = check_header_line (obj, inst);
+  if (array == NULL) {
+    return 0;
+  }
+
+  i = oarray_get_index(array, column);
+  if (i < 0) {
+    error(obj, ERR_INVALID_PARAM);
+    return 1;
+  }
+
+  po = (char **) arraynget(array, i);
+  if (po == NULL) {
+    error(obj, ERR_INVALID_PARAM);
+    return 1;
+  }
+  rval->str = g_strdup (*po);
+  return 0;
+}
+
+static int
+f2dheader_column(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int i;
+  i = *(int *) argv[2];
+  return f2dheader_column_internal(obj, inst, rval, i);
+}
+
+static int
+f2dheader_column_x(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int i;
+  _getobj(obj, "x", inst, &i);
+  return f2dheader_column_internal(obj, inst, rval, i);
+}
+
+static int
+f2dheader_column_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int i;
+  _getobj(obj, "y", inst, &i);
+  return f2dheader_column_internal(obj, inst, rval, i);
 }
 
 static int
@@ -11855,6 +12088,7 @@ static struct objtable file2d[] = {
   {"head_skip",NINT,NREAD|NWRITE,foputabs,NULL,0},
   {"read_step",NINT,NREAD|NWRITE,foputge1,NULL,0},
   {"final_line",NINT,NREAD|NWRITE,f2dput,NULL,0},
+  {"header_line",NINT,NREAD|NWRITE,f2dput_header_line,NULL,0},
   {"mask",NIARRAY,NREAD|NWRITE,update_mask,NULL,0},
   {"move_data",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
   {"move_data_x",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
@@ -11919,6 +12153,10 @@ static struct objtable file2d[] = {
   {"column",NSFUNC,NREAD|NEXEC,f2dcolumn,"ii",0},
   {"basename",NSFUNC,NREAD|NEXEC,f2dbasename,"",0},
   {"head_lines",NSFUNC,NREAD|NEXEC,f2dhead,"i",0},
+  {"header",NSARRAY,NREAD,NULL,NULL,0},
+  {"header_column",NSFUNC,NREAD|NEXEC,f2dheader_column,"i",0},
+  {"header_column_x",NSFUNC,NREAD|NEXEC,f2dheader_column_x,NULL,0},
+  {"header_column_y",NSFUNC,NREAD|NEXEC,f2dheader_column_y,NULL,0},
   {"boundings",NVFUNC,NREAD|NEXEC,f2dboundings,"b",0},
   {"bounding",NDAFUNC,NREAD|NEXEC,f2dbounding,"o",0},
   {"load_settings",NVFUNC,NREAD|NEXEC,f2dsettings,"",0},
