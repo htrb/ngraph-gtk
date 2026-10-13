@@ -155,7 +155,7 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
 
   n_columns = spreadsheet_n_columns (sheet);
   n_rows = spreadsheet_n_rows (sheet);
-  if (row >= n_rows || col >= n_columns) {
+  if (row < 0 || col < 0 || row >= n_rows || col >= n_columns) {
     return;
   }
 
