@@ -2214,34 +2214,6 @@ file_sheet_name(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   return 0;
 }
 
-static int
-file_sheet_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
-{
-  struct f2ddata *fp;
-  (void) exp;
-
-  rval->val = 0;
-  rval->type = MATH_VALUE_ERROR;
-
-  fp = math_equation_get_user_data(eq);
-  if (fp == NULL) {
-    return 1;
-  }
-
-  if (fp->src != DATA_SOURCE_SPREADSHEET) {
-    return 1;
-  }
-
-  if (fp->spreadsheet == NULL) {
-    return 1;
-  }
-
-  rval->val = fp->worksheet_index + 1;
-  rval->type = MATH_VALUE_NORMAL;
-
-  return 0;
-}
-
 static N_VALUE *
 cell_other_common (struct f2ddata *fp, int id)
 {
@@ -2568,7 +2540,6 @@ static struct funcs FileFunc[] = {
   {"STRING_COLUMN",  {G_N_ELEMENTS(string_column_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
   {"FILENAME",       {G_N_ELEMENTS(filename_arg_type),      1, MATH_FUNCTION_TYPE_NORMAL, file_filename, filename_arg_type, NULL, NULL, NULL}},
   {"SHEET_NAME",     {G_N_ELEMENTS(sheetname_arg_type),     1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_name, sheetname_arg_type, NULL, NULL, NULL}},
-  {"SHEET",          {0,                                    0, MATH_FUNCTION_TYPE_NORMAL, file_sheet_index, NULL, NULL, NULL, NULL}},
   {"SHEET_CELL",     {3,                                    1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell, NULL, NULL, NULL, NULL}},
   {"SHEET_CELL_TEXT",{G_N_ELEMENTS(sheet_cell_text_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell_text, sheet_cell_text_arg_type, NULL, NULL, NULL}},
   {"ON_END",         {G_N_ELEMENTS(on_end_arg_type),        1, MATH_FUNCTION_TYPE_CALLBACK, file_on_end, on_end_arg_type, NULL, NULL, NULL}},
