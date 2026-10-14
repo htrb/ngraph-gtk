@@ -2253,7 +2253,7 @@ cell_other_common (struct f2ddata *fp, int id)
     return NULL;
   }
 
-  _getobj(obj, "source", inst, &src);
+  _getobj(fp->obj, "source", inst1, &src);
   if (src != DATA_SOURCE_SPREADSHEET) {
     return NULL;
   }
