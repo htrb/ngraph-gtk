@@ -2198,10 +2198,6 @@ file_sheet_name(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     return 1;
   }
 
-  if (fp->src != DATA_SOURCE_SPREADSHEET) {
-    return 1;
-  }
-
   if (fp->spreadsheet == NULL) {
     return 1;
   }
