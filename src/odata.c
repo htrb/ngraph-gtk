@@ -2344,6 +2344,102 @@ file_sheet_cell(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 }
 
 static int
+file_sheet_cell_text_other(struct f2ddata *fp, int id, int row, int col, GString *str, MathValue *rval)
+{
+  N_VALUE *inst1;
+  char *argv[3];
+  char *cell_text;
+
+  inst1 = cell_other_common (fp, id);
+  if (inst1 == NULL) {
+    return 1;
+  }
+
+  argv[0] = (char *) &row;
+  argv[1] = (char *) &col;
+  argv[2] = NULL;
+  if (_exeobj(fp->obj, "getcell_text_raw", inst1, 2, argv)) {
+    return 1;
+  }
+  _getobj(fp->obj, "getcell_text_raw", inst1, &cell_text);
+
+  if (cell_text) {
+    g_string_assign(str, cell_text);
+    rval->val = g_utf8_strlen (cell_text, -1);
+  } else {
+    g_string_assign(str, "");
+  }
+  rval->type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+static int
+file_sheet_cell_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int row, col, id;
+  GString *str;
+  char *cell_text;
+  (void) exp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  str = math_expression_get_string_variable_from_argument(exp, 0);
+  if (str == NULL) {
+    return 1;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    return 1;
+  }
+
+  if (fp->src != DATA_SOURCE_SPREADSHEET) {
+    return 1;
+  }
+
+  if (fp->spreadsheet == NULL) {
+    return 1;
+  }
+
+  if (exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  if (exp->buf[3].val.val) {
+    id = exp->buf[1].val.val;
+    row = exp->buf[2].val.val;
+    col = exp->buf[3].val.val;
+  } else {
+    row = exp->buf[1].val.val;
+    col = exp->buf[2].val.val;
+    id = fp->id;
+  }
+  if (row < 1 || col < 1) {
+    return 0;
+  }
+  if (id != fp->id) {
+    return file_sheet_cell_text_other(fp, id, row, col, str, rval);
+  }
+
+  cell_text = spreadsheet_get_text (fp->spreadsheet, col - 1, row - 1);
+  if (cell_text) {
+    g_string_assign(str, cell_text);
+    rval->val = g_utf8_strlen (cell_text, -1);
+    g_free (cell_text);
+  } else {
+    g_string_assign(str, "");
+  }
+  rval->type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const struct f2ddata *fp;
@@ -2434,6 +2530,13 @@ static enum MATH_FUNCTION_ARG_TYPE sheetname_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 0: string variable */
 };
 
+static enum MATH_FUNCTION_ARG_TYPE sheet_cell_text_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 0: string variable */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 1: id or row */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 2: col or row */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 3: col or not used */
+};
+
 static struct funcs FileFunc[] = {
   {"MTIME",     {0, 1, MATH_FUNCTION_TYPE_NORMAL, file_mtime,    NULL, NULL, NULL, NULL}},
   {"OBJ_ALPHA", {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_objalpha, NULL, NULL, NULL, NULL}},
@@ -2467,6 +2570,7 @@ static struct funcs FileFunc[] = {
   {"SHEET_NAME",     {G_N_ELEMENTS(sheetname_arg_type),     1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_name, sheetname_arg_type, NULL, NULL, NULL}},
   {"SHEET",          {0,                                    0, MATH_FUNCTION_TYPE_NORMAL, file_sheet_index, NULL, NULL, NULL, NULL}},
   {"SHEET_CELL",     {3,                                    1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell, NULL, NULL, NULL, NULL}},
+  {"SHEET_CELL_TEXT",{G_N_ELEMENTS(sheet_cell_text_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell_text, sheet_cell_text_arg_type, NULL, NULL, NULL}},
   {"ON_END",         {G_N_ELEMENTS(on_end_arg_type),        1, MATH_FUNCTION_TYPE_CALLBACK, file_on_end, on_end_arg_type, NULL, NULL, NULL}},
 };
 
