@@ -105,6 +105,9 @@ enum {
   MATH_CONST_ARC_OBJ,
   MATH_CONST_MARK_OBJ,
   MATH_CONST_TEXT_OBJ,
+  MATH_CONST_SHEET,
+  MATH_CONST_SHEET_COLS,
+  MATH_CONST_SHEET_ROWS,
   MATH_CONST_D,
   MATH_CONST_N,
   MATH_CONST_SIZE,
@@ -156,6 +159,9 @@ static char *FileConstant[MATH_CONST_SIZE] = {
   "ARC_OBJ",
   "MARK_OBJ",
   "TEXT_OBJ",
+  "SHEET",
+  "SHEET_COLS",
+  "SHEET_ROWS",
   "%D",
   "%N",
 };
@@ -4665,6 +4671,31 @@ struct obj_name_const {
   int const_id;
 };
 
+static void
+set_sheet_const (MathEquation *eq, int *const_id, struct f2ddata *fp)
+{
+  MathValue val;
+  if (fp->spreadsheet) {
+    val.type = MATH_VALUE_NORMAL;
+    val.val = fp->worksheet_index + 1;
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET], &val);
+
+    val.type = MATH_VALUE_NORMAL;
+    val.val = spreadsheet_n_columns (fp->spreadsheet);
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET_COLS], &val);
+
+    val.type = MATH_VALUE_NORMAL;
+    val.val = spreadsheet_n_rows (fp->spreadsheet);
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET_ROWS], &val);
+  } else {
+    val.type = MATH_VALUE_ERROR;
+    val.val = 0;
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET_COLS], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SHEET_ROWS], &val);
+  }
+}
+
 static int
 set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, int first)
 {
@@ -4827,6 +4858,8 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.val = i;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_FLINE], &val);
+
+  set_sheet_const (eq, const_id, fp);
 
   for (i = 0; i < (int) (sizeof(obj_names) / sizeof(*obj_names)); i++) {
     struct objlist *obj;
