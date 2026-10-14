@@ -2405,6 +2405,118 @@ file_sheet_cell_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
   return 0;
 }
 
+#define DIRECTION_HORIZONTAL 0
+#define DIRECTION_VERTICAL   1
+
+static int
+file_sheet_values(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int direction)
+{
+  struct f2ddata *fp;
+  enum DATA_TYPE dest_type;
+  int dest_id, start, end, sel, i, m, n, r;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    return 1;
+  }
+
+  if (fp->spreadsheet == NULL) {
+    return 1;
+  }
+
+  if (exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  dest_id = (int) exp->buf[0].array.idx;
+  dest_type = exp->buf[0].array.array_type;
+  if (dest_type == DATA_TYPE_VALUE) {
+    r = math_equation_clear_array(eq, dest_id);
+  } else {
+    r = math_equation_clear_string_array(eq, dest_id);
+  }
+  if (r) {
+    return 1;
+  }
+
+  sel = exp->buf[1].val.val;
+  start = exp->buf[2].val.val;
+  end = exp->buf[3].val.val;
+  if (direction == DIRECTION_HORIZONTAL) {
+    n = spreadsheet_n_columns (fp->spreadsheet);
+    m = spreadsheet_n_rows (fp->spreadsheet);
+  } else {
+    m = spreadsheet_n_columns (fp->spreadsheet);
+    n = spreadsheet_n_rows (fp->spreadsheet);
+  }
+
+  if (sel < 1){
+    sel = 1;
+  }
+  if (sel > m) {
+    return 0;
+  }
+  if (end < 1) {
+    end += n;
+  }
+  if (end > n) {
+    end = n;
+  }
+  if (start < 1) {
+    start = 1;
+  }
+  if (start > end) {
+    return 1;
+  }
+
+  for (i = start; i <= end; i++) {
+    int row, col;
+    if (direction == DIRECTION_HORIZONTAL) {
+      row = sel - 1;
+      col = i - 1;
+    } else {
+      col = sel - 1;
+      row = i - 1;
+    }
+    if (dest_type == DATA_TYPE_VALUE) {
+      MathValue cell;
+      spreadsheet_get_double (fp->spreadsheet, col, row, &cell);
+      if (math_equation_push_array_val(eq, dest_id, &cell)) {
+        return 1;
+      }
+    } else {
+      char *text;
+      text = spreadsheet_get_text (fp->spreadsheet, col, row);
+      r = math_equation_push_array_str(eq, dest_id, text ? text : "");
+      g_free (text);
+      if (r) {
+        return 1;
+      }
+    }
+  }
+
+  rval->val = end - start + 1;
+  rval->type = MATH_VALUE_NORMAL;
+  return 0;
+}
+
+static int
+file_sheet_col_values(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_sheet_values(exp, eq, rval, DIRECTION_VERTICAL);
+}
+
+static int
+file_sheet_row_values(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_sheet_values(exp, eq, rval, DIRECTION_HORIZONTAL);
+}
+
 static int
 file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
@@ -2503,6 +2615,13 @@ static enum MATH_FUNCTION_ARG_TYPE sheet_cell_text_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 3: col or not used */
 };
 
+static enum MATH_FUNCTION_ARG_TYPE sheet_values_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON,    /* 0: array */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 1: row or col*/
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 2: start */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 3: end */
+};
+
 static struct funcs FileFunc[] = {
   {"MTIME",     {0, 1, MATH_FUNCTION_TYPE_NORMAL, file_mtime,    NULL, NULL, NULL, NULL}},
   {"OBJ_ALPHA", {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_objalpha, NULL, NULL, NULL, NULL}},
@@ -2536,6 +2655,8 @@ static struct funcs FileFunc[] = {
   {"SHEET_NAME",     {G_N_ELEMENTS(sheetname_arg_type),     1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_name, sheetname_arg_type, NULL, NULL, NULL}},
   {"SHEET_CELL",     {3,                                    1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell, NULL, NULL, NULL, NULL}},
   {"SHEET_CELL_TEXT",{G_N_ELEMENTS(sheet_cell_text_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_cell_text, sheet_cell_text_arg_type, NULL, NULL, NULL}},
+  {"SHEET_COL_VALUES",{G_N_ELEMENTS(sheet_values_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_col_values, sheet_values_arg_type, NULL, NULL, NULL}},
+  {"SHEET_ROW_VALUES",{G_N_ELEMENTS(sheet_values_arg_type), 1, MATH_FUNCTION_TYPE_NORMAL, file_sheet_row_values, sheet_values_arg_type, NULL, NULL, NULL}},
   {"ON_END",         {G_N_ELEMENTS(on_end_arg_type),        1, MATH_FUNCTION_TYPE_CALLBACK, file_on_end, on_end_arg_type, NULL, NULL, NULL}},
 };
 
