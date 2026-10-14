@@ -2366,10 +2366,6 @@ file_sheet_cell_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
     return 1;
   }
 
-  if (fp->src != DATA_SOURCE_SPREADSHEET) {
-    return 1;
-  }
-
   if (fp->spreadsheet == NULL) {
     return 1;
   }
