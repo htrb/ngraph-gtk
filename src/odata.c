@@ -10033,6 +10033,31 @@ f2dgetcellraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 }
 
 static int
+f2dgetcelltextraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct f2dlocal *f2dlocal;
+  struct f2ddata *fp;
+  int row, col;
+
+  g_free(rval->str);
+  rval->str=NULL;
+
+  _getobj(obj, "_local", inst, &f2dlocal);
+  fp = f2dlocal->data;
+  if (fp == NULL) {
+    return 0;
+  }
+  if (fp->spreadsheet == NULL) {
+    return 0;
+  }
+  row = *(int *) argv[2];
+  col = *(int *) argv[3];
+
+  rval->str = spreadsheet_get_text (fp->spreadsheet, col - 1, row - 1);
+  return 0;
+}
+
+static int
 f2dclosedataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -12257,6 +12282,7 @@ static struct objtable file2d[] = {
   {"opendata_raw",NVFUNC,NEXEC,f2dopendataraw,"",0},
   {"getdata_raw",NDAFUNC,NEXEC,f2dgetdataraw,"ia",0},
   {"getcell_raw",NDFUNC,NEXEC,f2dgetcellraw,"ii",0},
+  {"getcell_text_raw",NSFUNC,NEXEC,f2dgetcelltextraw,"ii",0},
   {"closedata_raw",NVFUNC,NEXEC,f2dclosedataraw,"",0},
   {"column",NSFUNC,NREAD|NEXEC,f2dcolumn,"ii",0},
   {"basename",NSFUNC,NREAD|NEXEC,f2dbasename,"",0},
