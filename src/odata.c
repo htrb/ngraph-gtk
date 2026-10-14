@@ -2242,6 +2242,32 @@ file_sheet_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   return 0;
 }
 
+static N_VALUE *
+cell_other_common (struct f2ddata *fp, int id)
+{
+  N_VALUE *inst1;
+  int src;
+
+  inst1 = chkobjinst(fp->obj, id);
+  if (inst1 == NULL) {
+    return NULL;
+  }
+
+  _getobj(obj, "source", inst, &src);
+  if (src != DATA_SOURCE_SPREADSHEET) {
+    return NULL;
+  }
+
+  if (array_find_int(&fp->fileopen, id) < 0) {
+    if (_exeobj(fp->obj, "opendata_raw", inst1, 0, NULL)) {
+      return NULL;
+    }
+    arrayadd(&fp->fileopen, &id);
+  }
+
+  return inst1;
+}
+
 static int
 file_sheet_cell_other(struct f2ddata *fp, int id, int row, int col, MathValue *rval)
 {
@@ -2249,17 +2275,11 @@ file_sheet_cell_other(struct f2ddata *fp, int id, int row, int col, MathValue *r
   char *argv[3];
   double d;
 
-  inst1 = chkobjinst(fp->obj, id);
+  inst1 = cell_other_common (fp, id);
   if (inst1 == NULL) {
     return 1;
   }
 
-  if (array_find_int(&fp->fileopen, id) < 0) {
-    if (_exeobj(fp->obj, "opendata_raw", inst1, 0, NULL)) {
-      return 1;
-    }
-    arrayadd(&fp->fileopen, &id);
-  }
   argv[0] = (char *) &row;
   argv[1] = (char *) &col;
   argv[2] = NULL;
