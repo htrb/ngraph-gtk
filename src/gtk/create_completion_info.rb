@@ -13,12 +13,24 @@ class CompletionInfo
     load_data(DATA_TYPE_CONST, const_file, @const_data)
   end
 
-  def func_struct(info)
-    function = info[0].sub(/\(.+\)/, '()')
+  def func_format(func)
+    function = func.sub(/\([^()]+\)/, '()')
     args = Regexp.last_match(0) ? Regexp.last_match(0).gsub(/[()]/, '') : ''
     func_name = function.split('(')[0]
+    "<b>#{func_name}</b>(<i>#{args}</i>)"
+  end
+
+  def func_info(func)
+    function = func.sub(/\([^()]+\)/, '()')
+    func_name = function.split('(')[0]
     lfunc = func_name.downcase
-    title = "<b>#{func_name}</b>(<i>#{args}</i>)"
+    [lfunc, function, func_name]
+  end
+
+  def func_struct(info)
+    funcs = info[0].split('=')
+    lfunc, function, func_name = func_info(funcs[0])
+    title = funcs.map { |f| func_format(f) }.join(', ')
     info_text = info[1].gsub('"', '\\"')
     %!{"#{lfunc}", "#{function}", "#{func_name}", N_("#{title}\\n#{info_text}"), NULL},!
   end
