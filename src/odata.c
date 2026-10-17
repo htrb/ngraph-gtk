@@ -10291,6 +10291,9 @@ f2dgetcellraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   row = *(int *) argv[2];
   col = *(int *) argv[3];
 
+  if (sheet_check_row_col (fp, &row, &col)) {
+    return 0;
+  }
   spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, &data);
 
   rval->d = data.val;
