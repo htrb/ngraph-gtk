@@ -52,5 +52,5 @@ SHEET		Sheet number
 SHEET_COLS	Number of columns in the sheet
 SHEET_ROWS	Number of rows in the sheet
 FILL_RULE_NONE		Defined for the function <b>draw_polygon</b>().\ndon't fill the polygon.
-FILL_RULE_EVEN_ODD	Defined for the function <b>draw_polygon</b>().\nfill the polygon with evin-odd rule.
+FILL_RULE_EVEN_ODD	Defined for the function <b>draw_polygon</b>().\nfill the polygon with even-odd rule.
 FILL_RULE_WINDING	Defined for the function <b>draw_polygon</b>().\nfill the polygon with winding rule.
