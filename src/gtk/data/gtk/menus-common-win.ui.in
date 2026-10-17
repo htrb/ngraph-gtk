@@ -573,7 +573,7 @@
           <attribute name="accel">F1</attribute>
 	</item>
         <item>
-          <attribute name="label" translatable="yes">_Keyboard shortcus</attribute>
+          <attribute name="label" translatable="yes">_Keyboard shortcuts</attribute>
           <attribute name="action">win.show-help-overlay</attribute>
         </item>
 	<item>
