@@ -163,7 +163,7 @@ draw_text($str, x, y, dir)	Draw the string <i>$str</i> at (<i>x, y</i>).\nDirect
 draw_text_raw($str, x, y, dir)	Draw the raw string <i>$str</i> at (<i>x, y</i>).\nDirection is specified by <i>dir</i>.
 getobj($obj, $field, id)	Return the value of the <i>$field</i> of the <i>$obj</i> object which ID is <i>id</i>.\nThe field type must be int, bool, enum or double.
 getobj_string($str, $obj, $field, id)	Set the value of the <i>$field</i> of the <i>$obj</i> object which ID is <i>id</i> to the variable <i>$str</i>.\nThe field type must be char*.\nReturn the length of the string <i>$str</i> in characters.
-getobj_array(array, $obj, $field, id)	Set values of the <i>$field</i> of the <i>$obj</i> object which ID is <i>id</i> to the array <i>array</i>.\nThe field type must be char*[], double[] or int[].\nRetuern the number of elements saved to the array.
+getobj_array(array, $obj, $field, id)	Set values of the <i>$field</i> of the <i>$obj</i> object which ID is <i>id</i> to the array <i>array</i>.\nThe field type must be char*[], double[] or int[].\nReturn the number of elements saved to the array.
 map(dest, src, item, ex)	Evaluate <i>ex</i> for each element of the array <i>src</i>\nand set them to the array <i>dest</i>.\nThe element of the array can be referred by the variable <i>item</i>.
 reduce(a, item, result, ex)	Evaluate <i>ex</i> for each element of the array <i>a</i>\nand return last evaluated value of <i>ex</i>.\nThe element of the array and the result of previous evaluation\ncan be referred by the variable <i>item</i> and <i>result</i>.
 each(a, item, ex)	Evaluate <i>ex</i> for each element of the array <i>a</i>.\nThe element of the array can be referred by the variable <i>item</i>.
