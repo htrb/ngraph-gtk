@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Ito Hiroyuki
-# This file is distributed under the same license as the ngraph-gtk package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ngraph-gtk 6.09.11\n"
-"Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2026-10-16 11:11+0900\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-17 14:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4936,7 +4936,7 @@ msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:556
 #: src/gtk/data/gtk/menus-common-win.ui.in:576
-msgid "_Keyboard shortcus"
+msgid "_Keyboard shortcuts"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:560

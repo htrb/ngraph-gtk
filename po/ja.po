@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 11:11+0900\n"
-"PO-Revision-Date: 2026-10-17 10:43+0900\n"
+"POT-Creation-Date: 2026-10-17 14:24+0900\n"
+"PO-Revision-Date: 2026-10-17 14:26+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -21,7 +21,7 @@ msgstr "エラー:"
 
 #: src/gtk/ox11menu.c:2112
 msgid "Unsaved Graph"
-msgstr "新規グラフ"
+msgstr "未保存のグラフ"
 
 #: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:271 src/gtk/x11commn.c:1895
 msgid "Confirm"
@@ -52,7 +52,7 @@ msgstr "ファイルを開く"
 
 #: src/gtk/ox11dlg.c:908
 msgid "Save file"
-msgstr "別名で保存"
+msgstr "保存"
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11dialg.c:1387 src/odraw.c:80
 #: src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
@@ -137,7 +137,7 @@ msgstr ""
 "%e\t月内通算日 (1 から 31).\n"
 "%F\t%Y-%m-%d と同等.\n"
 "%H\t24 時間表記での時 (00 から 23).\n"
-"%I\t14 時間表記での時 (01 から 12).\n"
+"%I\t12 時間表記での時 (01 から 12).\n"
 "%j\t年の初めから通算の日数 (001 から 366).\n"
 "%k\t24 時間表記での時 (0 から 23).\n"
 "%l\t12 時間表記での時 (1 から 12).\n"
@@ -1812,7 +1812,7 @@ msgstr "テキスト(_T):"
 #: src/gtk/x11lgndx.c:363
 #, c-format
 msgid "Legend Gaussian/Lorentzian/Parabola/Sin %d"
-msgstr "ガウス関数/ローレンツ関数/双曲線/三角関数 %d"
+msgstr "ガウス関数/ローレンツ関数/放物線/正弦波 %d"
 
 #: src/gtk/x11lgndx.c:374
 msgid "_Sin"
@@ -2269,7 +2269,7 @@ msgstr "ビューア(_V)"
 
 #: src/gtk/x11opt.c:79
 msgid "_External Viewer"
-msgstr "外部ビューアー設定(_E)"
+msgstr "外部ビューア(_E)"
 
 #: src/gtk/x11opt.c:83 src/gtk/data/gtk/menus-common.ui.in:510
 #: src/gtk/data/gtk/menus-common-win.ui.in:530
@@ -2802,7 +2802,7 @@ msgid ""
 "when <i>i</i> == 0, set A and A2 values to <i>x</i>"
 msgstr ""
 "<b>alpha</b>(<i>x, i</i>)\n"
-"A (<i>i</i> == 1) または A2 (<i>i</i> == 1) 値を <i>x</i> (0≦<i>x</i>＜256)に"
+"A (<i>i</i> == 1) または A2 (<i>i</i> == 2) 値を <i>x</i> (0≦<i>x</i>＜256)に"
 "設定\n"
 "<i>i</i> == 0 のときは A, A2 値を <i>x</i> (0≦<i>x</i>＜256)に設定"
 
@@ -2847,7 +2847,7 @@ msgid ""
 "set the number of elements of the array <i>a</i> to 0"
 msgstr ""
 "<b>array_clear</b>(<i>a</i>)\n"
-"配列 <i>a</i> の配列の要素数を 0 にする"
+"配列 <i>a</i> の要素数を 0 にする"
 
 #: src/gtk/completion_info_data.c:14
 msgid ""
@@ -2856,8 +2856,7 @@ msgid ""
 "and return the number of elements after removal"
 msgstr ""
 "<b>array_compact</b>(<i>a</i>)\n"
-"配列 <i>a</i> の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数"
-"を返す"
+"配列 <i>a</i> の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す"
 
 #: src/gtk/completion_info_data.c:15
 msgid ""
@@ -3067,11 +3066,11 @@ msgid ""
 "If <i>pieslice</i> is not 0, draw a sector.\n"
 "If <i>close</i> is not 0, close the outline."
 msgstr ""
-"<b>draw_arc</b>(<i>x, y, rx, ry, start, angle, pieslice, stroke, fill, "
-"close</i>)\n"
+"<b>draw_arc</b>(<i>x, y, rx, ry, start, arc, pieslice, stroke, fill, close</"
+"i>)\n"
 "(<i>x, y</i>) を中心とし X 方向半径 <i>rx</i>, Y 方向半径 <i>ry</i> の円弧を"
 "描画する。\n"
-"<i>start</i>, <i>angle</i> で開始角、円弧角を指定する。\n"
+"<i>start</i>, <i>arc</i> で開始角、円弧角を指定する。\n"
 "<i>stroke</i>, <i>fill</i> が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しな"
 "い。\n"
 "<i>pieslice</i> が 0 以外の場合は扇形を描画する。\n"
@@ -3887,7 +3886,7 @@ msgid ""
 "Evaluate <i>proc</i> at the end of plottong the data object."
 msgstr ""
 "<b>on_end</b>(<i>proc</i>)\n"
-"data オブジェクトの描画終了時に<i>proc</i>を評価する。"
+"データオブジェクトの描画終了時に<i>proc</i>を評価する。"
 
 #: src/gtk/completion_info_data.c:116
 msgid ""
@@ -4007,7 +4006,7 @@ msgid ""
 "can be referred by the variable <i>item</i> and <i>result</i>."
 msgstr ""
 "<b>reduce</b>(<i>a, item, result, ex</i>)\n"
-"配列 <i>src</i> の各要素に対して、式 <i>ex</i> を評価し、最後の評価結果返"
+"配列 <i>a</i> の各要素に対して、式 <i>ex</i> を評価し、最後の評価結果を返"
 "す。\n"
 "配列の各要素は、第二引数に指定した変数 (<i>item</i>) で参照できる。\n"
 "前回の繰り返しにおける計算結果は、第三引数に指定した変数 (<i>result</i>) で参"
@@ -4094,7 +4093,8 @@ msgid ""
 "4 args: <i>$var</i>, <i>id</i>, <i>row</i>, <i>col</i> (data object with "
 "<i>id</i>)."
 msgstr ""
-"<b>sheet_cell_text</b>(<i>$var, row, col</i>), <b>sheet_cell_text</b>(<i>$var, id, row, col</i>)\n"
+"<b>sheet_cell_text</b>(<i>$var, row, col</i>), <b>sheet_cell_text</"
+"b>(<i>$var, id, row, col</i>)\n"
 "現在のシートまたはシートを開いているデータオブジェクトの\n"
 "セル値を文字列変数 <i>$var</i> に代入する。\n"
 "行・列番号は1から始まる。\n"
@@ -4158,7 +4158,7 @@ msgid ""
 "same as <i>n</i> = 1).\n"
 "Returns the new size of the array."
 msgstr ""
-"<b>shift</b>(<i>a</i>)\n"
+"<b>shift</b>(<i>a, n</i>)\n"
 "配列 <i>a</i> の先頭の<i>n</i>要素を取り除く (<i>n</i> = 0 は <i>n</i> = 1 と"
 "同義)。\n"
 "残りの要素は前に詰められる。\n"
@@ -4481,7 +4481,7 @@ msgid ""
 "The substring will contain <i>end</i> - <i>start</i> characters."
 msgstr ""
 "<b>string_substring</b>(<i>$dest, $src, start, end</i>)\n"
-"文字列 <i>$src</i> の <i>pos</i> 文字目から始まり <i>end</i> 文字までからな"
+"文字列 <i>$src</i> の <i>pos</i> 文字目から始まり <i>end</i> 文字目までからな"
 "る\n"
 "文字列を <i>$dest</i> に代入する。\n"
 "UTF-8 以外の文字列では使えない。"
@@ -4761,7 +4761,7 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 "<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
-"配列 <i>asrc1, src2</i> の各要素に対して、式 <i>ex</i> を評価し、\n"
+"配列 <i>src1, src2</i> の各要素に対して、式 <i>ex</i> を評価し、\n"
 "その結果を配列 <i>dest</i> に設定する。\n"
 "配列の各要素は、第4, 第5引数に指定した変数 (<i>item1, item2</i>) で参照でき"
 "る。"
@@ -5063,7 +5063,7 @@ msgid ""
 "Missing data with error indication"
 msgstr ""
 "<b>NAN</b>\n"
-"欠損データエラー表示"
+"欠損データ (エラー表示) "
 
 #: src/gtk/completion_info_data.c:237
 msgid ""
@@ -5221,7 +5221,7 @@ msgid ""
 "Missing data without error indication"
 msgstr ""
 "<b>UNDEF</b>\n"
-"欠損データエラー非表示"
+"欠損データ (エラー表示なし) "
 
 #: src/gtk/data/gtk/menus-common.ui.in:6
 #: src/gtk/data/gtk/menus-common-win.ui.in:6
@@ -5680,7 +5680,7 @@ msgstr "ヘルプ(_H)"
 
 #: src/gtk/data/gtk/menus-common.ui.in:556
 #: src/gtk/data/gtk/menus-common-win.ui.in:576
-msgid "_Keyboard shortcus"
+msgid "_Keyboard shortcuts"
 msgstr "キーボードショートカット(_K)"
 
 #: src/gtk/data/gtk/menus-common.ui.in:560
@@ -5774,12 +5774,12 @@ msgstr "EM_F+ ファイル"
 #: src/gtk/data/gtk/menus-common-win.ui.in:88
 #: src/gtk/data/gtk/menus-common-win.ui.in:757
 msgid "_Clipboard (EMF)"
-msgstr "クリップボード (EMF) (_C) "
+msgstr "クリップボード (EMF) (_C)"
 
 #: src/gtk/data/gtk/menus-common-win.ui.in:92
 #: src/gtk/data/gtk/menus-common-win.ui.in:761
 msgid "_Clipboard (EMF+)"
-msgstr "クリップボード (EMF+) (_C) "
+msgstr "クリップボード (EMF+) (_C)"
 
 #: src/gtk/data/gtk/menus-tool.ui:23 src/odraw.c:66
 msgid "miter"
