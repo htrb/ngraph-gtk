@@ -103,17 +103,17 @@ enum AXIS_NUM_POS {
 
 static char *axistitleposchar[]={
   NC_("title", "auto"),
+  NC_("title", "end"),
   NC_("title", "start"),
   NC_("title", "center"),
-  NC_("title", "end"),
   NULL
 };
 
 enum AXIS_TITLE_POS {
   AXIS_TITLE_POS_AUTO,
+  AXIS_TITLE_POS_END,
   AXIS_TITLE_POS_START,
   AXIS_TITLE_POS_CENTER,
-  AXIS_TITLE_POS_END,
 };
 
 static char *axistitleorientation[]={
