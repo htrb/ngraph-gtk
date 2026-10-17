@@ -2269,6 +2269,28 @@ file_sheet_cell_other(struct f2ddata *fp, int id, int row, int col, MathValue *r
 }
 
 static int
+sheet_check_row_col (struct f2ddata *fp, int *row, int *col)
+{
+  int r, c, max_row, max_col;
+  r = *row;
+  c = *col;
+  max_col = spreadsheet_n_columns (fp->spreadsheet);
+  max_row = spreadsheet_n_rows (fp->spreadsheet);
+  if (r < 0) {
+    r += max_row + 1;
+  }
+  if (c < 0) {
+    c += max_col + 1;
+  }
+  if (r < 0 || r > max_row || c < 0 || c > max_col) {
+    return 1;
+  }
+  *row = r;
+  *col = c;
+  return 0;
+}
+
+static int
 file_sheet_cell(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
