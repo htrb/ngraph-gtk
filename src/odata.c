@@ -2324,11 +2324,14 @@ file_sheet_cell(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     col = exp->buf[1].val.val;
     id = fp->id;
   }
-  if (row < 1 || col < 1) {
+  if (row == 0 || col == 0) {
     return 0;
   }
   if (id != fp->id) {
     return file_sheet_cell_other(fp, id, row, col, rval);
+  }
+  if (sheet_check_row_col (fp, &row, &col)) {
+    return 0;
   }
   spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, rval);
 
