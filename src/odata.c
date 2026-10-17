@@ -2410,13 +2410,16 @@ file_sheet_cell_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
     col = exp->buf[2].val.val;
     id = fp->id;
   }
-  if (row < 1 || col < 1) {
+  if (row == 0 || col == 0) {
     return 0;
   }
   if (id != fp->id) {
     return file_sheet_cell_text_other(fp, id, row, col, str, rval);
   }
 
+  if (sheet_check_row_col (fp, &row, &col)) {
+    return 0;
+  }
   cell_text = spreadsheet_get_text (fp->spreadsheet, col - 1, row - 1);
   if (cell_text) {
     g_string_assign(str, cell_text);
