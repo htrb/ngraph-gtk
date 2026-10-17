@@ -28,8 +28,8 @@
    <ul>
     <li> <a href="#TRANSFORM_FUNC">変換関数</a>
     <li> <a href="#ELEMENTARY_FUNC">初等関数</a>
-    <li> <a href="#SPECIAL_FUMC">特殊関数</a>
-    <li> <a href="#DATETIME_FUMC">日付時刻関数</a>
+    <li> <a href="#SPECIAL_FUNC">特殊関数</a>
+    <li> <a href="#DATETIME_FUNC">日付時刻関数</a>
     <li> <a href="#LOGIC_FUNC">論理関数</a>
     <li> <a href="#ARRAY_FUNC">配列操作関数</a>
     <li> <a href="#SHEET_FUNC">表計算データ関係関数</a>
@@ -148,7 +148,7 @@
  <tr><td>AXISX_LEN</td><td>「X 軸」の長さ</td></tr>
  <tr><td>AXISY</td><td>「Y 軸」に指定された axis オブジェクトの ID</td></tr>
  <tr><td>AXISY_MIN</td><td>「Y 軸」の最小値</td></tr>
- <tr><td>AXISY_MAX</td><td>「X 軸」の最大値</td></tr>
+ <tr><td>AXISY_MAX</td><td>「Y 軸」の最大値</td></tr>
  <tr><td>AXISY_LEN</td><td>「Y 軸」の長さ</td></tr>
  <tr><td>HSKIP</td><td>「先頭スキップ行」に指定された行数</td></tr>
  <tr><td>RSTEP</td><td>「読込ステップ行」に指定された行数</td></tr>
@@ -357,8 +357,6 @@
  <tr><td>/=</td><td>自己代入</td></tr>
  <tr><td>\=</td><td>自己代入</td></tr>
  <tr><td>^=</td><td>自己代入</td></tr>
- <tr><td>^=</td><td>自己代入</td></tr>
- <tr><td>^=</td><td>自己代入</td></tr>
  <tr><td>&amp;=</td><td>自己代入</td></tr>
  <tr><td>|=</td><td>自己代入</td></tr>
  <tr><td>&lt;&lt;=</td><td>自己代入</td></tr>
@@ -470,7 +468,7 @@
  <tr><td>choose(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
 </table>
 <br>
-<h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
+<h3><a name="SPECIAL_FUNC">特殊関数</a></h3>
 <table border="1">
  <tr><td>rand(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
  <tr><td>srand(x)</td><td>RAND()  関数で作られる疑似乱数系列の新しい種を設定する。</td></tr>
@@ -497,14 +495,14 @@
  <tr><td>pn(n,x)</td><td>ルジャンドル多項式</td></tr>
  <tr><td>lgn(n,a,x)</td><td>ラゲール倍多項式</td></tr>
  <tr><td>hn(n,x)</td><td>エルミート多項式</td></tr>
- <tr><td>tn(n,x)</td><td>チェビシフ多項式</td></tr>
+ <tr><td>tn(n,x)</td><td>チェビシェフ多項式</td></tr>
  <tr><td>zeta(x)</td><td>リーマンゼータ関数 ζ(x)</td></tr>
  <tr><td>zeta_int(x)</td><td>リーマンゼータ関数 ζ(x) (x は整数) </td></tr>
  <tr><td>zetam1(x)</td><td>リーマンゼータ関数 ζ(x) - 1</td></tr>
  <tr><td>zetam1_int(x)</td><td>リーマンゼータ関数 ζ(x) - 1 (x は整数) </td></tr>
 </table>
 <br>
-<h3><a name="DATETIME_FUMC">日付時刻関数</a></h3>
+<h3><a name="DATETIME_FUNC">日付時刻関数</a></h3>
 <table border="1">
  <tr><td>mjd(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
  <tr><td>unix2mjd(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
@@ -598,7 +596,7 @@
     sheet_cell(id, row, col)
    </td>
    <td>
-    id で指定したデータオブジェクトで開いたいるファイルが表計算データの場合、そのデータで開いているシートの指定したセルの値を返す。
+    id で指定したデータオブジェクトで開いているファイルが表計算データの場合、そのデータで開いているシートの指定したセルの値を返す。
    </td>
   </tr>
  <tr>
@@ -1267,10 +1265,10 @@
       <p>
       dif()  は現在のデータと一つ前のデータとの差分を返しますから、y-dif(y) とすることで一つ前のデータを取り出すことができます。
       同様に y-dif(y)-dif(y-dif(y)) で2つ前のデータを取り出すことができます。
-      y-dif(y)-dif(y-dif(y))-dif(y-dif(y)-dif(y-dif(y)))は3つ前のデータです．
+      y-dif(y)-dif(y-dif(y))-dif(y-dif(y)-dif(y-dif(y)))は3つ前のデータです。
       </p>
       <p>
-      一番初めの dif() の戻り値は"不定"です．このため，式全体の値も"不定"となり、結果としてデータの個数は1つ減ります(一番初めのデータに差分は存在しない)。
+      一番初めの dif() の戻り値は"不定"です。このため，式全体の値も"不定"となり、結果としてデータの個数は1つ減ります(一番初めのデータに差分は存在しない)。
       また dif() をいくつも含む式では、全ての dif() が初期化されるまで式全体の値は"不定"です。
       例えば dif() をネストして dif(dif()) のように使った場合、一番初めのデータでは内側の dif() が初期化されその戻り値は不定の為、外側の dif() の初期化は行われません。
       外側の dif() が初期化されるのは 2番目のデータの時です。
@@ -1419,7 +1417,7 @@
       </li>
  <li><b>関数 prog1(), prog2(), progn() 使用例</b>
       <p>
-      関数 prog1(), prog1(), progn() は複数の引数を評価して、最初、2番
+      関数 prog1(), prog2(), progn() は複数の引数を評価して、最初、2番
       目または最後の引数の値を返す関数です。if(), unless(), for() など
       の関数の引数に使用して複数の式を評価するために利用できます。下記
       の例では x の値が 1 以上変化する毎に y の平均値を計算しています
