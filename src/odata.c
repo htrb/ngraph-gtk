@@ -2483,23 +2483,32 @@ file_sheet_values(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
     n = spreadsheet_n_rows (fp->spreadsheet);
   }
 
-  if (sel < 1){
+  if (sel == 0) {
     sel = 1;
+  } else if (sel < 0) {
+    sel += m + 1;
   }
-  if (sel > m) {
+  if (sel > m || sel < 1) {
     return 0;
   }
-  if (end < 1) {
-    end += n;
+
+  if (end == 0) {
+    end = n;
+  } else if (end < 0) {
+    end += n + 1;
   }
   if (end > n) {
     end = n;
   }
-  if (start < 1) {
+
+  if (start == 0) {
     start = 1;
+  } else if (start < 0) {
+    start += n + 1;
   }
-  if (start > end) {
-    return 1;
+
+  if (start > end || start < 1 || end < 1) {
+    return 0;
   }
 
   for (i = start; i <= end; i++) {
