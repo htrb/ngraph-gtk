@@ -10321,6 +10321,9 @@ f2dgetcelltextraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   row = *(int *) argv[2];
   col = *(int *) argv[3];
 
+  if (sheet_check_row_col (fp, &row, &col)) {
+    return 0;
+  }
   rval->str = spreadsheet_get_text (fp->spreadsheet, col - 1, row - 1);
   return 0;
 }
