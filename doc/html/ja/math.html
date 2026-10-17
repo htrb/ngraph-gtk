@@ -32,6 +32,7 @@
     <li> <a href="#DATETIME_FUMC">日付時刻関数</a>
     <li> <a href="#LOGIC_FUNC">論理関数</a>
     <li> <a href="#ARRAY_FUNC">配列操作関数</a>
+    <li> <a href="#SHEET_FUNC">表計算データ関係関数</a>
     <li> <a href="#MEMORY_FUNC">メモリー操作関数</a>
     <li> <a href="#DRAWING_FUNC">図形描画関数</a>
     <li> <a href="#STRING_FUNC">文字列操作関数</a>
@@ -165,6 +166,9 @@
  <tr><td>FILL_RULE_NONE</td><td>ポリゴンを塗りつぶさない。draw_polygon() 関数で利用する。</td></tr>
  <tr><td>FILL_RULE_EVEN_ODD</td><td>ポリゴンを偶奇則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
  <tr><td>FILL_RULE_WINDING</td><td>ポリゴンをワインディング則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
+ <tr><td>SHEET</td><td>表計算データを開いているときに、現在開いているシートの番号。</td></tr>
+ <tr><td>SHEET_COLS</td><td>表計算データを開いているときに、現在開いているシートの列数。</td></tr>
+ <tr><td>SHEET_ROWS</td><td>表計算データを開いているときに、現在開いているシートの行数。</td></tr>
 </table>
 </div>
 
@@ -289,6 +293,11 @@
       <ul>
        <li> $col[0]は読み込み中のデータの行全体、それ以外は同一行中 n カラムの文字列。</li>
        <li> 配列の要素への代入は可能ですが、データ読込時に新しい行の文字列で上書きされます。</li>
+      </ul>
+ <li>$header[n]</li>
+      <ul>
+       <li> ヘッダ行で指定した行の各カラムの文字列。</li>
+       <li> テキストファイルを開いている場合 $header[0] はヘッダ行全体。</li>
       </ul>
  <li>$x[n]</li>
       <ul>
@@ -570,6 +579,68 @@
  <tr><td>filter(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 dest に格納する。第3引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
  <tr><td>find(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
  <tr><td>index(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素の位置を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+</table>
+<br>
+<h3><a name="SHEET_FUNC">表計算データ関係関数</a></h3>
+<p>開いているデータが表計算ファイルのときに使用できます。</p>
+<p>行・列の指定で負の値を使うと末尾からの指定になります (-1 で最後の行または列)。</p>
+<table border="1">
+ <tr>
+  <td>
+   sheet_cell(row, col)
+  </td>
+  <td>
+   現在のシートの指定したセルの値を返す。
+  </td>
+ </tr>
+  <tr>
+   <td>
+    sheet_cell(id, row, col)
+   </td>
+   <td>
+    id で指定したデータオブジェクトで開いたいるファイルが表計算データの場合、そのデータで開いているシートの指定したセルの値を返す。
+   </td>
+  </tr>
+ <tr>
+  <td>
+   sheet_cell_text($text, row, col)
+  </td>
+  <td>
+   現在のシートの指定したセルの文字列を変数 $text に代入する。代入された文字列の長さを返す。
+  </td>
+ </tr>
+ <tr>
+  <td>
+   sheet_cell_text($text, id, row, col)
+  </td>
+  <td>
+   id で指定したデータオブジェクトで開いたいるファイルが表計算データの場合、そのデータで開いているシートの指定したセルの文字列を変数 $text に代入する。代入された文字列の長さを返す。
+  </td>
+ </tr>
+ <tr>
+  <td>
+   sheet_col_values(array, col[, start[, end]])
+  </td>
+  <td>
+   現在のシートの指定した列のデータをarrayに代入する。start を指定した場合はその行から、end を指定した場合はその行までを対象とする。
+  </td>
+ </tr>
+ <tr>
+  <td>
+   sheet_row_values(array, row[, start[, end]])
+  </td>
+  <td>
+   現在のシートの指定した行のデータをarrayに代入する。start を指定した場合はその列から、end を指定した場合はその列までを対象とする。
+  </td>
+ </tr>
+ <tr>
+  <td>
+   sheet_name($text)
+  </td>
+  <td>
+   現在のシート名を $text に代入する。
+  </td>
+ </tr>
 </table>
 <br>
 <h3><a name="MEMORY_FUNC">メモリー操作関数</a></h3>
