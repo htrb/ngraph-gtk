@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 11:51+0900\n"
-"PO-Revision-Date: 2026-10-12 14:50+0900\n"
+"POT-Creation-Date: 2026-10-16 11:11+0900\n"
+"PO-Revision-Date: 2026-10-17 10:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -23,7 +23,7 @@ msgstr "エラー:"
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:271 src/gtk/x11commn.c:1890
+#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:271 src/gtk/x11commn.c:1895
 msgid "Confirm"
 msgstr "確認"
 
@@ -31,7 +31,7 @@ msgstr "確認"
 msgid "Message"
 msgstr "メッセージ"
 
-#: src/gtk/ox11dlg.c:236 src/gtk/ox11dlg.c:392 src/gtk/x11commn.c:2319
+#: src/gtk/ox11dlg.c:236 src/gtk/ox11dlg.c:392 src/gtk/x11commn.c:2324
 #: src/gtk/x11gui.c:332 src/gtk/x11gui.c:904 src/gtk/x11gui.c:989
 #: src/gtk/x11gui.c:1083 src/gtk/x11gui.c:1185 src/gtk/x11opt.c:1162
 msgid "_OK"
@@ -162,7 +162,7 @@ msgstr ""
 msgid "_Style %d:"
 msgstr "線種 %d(_S):"
 
-#: src/gtk/x11axis.c:279 src/gtk/x11axis.c:1672
+#: src/gtk/x11axis.c:279 src/gtk/x11axis.c:1671
 #, c-format
 msgid "_Width %d:"
 msgstr "線幅 %d(_W):"
@@ -172,78 +172,78 @@ msgstr "線幅 %d(_W):"
 msgid "Grid %d"
 msgstr "グリッド %d"
 
-#: src/gtk/x11axis.c:315
+#: src/gtk/x11axis.c:314
 msgid "Axis (_X):"
 msgstr "_X 軸:"
 
-#: src/gtk/x11axis.c:318
+#: src/gtk/x11axis.c:317
 msgid "draw _X grid"
 msgstr "_X グリッド描画"
 
-#: src/gtk/x11axis.c:323
+#: src/gtk/x11axis.c:322
 msgid "Axis (_Y):"
 msgstr "_Y 軸:"
 
-#: src/gtk/x11axis.c:326
+#: src/gtk/x11axis.c:325
 msgid "draw _Y grid"
 msgstr "_Y グリッド描画"
 
-#: src/gtk/x11axis.c:330 src/gtk/x11menu.c:260
+#: src/gtk/x11axis.c:329 src/gtk/x11menu.c:260
 msgid "Axis"
 msgstr "軸"
 
-#: src/gtk/x11axis.c:344 src/gtk/x11axis.c:1474 src/gtk/x11axis.c:1664
-#: src/gtk/x11axis.c:2137 src/gtk/x11lgnd.c:1244 src/gtk/x11lgnd.c:1264
+#: src/gtk/x11axis.c:343 src/gtk/x11axis.c:1473 src/gtk/x11axis.c:1663
+#: src/gtk/x11axis.c:2136 src/gtk/x11lgnd.c:1244 src/gtk/x11lgnd.c:1264
 #: src/gtk/x11lgnd.c:1274 src/gtk/x11lgndx.c:424
 msgid "_Color:"
 msgstr "色(_C):"
 
-#: src/gtk/x11axis.c:348 src/gtk/x11axis.c:361 src/gtk/x11axis.c:1478
-#: src/gtk/x11axis.c:1668 src/gtk/x11axis.c:2141 src/gtk/x11lgndx.c:428
+#: src/gtk/x11axis.c:347 src/gtk/x11axis.c:360 src/gtk/x11axis.c:1477
+#: src/gtk/x11axis.c:1667 src/gtk/x11axis.c:2140 src/gtk/x11lgndx.c:428
 msgid "_Alpha:"
 msgstr "不透明度(_A):"
 
-#: src/gtk/x11axis.c:351
+#: src/gtk/x11axis.c:350
 msgid "_Background"
 msgstr "背景色(_B)"
 
-#: src/gtk/x11axis.c:357 src/gtk/x11opt.c:1669
+#: src/gtk/x11axis.c:356 src/gtk/x11opt.c:1669
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:364 src/gtk/x11file.c:3755
+#: src/gtk/x11axis.c:363 src/gtk/x11file.c:3755
 msgid "Color"
 msgstr "色"
 
-#: src/gtk/x11axis.c:377 src/gtk/x11axis.c:1683
+#: src/gtk/x11axis.c:376 src/gtk/x11axis.c:1682
 msgid "Style"
 msgstr "スタイル"
 
-#: src/gtk/x11axis.c:707 src/gtk/x11axis.c:922
+#: src/gtk/x11axis.c:706 src/gtk/x11axis.c:921
 msgid "Graph _Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11axis.c:711 src/gtk/x11axis.c:926
+#: src/gtk/x11axis.c:710 src/gtk/x11axis.c:925
 msgid "Graph _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11axis.c:722 src/gtk/x11axis.c:936
+#: src/gtk/x11axis.c:721 src/gtk/x11axis.c:935
 msgid "_X axis"
 msgstr "_X 軸"
 
-#: src/gtk/x11axis.c:736 src/gtk/x11axis.c:949
+#: src/gtk/x11axis.c:735 src/gtk/x11axis.c:948
 msgid "_Y axis"
 msgstr "_Y 軸"
 
-#: src/gtk/x11axis.c:749
+#: src/gtk/x11axis.c:748
 msgid "_U axis"
 msgstr "_U 軸"
 
-#: src/gtk/x11axis.c:762
+#: src/gtk/x11axis.c:761
 msgid "_R axis"
 msgstr "_R 軸"
 
-#: src/gtk/x11axis.c:775 src/gtk/data/gtk/menus-common.ui.in:284
+#: src/gtk/x11axis.c:774 src/gtk/data/gtk/menus-common.ui.in:284
 #: src/gtk/data/gtk/menus-common.ui.in:379
 #: src/gtk/data/gtk/menus-common.ui.in:682
 #: src/gtk/data/gtk/menus-common-win.ui.in:304
@@ -252,363 +252,363 @@ msgstr "_R 軸"
 msgid "_Grid"
 msgstr "グリッド(_G)"
 
-#: src/gtk/x11axis.c:1046
+#: src/gtk/x11axis.c:1045
 msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
-#: src/gtk/x11axis.c:1249
+#: src/gtk/x11axis.c:1248
 msgid "autoscale (multi select)"
 msgstr "自動スケール (複数選択)"
 
-#: src/gtk/x11axis.c:1307 src/gtk/x11axis.c:1643 src/gtk/x11file.c:1866
+#: src/gtk/x11axis.c:1306 src/gtk/x11axis.c:1642 src/gtk/x11file.c:1866
 #: src/gtk/x11parameter.c:137
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1311 src/gtk/x11axis.c:1648 src/gtk/x11file.c:1870
+#: src/gtk/x11axis.c:1310 src/gtk/x11axis.c:1647 src/gtk/x11file.c:1870
 #: src/gtk/x11parameter.c:141
 msgid "_Max:"
 msgstr "最大値(_M):"
 
-#: src/gtk/x11axis.c:1315
+#: src/gtk/x11axis.c:1314
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:1321 src/gtk/data/gtk/menus-common.ui.in:841
+#: src/gtk/x11axis.c:1320 src/gtk/data/gtk/menus-common.ui.in:841
 #: src/gtk/data/gtk/menus-common-win.ui.in:881
 msgid "_Clear"
 msgstr "クリア(_C)"
 
-#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:2428
+#: src/gtk/x11axis.c:1324 src/gtk/x11axis.c:2427
 #: src/gtk/data/gtk/menus-common.ui.in:293
 #: src/gtk/data/gtk/menus-common-win.ui.in:313
 msgid "_Data"
 msgstr "データ(_D)"
 
-#: src/gtk/x11axis.c:1326
+#: src/gtk/x11axis.c:1325
 msgid "Calculates and sets the axis range based on the selected dataset(s)."
 msgstr "選択したデータ（複数可）の範囲に合わせて軸スケールを自動設定します。"
 
-#: src/gtk/x11axis.c:1334
+#: src/gtk/x11axis.c:1333
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:1338 src/gtk/x11file.c:1874 src/gtk/x11print.c:92
+#: src/gtk/x11axis.c:1337 src/gtk/x11file.c:1874 src/gtk/x11print.c:92
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:1342
+#: src/gtk/x11axis.c:1341
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:1346
+#: src/gtk/x11axis.c:1345
 msgid "_Auto scale margin:"
 msgstr "自動スケール余白(_A):"
 
-#: src/gtk/x11axis.c:1349 src/oparameter.c:37
+#: src/gtk/x11axis.c:1348 src/oparameter.c:37
 msgid "Scale"
 msgstr "スケール"
 
-#: src/gtk/x11axis.c:1460
+#: src/gtk/x11axis.c:1459
 msgid "Draw _Baseline"
 msgstr "軸基線描画(_B)"
 
-#: src/gtk/x11axis.c:1466 src/gtk/x11file.c:3764 src/gtk/x11lgnd.c:1214
+#: src/gtk/x11axis.c:1465 src/gtk/x11file.c:3764 src/gtk/x11lgnd.c:1214
 #: src/gtk/x11lgndx.c:408
 msgid "Line _Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1470 src/gtk/x11file.c:3768 src/gtk/x11lgndx.c:412
+#: src/gtk/x11axis.c:1469 src/gtk/x11file.c:3768 src/gtk/x11lgndx.c:412
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1481
+#: src/gtk/x11axis.c:1480
 msgid "Baseline"
 msgstr "軸基線"
 
-#: src/gtk/x11axis.c:1491 src/gtk/x11axis.c:1513 src/gtk/x11axis.c:2434
+#: src/gtk/x11axis.c:1490 src/gtk/x11axis.c:1512 src/gtk/x11axis.c:2433
 msgid "_Position:"
 msgstr "位置(_P):"
 
-#: src/gtk/x11axis.c:1496
+#: src/gtk/x11axis.c:1495
 msgid "_Arrow length:"
 msgstr "長さ(_A):"
 
-#: src/gtk/x11axis.c:1501
+#: src/gtk/x11axis.c:1500
 msgid "_Arrow width:"
 msgstr "幅(_A):"
 
-#: src/gtk/x11axis.c:1504
+#: src/gtk/x11axis.c:1503
 msgid "Arrow"
 msgstr "矢印"
 
-#: src/gtk/x11axis.c:1517
+#: src/gtk/x11axis.c:1516
 msgid "_Wave length:"
 msgstr "長さ(_W):"
 
-#: src/gtk/x11axis.c:1521
+#: src/gtk/x11axis.c:1520
 msgid "_Wave width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1524
+#: src/gtk/x11axis.c:1523
 msgid "Wave"
 msgstr "波型"
 
-#: src/gtk/x11axis.c:1638
+#: src/gtk/x11axis.c:1637
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1651 src/gtk/x11axis.c:1924
+#: src/gtk/x11axis.c:1650 src/gtk/x11axis.c:1923
 msgid "Range"
 msgstr "範囲"
 
-#: src/gtk/x11axis.c:1660
+#: src/gtk/x11axis.c:1659
 msgid "_Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1677
+#: src/gtk/x11axis.c:1676
 #, c-format
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:1909
+#: src/gtk/x11axis.c:1908
 msgid "_Numbering:"
 msgstr "位置(_N):"
 
-#: src/gtk/x11axis.c:1913
+#: src/gtk/x11axis.c:1912
 msgid "_Begin:"
 msgstr "開始点(_B):"
 
-#: src/gtk/x11axis.c:1917 src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:207
+#: src/gtk/x11axis.c:1916 src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:207
 msgid "_Step:"
 msgstr "間隔(_S):"
 
-#: src/gtk/x11axis.c:1921
+#: src/gtk/x11axis.c:1920
 msgid "_Num:"
 msgstr "個数(_N):"
 
-#: src/gtk/x11axis.c:1933
+#: src/gtk/x11axis.c:1932
 msgid "_Align:"
 msgstr "位置合わせ(_A):"
 
-#: src/gtk/x11axis.c:1937 src/gtk/x11axis.c:2245 src/gtk/x11lgnd.c:2000
+#: src/gtk/x11axis.c:1936 src/gtk/x11axis.c:2244 src/gtk/x11lgnd.c:2000
 msgid "_Direction:"
 msgstr "方向(_D):"
 
-#: src/gtk/x11axis.c:1942
+#: src/gtk/x11axis.c:1941
 msgid "shift (_P):"
 msgstr "並行シフト量(_P):"
 
-#: src/gtk/x11axis.c:1946
+#: src/gtk/x11axis.c:1945
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:1949 src/gtk/x11axis.c:2257
+#: src/gtk/x11axis.c:1948 src/gtk/x11axis.c:2256
 msgid "Position"
 msgstr "位置"
 
-#: src/gtk/x11axis.c:1960
+#: src/gtk/x11axis.c:1959
 msgid "_Fraction:"
 msgstr "小数部桁数(_F):"
 
-#: src/gtk/x11axis.c:1964
+#: src/gtk/x11axis.c:1963
 msgid "_Head:"
 msgstr "先頭(_H):"
 
-#: src/gtk/x11axis.c:1968
+#: src/gtk/x11axis.c:1967
 msgid "_Tail:"
 msgstr "後続(_T):"
 
-#: src/gtk/x11axis.c:1973
+#: src/gtk/x11axis.c:1972
 msgid "_Date/time format:"
 msgstr "日時書式(_D):"
 
-#: src/gtk/x11axis.c:1977
+#: src/gtk/x11axis.c:1976
 msgid "_Auto normalization:"
 msgstr "自動スケール(_A):"
 
-#: src/gtk/x11axis.c:1980
+#: src/gtk/x11axis.c:1979
 msgid "_Log power"
 msgstr "ベキ形式(ログ)(_L)"
 
-#: src/gtk/x11axis.c:1984
+#: src/gtk/x11axis.c:1983
 msgid "_Add plus"
 msgstr "+追加(_A)"
 
-#: src/gtk/x11axis.c:1989
+#: src/gtk/x11axis.c:1988
 msgid "_Zero:"
 msgstr "ゼロ表示(_Z):"
 
-#: src/gtk/x11axis.c:1993
+#: src/gtk/x11axis.c:1992
 msgid "numbering _Math:"
 msgstr "変換数式(_M):"
 
-#: src/gtk/x11axis.c:1996
+#: src/gtk/x11axis.c:1995
 msgid "Format"
 msgstr "フォーマット"
 
-#: src/gtk/x11axis.c:2110
+#: src/gtk/x11axis.c:2109
 msgid "_Point:"
 msgstr "ポイント(_P):"
 
-#: src/gtk/x11axis.c:2114 src/gtk/x11lgnd.c:1966
+#: src/gtk/x11axis.c:2113 src/gtk/x11lgnd.c:1966
 msgid "_Space:"
 msgstr "文字間(_S):"
 
-#: src/gtk/x11axis.c:2118
+#: src/gtk/x11axis.c:2117
 msgid "_Script size:"
 msgstr "スクリプトサイズ(_S):"
 
-#: src/gtk/x11axis.c:2122 src/gtk/x11lgnd.c:1977 src/gtk/x11opt.c:697
+#: src/gtk/x11axis.c:2121 src/gtk/x11lgnd.c:1977 src/gtk/x11opt.c:697
 msgid "_Font:"
 msgstr "フォント(_F):"
 
-#: src/gtk/x11axis.c:2126 src/gtk/x11lgnd.c:1981
+#: src/gtk/x11axis.c:2125 src/gtk/x11lgnd.c:1981
 msgid "_Bold"
 msgstr "太字(_B)"
 
-#: src/gtk/x11axis.c:2130 src/gtk/x11lgnd.c:1985
+#: src/gtk/x11axis.c:2129 src/gtk/x11lgnd.c:1985
 msgid "_Italic"
 msgstr "斜体(_I)"
 
-#: src/gtk/x11axis.c:2144 src/gtk/x11dialg.c:260 src/gtk/x11opt.c:1282
+#: src/gtk/x11axis.c:2143 src/gtk/x11dialg.c:260 src/gtk/x11opt.c:1282
 msgid "Font"
 msgstr "フォント"
 
-#: src/gtk/x11axis.c:2242
+#: src/gtk/x11axis.c:2241
 msgid "_Length:"
 msgstr "長さ(_L):"
 
-#: src/gtk/x11axis.c:2249
+#: src/gtk/x11axis.c:2248
 msgid "_Adjust:"
 msgstr "交差軸(_A):"
 
-#: src/gtk/x11axis.c:2253
+#: src/gtk/x11axis.c:2252
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
-#: src/gtk/x11axis.c:2423 src/gtk/x11parameter.c:312
+#: src/gtk/x11axis.c:2422 src/gtk/x11parameter.c:312
 msgid "_Title:"
 msgstr "タイトル(_T):"
 
-#: src/gtk/x11axis.c:2424
+#: src/gtk/x11axis.c:2423
 msgid "Leave blank to hide"
 msgstr "空欄で非表示"
 
-#: src/gtk/x11axis.c:2429
+#: src/gtk/x11axis.c:2428
 msgid "Applies the text from the data column header as the axis title."
 msgstr "対応するデータの列名（ヘッダー）を取得して設定します。"
 
-#: src/gtk/x11axis.c:2439 src/gtk/x11graph.c:235
+#: src/gtk/x11axis.c:2438 src/gtk/x11graph.c:235
 msgid "_Orientation:"
 msgstr "向き(_O):"
 
-#: src/gtk/x11axis.c:2443
+#: src/gtk/x11axis.c:2442
 msgid "_Offset:"
 msgstr "微調整(_O):"
 
-#: src/gtk/x11axis.c:2444
+#: src/gtk/x11axis.c:2443
 msgid ""
 "Finely adjust the distance from the axis (mm). Negative values are allowed."
 msgstr "軸からの距離を微調整します。マイナス値も入力可能です。"
 
-#: src/gtk/x11axis.c:2448
+#: src/gtk/x11axis.c:2447
 msgid "Font _Size Offset:"
 msgstr "文字サイズ調整(_S):"
 
-#: src/gtk/x11axis.c:2449
+#: src/gtk/x11axis.c:2448
 msgid "Sets a font size offset added to the tick label text size."
 msgstr "目盛数字のサイズに加算されるサイズオフセットを設定します。"
 
-#: src/gtk/x11axis.c:2452 src/gtk/x11lgnd.c:2003
+#: src/gtk/x11axis.c:2451 src/gtk/x11lgnd.c:2003
 msgid "_Raw"
 msgstr "生テキスト(_Raw)"
 
-#: src/gtk/x11axis.c:2453 src/gtk/x11lgnd.c:2004
+#: src/gtk/x11axis.c:2452 src/gtk/x11lgnd.c:2004
 msgid ""
 "Renders text literally, ignoring control characters and escape sequences."
 msgstr "制御コードや特殊文字を解釈せず、入力された文字列をそのまま描画します。"
 
-#: src/gtk/x11axis.c:2457
+#: src/gtk/x11axis.c:2456
 msgid "Title"
 msgstr "タイトル"
 
-#: src/gtk/x11axis.c:2479
+#: src/gtk/x11axis.c:2478
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2488
+#: src/gtk/x11axis.c:2487
 msgid "_Scale"
 msgstr "スケール(_S)"
 
-#: src/gtk/x11axis.c:2492
+#: src/gtk/x11axis.c:2491
 msgid "_Baseline"
 msgstr "軸基線(_B)"
 
-#: src/gtk/x11axis.c:2496
+#: src/gtk/x11axis.c:2495
 msgid "_Gauge"
 msgstr "目盛線(_G)"
 
-#: src/gtk/x11axis.c:2500
+#: src/gtk/x11axis.c:2499
 msgid "_Numbering"
 msgstr "目盛数字(_N)"
 
-#: src/gtk/x11axis.c:2504
+#: src/gtk/x11axis.c:2503
 msgid "_Font"
 msgstr "フォント(_F)"
 
-#: src/gtk/x11axis.c:2508
+#: src/gtk/x11axis.c:2507
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:2512
+#: src/gtk/x11axis.c:2511
 msgid "_Title"
 msgstr "タイトル(_T)"
 
-#: src/gtk/x11axis.c:2948
+#: src/gtk/x11axis.c:2947
 msgid "delete axis (single select)"
 msgstr "軸削除 (単一選択)"
 
-#: src/gtk/x11axis.c:2996
+#: src/gtk/x11axis.c:2995
 msgid "axis property (single select)"
 msgstr "軸プロパティ (単一選択)"
 
-#: src/gtk/x11axis.c:3079
+#: src/gtk/x11axis.c:3078
 msgid "scale zoom (multi select)"
 msgstr "スケールズーム (複数選択)"
 
-#: src/gtk/x11axis.c:3171
+#: src/gtk/x11axis.c:3170
 msgid "scale clear (multi select)"
 msgstr "スケールクリア (複数選択)"
 
-#: src/gtk/x11axis.c:3257
+#: src/gtk/x11axis.c:3256
 msgid "delete grid (multi select)"
 msgstr "グリッド削除 (複数選択)"
 
-#: src/gtk/x11axis.c:3331
+#: src/gtk/x11axis.c:3330
 msgid "grid property (multi select)"
 msgstr "グリッドプロパティ (複数選択)"
 
-#: src/gtk/x11axis.c:3512
+#: src/gtk/x11axis.c:3511
 msgid "scale undo (multi select)"
 msgstr "スケールアンドゥ (複数選択)"
 
-#: src/gtk/x11commn.c:1302 src/gtk/x11opt.c:1814
+#: src/gtk/x11commn.c:1307 src/gtk/x11opt.c:1814
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1392 src/gtk/x11menu.c:437
+#: src/gtk/x11commn.c:1397 src/gtk/x11menu.c:437
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1672
+#: src/gtk/x11commn.c:1677
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1889
+#: src/gtk/x11commn.c:1894
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -616,36 +616,36 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:2205
+#: src/gtk/x11commn.c:2210
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:2219
+#: src/gtk/x11commn.c:2224
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:2223
+#: src/gtk/x11commn.c:2228
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:2252
+#: src/gtk/x11commn.c:2257
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:2318
+#: src/gtk/x11commn.c:2323
 msgid "Drawing end"
 msgstr "描画終了"
 
-#: src/gtk/x11commn.c:2366
+#: src/gtk/x11commn.c:2371
 msgid "Error messages"
 msgstr "エラーメッセージ"
 
-#: src/gtk/x11commn.c:2420 src/gtk/x11commn.c:2523
+#: src/gtk/x11commn.c:2425 src/gtk/x11commn.c:2528
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:2556
+#: src/gtk/x11commn.c:2561
 msgid "error"
 msgstr "エラー"
 
@@ -682,7 +682,7 @@ msgid "auto"
 msgstr "自動"
 
 #: src/gtk/x11dialg.c:124 src/gtk/x11merge.c:54 src/gtk/x11opt.c:470
-#: src/odata.c:236
+#: src/odata.c:242
 msgid "file"
 msgstr "ファイル"
 
@@ -690,7 +690,7 @@ msgstr "ファイル"
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:132 src/odata.c:238
+#: src/gtk/x11dialg.c:132 src/odata.c:244
 msgid "array"
 msgstr "配列"
 
@@ -710,7 +710,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:152 src/odata.c:273
+#: src/gtk/x11dialg.c:152 src/odata.c:279
 msgid "fit"
 msgstr "フィット"
 
@@ -1290,31 +1290,31 @@ msgstr "最大値(_M):"
 msgid "di_ViSion:"
 msgstr "分割数(_V):"
 
-#: src/gtk/x11file.c:5285 src/gtk/x11menu.c:411
+#: src/gtk/x11file.c:5286 src/gtk/x11menu.c:411
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:5326
+#: src/gtk/x11file.c:5327
 msgid "close data (multi select)"
 msgstr "データを閉じる (複数選択)"
 
-#: src/gtk/x11file.c:5508
+#: src/gtk/x11file.c:5511
 msgid "data property (multi select)"
 msgstr "データプロパティ (複数選択)"
 
-#: src/gtk/x11file.c:5573
+#: src/gtk/x11file.c:5576
 msgid "edit data file (single select)"
 msgstr "データファイルの編集 (単一選択)"
 
-#: src/gtk/x11file.c:6664
+#: src/gtk/x11file.c:6667
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:6665
+#: src/gtk/x11file.c:6668
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:6682
+#: src/gtk/x11file.c:6685
 msgid "Data file"
 msgstr "データの保存"
 
@@ -1545,11 +1545,11 @@ msgstr "データファイルを含める(_I)"
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1223 src/gtk/x11menu.c:426
+#: src/gtk/x11graph.c:1227 src/gtk/x11menu.c:426
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1439
+#: src/gtk/x11graph.c:1443
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2730,7 +2730,7 @@ msgstr "適用(_A)"
 msgid "Instance name"
 msgstr "インスタンス名"
 
-#: src/gtk/gtk_presettings.c:1898 src/odata.c:252 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1898 src/odata.c:258 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
@@ -4065,6 +4065,94 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:134
 msgid ""
+"<b>sheet_cell</b>(<i>row, col</i>), <b>sheet_cell</b>(<i>id, row, col</i>)\n"
+"Returns a cell value from the current sheet or a data object\n"
+"if it currently has spreadsheet data open.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>row</i>, <i>col</i> (current sheet).\n"
+"3 args: <i>id</i>, <i>row</i>, <i>col</i> (data object with <i>id</i>)."
+msgstr ""
+"<b>sheet_cell</b>(<i>row, col</i>), <b>sheet_cell</b>(<i>id, row, col</i>)\n"
+"現在のシートまたはシートを開いている\n"
+"データオブジェクトのセル値を返す。\n"
+"行・列番号は1から始まる。\n"
+"\n"
+"引数2つ: 行, 列 (現在のシート)\n"
+"引数3つ: ID, 行, 列 (指定したIDのデータオブジェクト)"
+
+#: src/gtk/completion_info_data.c:135
+msgid ""
+"<b>sheet_cell_text</b>(<i>$var, row, col</i>), <b>sheet_cell_text</"
+"b>(<i>$var, id, row, col</i>)\n"
+"Assigns a cell value to the specified string variable <i>$var</i>\n"
+"from the current sheet or a data object\n"
+"if it currently has spreadsheet data open.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"3 args: <i>$var</i>, <i>row</i>, <i>col</i> (current sheet)\n"
+"4 args: <i>$var</i>, <i>id</i>, <i>row</i>, <i>col</i> (data object with "
+"<i>id</i>)."
+msgstr ""
+"<b>sheet_cell_text</b>(<i>$var, row, col</i>), <b>sheet_cell_text</b>(<i>$var, id, row, col</i>)\n"
+"現在のシートまたはシートを開いているデータオブジェクトの\n"
+"セル値を文字列変数 <i>$var</i> に代入する。\n"
+"行・列番号は1から始まる。\n"
+"\n"
+"引数3つ: 文字列変数, 行, 列 (現在のシート)\n"
+"引数4つ: 文字列変数, ID, 行, 列 (指定したIDのデータオブジェクト)"
+
+#: src/gtk/completion_info_data.c:136
+msgid ""
+"<b>sheet_col_values</b>(<i>array, col[, start[, end]]</i>)\n"
+"Assigns column data from the current sheet\n"
+"to the specified array.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>array</i>, <i>col</i> (from first to last row)\n"
+"3 args: <i>array</i>, <i>col</i>, <i>start</i> (from start row to last row)\n"
+"4 args: <i>array</i>, <i>col</i>, <i>start</i>, <i>end</i> (from start row "
+"to end row)"
+msgstr ""
+"<b>sheet_col_values</b>(<i>array, col[, start[, end]]</i>)\n"
+"現在のシートの指定した列データを配列に代入する。\n"
+"行・列番号は1から始まる。\n"
+"\n"
+"引数2つ: 配列, 列 (最初から最後の行まで)\n"
+"引数3つ: 配列, 列, 開始行 (開始行から最後の行まで)\n"
+"引数4つ: 配列, 列, 開始行, 終了行 (開始行から終了行まで)"
+
+#: src/gtk/completion_info_data.c:137
+msgid ""
+"<b>sheet_name</b>(<i>$var</i>)\n"
+"Assigns the name of the current sheet\n"
+"to the specified string variable <i>$var</i>."
+msgstr ""
+"<b>sheet_name</b>(<i>$var</i>)\n"
+"<i>$var</i> に現在のシート名を代入する。"
+
+#: src/gtk/completion_info_data.c:138
+msgid ""
+"<b>sheet_row_values</b>(<i>array, row[, start[, end]]</i>)\n"
+"Assigns row data from the current sheet to the specified array.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>array</i>, <i>row</i> (from first to last column)\n"
+"3 args: <i>array</i>, <i>row</i>, <i>start</i> (from start column to last "
+"column)\n"
+"4 args: <i>array</i>, <i>row</i>, <i>start</i>, <i>end</i> (from start "
+"column to end column)"
+msgstr ""
+"<b>sheet_row_values</b>(<i>array, row[, start[, end]]</i>)\n"
+"現在のシートの指定した行データを配列に代入する。\n"
+"行・列番号は1から始まる。\n"
+"\n"
+"引数2つ: 配列, 行 (最初から最後の列まで)\n"
+"引数3つ: 配列, 行, 開始列 (開始列から最後の列まで)\n"
+"引数4つ: 配列, 行, 開始列, 終了列 (開始列から終了列まで)"
+
+#: src/gtk/completion_info_data.c:139
+msgid ""
 "<b>shift</b>(<i>a, n</i>)\n"
 "remove the first <i>n</i> elements of array <i>a</i> (<i>n</i> = 0 is as "
 "same as <i>n</i> = 1).\n"
@@ -4076,7 +4164,7 @@ msgstr ""
 "残りの要素は前に詰められる。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:135
+#: src/gtk/completion_info_data.c:140
 msgid ""
 "<b>sign</b>(<i>x</i>)\n"
 "positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;= 0)"
@@ -4084,7 +4172,7 @@ msgstr ""
 "<b>sign</b>(<i>x</i>)\n"
 "正負の符号 (<i>x</i> ＜ 0 で -1、<i>x</i> ≧ 0 で 1)"
 
-#: src/gtk/completion_info_data.c:136
+#: src/gtk/completion_info_data.c:141
 msgid ""
 "<b>sin</b>(<i>x</i>)\n"
 "sine function"
@@ -4092,7 +4180,7 @@ msgstr ""
 "<b>sin</b>(<i>x</i>)\n"
 "サイン"
 
-#: src/gtk/completion_info_data.c:137
+#: src/gtk/completion_info_data.c:142
 msgid ""
 "<b>sinh</b>(<i>x</i>)\n"
 "hyperbolic sine function"
@@ -4100,7 +4188,7 @@ msgstr ""
 "<b>sinh</b>(<i>x</i>)\n"
 "ハイパボリックサイン"
 
-#: src/gtk/completion_info_data.c:138
+#: src/gtk/completion_info_data.c:143
 msgid ""
 "<b>size</b>(<i>a</i>)\n"
 "number of elements of array <i>a</i>"
@@ -4108,7 +4196,7 @@ msgstr ""
 "<b>size</b>(<i>a</i>)\n"
 "配列 <i>a</i> の要素数"
 
-#: src/gtk/completion_info_data.c:139
+#: src/gtk/completion_info_data.c:144
 msgid ""
 "<b>sort</b>(<i>a, ignore_case</i>)\n"
 "sort elements of array <i>a</i>\n"
@@ -4120,7 +4208,7 @@ msgstr ""
 "文字列に含まれる ascii 文字の\n"
 "大文字小文字を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:140
+#: src/gtk/completion_info_data.c:145
 msgid ""
 "<b>sprintf</b>(<i>$str, $format, v1, v2, ...</i>)\n"
 "Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\n"
@@ -4132,7 +4220,7 @@ msgstr ""
 "文字列に変換して <i>$str</i> に代入する。\n"
 "変換された文字列の文字数を返す。"
 
-#: src/gtk/completion_info_data.c:141
+#: src/gtk/completion_info_data.c:146
 msgid ""
 "<b>sqr</b>(<i>x</i>)\n"
 "squaring"
@@ -4140,7 +4228,7 @@ msgstr ""
 "<b>sqr</b>(<i>x</i>)\n"
 "二乗"
 
-#: src/gtk/completion_info_data.c:142
+#: src/gtk/completion_info_data.c:147
 msgid ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "square root"
@@ -4148,7 +4236,7 @@ msgstr ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "平方根"
 
-#: src/gtk/completion_info_data.c:143
+#: src/gtk/completion_info_data.c:148
 msgid ""
 "<b>srand</b>(<i>x</i>)\n"
 "Sets the seed for the random number generator which is used by the <b>rand</"
@@ -4157,7 +4245,7 @@ msgstr ""
 "<b>srand</b>(<i>x</i>)\n"
 "<b>rand</b>() 関数で作られる疑似乱数系列の新しい種を設定する。"
 
-#: src/gtk/completion_info_data.c:144
+#: src/gtk/completion_info_data.c:149
 msgid ""
 "<b>strftime</b>(<i>$str, $fmt, t, utc</i>)\n"
 "convers <i>t</i> (the number of seconds elapsed since the Epoch)\n"
@@ -4173,7 +4261,7 @@ msgstr ""
 "<i>utc</i> が偽 (0) の時はローカル時刻、\n"
 "それ以外の場合は協定世界時 (UTC) に変換する。"
 
-#: src/gtk/completion_info_data.c:145
+#: src/gtk/completion_info_data.c:150
 msgid ""
 "<b>string</b>(<i>$str, value</i>)\n"
 "Converts <i>value</i> to a string and set to <i>$str</i>.\n"
@@ -4183,7 +4271,7 @@ msgstr ""
 "数値 <i>value</i> を文字列に変換して <i>$str</i> に代入する。\n"
 "<i>value</i> を返す。"
 
-#: src/gtk/completion_info_data.c:146
+#: src/gtk/completion_info_data.c:151
 msgid ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the end of the string <i>$dest</i>."
@@ -4191,7 +4279,7 @@ msgstr ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "文字列 <i>$dest</i> の最後に文字列 <i>$src</i> を連結する。"
 
-#: src/gtk/completion_info_data.c:147
+#: src/gtk/completion_info_data.c:152
 msgid ""
 "<b>string_column</b>(<i>$dest, index</i>)\n"
 "Set <i>index</i>th column in the reading data-line to the string <i>$dest</"
@@ -4202,7 +4290,7 @@ msgstr ""
 "文字列を <i>$dest</i> に代入する。\n"
 "<i>index</i> が 0 のときは行全体の文字列が代入される。"
 
-#: src/gtk/completion_info_data.c:148
+#: src/gtk/completion_info_data.c:153
 msgid ""
 "<b>string_compare</b>(<i>$str1, $str2, ignore_case</i>)\n"
 "Compare two strings, ignoring the case of ASCII characters when "
@@ -4215,7 +4303,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の\n"
 "大文字小文字を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:149
+#: src/gtk/completion_info_data.c:154
 msgid ""
 "<b>string_down</b>(<i>$dest, $src</i>)\n"
 "Converts all uppercase ASCII letters to lowercase ASCII letters in the "
@@ -4225,7 +4313,7 @@ msgstr ""
 "文字列 <i>$src</i> に含まれる ascii 文字を小文字にした\n"
 "文字列を <i>$dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:150
+#: src/gtk/completion_info_data.c:155
 msgid ""
 "<b>string_erase</b>(<i>$str, pos, len</i>)\n"
 "Removes <i>len</i> characters from the string <i>$str</i>, starting at "
@@ -4236,7 +4324,7 @@ msgstr ""
 "る。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:151
+#: src/gtk/completion_info_data.c:156
 msgid ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "Converts the string <i>$str</i> to a floating-point value and return the "
@@ -4245,7 +4333,7 @@ msgstr ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "<i>$str</i> を浮動小数点に変換し、その値を返す。"
 
-#: src/gtk/completion_info_data.c:152
+#: src/gtk/completion_info_data.c:157
 msgid ""
 "<b>string_float_array</b>(<i>dest, $ary</i>)\n"
 "Converts the string element of the array <i>$ary</i>\n"
@@ -4256,7 +4344,7 @@ msgstr ""
 "配列 <i>$ary</i> の各要素を浮動小数点に変換し、\n"
 "その値を配列 <i>dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:153
+#: src/gtk/completion_info_data.c:158
 msgid ""
 "<b>string_insert</b>(<i>$dest, $src, pos</i>)\n"
 "Inserts the string <i>$src</i> into the string <i>$dest</i> at the position "
@@ -4266,7 +4354,7 @@ msgstr ""
 "文字列 <i>$dest</i> の <i>pos</i> 番目の文字の前に文字列 <i>$src</i> を挿入す"
 "る。"
 
-#: src/gtk/completion_info_data.c:154
+#: src/gtk/completion_info_data.c:159
 msgid ""
 "<b>string_join</b>(<i>$dest, $sep, $array</i>)\n"
 "Joins a number of strings in the array <i>$array</i>\n"
@@ -4277,7 +4365,7 @@ msgstr ""
 "文字列の配列 <i>$array</i> の各要素を連結して <i>$dest</i> に代入する。\n"
 "各要素のあいだには、文字列 <i>$sep</i> が挿入される。"
 
-#: src/gtk/completion_info_data.c:155
+#: src/gtk/completion_info_data.c:160
 msgid ""
 "<b>string_length</b>(<i>$str</i>)\n"
 "Return the length of the string <i>$str</i> in characters."
@@ -4286,7 +4374,7 @@ msgstr ""
 "<i>$str</i> に含まれる文字数を返す。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:156
+#: src/gtk/completion_info_data.c:161
 msgid ""
 "<b>string_match</b>(<i>$str, $regexp, ignore_case</i>)\n"
 "Scans for a match in the string <i>$str</i> for the regular expression "
@@ -4300,7 +4388,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の大文字小文字"
 "を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:157
+#: src/gtk/completion_info_data.c:162
 msgid ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the start of the string <i>$dest</i>."
@@ -4308,7 +4396,7 @@ msgstr ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "文字列 <i>$dest</i> の最初に文字列 <i>$src</i> を連結する。"
 
-#: src/gtk/completion_info_data.c:158
+#: src/gtk/completion_info_data.c:163
 msgid ""
 "<b>string_replace</b>(<i>$dest, $src, $regexp, $replacement, ignore_case</"
 "i>)\n"
@@ -4330,7 +4418,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の大文字小文字"
 "を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:159
+#: src/gtk/completion_info_data.c:164
 msgid ""
 "<b>string_reverse</b>(<i>$dest, $src</i>)\n"
 "Reverses the UTF-8 string <i>$src</i> and set to the string <i>$dest</i>."
@@ -4339,7 +4427,7 @@ msgstr ""
 "文字列 <i>$src</i> の並びを逆にした文字列を <i>$dest</i> に代入する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:160
+#: src/gtk/completion_info_data.c:165
 msgid ""
 "<b>string_split</b>(<i>$dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -4358,7 +4446,7 @@ msgstr ""
 "<i>use_regexp</i> が 2 の場合、文字列に含まれる\n"
 "ascii 文字の大文字小文字を区別せずに分割する。"
 
-#: src/gtk/completion_info_data.c:161
+#: src/gtk/completion_info_data.c:166
 msgid ""
 "<b>string_split_float</b>(<i>dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -4378,7 +4466,7 @@ msgstr ""
 "<i>use_regexp</i> が 2 の場合、文字列に含まれる\n"
 "ascii 文字の大文字小文字を区別せずに分割する。"
 
-#: src/gtk/completion_info_data.c:162
+#: src/gtk/completion_info_data.c:167
 msgid ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "Removes leading and trailing whitespace from the string <i>$str</i>."
@@ -4386,7 +4474,7 @@ msgstr ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "文字列 <i>$str</i> の先頭、最後にある空白文字を削除する。"
 
-#: src/gtk/completion_info_data.c:163
+#: src/gtk/completion_info_data.c:168
 msgid ""
 "<b>string_substring</b>(<i>$dest, $src, start, end</i>)\n"
 "Copies a substring out of a UTF-8 encoded string <i>$src</i>.\n"
@@ -4398,7 +4486,7 @@ msgstr ""
 "文字列を <i>$dest</i> に代入する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:164
+#: src/gtk/completion_info_data.c:169
 msgid ""
 "<b>string_truncate</b>(<i>$str, len</i>)\n"
 "Cuts off the end of the string <i>$str</i>, leaving the first <i>len</i> "
@@ -4408,7 +4496,7 @@ msgstr ""
 "文字列 <i>$str</i> の先頭 len 文字以降を削除する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:165
+#: src/gtk/completion_info_data.c:170
 msgid ""
 "<b>string_up</b>(<i>$dest, $src</i>)\n"
 "Converts all lowercase ASCII letters to uppercase ASCII letters in the "
@@ -4418,7 +4506,7 @@ msgstr ""
 "文字列 <i>$src</i> に含まれる ascii 文字を大文字にした\n"
 "文字列を <i>$dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:166
+#: src/gtk/completion_info_data.c:171
 msgid ""
 "<b>sum</b>(<i>x</i>)\n"
 "Integration"
@@ -4426,7 +4514,7 @@ msgstr ""
 "<b>sum</b>(<i>x</i>)\n"
 "積算"
 
-#: src/gtk/completion_info_data.c:167
+#: src/gtk/completion_info_data.c:172
 msgid ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "square sum of arguments"
@@ -4434,7 +4522,7 @@ msgstr ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "引数の自乗和"
 
-#: src/gtk/completion_info_data.c:168
+#: src/gtk/completion_info_data.c:173
 msgid ""
 "<b>tan</b>(<i>x</i>)\n"
 "tangent function"
@@ -4442,7 +4530,7 @@ msgstr ""
 "<b>tan</b>(<i>x</i>)\n"
 "タンジェント"
 
-#: src/gtk/completion_info_data.c:169
+#: src/gtk/completion_info_data.c:174
 msgid ""
 "<b>tanh</b>(<i>x</i>)\n"
 "hyperbolic tangent function"
@@ -4450,7 +4538,7 @@ msgstr ""
 "<b>tanh</b>(<i>x</i>)\n"
 "ハイパボリックタンジェント"
 
-#: src/gtk/completion_info_data.c:170
+#: src/gtk/completion_info_data.c:175
 msgid ""
 "<b>text_align</b>(<i>x, y</i>)\n"
 "Set alignment of a text drawing.\n"
@@ -4464,7 +4552,7 @@ msgstr ""
 "す。\n"
 "(0 ≦ <i>x, y</i> ≦ 1)"
 
-#: src/gtk/completion_info_data.c:171
+#: src/gtk/completion_info_data.c:176
 msgid ""
 "<b>text_font</b>(<i>font</i>)\n"
 "Set font setting of drawing texts.\n"
@@ -4476,7 +4564,7 @@ msgstr ""
 "<i>font</i> は 0, 1, 2 がそれぞれ \"Sans-serif\", \"Serif\", \"Monospace\" に"
 "対応する。"
 
-#: src/gtk/completion_info_data.c:172
+#: src/gtk/completion_info_data.c:177
 msgid ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "assign text of the the text object which ID is <i>id</i> to the variable "
@@ -4485,7 +4573,7 @@ msgstr ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "<i>$text</i> に ID が <i>id</i> の text オブジェクトの文字列を設定する。"
 
-#: src/gtk/completion_info_data.c:173
+#: src/gtk/completion_info_data.c:178
 msgid ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "set text of the the text object which ID is <i>id</i> as the variable "
@@ -4494,7 +4582,7 @@ msgstr ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "ID が <i>id</i> の text オブジェクトの文字列を <i>$text</i> に設定する。"
 
-#: src/gtk/completion_info_data.c:174
+#: src/gtk/completion_info_data.c:179
 msgid ""
 "<b>text_size</b>(<i>pt, space, script</i>)\n"
 "Set font size and other settings of drawing texts.\n"
@@ -4506,7 +4594,7 @@ msgstr ""
 "<i>pt</i> でフォントサイズを指定できる。\n"
 "続く引数で文字間隔、スクリプトサイズを指定できる。"
 
-#: src/gtk/completion_info_data.c:175
+#: src/gtk/completion_info_data.c:180
 msgid ""
 "<b>text_style</b>(<i>style</i>)\n"
 "Set font style settings of drawing texts.\n"
@@ -4518,7 +4606,7 @@ msgstr ""
 "<i>style</i> は 0, 1, 2, 3 がそれぞれ \"normal\", \"bold\", \"italic\", "
 "\"bold-italic\" に対応する。"
 
-#: src/gtk/completion_info_data.c:176
+#: src/gtk/completion_info_data.c:181
 msgid ""
 "<b>theta</b>(<i>x</i>)\n"
 "staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)"
@@ -4526,7 +4614,7 @@ msgstr ""
 "<b>theta</b>(<i>x</i>)\n"
 "階段関数(<i>x</i>≧0 のとき 1, それ以外は 0)"
 
-#: src/gtk/completion_info_data.c:177
+#: src/gtk/completion_info_data.c:182
 msgid ""
 "<b>time</b>(<i></i>)\n"
 "returns the time as the number of seconds since the Epoch,\n"
@@ -4535,7 +4623,7 @@ msgstr ""
 "<b>time</b>(<i></i>)\n"
 "紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。"
 
-#: src/gtk/completion_info_data.c:178
+#: src/gtk/completion_info_data.c:183
 msgid ""
 "<b>times</b>(<i>n, index, ex</i>)\n"
 "Repeat <i>ex</i> <i>n</i> times.\n"
@@ -4545,7 +4633,7 @@ msgstr ""
 "式 <i>ex</i> を <i>n</i> 回評価する。\n"
 "繰り返しのカウンタは、第二引数に指定した変数 (<i>index</i>) で参照できる。"
 
-#: src/gtk/completion_info_data.c:179
+#: src/gtk/completion_info_data.c:184
 msgid ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "Chebyshev polynomials"
@@ -4553,7 +4641,7 @@ msgstr ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "チェビシフ多項式"
 
-#: src/gtk/completion_info_data.c:180
+#: src/gtk/completion_info_data.c:185
 msgid ""
 "<b>unix2mjd</b>(<i>time</i>)\n"
 "Modified Julian Date\n"
@@ -4565,7 +4653,7 @@ msgstr ""
 "(<i>time</i> は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されな"
 "い)"
 
-#: src/gtk/completion_info_data.c:181
+#: src/gtk/completion_info_data.c:186
 msgid ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise"
@@ -4573,7 +4661,7 @@ msgstr ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "<i>x</i> ≠ 0 のとき <i>ex2</i>, <i>x</i> = 0 のとき <i>ex1</i>"
 
-#: src/gtk/completion_info_data.c:182
+#: src/gtk/completion_info_data.c:187
 msgid ""
 "<b>unshift</b>(<i>a, x</i>)\n"
 "adds new element <i>x</i> to the beginning of an array <i>a</i>.\n"
@@ -4583,7 +4671,7 @@ msgstr ""
 "配列 <i>a</i> の先頭に <i>x</i> を挿入する。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:183
+#: src/gtk/completion_info_data.c:188
 msgid ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)"
@@ -4591,7 +4679,7 @@ msgstr ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "(<i>x</i>≠0) xor (<i>y</i>≠0) のとき真(=1)"
 
-#: src/gtk/completion_info_data.c:184
+#: src/gtk/completion_info_data.c:189
 msgid ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
@@ -4600,7 +4688,7 @@ msgstr ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "第2種<i>l</i>次球ベッセル関数"
 
-#: src/gtk/completion_info_data.c:185
+#: src/gtk/completion_info_data.c:190
 msgid ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
@@ -4609,7 +4697,7 @@ msgstr ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "第2種<i>n</i>次ベッセル関数"
 
-#: src/gtk/completion_info_data.c:186
+#: src/gtk/completion_info_data.c:191
 msgid ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "compute the irregular cylindrical Bessel function of fractional order |"
@@ -4618,7 +4706,7 @@ msgstr ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "第2種<i>nu</i>次ベッセル関数 (<i>nu</i> は正の実数)"
 
-#: src/gtk/completion_info_data.c:187
+#: src/gtk/completion_info_data.c:192
 msgid ""
 "<b>zeta</b>(<i>s</i>)\n"
 "compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> !"
@@ -4627,7 +4715,7 @@ msgstr ""
 "<b>zeta</b>(<i>s</i>)\n"
 "リーマンゼータ関数ζ(<i>s</i>)"
 
-#: src/gtk/completion_info_data.c:188
+#: src/gtk/completion_info_data.c:193
 msgid ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1"
@@ -4635,7 +4723,7 @@ msgstr ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "リーマンゼータ関数ζ(<i>n</i>) (<i>n</i> は整数)"
 
-#: src/gtk/completion_info_data.c:189
+#: src/gtk/completion_info_data.c:194
 msgid ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1"
@@ -4643,7 +4731,7 @@ msgstr ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "リーマンゼータ関数ζ(<i>s</i>) - 1"
 
-#: src/gtk/completion_info_data.c:190
+#: src/gtk/completion_info_data.c:195
 msgid ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1"
@@ -4651,7 +4739,7 @@ msgstr ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "リーマンゼータ関数ζ(<i>n</i>) - 1 (<i>n</i> は整数)"
 
-#: src/gtk/completion_info_data.c:191
+#: src/gtk/completion_info_data.c:196
 msgid ""
 "<b>zip</b>(<i>a1, a2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>a1</i> and <i>a2</i>.\n"
@@ -4663,7 +4751,7 @@ msgstr ""
 "配列の各要素は、第3, 第4引数に指定した変数 (<i>item1, item2</i>) で参照でき"
 "る。"
 
-#: src/gtk/completion_info_data.c:192
+#: src/gtk/completion_info_data.c:197
 msgid ""
 "<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>src1</i> and <i>sec2</"
@@ -4678,7 +4766,7 @@ msgstr ""
 "配列の各要素は、第4, 第5引数に指定した変数 (<i>item1, item2</i>) で参照でき"
 "る。"
 
-#: src/gtk/completion_info_data.c:196
+#: src/gtk/completion_info_data.c:201
 msgid ""
 "<b>%D</b>\n"
 "The ID of the instance of the data object"
@@ -4686,7 +4774,7 @@ msgstr ""
 "<b>%D</b>\n"
 "データの番号"
 
-#: src/gtk/completion_info_data.c:197
+#: src/gtk/completion_info_data.c:202
 msgid ""
 "<b>%N</b>\n"
 "The number of instances of data object"
@@ -4694,7 +4782,7 @@ msgstr ""
 "<b>%N</b>\n"
 "データオブジェクトのインスタンス数"
 
-#: src/gtk/completion_info_data.c:198
+#: src/gtk/completion_info_data.c:203
 msgid ""
 "<b>ARC_OBJ</b>\n"
 "The identification number of the arc object"
@@ -4702,7 +4790,7 @@ msgstr ""
 "<b>ARC_OBJ</b>\n"
 "arc オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:199
+#: src/gtk/completion_info_data.c:204
 msgid ""
 "<b>AVX</b>\n"
 "The average of X"
@@ -4710,7 +4798,7 @@ msgstr ""
 "<b>AVX</b>\n"
 "(X) column の生データの平均"
 
-#: src/gtk/completion_info_data.c:200
+#: src/gtk/completion_info_data.c:205
 msgid ""
 "<b>AVY</b>\n"
 "The average of X"
@@ -4718,7 +4806,7 @@ msgstr ""
 "<b>AVY</b>\n"
 "(Y) column の生データの平均"
 
-#: src/gtk/completion_info_data.c:201
+#: src/gtk/completion_info_data.c:206
 msgid ""
 "<b>AXISX</b>\n"
 "The ID of the axis instance specified as X axis"
@@ -4726,7 +4814,7 @@ msgstr ""
 "<b>AXISX</b>\n"
 "「X 軸」に指定された axis オブジェクトの ID"
 
-#: src/gtk/completion_info_data.c:202
+#: src/gtk/completion_info_data.c:207
 msgid ""
 "<b>AXISX_LEN</b>\n"
 "Length of the X axis"
@@ -4734,7 +4822,7 @@ msgstr ""
 "<b>AXISX_LEN</b>\n"
 "「X 軸」の長さ"
 
-#: src/gtk/completion_info_data.c:203
+#: src/gtk/completion_info_data.c:208
 msgid ""
 "<b>AXISX_MAX</b>\n"
 "The maximum value of the X axis"
@@ -4742,7 +4830,7 @@ msgstr ""
 "<b>AXISX_MAX</b>\n"
 "「X 軸」の最大値"
 
-#: src/gtk/completion_info_data.c:204
+#: src/gtk/completion_info_data.c:209
 msgid ""
 "<b>AXISX_MIN</b>\n"
 "The minimum value of the X axis"
@@ -4750,7 +4838,7 @@ msgstr ""
 "<b>AXISX_MIN</b>\n"
 "「X 軸」の最小値"
 
-#: src/gtk/completion_info_data.c:205
+#: src/gtk/completion_info_data.c:210
 msgid ""
 "<b>AXISY</b>\n"
 "The ID of the axis instance specified as Y axis"
@@ -4758,7 +4846,7 @@ msgstr ""
 "<b>AXISY</b>\n"
 "「Y 軸」に指定された axis オブジェクトの ID"
 
-#: src/gtk/completion_info_data.c:206
+#: src/gtk/completion_info_data.c:211
 msgid ""
 "<b>AXISY_LEN</b>\n"
 "Length of the Y axis"
@@ -4766,7 +4854,7 @@ msgstr ""
 "<b>AXISY_LEN</b>\n"
 "「Y 軸」の長さ"
 
-#: src/gtk/completion_info_data.c:207
+#: src/gtk/completion_info_data.c:212
 msgid ""
 "<b>AXISY_MAX</b>\n"
 "The maximum value of the Y axis"
@@ -4774,7 +4862,7 @@ msgstr ""
 "<b>AXISY_MAX</b>\n"
 "「Y 軸」の最大値"
 
-#: src/gtk/completion_info_data.c:208
+#: src/gtk/completion_info_data.c:213
 msgid ""
 "<b>AXISY_MIN</b>\n"
 "The minimum value of the Y axis"
@@ -4782,7 +4870,7 @@ msgstr ""
 "<b>AXISY_MIN</b>\n"
 "「Y 軸」の最小値"
 
-#: src/gtk/completion_info_data.c:209
+#: src/gtk/completion_info_data.c:214
 msgid ""
 "<b>BREAK</b>\n"
 "Missing data (data lines are not combined)"
@@ -4790,7 +4878,7 @@ msgstr ""
 "<b>BREAK</b>\n"
 "欠損データ (データ線は分断)"
 
-#: src/gtk/completion_info_data.c:210
+#: src/gtk/completion_info_data.c:215
 msgid ""
 "<b>COLX</b>\n"
 "The column number specified for X"
@@ -4798,7 +4886,7 @@ msgstr ""
 "<b>COLX</b>\n"
 "「X カラム」に指定された数"
 
-#: src/gtk/completion_info_data.c:211
+#: src/gtk/completion_info_data.c:216
 msgid ""
 "<b>COLY</b>\n"
 "The column number specified for Y"
@@ -4806,7 +4894,7 @@ msgstr ""
 "<b>COLY</b>\n"
 "「Y カラム」に指定された数"
 
-#: src/gtk/completion_info_data.c:212
+#: src/gtk/completion_info_data.c:217
 msgid ""
 "<b>CONT</b>\n"
 "Missing data (data lines are combined)"
@@ -4814,7 +4902,7 @@ msgstr ""
 "<b>CONT</b>\n"
 "欠損データ (データ線は結合)"
 
-#: src/gtk/completion_info_data.c:213
+#: src/gtk/completion_info_data.c:218
 msgid ""
 "<b>DATA_OBJ</b>\n"
 "The identification number of the data object"
@@ -4822,7 +4910,7 @@ msgstr ""
 "<b>DATA_OBJ</b>\n"
 "data オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:214
+#: src/gtk/completion_info_data.c:219
 msgid ""
 "<b>E</b>\n"
 "The base of natural logarithm (Napier's constant)"
@@ -4830,7 +4918,7 @@ msgstr ""
 "<b>E</b>\n"
 "自然対数の底"
 
-#: src/gtk/completion_info_data.c:215
+#: src/gtk/completion_info_data.c:220
 msgid ""
 "<b>EULER</b>\n"
 "Euler's constant"
@@ -4838,7 +4926,7 @@ msgstr ""
 "<b>EULER</b>\n"
 "オイラーの定数"
 
-#: src/gtk/completion_info_data.c:216
+#: src/gtk/completion_info_data.c:221
 msgid ""
 "<b>FALSE</b>\n"
 "the FALSE value (0)"
@@ -4846,7 +4934,7 @@ msgstr ""
 "<b>FALSE</b>\n"
 "偽の値 (0)"
 
-#: src/gtk/completion_info_data.c:217
+#: src/gtk/completion_info_data.c:222
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
@@ -4854,7 +4942,7 @@ msgstr ""
 "<b>FILE_OBJ</b>\n"
 "file オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:218
+#: src/gtk/completion_info_data.c:223
 msgid ""
 "<b>FILL_RULE_EVEN_ODD</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4864,7 +4952,7 @@ msgstr ""
 "ポリゴンを偶奇則で塗りつぶす。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:219
+#: src/gtk/completion_info_data.c:224
 msgid ""
 "<b>FILL_RULE_NONE</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4874,7 +4962,7 @@ msgstr ""
 "ポリゴンを塗りつぶさない。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:220
+#: src/gtk/completion_info_data.c:225
 msgid ""
 "<b>FILL_RULE_WINDING</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4884,7 +4972,7 @@ msgstr ""
 "ポリゴンをワインディング則で塗りつぶす。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:221
+#: src/gtk/completion_info_data.c:226
 msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
@@ -4897,7 +4985,7 @@ msgstr ""
 "1回目の呼出しで真(=1)、\n"
 "2回目の呼出しで偽(=0)。"
 
-#: src/gtk/completion_info_data.c:222
+#: src/gtk/completion_info_data.c:227
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
@@ -4905,7 +4993,7 @@ msgstr ""
 "<b>FLINE</b>\n"
 "「最終行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:223
+#: src/gtk/completion_info_data.c:228
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
@@ -4913,7 +5001,7 @@ msgstr ""
 "<b>HSKIP</b>\n"
 "「先頭スキップ行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:224
+#: src/gtk/completion_info_data.c:229
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
@@ -4921,7 +5009,7 @@ msgstr ""
 "<b>MARK_OBJ</b>\n"
 "mark オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:225
+#: src/gtk/completion_info_data.c:230
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
@@ -4929,7 +5017,7 @@ msgstr ""
 "<b>MASK</b>\n"
 "「マスク」に設定された行数"
 
-#: src/gtk/completion_info_data.c:226
+#: src/gtk/completion_info_data.c:231
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
@@ -4937,7 +5025,7 @@ msgstr ""
 "<b>MAXX</b>\n"
 "(X) column の生データの最大値"
 
-#: src/gtk/completion_info_data.c:227
+#: src/gtk/completion_info_data.c:232
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
@@ -4945,7 +5033,7 @@ msgstr ""
 "<b>MAXY</b>\n"
 "(Y) column の生データの最大値"
 
-#: src/gtk/completion_info_data.c:228
+#: src/gtk/completion_info_data.c:233
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
@@ -4953,7 +5041,7 @@ msgstr ""
 "<b>MINX</b>\n"
 "(X) column の生データの最小値"
 
-#: src/gtk/completion_info_data.c:229
+#: src/gtk/completion_info_data.c:234
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
@@ -4961,7 +5049,7 @@ msgstr ""
 "<b>MINY</b>\n"
 "(Y) column の生データの最小値"
 
-#: src/gtk/completion_info_data.c:230
+#: src/gtk/completion_info_data.c:235
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
@@ -4969,7 +5057,7 @@ msgstr ""
 "<b>MOVE</b>\n"
 "「移動」に設定された行数"
 
-#: src/gtk/completion_info_data.c:231
+#: src/gtk/completion_info_data.c:236
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
@@ -4977,7 +5065,7 @@ msgstr ""
 "<b>NAN</b>\n"
 "欠損データエラー表示"
 
-#: src/gtk/completion_info_data.c:232
+#: src/gtk/completion_info_data.c:237
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
@@ -4985,7 +5073,7 @@ msgstr ""
 "<b>NUM</b>\n"
 "データの個数"
 
-#: src/gtk/completion_info_data.c:233
+#: src/gtk/completion_info_data.c:238
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
@@ -4993,7 +5081,7 @@ msgstr ""
 "<b>PATH_OBJ</b>\n"
 "path オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:234
+#: src/gtk/completion_info_data.c:239
 msgid ""
 "<b>PI</b>\n"
 "Pi"
@@ -5001,7 +5089,7 @@ msgstr ""
 "<b>PI</b>\n"
 "円周率"
 
-#: src/gtk/completion_info_data.c:235
+#: src/gtk/completion_info_data.c:240
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
@@ -5009,7 +5097,7 @@ msgstr ""
 "<b>RECT_OBJ</b>\n"
 "rectangle オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:236
+#: src/gtk/completion_info_data.c:241
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
@@ -5017,7 +5105,29 @@ msgstr ""
 "<b>RSTEP</b>\n"
 "「読込ステップ行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:237
+#: src/gtk/completion_info_data.c:242
+msgid ""
+"<b>SHEET</b>\n"
+"Sheet number"
+msgstr "シート番号"
+
+#: src/gtk/completion_info_data.c:243
+msgid ""
+"<b>SHEET_COLS</b>\n"
+"Number of columns in the sheet"
+msgstr ""
+"<b>SHEET_COLS</b>\n"
+"シートの列数（カラム数）"
+
+#: src/gtk/completion_info_data.c:244
+msgid ""
+"<b>SHEET_ROWS</b>\n"
+"Number of rows in the sheet"
+msgstr ""
+"<b>SHEET_ROWS</b>\n"
+"シートの行数"
+
+#: src/gtk/completion_info_data.c:245
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
@@ -5025,7 +5135,7 @@ msgstr ""
 "<b>STDEVPX</b>\n"
 "(X) column の生データの標準偏差"
 
-#: src/gtk/completion_info_data.c:238
+#: src/gtk/completion_info_data.c:246
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
@@ -5033,7 +5143,7 @@ msgstr ""
 "<b>STDEVPY</b>\n"
 "(Y) column の生データの標準偏差"
 
-#: src/gtk/completion_info_data.c:239
+#: src/gtk/completion_info_data.c:247
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
@@ -5041,7 +5151,7 @@ msgstr ""
 "<b>STDEVX</b>\n"
 "(X) column の生データの不偏標準偏差"
 
-#: src/gtk/completion_info_data.c:240
+#: src/gtk/completion_info_data.c:248
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
@@ -5049,7 +5159,7 @@ msgstr ""
 "<b>STDEVY</b>\n"
 "(Y) column の生データの不偏標準偏差"
 
-#: src/gtk/completion_info_data.c:241
+#: src/gtk/completion_info_data.c:249
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
@@ -5057,7 +5167,7 @@ msgstr ""
 "<b>SUMX</b>\n"
 "(X) column の生データの和"
 
-#: src/gtk/completion_info_data.c:242
+#: src/gtk/completion_info_data.c:250
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
@@ -5065,7 +5175,7 @@ msgstr ""
 "<b>SUMXX</b>\n"
 "(X) column の生データの二乗和"
 
-#: src/gtk/completion_info_data.c:243
+#: src/gtk/completion_info_data.c:251
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
@@ -5073,7 +5183,7 @@ msgstr ""
 "<b>SUMXY</b>\n"
 "(X) column, (Y) column の生データの積和"
 
-#: src/gtk/completion_info_data.c:244
+#: src/gtk/completion_info_data.c:252
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
@@ -5081,7 +5191,7 @@ msgstr ""
 "<b>SUMY</b>\n"
 "(Y) column の生データの和"
 
-#: src/gtk/completion_info_data.c:245
+#: src/gtk/completion_info_data.c:253
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
@@ -5089,7 +5199,7 @@ msgstr ""
 "<b>SUMYY</b>\n"
 "(Y) column の生データの二乗和"
 
-#: src/gtk/completion_info_data.c:246
+#: src/gtk/completion_info_data.c:254
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
@@ -5097,7 +5207,7 @@ msgstr ""
 "<b>TEXT_OBJ</b>\n"
 "text オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:247
+#: src/gtk/completion_info_data.c:255
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
@@ -5105,7 +5215,7 @@ msgstr ""
 "<b>TRUE</b>\n"
 "代表的な真の値 (1)"
 
-#: src/gtk/completion_info_data.c:248
+#: src/gtk/completion_info_data.c:256
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
@@ -5915,7 +6025,7 @@ msgstr "始点"
 msgid "both"
 msgstr "両方"
 
-#: src/odraw.c:89 src/odata.c:257
+#: src/odraw.c:89 src/odata.c:263
 msgid "arrow"
 msgstr "矢印"
 
@@ -5923,7 +6033,7 @@ msgstr "矢印"
 msgid "wave"
 msgstr "波型"
 
-#: src/odraw.c:91 src/odata.c:251
+#: src/odraw.c:91 src/odata.c:257
 msgid "mark"
 msgstr "マーク"
 
@@ -6067,103 +6177,103 @@ msgstr "指数関数"
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/odata.c:163
+#: src/odata.c:169
 msgid "data"
 msgstr "データ"
 
-#: src/odata.c:237
+#: src/odata.c:243
 msgid "spreadsheet"
 msgstr "スプレッドシート"
 
-#: src/odata.c:239
+#: src/odata.c:245
 msgid "range"
 msgstr "範囲"
 
-#: src/odata.c:244
+#: src/odata.c:250
 msgid "simple"
 msgstr "単純移動平均"
 
-#: src/odata.c:245
+#: src/odata.c:251
 msgid "weighted"
 msgstr "加重移動平均"
 
-#: src/odata.c:246
+#: src/odata.c:252
 msgid "exponential"
 msgstr "指数移動平均"
 
-#: src/odata.c:253
+#: src/odata.c:259
 msgid "polygon"
 msgstr "多角形"
 
-#: src/odata.c:254
+#: src/odata.c:260
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:255 src/opath.c:82
+#: src/odata.c:261 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
-#: src/odata.c:256
+#: src/odata.c:262
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/odata.c:258
+#: src/odata.c:264
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/odata.c:259
+#: src/odata.c:265
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/odata.c:260
+#: src/odata.c:266
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/odata.c:261
+#: src/odata.c:267
 msgid "errorbar_x"
 msgstr "横誤差棒"
 
-#: src/odata.c:262
+#: src/odata.c:268
 msgid "errorbar_y"
 msgstr "縦誤差棒"
 
-#: src/odata.c:263
+#: src/odata.c:269
 msgid "errorband_x"
 msgstr "横エラーバンド"
 
-#: src/odata.c:264
+#: src/odata.c:270
 msgid "errorband_y"
 msgstr "縦エラーバンド"
 
-#: src/odata.c:265
+#: src/odata.c:271
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:266
+#: src/odata.c:272
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:267
+#: src/odata.c:273
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:268
+#: src/odata.c:274
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:269
+#: src/odata.c:275
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:270
+#: src/odata.c:276
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:271
+#: src/odata.c:277
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:272
+#: src/odata.c:278
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 

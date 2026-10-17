@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Ito Hiroyuki
+# This file is distributed under the same license as the ngraph-gtk package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 14:17+0900\n"
+"Project-Id-Version: ngraph-gtk 6.09.11\n"
+"Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
+"POT-Creation-Date: 2026-10-16 11:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:271 src/gtk/x11commn.c:1890
+#: src/gtk/ox11dlg.c:159 src/gtk/ox11dlg.c:271 src/gtk/x11commn.c:1895
 msgid "Confirm"
 msgstr ""
 
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:236 src/gtk/ox11dlg.c:392 src/gtk/x11commn.c:2319
+#: src/gtk/ox11dlg.c:236 src/gtk/ox11dlg.c:392 src/gtk/x11commn.c:2324
 #: src/gtk/x11gui.c:332 src/gtk/x11gui.c:904 src/gtk/x11gui.c:989
 #: src/gtk/x11gui.c:1083 src/gtk/x11gui.c:1185 src/gtk/x11opt.c:1162
 msgid "_OK"
@@ -135,7 +135,7 @@ msgstr ""
 msgid "_Style %d:"
 msgstr ""
 
-#: src/gtk/x11axis.c:279 src/gtk/x11axis.c:1672
+#: src/gtk/x11axis.c:279 src/gtk/x11axis.c:1671
 #, c-format
 msgid "_Width %d:"
 msgstr ""
@@ -145,78 +145,78 @@ msgstr ""
 msgid "Grid %d"
 msgstr ""
 
-#: src/gtk/x11axis.c:315
+#: src/gtk/x11axis.c:314
 msgid "Axis (_X):"
 msgstr ""
 
-#: src/gtk/x11axis.c:318
+#: src/gtk/x11axis.c:317
 msgid "draw _X grid"
 msgstr ""
 
-#: src/gtk/x11axis.c:323
+#: src/gtk/x11axis.c:322
 msgid "Axis (_Y):"
 msgstr ""
 
-#: src/gtk/x11axis.c:326
+#: src/gtk/x11axis.c:325
 msgid "draw _Y grid"
 msgstr ""
 
-#: src/gtk/x11axis.c:330 src/gtk/x11menu.c:260
+#: src/gtk/x11axis.c:329 src/gtk/x11menu.c:260
 msgid "Axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:344 src/gtk/x11axis.c:1474 src/gtk/x11axis.c:1664
-#: src/gtk/x11axis.c:2137 src/gtk/x11lgnd.c:1244 src/gtk/x11lgnd.c:1264
+#: src/gtk/x11axis.c:343 src/gtk/x11axis.c:1473 src/gtk/x11axis.c:1663
+#: src/gtk/x11axis.c:2136 src/gtk/x11lgnd.c:1244 src/gtk/x11lgnd.c:1264
 #: src/gtk/x11lgnd.c:1274 src/gtk/x11lgndx.c:424
 msgid "_Color:"
 msgstr ""
 
-#: src/gtk/x11axis.c:348 src/gtk/x11axis.c:361 src/gtk/x11axis.c:1478
-#: src/gtk/x11axis.c:1668 src/gtk/x11axis.c:2141 src/gtk/x11lgndx.c:428
+#: src/gtk/x11axis.c:347 src/gtk/x11axis.c:360 src/gtk/x11axis.c:1477
+#: src/gtk/x11axis.c:1667 src/gtk/x11axis.c:2140 src/gtk/x11lgndx.c:428
 msgid "_Alpha:"
 msgstr ""
 
-#: src/gtk/x11axis.c:351
+#: src/gtk/x11axis.c:350
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:357 src/gtk/x11opt.c:1669
+#: src/gtk/x11axis.c:356 src/gtk/x11opt.c:1669
 msgid "_Background Color:"
 msgstr ""
 
-#: src/gtk/x11axis.c:364 src/gtk/x11file.c:3755
+#: src/gtk/x11axis.c:363 src/gtk/x11file.c:3755
 msgid "Color"
 msgstr ""
 
-#: src/gtk/x11axis.c:377 src/gtk/x11axis.c:1683
+#: src/gtk/x11axis.c:376 src/gtk/x11axis.c:1682
 msgid "Style"
 msgstr ""
 
-#: src/gtk/x11axis.c:707 src/gtk/x11axis.c:922
+#: src/gtk/x11axis.c:706 src/gtk/x11axis.c:921
 msgid "Graph _Width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:711 src/gtk/x11axis.c:926
+#: src/gtk/x11axis.c:710 src/gtk/x11axis.c:925
 msgid "Graph _Height:"
 msgstr ""
 
-#: src/gtk/x11axis.c:722 src/gtk/x11axis.c:936
+#: src/gtk/x11axis.c:721 src/gtk/x11axis.c:935
 msgid "_X axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:736 src/gtk/x11axis.c:949
+#: src/gtk/x11axis.c:735 src/gtk/x11axis.c:948
 msgid "_Y axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:749
+#: src/gtk/x11axis.c:748
 msgid "_U axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:762
+#: src/gtk/x11axis.c:761
 msgid "_R axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:775 src/gtk/data/gtk/menus-common.ui.in:284
+#: src/gtk/x11axis.c:774 src/gtk/data/gtk/menus-common.ui.in:284
 #: src/gtk/data/gtk/menus-common.ui.in:379
 #: src/gtk/data/gtk/menus-common.ui.in:682
 #: src/gtk/data/gtk/menus-common-win.ui.in:304
@@ -225,398 +225,398 @@ msgstr ""
 msgid "_Grid"
 msgstr ""
 
-#: src/gtk/x11axis.c:1046
+#: src/gtk/x11axis.c:1045
 msgid "_Zoom:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1249
+#: src/gtk/x11axis.c:1248
 msgid "autoscale (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:1307 src/gtk/x11axis.c:1643 src/gtk/x11file.c:1866
+#: src/gtk/x11axis.c:1306 src/gtk/x11axis.c:1642 src/gtk/x11file.c:1866
 #: src/gtk/x11parameter.c:137
 msgid "_Min:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1311 src/gtk/x11axis.c:1648 src/gtk/x11file.c:1870
+#: src/gtk/x11axis.c:1310 src/gtk/x11axis.c:1647 src/gtk/x11file.c:1870
 #: src/gtk/x11parameter.c:141
 msgid "_Max:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1315
+#: src/gtk/x11axis.c:1314
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1321 src/gtk/data/gtk/menus-common.ui.in:841
+#: src/gtk/x11axis.c:1320 src/gtk/data/gtk/menus-common.ui.in:841
 #: src/gtk/data/gtk/menus-common-win.ui.in:881
 msgid "_Clear"
 msgstr ""
 
-#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:2428
+#: src/gtk/x11axis.c:1324 src/gtk/x11axis.c:2427
 #: src/gtk/data/gtk/menus-common.ui.in:293
 #: src/gtk/data/gtk/menus-common-win.ui.in:313
 msgid "_Data"
 msgstr ""
 
-#: src/gtk/x11axis.c:1326
+#: src/gtk/x11axis.c:1325
 msgid "Calculates and sets the axis range based on the selected dataset(s)."
 msgstr ""
 
-#: src/gtk/x11axis.c:1334
+#: src/gtk/x11axis.c:1333
 msgid "_Scale:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1338 src/gtk/x11file.c:1874 src/gtk/x11print.c:92
+#: src/gtk/x11axis.c:1337 src/gtk/x11file.c:1874 src/gtk/x11print.c:92
 msgid "_Div:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1342
+#: src/gtk/x11axis.c:1341
 msgid "_Ref:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1346
+#: src/gtk/x11axis.c:1345
 msgid "_Auto scale margin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1349 src/oparameter.c:37
+#: src/gtk/x11axis.c:1348 src/oparameter.c:37
 msgid "Scale"
 msgstr ""
 
-#: src/gtk/x11axis.c:1460
+#: src/gtk/x11axis.c:1459
 msgid "Draw _Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1466 src/gtk/x11file.c:3764 src/gtk/x11lgnd.c:1214
+#: src/gtk/x11axis.c:1465 src/gtk/x11file.c:3764 src/gtk/x11lgnd.c:1214
 #: src/gtk/x11lgndx.c:408
 msgid "Line _Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1470 src/gtk/x11file.c:3768 src/gtk/x11lgndx.c:412
+#: src/gtk/x11axis.c:1469 src/gtk/x11file.c:3768 src/gtk/x11lgndx.c:412
 msgid "_Line Width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1481
+#: src/gtk/x11axis.c:1480
 msgid "Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1491 src/gtk/x11axis.c:1513 src/gtk/x11axis.c:2434
+#: src/gtk/x11axis.c:1490 src/gtk/x11axis.c:1512 src/gtk/x11axis.c:2433
 msgid "_Position:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1496
+#: src/gtk/x11axis.c:1495
 msgid "_Arrow length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1501
+#: src/gtk/x11axis.c:1500
 msgid "_Arrow width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1504
+#: src/gtk/x11axis.c:1503
 msgid "Arrow"
 msgstr ""
 
-#: src/gtk/x11axis.c:1517
+#: src/gtk/x11axis.c:1516
 msgid "_Wave length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1521
+#: src/gtk/x11axis.c:1520
 msgid "_Wave width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1524
+#: src/gtk/x11axis.c:1523
 msgid "Wave"
 msgstr ""
 
-#: src/gtk/x11axis.c:1638
+#: src/gtk/x11axis.c:1637
 msgid "_Gauge:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1651 src/gtk/x11axis.c:1924
+#: src/gtk/x11axis.c:1650 src/gtk/x11axis.c:1923
 msgid "Range"
 msgstr ""
 
-#: src/gtk/x11axis.c:1660
+#: src/gtk/x11axis.c:1659
 msgid "_Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1677
+#: src/gtk/x11axis.c:1676
 #, c-format
 msgid "_Length %d:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1909
+#: src/gtk/x11axis.c:1908
 msgid "_Numbering:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1913
+#: src/gtk/x11axis.c:1912
 msgid "_Begin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1917 src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:207
+#: src/gtk/x11axis.c:1916 src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:207
 msgid "_Step:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1921
+#: src/gtk/x11axis.c:1920
 msgid "_Num:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1933
+#: src/gtk/x11axis.c:1932
 msgid "_Align:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1937 src/gtk/x11axis.c:2245 src/gtk/x11lgnd.c:2000
+#: src/gtk/x11axis.c:1936 src/gtk/x11axis.c:2244 src/gtk/x11lgnd.c:2000
 msgid "_Direction:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1942
+#: src/gtk/x11axis.c:1941
 msgid "shift (_P):"
 msgstr ""
 
-#: src/gtk/x11axis.c:1946
+#: src/gtk/x11axis.c:1945
 msgid "shift (_N):"
 msgstr ""
 
-#: src/gtk/x11axis.c:1949 src/gtk/x11axis.c:2257
+#: src/gtk/x11axis.c:1948 src/gtk/x11axis.c:2256
 msgid "Position"
 msgstr ""
 
-#: src/gtk/x11axis.c:1960
+#: src/gtk/x11axis.c:1959
 msgid "_Fraction:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1964
+#: src/gtk/x11axis.c:1963
 msgid "_Head:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1968
+#: src/gtk/x11axis.c:1967
 msgid "_Tail:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1973
+#: src/gtk/x11axis.c:1972
 msgid "_Date/time format:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1977
+#: src/gtk/x11axis.c:1976
 msgid "_Auto normalization:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1980
+#: src/gtk/x11axis.c:1979
 msgid "_Log power"
 msgstr ""
 
-#: src/gtk/x11axis.c:1984
+#: src/gtk/x11axis.c:1983
 msgid "_Add plus"
 msgstr ""
 
-#: src/gtk/x11axis.c:1989
+#: src/gtk/x11axis.c:1988
 msgid "_Zero:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1993
+#: src/gtk/x11axis.c:1992
 msgid "numbering _Math:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1996
+#: src/gtk/x11axis.c:1995
 msgid "Format"
 msgstr ""
 
-#: src/gtk/x11axis.c:2110
+#: src/gtk/x11axis.c:2109
 msgid "_Point:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2114 src/gtk/x11lgnd.c:1966
+#: src/gtk/x11axis.c:2113 src/gtk/x11lgnd.c:1966
 msgid "_Space:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2118
+#: src/gtk/x11axis.c:2117
 msgid "_Script size:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2122 src/gtk/x11lgnd.c:1977 src/gtk/x11opt.c:697
+#: src/gtk/x11axis.c:2121 src/gtk/x11lgnd.c:1977 src/gtk/x11opt.c:697
 msgid "_Font:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2126 src/gtk/x11lgnd.c:1981
+#: src/gtk/x11axis.c:2125 src/gtk/x11lgnd.c:1981
 msgid "_Bold"
 msgstr ""
 
-#: src/gtk/x11axis.c:2130 src/gtk/x11lgnd.c:1985
+#: src/gtk/x11axis.c:2129 src/gtk/x11lgnd.c:1985
 msgid "_Italic"
 msgstr ""
 
-#: src/gtk/x11axis.c:2144 src/gtk/x11dialg.c:260 src/gtk/x11opt.c:1282
+#: src/gtk/x11axis.c:2143 src/gtk/x11dialg.c:260 src/gtk/x11opt.c:1282
 msgid "Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2242
+#: src/gtk/x11axis.c:2241
 msgid "_Length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2249
+#: src/gtk/x11axis.c:2248
 msgid "_Adjust:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2253
+#: src/gtk/x11axis.c:2252
 msgid "Adjust _Position:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2423 src/gtk/x11parameter.c:312
+#: src/gtk/x11axis.c:2422 src/gtk/x11parameter.c:312
 msgid "_Title:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2424
+#: src/gtk/x11axis.c:2423
 msgid "Leave blank to hide"
 msgstr ""
 
-#: src/gtk/x11axis.c:2429
+#: src/gtk/x11axis.c:2428
 msgid "Applies the text from the data column header as the axis title."
 msgstr ""
 
-#: src/gtk/x11axis.c:2439 src/gtk/x11graph.c:235
+#: src/gtk/x11axis.c:2438 src/gtk/x11graph.c:235
 msgid "_Orientation:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2443
+#: src/gtk/x11axis.c:2442
 msgid "_Offset:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2444
+#: src/gtk/x11axis.c:2443
 msgid ""
 "Finely adjust the distance from the axis (mm). Negative values are allowed."
 msgstr ""
 
-#: src/gtk/x11axis.c:2448
+#: src/gtk/x11axis.c:2447
 msgid "Font _Size Offset:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2449
+#: src/gtk/x11axis.c:2448
 msgid "Sets a font size offset added to the tick label text size."
 msgstr ""
 
-#: src/gtk/x11axis.c:2452 src/gtk/x11lgnd.c:2003
+#: src/gtk/x11axis.c:2451 src/gtk/x11lgnd.c:2003
 msgid "_Raw"
 msgstr ""
 
-#: src/gtk/x11axis.c:2453 src/gtk/x11lgnd.c:2004
+#: src/gtk/x11axis.c:2452 src/gtk/x11lgnd.c:2004
 msgid ""
 "Renders text literally, ignoring control characters and escape sequences."
 msgstr ""
 
-#: src/gtk/x11axis.c:2457
+#: src/gtk/x11axis.c:2456
 msgid "Title"
 msgstr ""
 
-#: src/gtk/x11axis.c:2479
+#: src/gtk/x11axis.c:2478
 #, c-format
 msgid "Axis %d %s"
 msgstr ""
 
-#: src/gtk/x11axis.c:2488
+#: src/gtk/x11axis.c:2487
 msgid "_Scale"
 msgstr ""
 
-#: src/gtk/x11axis.c:2492
+#: src/gtk/x11axis.c:2491
 msgid "_Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:2496
+#: src/gtk/x11axis.c:2495
 msgid "_Gauge"
 msgstr ""
 
-#: src/gtk/x11axis.c:2500
+#: src/gtk/x11axis.c:2499
 msgid "_Numbering"
 msgstr ""
 
-#: src/gtk/x11axis.c:2504
+#: src/gtk/x11axis.c:2503
 msgid "_Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2508
+#: src/gtk/x11axis.c:2507
 msgid "_Position"
 msgstr ""
 
-#: src/gtk/x11axis.c:2512
+#: src/gtk/x11axis.c:2511
 msgid "_Title"
 msgstr ""
 
-#: src/gtk/x11axis.c:2948
+#: src/gtk/x11axis.c:2947
 msgid "delete axis (single select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:2996
+#: src/gtk/x11axis.c:2995
 msgid "axis property (single select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3079
+#: src/gtk/x11axis.c:3078
 msgid "scale zoom (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3171
+#: src/gtk/x11axis.c:3170
 msgid "scale clear (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3257
+#: src/gtk/x11axis.c:3256
 msgid "delete grid (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3331
+#: src/gtk/x11axis.c:3330
 msgid "grid property (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:3512
+#: src/gtk/x11axis.c:3511
 msgid "scale undo (multi select)"
 msgstr ""
 
-#: src/gtk/x11commn.c:1302 src/gtk/x11opt.c:1814
+#: src/gtk/x11commn.c:1307 src/gtk/x11opt.c:1814
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1392 src/gtk/x11menu.c:437
+#: src/gtk/x11commn.c:1397 src/gtk/x11menu.c:437
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1672
+#: src/gtk/x11commn.c:1677
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1889
+#: src/gtk/x11commn.c:1894
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:2205
+#: src/gtk/x11commn.c:2210
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:2219
+#: src/gtk/x11commn.c:2224
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:2223
+#: src/gtk/x11commn.c:2228
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:2252
+#: src/gtk/x11commn.c:2257
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:2318
+#: src/gtk/x11commn.c:2323
 msgid "Drawing end"
 msgstr ""
 
-#: src/gtk/x11commn.c:2366
+#: src/gtk/x11commn.c:2371
 msgid "Error messages"
 msgstr ""
 
-#: src/gtk/x11commn.c:2420 src/gtk/x11commn.c:2523
+#: src/gtk/x11commn.c:2425 src/gtk/x11commn.c:2528
 msgid "_Stop"
 msgstr ""
 
-#: src/gtk/x11commn.c:2556
+#: src/gtk/x11commn.c:2561
 msgid "error"
 msgstr ""
 
@@ -653,7 +653,7 @@ msgid "auto"
 msgstr ""
 
 #: src/gtk/x11dialg.c:124 src/gtk/x11merge.c:54 src/gtk/x11opt.c:470
-#: src/odata.c:236
+#: src/odata.c:242
 msgid "file"
 msgstr ""
 
@@ -661,7 +661,7 @@ msgstr ""
 msgid "function"
 msgstr ""
 
-#: src/gtk/x11dialg.c:132 src/odata.c:238
+#: src/gtk/x11dialg.c:132 src/odata.c:244
 msgid "array"
 msgstr ""
 
@@ -681,7 +681,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:152 src/odata.c:273
+#: src/gtk/x11dialg.c:152 src/odata.c:279
 msgid "fit"
 msgstr ""
 
@@ -1261,31 +1261,31 @@ msgstr ""
 msgid "di_ViSion:"
 msgstr ""
 
-#: src/gtk/x11file.c:5285 src/gtk/x11menu.c:411
+#: src/gtk/x11file.c:5286 src/gtk/x11menu.c:411
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5326
+#: src/gtk/x11file.c:5327
 msgid "close data (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:5508
+#: src/gtk/x11file.c:5511
 msgid "data property (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:5573
+#: src/gtk/x11file.c:5576
 msgid "edit data file (single select)"
 msgstr ""
 
-#: src/gtk/x11file.c:6664
+#: src/gtk/x11file.c:6667
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:6665
+#: src/gtk/x11file.c:6668
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:6682
+#: src/gtk/x11file.c:6685
 msgid "Data file"
 msgstr ""
 
@@ -1516,11 +1516,11 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1223 src/gtk/x11menu.c:426
+#: src/gtk/x11graph.c:1227 src/gtk/x11menu.c:426
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1439
+#: src/gtk/x11graph.c:1443
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2696,7 +2696,7 @@ msgstr ""
 msgid "Instance name"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1898 src/odata.c:252 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1898 src/odata.c:258 src/opath.c:81
 msgid "line"
 msgstr ""
 
@@ -3653,44 +3653,102 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:134
 msgid ""
+"<b>sheet_cell</b>(<i>row, col</i>), <b>sheet_cell</b>(<i>id, row, col</i>)\n"
+"Returns a cell value from the current sheet or a data object\n"
+"if it currently has spreadsheet data open.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>row</i>, <i>col</i> (current sheet).\n"
+"3 args: <i>id</i>, <i>row</i>, <i>col</i> (data object with <i>id</i>)."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:135
+msgid ""
+"<b>sheet_cell_text</b>(<i>$var, row, col</i>), <b>sheet_cell_text</"
+"b>(<i>$var, id, row, col</i>)\n"
+"Assigns a cell value to the specified string variable <i>$var</i>\n"
+"from the current sheet or a data object\n"
+"if it currently has spreadsheet data open.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"3 args: <i>$var</i>, <i>row</i>, <i>col</i> (current sheet)\n"
+"4 args: <i>$var</i>, <i>id</i>, <i>row</i>, <i>col</i> (data object with "
+"<i>id</i>)."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:136
+msgid ""
+"<b>sheet_col_values</b>(<i>array, col[, start[, end]]</i>)\n"
+"Assigns column data from the current sheet\n"
+"to the specified array.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>array</i>, <i>col</i> (from first to last row)\n"
+"3 args: <i>array</i>, <i>col</i>, <i>start</i> (from start row to last row)\n"
+"4 args: <i>array</i>, <i>col</i>, <i>start</i>, <i>end</i> (from start row "
+"to end row)"
+msgstr ""
+
+#: src/gtk/completion_info_data.c:137
+msgid ""
+"<b>sheet_name</b>(<i>$var</i>)\n"
+"Assigns the name of the current sheet\n"
+"to the specified string variable <i>$var</i>."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:138
+msgid ""
+"<b>sheet_row_values</b>(<i>array, row[, start[, end]]</i>)\n"
+"Assigns row data from the current sheet to the specified array.\n"
+"Row and column indices are 1-based.\n"
+"\n"
+"2 args: <i>array</i>, <i>row</i> (from first to last column)\n"
+"3 args: <i>array</i>, <i>row</i>, <i>start</i> (from start column to last "
+"column)\n"
+"4 args: <i>array</i>, <i>row</i>, <i>start</i>, <i>end</i> (from start "
+"column to end column)"
+msgstr ""
+
+#: src/gtk/completion_info_data.c:139
+msgid ""
 "<b>shift</b>(<i>a, n</i>)\n"
 "remove the first <i>n</i> elements of array <i>a</i> (<i>n</i> = 0 is as "
 "same as <i>n</i> = 1).\n"
 "Returns the new size of the array."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:135
+#: src/gtk/completion_info_data.c:140
 msgid ""
 "<b>sign</b>(<i>x</i>)\n"
 "positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;= 0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:136
+#: src/gtk/completion_info_data.c:141
 msgid ""
 "<b>sin</b>(<i>x</i>)\n"
 "sine function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:137
+#: src/gtk/completion_info_data.c:142
 msgid ""
 "<b>sinh</b>(<i>x</i>)\n"
 "hyperbolic sine function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:138
+#: src/gtk/completion_info_data.c:143
 msgid ""
 "<b>size</b>(<i>a</i>)\n"
 "number of elements of array <i>a</i>"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:139
+#: src/gtk/completion_info_data.c:144
 msgid ""
 "<b>sort</b>(<i>a, ignore_case</i>)\n"
 "sort elements of array <i>a</i>\n"
 "fold lower case to upper case characters when <i>ignore_case</i> is not zero."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:140
+#: src/gtk/completion_info_data.c:145
 msgid ""
 "<b>sprintf</b>(<i>$str, $format, v1, v2, ...</i>)\n"
 "Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\n"
@@ -3698,26 +3756,26 @@ msgid ""
 "Return the length of the string <i>$str</i> in characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:141
+#: src/gtk/completion_info_data.c:146
 msgid ""
 "<b>sqr</b>(<i>x</i>)\n"
 "squaring"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:142
+#: src/gtk/completion_info_data.c:147
 msgid ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "square root"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:143
+#: src/gtk/completion_info_data.c:148
 msgid ""
 "<b>srand</b>(<i>x</i>)\n"
 "Sets the seed for the random number generator which is used by the <b>rand</"
 "b>() function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:144
+#: src/gtk/completion_info_data.c:149
 msgid ""
 "<b>strftime</b>(<i>$str, $fmt, t, utc</i>)\n"
 "convers <i>t</i> (the number of seconds elapsed since the Epoch)\n"
@@ -3727,55 +3785,55 @@ msgid ""
 "Time (UTC)."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:145
+#: src/gtk/completion_info_data.c:150
 msgid ""
 "<b>string</b>(<i>$str, value</i>)\n"
 "Converts <i>value</i> to a string and set to <i>$str</i>.\n"
 "Return the value."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:146
+#: src/gtk/completion_info_data.c:151
 msgid ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the end of the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:147
+#: src/gtk/completion_info_data.c:152
 msgid ""
 "<b>string_column</b>(<i>$dest, index</i>)\n"
 "Set <i>index</i>th column in the reading data-line to the string <i>$dest</"
 "i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:148
+#: src/gtk/completion_info_data.c:153
 msgid ""
 "<b>string_compare</b>(<i>$str1, $str2, ignore_case</i>)\n"
 "Compare two strings, ignoring the case of ASCII characters when "
 "<i>ignore_case</i> is not zero."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:149
+#: src/gtk/completion_info_data.c:154
 msgid ""
 "<b>string_down</b>(<i>$dest, $src</i>)\n"
 "Converts all uppercase ASCII letters to lowercase ASCII letters in the "
 "string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:150
+#: src/gtk/completion_info_data.c:155
 msgid ""
 "<b>string_erase</b>(<i>$str, pos, len</i>)\n"
 "Removes <i>len</i> characters from the string <i>$str</i>, starting at "
 "position <i>pos</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:151
+#: src/gtk/completion_info_data.c:156
 msgid ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "Converts the string <i>$str</i> to a floating-point value and return the "
 "value."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:152
+#: src/gtk/completion_info_data.c:157
 msgid ""
 "<b>string_float_array</b>(<i>dest, $ary</i>)\n"
 "Converts the string element of the array <i>$ary</i>\n"
@@ -3783,14 +3841,14 @@ msgid ""
 "and set them to the array <i>dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:153
+#: src/gtk/completion_info_data.c:158
 msgid ""
 "<b>string_insert</b>(<i>$dest, $src, pos</i>)\n"
 "Inserts the string <i>$src</i> into the string <i>$dest</i> at the position "
 "<i>pos</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:154
+#: src/gtk/completion_info_data.c:159
 msgid ""
 "<b>string_join</b>(<i>$dest, $sep, $array</i>)\n"
 "Joins a number of strings in the array <i>$array</i>\n"
@@ -3798,13 +3856,13 @@ msgid ""
 "with the optional separator <i>$sep</i>inserted between each of them."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:155
+#: src/gtk/completion_info_data.c:160
 msgid ""
 "<b>string_length</b>(<i>$str</i>)\n"
 "Return the length of the string <i>$str</i> in characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:156
+#: src/gtk/completion_info_data.c:161
 msgid ""
 "<b>string_match</b>(<i>$str, $regexp, ignore_case</i>)\n"
 "Scans for a match in the string <i>$str</i> for the regular expression "
@@ -3812,13 +3870,13 @@ msgid ""
 "Return non-zero value if the string matched, zero otherwise."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:157
+#: src/gtk/completion_info_data.c:162
 msgid ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the start of the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:158
+#: src/gtk/completion_info_data.c:163
 msgid ""
 "<b>string_replace</b>(<i>$dest, $src, $regexp, $replacement, ignore_case</"
 "i>)\n"
@@ -3834,13 +3892,13 @@ msgid ""
 "when <i>ignore_case</i> is not zero."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:159
+#: src/gtk/completion_info_data.c:164
 msgid ""
 "<b>string_reverse</b>(<i>$dest, $src</i>)\n"
 "Reverses the UTF-8 string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:160
+#: src/gtk/completion_info_data.c:165
 msgid ""
 "<b>string_split</b>(<i>$dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -3852,7 +3910,7 @@ msgid ""
 "when <i>use_regexp</i> is 2."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:161
+#: src/gtk/completion_info_data.c:166
 msgid ""
 "<b>string_split_float</b>(<i>dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -3865,58 +3923,58 @@ msgid ""
 "when <i>use_regexp</i> is 2."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:162
+#: src/gtk/completion_info_data.c:167
 msgid ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "Removes leading and trailing whitespace from the string <i>$str</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:163
+#: src/gtk/completion_info_data.c:168
 msgid ""
 "<b>string_substring</b>(<i>$dest, $src, start, end</i>)\n"
 "Copies a substring out of a UTF-8 encoded string <i>$src</i>.\n"
 "The substring will contain <i>end</i> - <i>start</i> characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:164
+#: src/gtk/completion_info_data.c:169
 msgid ""
 "<b>string_truncate</b>(<i>$str, len</i>)\n"
 "Cuts off the end of the string <i>$str</i>, leaving the first <i>len</i> "
 "characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:165
+#: src/gtk/completion_info_data.c:170
 msgid ""
 "<b>string_up</b>(<i>$dest, $src</i>)\n"
 "Converts all lowercase ASCII letters to uppercase ASCII letters in the "
 "string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:166
+#: src/gtk/completion_info_data.c:171
 msgid ""
 "<b>sum</b>(<i>x</i>)\n"
 "Integration"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:167
+#: src/gtk/completion_info_data.c:172
 msgid ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "square sum of arguments"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:168
+#: src/gtk/completion_info_data.c:173
 msgid ""
 "<b>tan</b>(<i>x</i>)\n"
 "tangent function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:169
+#: src/gtk/completion_info_data.c:174
 msgid ""
 "<b>tanh</b>(<i>x</i>)\n"
 "hyperbolic tangent function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:170
+#: src/gtk/completion_info_data.c:175
 msgid ""
 "<b>text_align</b>(<i>x, y</i>)\n"
 "Set alignment of a text drawing.\n"
@@ -3925,7 +3983,7 @@ msgid ""
 "(0 &lt;= <i>x, y</i> &lt;= 1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:171
+#: src/gtk/completion_info_data.c:176
 msgid ""
 "<b>text_font</b>(<i>font</i>)\n"
 "Set font setting of drawing texts.\n"
@@ -3933,21 +3991,21 @@ msgid ""
 "\"Monospace\" respectively."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:172
+#: src/gtk/completion_info_data.c:177
 msgid ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "assign text of the the text object which ID is <i>id</i> to the variable "
 "<i>$text</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:173
+#: src/gtk/completion_info_data.c:178
 msgid ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "set text of the the text object which ID is <i>id</i> as the variable "
 "<i>$text</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:174
+#: src/gtk/completion_info_data.c:179
 msgid ""
 "<b>text_size</b>(<i>pt, space, script</i>)\n"
 "Set font size and other settings of drawing texts.\n"
@@ -3955,7 +4013,7 @@ msgid ""
 "Font-spacing and script-size are specified by the following arguments."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:175
+#: src/gtk/completion_info_data.c:180
 msgid ""
 "<b>text_style</b>(<i>style</i>)\n"
 "Set font style settings of drawing texts.\n"
@@ -3963,33 +4021,33 @@ msgid ""
 "\"italic\" and \"bold-italic\" respectively."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:176
+#: src/gtk/completion_info_data.c:181
 msgid ""
 "<b>theta</b>(<i>x</i>)\n"
 "staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:177
+#: src/gtk/completion_info_data.c:182
 msgid ""
 "<b>time</b>(<i></i>)\n"
 "returns the time as the number of seconds since the Epoch,\n"
 "1970-01-01 00:00:00 +0000 (UTC)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:178
+#: src/gtk/completion_info_data.c:183
 msgid ""
 "<b>times</b>(<i>n, index, ex</i>)\n"
 "Repeat <i>ex</i> <i>n</i> times.\n"
 "The loop count can be referred by the variable <i>index</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:179
+#: src/gtk/completion_info_data.c:184
 msgid ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "Chebyshev polynomials"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:180
+#: src/gtk/completion_info_data.c:185
 msgid ""
 "<b>unix2mjd</b>(<i>time</i>)\n"
 "Modified Julian Date\n"
@@ -3997,72 +4055,72 @@ msgid ""
 "1970-01-01 00:00:00 +0000 (UTC))"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:181
+#: src/gtk/completion_info_data.c:186
 msgid ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:182
+#: src/gtk/completion_info_data.c:187
 msgid ""
 "<b>unshift</b>(<i>a, x</i>)\n"
 "adds new element <i>x</i> to the beginning of an array <i>a</i>.\n"
 "Returns the new size of the array."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:183
+#: src/gtk/completion_info_data.c:188
 msgid ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:184
+#: src/gtk/completion_info_data.c:189
 msgid ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
 "y<sub><i>l</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:185
+#: src/gtk/completion_info_data.c:190
 msgid ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
 "Y<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:186
+#: src/gtk/completion_info_data.c:191
 msgid ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "compute the irregular cylindrical Bessel function of fractional order |"
 "<i>nu</i>|, Y<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:187
+#: src/gtk/completion_info_data.c:192
 msgid ""
 "<b>zeta</b>(<i>s</i>)\n"
 "compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> !"
 "= 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:188
+#: src/gtk/completion_info_data.c:193
 msgid ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:189
+#: src/gtk/completion_info_data.c:194
 msgid ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:190
+#: src/gtk/completion_info_data.c:195
 msgid ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:191
+#: src/gtk/completion_info_data.c:196
 msgid ""
 "<b>zip</b>(<i>a1, a2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>a1</i> and <i>a2</i>.\n"
@@ -4070,7 +4128,7 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:192
+#: src/gtk/completion_info_data.c:197
 msgid ""
 "<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>src1</i> and <i>sec2</"
@@ -4080,160 +4138,160 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:196
+#: src/gtk/completion_info_data.c:201
 msgid ""
 "<b>%D</b>\n"
 "The ID of the instance of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:197
+#: src/gtk/completion_info_data.c:202
 msgid ""
 "<b>%N</b>\n"
 "The number of instances of data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:198
+#: src/gtk/completion_info_data.c:203
 msgid ""
 "<b>ARC_OBJ</b>\n"
 "The identification number of the arc object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:199
+#: src/gtk/completion_info_data.c:204
 msgid ""
 "<b>AVX</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:200
+#: src/gtk/completion_info_data.c:205
 msgid ""
 "<b>AVY</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:201
+#: src/gtk/completion_info_data.c:206
 msgid ""
 "<b>AXISX</b>\n"
 "The ID of the axis instance specified as X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:202
+#: src/gtk/completion_info_data.c:207
 msgid ""
 "<b>AXISX_LEN</b>\n"
 "Length of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:203
+#: src/gtk/completion_info_data.c:208
 msgid ""
 "<b>AXISX_MAX</b>\n"
 "The maximum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:204
+#: src/gtk/completion_info_data.c:209
 msgid ""
 "<b>AXISX_MIN</b>\n"
 "The minimum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:205
+#: src/gtk/completion_info_data.c:210
 msgid ""
 "<b>AXISY</b>\n"
 "The ID of the axis instance specified as Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:206
+#: src/gtk/completion_info_data.c:211
 msgid ""
 "<b>AXISY_LEN</b>\n"
 "Length of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:207
+#: src/gtk/completion_info_data.c:212
 msgid ""
 "<b>AXISY_MAX</b>\n"
 "The maximum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:208
+#: src/gtk/completion_info_data.c:213
 msgid ""
 "<b>AXISY_MIN</b>\n"
 "The minimum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:209
+#: src/gtk/completion_info_data.c:214
 msgid ""
 "<b>BREAK</b>\n"
 "Missing data (data lines are not combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:210
+#: src/gtk/completion_info_data.c:215
 msgid ""
 "<b>COLX</b>\n"
 "The column number specified for X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:211
+#: src/gtk/completion_info_data.c:216
 msgid ""
 "<b>COLY</b>\n"
 "The column number specified for Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:212
+#: src/gtk/completion_info_data.c:217
 msgid ""
 "<b>CONT</b>\n"
 "Missing data (data lines are combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:213
+#: src/gtk/completion_info_data.c:218
 msgid ""
 "<b>DATA_OBJ</b>\n"
 "The identification number of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:214
+#: src/gtk/completion_info_data.c:219
 msgid ""
 "<b>E</b>\n"
 "The base of natural logarithm (Napier's constant)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:215
+#: src/gtk/completion_info_data.c:220
 msgid ""
 "<b>EULER</b>\n"
 "Euler's constant"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:216
+#: src/gtk/completion_info_data.c:221
 msgid ""
 "<b>FALSE</b>\n"
 "the FALSE value (0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:217
+#: src/gtk/completion_info_data.c:222
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:218
+#: src/gtk/completion_info_data.c:223
 msgid ""
 "<b>FILL_RULE_EVEN_ODD</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with evin-odd rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:219
+#: src/gtk/completion_info_data.c:224
 msgid ""
 "<b>FILL_RULE_NONE</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "don't fill the polygon."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:220
+#: src/gtk/completion_info_data.c:225
 msgid ""
 "<b>FILL_RULE_WINDING</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with winding rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:221
+#: src/gtk/completion_info_data.c:226
 msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
@@ -4241,163 +4299,181 @@ msgid ""
 "true (1) in the first call, false (0) in the second call."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:222
+#: src/gtk/completion_info_data.c:227
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:223
+#: src/gtk/completion_info_data.c:228
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:224
+#: src/gtk/completion_info_data.c:229
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:225
+#: src/gtk/completion_info_data.c:230
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:226
+#: src/gtk/completion_info_data.c:231
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:227
+#: src/gtk/completion_info_data.c:232
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:228
+#: src/gtk/completion_info_data.c:233
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:229
+#: src/gtk/completion_info_data.c:234
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:230
+#: src/gtk/completion_info_data.c:235
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:231
+#: src/gtk/completion_info_data.c:236
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:232
+#: src/gtk/completion_info_data.c:237
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:233
+#: src/gtk/completion_info_data.c:238
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:234
+#: src/gtk/completion_info_data.c:239
 msgid ""
 "<b>PI</b>\n"
 "Pi"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:235
+#: src/gtk/completion_info_data.c:240
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:236
+#: src/gtk/completion_info_data.c:241
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:237
+#: src/gtk/completion_info_data.c:242
+msgid ""
+"<b>SHEET</b>\n"
+"Sheet number"
+msgstr ""
+
+#: src/gtk/completion_info_data.c:243
+msgid ""
+"<b>SHEET_COLS</b>\n"
+"Number of columns in the sheet"
+msgstr ""
+
+#: src/gtk/completion_info_data.c:244
+msgid ""
+"<b>SHEET_ROWS</b>\n"
+"Number of rows in the sheet"
+msgstr ""
+
+#: src/gtk/completion_info_data.c:245
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:238
+#: src/gtk/completion_info_data.c:246
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:239
+#: src/gtk/completion_info_data.c:247
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:240
+#: src/gtk/completion_info_data.c:248
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:241
+#: src/gtk/completion_info_data.c:249
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:242
+#: src/gtk/completion_info_data.c:250
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:243
+#: src/gtk/completion_info_data.c:251
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:244
+#: src/gtk/completion_info_data.c:252
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:245
+#: src/gtk/completion_info_data.c:253
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:246
+#: src/gtk/completion_info_data.c:254
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:247
+#: src/gtk/completion_info_data.c:255
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:248
+#: src/gtk/completion_info_data.c:256
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
@@ -5203,7 +5279,7 @@ msgstr ""
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:89 src/odata.c:257
+#: src/odraw.c:89 src/odata.c:263
 msgid "arrow"
 msgstr ""
 
@@ -5211,7 +5287,7 @@ msgstr ""
 msgid "wave"
 msgstr ""
 
-#: src/odraw.c:91 src/odata.c:251
+#: src/odraw.c:91 src/odata.c:257
 msgid "mark"
 msgstr ""
 
@@ -5355,103 +5431,103 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/odata.c:163
+#: src/odata.c:169
 msgid "data"
 msgstr ""
 
-#: src/odata.c:237
+#: src/odata.c:243
 msgid "spreadsheet"
 msgstr ""
 
-#: src/odata.c:239
+#: src/odata.c:245
 msgid "range"
 msgstr ""
 
-#: src/odata.c:244
+#: src/odata.c:250
 msgid "simple"
 msgstr ""
 
-#: src/odata.c:245
+#: src/odata.c:251
 msgid "weighted"
 msgstr ""
 
-#: src/odata.c:246
+#: src/odata.c:252
 msgid "exponential"
 msgstr ""
 
-#: src/odata.c:253
+#: src/odata.c:259
 msgid "polygon"
 msgstr ""
 
-#: src/odata.c:254
+#: src/odata.c:260
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/odata.c:255 src/opath.c:82
+#: src/odata.c:261 src/opath.c:82
 msgid "curve"
 msgstr ""
 
-#: src/odata.c:256
+#: src/odata.c:262
 msgid "diagonal"
 msgstr ""
 
-#: src/odata.c:258
+#: src/odata.c:264
 msgid "rectangle"
 msgstr ""
 
-#: src/odata.c:259
+#: src/odata.c:265
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/odata.c:260
+#: src/odata.c:266
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/odata.c:261
+#: src/odata.c:267
 msgid "errorbar_x"
 msgstr ""
 
-#: src/odata.c:262
+#: src/odata.c:268
 msgid "errorbar_y"
 msgstr ""
 
-#: src/odata.c:263
+#: src/odata.c:269
 msgid "errorband_x"
 msgstr ""
 
-#: src/odata.c:264
+#: src/odata.c:270
 msgid "errorband_y"
 msgstr ""
 
-#: src/odata.c:265
+#: src/odata.c:271
 msgid "staircase_x"
 msgstr ""
 
-#: src/odata.c:266
+#: src/odata.c:272
 msgid "staircase_y"
 msgstr ""
 
-#: src/odata.c:267
+#: src/odata.c:273
 msgid "bar_x"
 msgstr ""
 
-#: src/odata.c:268
+#: src/odata.c:274
 msgid "bar_y"
 msgstr ""
 
-#: src/odata.c:269
+#: src/odata.c:275
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/odata.c:270
+#: src/odata.c:276
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/odata.c:271
+#: src/odata.c:277
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/odata.c:272
+#: src/odata.c:278
 msgid "bar_solid_fill_y"
 msgstr ""
 
