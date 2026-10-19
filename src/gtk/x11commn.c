@@ -2322,20 +2322,27 @@ progress_dialog_finalize(gpointer user_data)
     gtk_progress_bar_set_fraction(ProgressBar[1], 1);
     gtk_window_set_title(GTK_WINDOW(ProgressDialog), _("Drawing end"));
     gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_OK"));
+    if (ProgressDialogData->tag) {
+      gtk_widget_remove_tick_callback (ProgressDialog, ProgressDialogData->tag);
+      ProgressDialogData->tag = 0;
+    }
   } else {
     ProgressDialogFinalize();
   }
 }
 
 static gboolean
-progress_dialog_update(gpointer user_data)
+progress_dialog_update(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
 {
   int i;
+  (void) widget;
+  (void) frame_clock;
+
   if (ProgressDialogData == NULL) {
-    return FALSE;
+    return G_SOURCE_REMOVE;
   } else if (ProgressDialogData->finish) {
     progress_dialog_finalize(user_data);
-    return FALSE;
+    return G_SOURCE_REMOVE;
   }
   for (i = 0; i < PROGRESSBAR_N; i++) {
     GtkProgressBar *bar;
@@ -2353,7 +2360,7 @@ progress_dialog_update(gpointer user_data)
     gtk_progress_bar_set_text(bar, msg);
     gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
   }
-  return TRUE;
+  return G_SOURCE_CONTINUE;
 }
 
 static void
@@ -2528,7 +2535,7 @@ ProgressDialogCreate(const char *title, progress_func update, progress_func fina
   gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_Stop"));
   ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);
 
-  ProgressDialogData->tag = g_timeout_add(100, progress_dialog_update, data);
+  ProgressDialogData->tag = gtk_widget_add_tick_callback(ProgressDialog, progress_dialog_update, data, NULL);
 }
 
 static void
@@ -2541,6 +2548,10 @@ ProgressDialogFinalize(void)
   gtk_widget_set_visible(ProgressDialog, FALSE);
   NSetCursor(SaveCursor);
   set_progress_func(NULL);
+  if (ProgressDialogData->tag) {
+    gtk_widget_remove_tick_callback (ProgressDialog, ProgressDialogData->tag);
+    ProgressDialogData->tag = 0;
+  }
 
   for (i = 0; i < PROGRESSBAR_N; i++) {
     g_string_free(ProgressDialogData->msg[i], TRUE);
