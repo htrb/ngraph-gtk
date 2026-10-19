@@ -201,7 +201,7 @@ get_double_formula (const ixion::formula_result &result, MathValue *data)
   }
   break;
   default:
-    data->type = MATH_VALUE_UNDEF;
+    data->type = MATH_VALUE_NONUM;
     break;
   }
 }
@@ -305,7 +305,7 @@ n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data
   }
   norcus = sheet->norcus;
   data->val = 0;
-  data->type = MATH_VALUE_NAN;
+  data->type = MATH_VALUE_NONUM;
   if (norcus == NULL) {
     return;
   }
@@ -319,7 +319,7 @@ n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data
     ixion::cell_t type = model.get_celltype(pos);
     switch (type) {
     case ixion::cell_t::unknown:
-      data->type = MATH_VALUE_UNDEF;
+      data->type = MATH_VALUE_NONUM;
       break;
     case ixion::cell_t::string:
       str_id = model.get_string_identifier(pos);
@@ -344,7 +344,7 @@ n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data
       data->type = MATH_VALUE_NORMAL;
       break;
     default:
-      data->type = MATH_VALUE_UNDEF;
+      data->type = MATH_VALUE_NONUM;
       break;
     }
   } catch  (const std::exception& e) {
