@@ -79,6 +79,11 @@ num_script_size=7000
 num_format=%g
 num_font=Sans-serif
 num_font_style=0
+title_position=auto
+title_offset=0
+title_orientation=parallel
+title_raw=0
+title_delta=200
 
 [axis_fX]
 direction=0
