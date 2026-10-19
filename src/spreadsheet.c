@@ -148,7 +148,7 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
     return;
   }
   data->val = 0;
-  data->type = MATH_VALUE_NAN;
+  data->type = MATH_VALUE_NONUM;
   if (sheet == NULL) {
     return;
   }
