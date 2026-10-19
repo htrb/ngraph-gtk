@@ -29,6 +29,7 @@
 #include <string.h>
 #include <errno.h>
 #include <glib.h>
+#include <sys/file.h>
 
 #include "object.h"
 #include "nstring.h"
@@ -39,7 +40,7 @@
 
 #define CONF "Ngraph.ini"
 #define CONFBAK "Ngraph.ini~"
-#define LOCK "Ngraph.lock"
+#define LOCK ".ngraph.lock"
 
 #ifndef TRUE
 #define TRUE  1
@@ -80,40 +81,34 @@ searchscript(char *file)
 }
 
 static int
-configlocked(char *dir)
+lockconfig(const char *dir)
 {
-  if (findfilename(dir,CONFSEP,LOCK)) return TRUE;
-  else return FALSE;
+  char *file;
+  int fd;
+
+  if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return -1;
+  fd = open(file, O_RDWR | O_CREAT, 0644);
+  g_free(file);
+  if (fd < 0) {
+    return -1;
+  }
+
+  if (flock(fd, LOCK_EX) < 0) {
+    close(fd);
+    return -1;
+  }
+
+  return fd;
 }
 
 static void
-lockconfig(char *dir)
+unlockconfig(int fd)
 {
-  char *file;
-  FILE *fp;
-
-  while (configlocked(dir)) {
-    msleep(100);
-  }
-  if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
-  if ((fp=nfopen(file,"wt"))==NULL) {
-    g_free(file);
+  if (fd < 0) {
     return;
   }
-  fputs("Ngraph.ini is locked",fp);
-  fclose(fp);
-  g_free(file);
-}
-
-static void
-unlockconfig(char *dir)
-{
-  char *file;
-
-  if (!findfilename(dir,CONFSEP,LOCK)) return;
-  if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
-  g_unlink(file);
-  g_free(file);
+  flock(fd, LOCK_UN);
+  close(fd);
 }
 
 FILE *
@@ -309,7 +304,7 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 int
 replaceconfig(char *section,struct narray *conf)
 {
-  int i,j,num,num2, r;
+  int i,j,num,num2, r, fd;
   char **data;
   struct objlist *sys;
   char *libdir,*homedir,*dir,*fil,*buf,*pfx, *tmp_name;
@@ -330,18 +325,18 @@ replaceconfig(char *section,struct narray *conf)
     if ((fil=getfilename(homedir,CONFSEP,CONF))==NULL) return FALSE;
     dir=homedir;
   }
-  lockconfig(dir);
+  fd = lockconfig(dir);
   fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
     g_free(fil);
-    unlockconfig(dir);
+    unlockconfig(fd);
     return FALSE;
   }
   fp = nfopen(fil,"rt");
   if (fp == NULL) {
     n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
-    unlockconfig(dir);
+    unlockconfig(fd);
     return FALSE;
   }
   arrayinit(&iconf,sizeof(int));
@@ -395,7 +390,7 @@ flush:
 
   n_tmpfile_close(fptmp, tmp_name);
   g_free(fil);
-  unlockconfig(dir);
+  unlockconfig(fd);
   return r;
 }
 
@@ -443,7 +438,7 @@ removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
 int
 removeconfig(char *section,struct narray *conf)
 {
-  int change, r;
+  int change, r, fd;
   struct objlist *sys;
   char *libdir,*homedir,*dir,*fil,*buf,*pfx, *tmp_name;
   FILE *fp,*fptmp;
@@ -463,18 +458,18 @@ removeconfig(char *section,struct narray *conf)
     if ((fil=getfilename(homedir,CONFSEP,CONF))==NULL) return FALSE;
     dir=homedir;
   }
-  lockconfig(dir);
+  fd = lockconfig(dir);
   fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
     g_free(fil);
-    unlockconfig(dir);
+    unlockconfig(fd);
     return FALSE;
   }
   fp = nfopen(fil,"rt");
   if (fp == NULL) {
     n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
-    unlockconfig(dir);
+    unlockconfig(fd);
     return FALSE;
   }
   while (fgetline(fp,&buf)==0) {
@@ -496,7 +491,7 @@ flush:
     fclose(fp);
     n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
-    unlockconfig(dir);
+    unlockconfig(fd);
     return TRUE;
   }
   while (fgetline(fp,&buf)==0) {
@@ -512,7 +507,7 @@ flush:
 
   n_tmpfile_close(fptmp, tmp_name);
   g_free(fil);
-  unlockconfig(dir);
+  unlockconfig(fd);
   return r;
 }
 
