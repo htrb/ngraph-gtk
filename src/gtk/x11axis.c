@@ -51,6 +51,7 @@
 #include "x11file.h"
 #include "x11view.h"
 #include "x11axis.h"
+#include "x11lgnd.h"
 #include "x11commn.h"
 
 static void *bind_minmax (GtkWidget *w, struct objlist *obj, const char *field, int id);
@@ -2460,6 +2461,8 @@ title_tab_create(struct AxisDialog *dd)
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
   gtk_box_append(GTK_BOX(vbox), frame);
+  w = create_character_panel(d->title);
+  gtk_box_append(GTK_BOX(vbox), w);
   add_copy_button_to_box(vbox, G_CALLBACK(title_tab_copy_clicked), dd, "axis");
 
   return vbox;
