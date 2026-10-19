@@ -2094,7 +2094,7 @@ create_character_view(GtkWidget *entry, gchar *data)
   return swin;
 }
 
-static GtkWidget *
+GtkWidget *
 create_character_panel(GtkWidget *entry)
 {
   GtkWidget *tab, *label, *child;

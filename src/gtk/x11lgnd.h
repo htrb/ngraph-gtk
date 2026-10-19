@@ -40,6 +40,7 @@ GtkWidget *create_rect_list(struct SubWin *d);
 GtkWidget *create_arc_list(struct SubWin *d);
 GtkWidget *create_mark_list(struct SubWin *d);
 GtkWidget *create_text_list(struct SubWin *d);
+GtkWidget *create_character_panel(GtkWidget *entry);
 
 void CmOptionTextDef(void);
 
