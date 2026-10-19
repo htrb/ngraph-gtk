@@ -219,6 +219,12 @@ static struct obj_config AxisConfig[] = {
   {"num_font", OBJ_CONFIG_TYPE_STRING},
   {"num_font_style", OBJ_CONFIG_TYPE_NUMERIC},
 
+  {"title_position", OBJ_CONFIG_TYPE_NUMERIC},
+  {"title_offset", OBJ_CONFIG_TYPE_NUMERIC},
+  {"title_orientation", OBJ_CONFIG_TYPE_NUMERIC},
+  {"title_raw", OBJ_CONFIG_TYPE_NUMERIC},
+  {"title_delta", OBJ_CONFIG_TYPE_NUMERIC},
+
   {"style", OBJ_CONFIG_TYPE_STYLE},
   {"gauge_style", OBJ_CONFIG_TYPE_STYLE},
 };
