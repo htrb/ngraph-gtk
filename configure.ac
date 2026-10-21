@@ -193,7 +193,7 @@ AC_SEARCH_LIBS(locale_charset,charset,,
 
 PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.3])
 
-PKG_CHECK_MODULES([EXPAT], [expat >= 2.9])
+PKG_CHECK_MODULES([EXPAT], [expat >= 2.0.0])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
