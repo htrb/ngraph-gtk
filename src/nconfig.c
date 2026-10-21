@@ -80,6 +80,48 @@ searchscript(char *file)
   return s;
 }
 
+#if WINDOWS
+#include <windows.h>
+#include <io.h>
+
+#define LOCK_SH 1
+#define LOCK_EX 2
+#define LOCK_NB 4
+#define LOCK_UN 8
+
+int
+flock(int fd, int operation)
+{
+  HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+  if (hFile == INVALID_HANDLE_VALUE) {
+    return -1;
+  }
+
+  if (operation & LOCK_UN) {
+    OVERLAPPED overlapped = {0};
+    if (UnlockFileEx(hFile, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped)) {
+      return 0;
+    }
+    return -1;
+  }
+
+  DWORD flags = 0;
+  if (operation & LOCK_EX) {
+    flags |= LOCKFILE_EXCLUSIVE_LOCK;
+  }
+  if (operation & LOCK_NB) {
+    flags |= LOCKFILE_FAIL_IMMEDIATELY;
+  }
+
+  OVERLAPPED overlapped = {0};
+  if (LockFileEx(hFile, flags, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped)) {
+    return 0;
+  }
+
+  return -1;
+}
+#endif
+
 static int
 lockconfig(const char *dir)
 {
