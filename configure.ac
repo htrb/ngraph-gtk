@@ -193,8 +193,7 @@ AC_SEARCH_LIBS(locale_charset,charset,,
 
 PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.3])
 
-AC_CHECK_HEADERS(expat.h,, [AC_MSG_ERROR([cannot find expat.h, bailing out])])
-AC_CHECK_LIB(expat,XML_ParserCreate,,AC_MSG_ERROR(['expat' is required but it doesn't seem to be installed on this system.]))
+PKG_CHECK_MODULES([EXPAT], [expat >= 2.9])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
