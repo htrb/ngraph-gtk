@@ -45,7 +45,7 @@ parts:
        sed -i.bak -e 's|Exec=ngraph|Exec=ngraph-gtk-htrb.ngraph-gtk|g' -e 's|Name=Ngraph-GTK|Name=Ngraph-GTK (Snap)|g' misc/com.github.htrb.ngraph-gtk.desktop
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
        cp misc/com.github.htrb.ngraph-gtk.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
-       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps
+       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
        cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps/
        cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PRIME/meta/gui/
     build-packages:
