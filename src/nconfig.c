@@ -83,43 +83,6 @@ searchscript(char *file)
 #if WINDOWS
 #include <windows.h>
 #include <io.h>
-
-#define LOCK_SH 1
-#define LOCK_EX 2
-#define LOCK_NB 4
-#define LOCK_UN 8
-
-int
-flock(int fd, int operation)
-{
-  HANDLE hFile = (HANDLE)_get_osfhandle(fd);
-  if (hFile == INVALID_HANDLE_VALUE) {
-    return -1;
-  }
-
-  if (operation & LOCK_UN) {
-    OVERLAPPED overlapped = {0};
-    if (UnlockFileEx(hFile, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped)) {
-      return 0;
-    }
-    return -1;
-  }
-
-  DWORD flags = 0;
-  if (operation & LOCK_EX) {
-    flags |= LOCKFILE_EXCLUSIVE_LOCK;
-  }
-  if (operation & LOCK_NB) {
-    flags |= LOCKFILE_FAIL_IMMEDIATELY;
-  }
-
-  OVERLAPPED overlapped = {0};
-  if (LockFileEx(hFile, flags, 0, 0xFFFFFFFF, 0xFFFFFFFF, &overlapped)) {
-    return 0;
-  }
-
-  return -1;
-}
 #endif
 
 static int
@@ -129,16 +92,29 @@ lockconfig(const char *dir)
   int fd;
 
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return -1;
-  fd = open(file, O_RDWR | O_CREAT, 0644);
+  fd = g_open(file, O_RDWR | O_CREAT, 0644);
   g_free(file);
   if (fd < 0) {
     return -1;
   }
 
+#if WINDOWS
+  HANDLE h = _get_osfhandle(fd);
+  OVERLAPPED ov = {0};
+  if (h == INVALID_HANDLE_VALUE) {
+    close(fd);
+    return -1;
+  }
+  if (! LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, 1, 0, &ov)) {
+    close(fd);
+    return -1;
+  }
+#else
   if (flock(fd, LOCK_EX) < 0) {
     close(fd);
     return -1;
   }
+#endif
 
   return fd;
 }
@@ -149,7 +125,15 @@ unlockconfig(int fd)
   if (fd < 0) {
     return;
   }
+#if WINDOWS
+  HANDLE h = _get_osfhandle(fd);
+  OVERLAPPED ov = {0};
+  if (h != INVALID_HANDLE_VALUE) {
+    UnlockFileEx(h, 0, 1, 0, &ov);
+  }
+#else
   flock(fd, LOCK_UN);
+#endif
   close(fd);
 }
 
