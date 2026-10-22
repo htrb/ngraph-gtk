@@ -38,6 +38,7 @@ parts:
     autotools-configure-parameters:
       - --prefix=/usr
       - --sysconfdir=/etc
+      - CFLAGS="-g -O2 -DLC_MESSAGES=5"
     override-build: |
        snapcraftctl build
        cp snap/local/ngraph-snap.sh $SNAPCRAFT_PART_INSTALL/usr/bin/
