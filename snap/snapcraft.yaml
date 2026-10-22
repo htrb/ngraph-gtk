@@ -32,8 +32,8 @@ apps:
 parts:
   ngraph-gtk:
     source: https://github.com/htrb/ngraph-gtk.git
-#    source-branch: master
-    source-tag: v6.09.11
+    source-branch: master
+#    source-tag: v6.09.11
     plugin: autotools
     autotools-configure-parameters:
       - --prefix=/usr
@@ -53,6 +53,8 @@ parts:
       - gettext
       - libreadline-dev
       - ruby-dev
+      - libminizip-dev
+      - libexpat1-dev
       - libgtksourceview-5-dev
       - autoconf-archive
     stage-packages:
@@ -64,6 +66,8 @@ parts:
     plugin: nil
     stage-packages:
       - libgsl27
+      - libminizip1t64
+      - libexpat1
       - libatk-bridge2.0-0t64
       - libatk1.0-0t64
       - libatspi2.0-0t64
