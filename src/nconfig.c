@@ -99,13 +99,13 @@ lockconfig(const char *dir)
   }
 
 #if WINDOWS
-  HANDLE h = _get_osfhandle(fd);
+  HANDLE h = (HANDLE) _get_osfhandle(fd);
   OVERLAPPED ov = {0};
   if (h == INVALID_HANDLE_VALUE) {
     close(fd);
     return -1;
   }
-  if (! LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, 1, 0, &ov)) {
+  if (! LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, 0xFFFFFFFF, 0xFFFFFFFF, &ov)) {
     close(fd);
     return -1;
   }
@@ -126,10 +126,10 @@ unlockconfig(int fd)
     return;
   }
 #if WINDOWS
-  HANDLE h = _get_osfhandle(fd);
+  HANDLE h = (HANDLE) _get_osfhandle(fd);
   OVERLAPPED ov = {0};
   if (h != INVALID_HANDLE_VALUE) {
-    UnlockFileEx(h, 0, 1, 0, &ov);
+    UnlockFileEx(h, 0, 0xFFFFFFFF, 0xFFFFFFFF, &ov);
   }
 #else
   flock(fd, LOCK_UN);
