@@ -1,5 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 name: ngraph-gtk-htrb
+title: "Ngraph-gtk"
+contact: "ZXB01226@nifty.com"
+license: "GPL-2.0+"
+website: "https://htrb.github.io/homepage/ngraph/ngraph-gtk.html"
+source-code: "https://github.com/htrb/ngraph-gtk"
+issues: "https://github.com/htrb/ngraph-gtk/issues"
 version: '6.09.11'
 summary: the program to create scientific 2-dimensional graphs.
 description: |
@@ -69,7 +75,6 @@ parts:
       - libgsl27
       - libminizip1t64
       - libexpat1
-      - libatk-bridge2.0-0t64
       - libatk1.0-0t64
       - libatspi2.0-0t64
       - libcairo-gobject2
@@ -98,7 +103,6 @@ parts:
       - libxcb-render0
       - libxcb-shm0
       - libxcb1
-      - libxcomposite1
       - libxcursor1
       - libxdamage1
       - libxdmcp6
