@@ -64,8 +64,8 @@ Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
 <br>
 <div>
 <ul>
- <li> Ngraphをバージョンアップした際には、~/.Ngraph に作成された
-      Ngraph.ini を削除するのを忘れないで下さい。そうしないと Ngraph.ini
+ <li> Ngraphをバージョンアップした際は、~/.Ngraph に作成された
+      Ngraph.ini を削除して下さい。そうしないと Ngraph.ini
       の構成が変更されたとしても古い Ngraph.ini がロードされてしまいます。
 </ul>
 
