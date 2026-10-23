@@ -6,12 +6,12 @@ license: "GPL-2.0+"
 website: "https://htrb.github.io/homepage/ngraph/ngraph-gtk.html"
 source-code: "https://github.com/htrb/ngraph-gtk"
 issues: "https://github.com/htrb/ngraph-gtk/issues"
-version: '6.09.11'
+version: '6.10.00-RC1'
 summary: the program to create scientific 2-dimensional graphs.
 description: |
-  Ngraph is the program to create scientific 2-dimensional graphs
-  for researchers and engineers. Graphs can be exported to
-  PostScript, SVG, PNG or PDF format.
+  Ngraph is a program for creating scientific 2-dimensional graphs
+  for researchers and engineers. Graphs can be exported in
+  PostScript, SVG, PNG, or PDF format.
 
 grade: stable # stable | devel
 confinement: strict

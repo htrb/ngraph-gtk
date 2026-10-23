@@ -9,8 +9,8 @@
   <name>Ngraph-GTK</name>
   <summary>Create scientific 2-dimensional graphs</summary>
   <description>
-    <p>Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers.</p>
-    <p>Graphs can be exported to PostScript, SVG, PNG or PDF format.</p>
+    <p>Ngraph is a program for creating scientific 2-dimensional graphs for researchers and engineers.</p>
+    <p>Graphs can be exported in PostScript, SVG, PNG, or PDF format.</p>
   </description>
   <url type="homepage">https://github.com/htrb/ngraph-gtk/</url>
   <url type="bugtracker">https://github.com/htrb/ngraph-gtk/issues</url>
@@ -63,6 +63,27 @@
     <name>Hiroyuki Ito</name>
   </developer>
   <releases>
+    <release version="6.10.00" date="2026-10-**">
+      <description>
+	<ul>
+	  <li> Added support for spreadsheet files (.xlsx, .ods, and .xls).</li>
+	  <li> Added axis titles.</li>
+	  <li> Added title row settings for data objects.</li>
+	  <li> Added spreadsheet functions: sheet_name, sheet_cell, sheet_cell_text, sheet_col_values, and sheet_row_values.</li>
+	  <li> Added spreadsheet constants: SHEET, SHEET_COLS, and SHEET_ROWS.</li>
+	  <li> Added excel2mjd() for converting Excel date serial values to MJD.</li>
+	  <li> Replaced deprecated GtkStatusbar with GtkBox under GTK4.</li>
+	  <li> Added Light and Dark appearance options.</li>
+	  <li> Fixed an issue in the Data Settings dialog where previously displayed data could appear in the Table tab.</li>
+	  <li> Fixed an issue where opening a new data file and then canceling could leave an unwanted undo history entry.</li>
+	  <li> Fixed a build issue that could cause make to fail.</li>
+	  <li> Fixed incorrect text bounding box calculations for strings containing ligatures or line breaks.</li>
+	  <li> Fixed a crash when drawing a Range object with the last-row setting less than or equal to -2.</li>
+	  <li> Fixed an issue where error messages were not displayed correctly during data rendering.</li>
+	  <li> (Windows) Updated fallback font settings.</li>
+	</ul>
+      </description>
+    </release>
     <release version="6.09.11" date="2026-01-11">
       <description>
 	<ul>
