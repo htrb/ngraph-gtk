@@ -35,7 +35,7 @@ BINFILES="libLerc.dll libbrotlidec.dll libbrotlicommon.dll
         libgstreamer-1.0-0.dll libgstplay-1.0-0.dll libgstvideo-1.0-0.dll
         libgstbase-1.0-0.dll liborc-0.4-0.dll libgsttag-1.0-0.dll
         libgstpbutils-1.0-0.dll libgstaudio-1.0-0.dll libgstd3dshader-1.0-0.dll
-        ngraph.exe ngp2"
+        libminizip-1.dll ngraph.exe ngp2"
 
 
 
