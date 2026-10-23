@@ -56,6 +56,8 @@ parts:
        cp misc/com.github.htrb.ngraph-gtk.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
        cp misc/ngraph-gtk.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
+       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/48x48/apps
+       cp icons/application-x-ngraph.xpm $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/48x48/apps/ngraph.xpm
        cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps/
        cp icons/scalable/apps/ngraph.svg $SNAPCRAFT_PRIME/meta/gui/
     build-packages:
