@@ -63,7 +63,7 @@
     <name>Hiroyuki Ito</name>
   </developer>
   <releases>
-    <release version="6.10.00" date="2026-10-**">
+    <release version="6.10.00" date="2026-10-24">
       <description>
 	<ul>
 	  <li> Added support for spreadsheet files (.xlsx, .ods, and .xls).</li>
