@@ -16,9 +16,6 @@ LIBTOOL_DEPS = @LIBTOOL_DEPS@
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) $(top_srcdir)/config.status --recheck
 
-test_all:
-	(cd test; $(MAKE) test)
-
 OBJECT_DEFINITION = $(abs_top_srcdir)/src/oagrid.c			\
 	$(abs_top_srcdir)/src/oarc.c $(abs_top_srcdir)/src/odarray.c	\
 	$(abs_top_srcdir)/src/odata.c $(abs_top_srcdir)/src/odouble.c	\
