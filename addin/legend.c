@@ -897,10 +897,8 @@ main(int argc, char **argv)
   g_signal_connect(prm.mix, "toggled", G_CALLBACK(set_files), &prm);
 
   set_parameter(&prm);
+  use_dark_theme(prm.dark_theme);
 
-  if (prm.dark_theme) {
-    use_dark_theme();
-  }
   gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
 

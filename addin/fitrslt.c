@@ -774,9 +774,7 @@ main(int argc, char **argv)
   gtk_drop_down_set_selected (GTK_DROP_DOWN (prm.combo), 0);
   set_parameter(&prm);
 
-  if (prm.dark_theme) {
-    use_dark_theme();
-  }
+  use_dark_theme(prm.dark_theme);
   gtk_window_present (GTK_WINDOW (mainwin));
   g_main_loop_run(MainLoop);
 

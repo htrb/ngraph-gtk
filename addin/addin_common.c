@@ -331,10 +331,18 @@ columnview_get_list(GtkWidget *columnview)
 }
 
 void
-use_dark_theme(void)
+use_dark_theme(int state)
 {
   GtkSettings *settings;
 
   settings = gtk_settings_get_default();
-  g_object_set(G_OBJECT(settings), "gtk-application-prefer-dark-theme", TRUE, NULL);
+#if GTK_CHECK_VERSION(4, 20, 0)
+  if (state) {
+    g_object_set(G_OBJECT(settings), "gtk-interface-color-scheme", GTK_INTERFACE_COLOR_SCHEME_DARK, NULL);
+  } else {
+    g_object_set(G_OBJECT(settings), "gtk-interface-color-scheme", GTK_INTERFACE_COLOR_SCHEME_LIGHT, NULL);
+  }
+#else
+  g_object_set(G_OBJECT(settings), "gtk-application-prefer-dark-theme", state, NULL);
+#endif
 }
