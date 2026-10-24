@@ -87,7 +87,7 @@ make_zip() {
 		done
 		;;
 	    share)
-		for i in GConf glib-2.0 gtk-4.0 gtksourceview-5 icons themes ngraph-gtk libthai
+		for i in glib-2.0 gtk-4.0 gtksourceview-5 icons themes ngraph-gtk libthai
 		do
 		    cp -r "$win_path/$subdir/$i" $PKG_DIR/$subdir/
 		done
