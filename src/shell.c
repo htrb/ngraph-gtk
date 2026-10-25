@@ -193,6 +193,7 @@ static int Interrupted = FALSE;
 
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
+static int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc);
 
 typedef struct {
   int sleep;
@@ -3068,55 +3069,894 @@ check_interrupt(void)
   return state;
 }
 
-int
+struct cmdexec_fd {
+  int sout, sout2, sin, sin2;
+  char *fstdout, *fstdin;
+  struct vallist *newvalroot;
+  struct cmdlist *cmdcur;
+  char **newenviron, *tmpfil2;
+  struct prmlist *prmnewroot;
+  char **env;
+};
+
+struct cmdexec_pipe {
+  int istdout, istdin, pipef, pnum;
+};
+
+static int
+cmdparse_redirect(struct cmdexec_pipe *pipe, struct cmdexec_fd *cmdfd)
+{
+  int quoted = FALSE;
+  struct prmlist *prmcur, *prmprev, *prm;
+  pipe->istdout=pipe->istdin=PPNO;
+  pipe->pipef=FALSE;
+  prmcur=cmdfd->prmnewroot;
+  prmprev=NULL;
+  pipe->pnum=0;
+  while (prmcur!=NULL) {
+    if (prmcur->str==NULL) {
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+    } else if ((prmcur->prmno==PPSI1) || (prmcur->prmno==PPSI2)
+	       || (prmcur->prmno==PPSO1) || (prmcur->prmno==PPSO2)) {
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+      switch (prmcur->prmno) {
+      case PPSI1:
+	g_free(cmdfd->fstdin);
+	cmdfd->fstdin=prmcur->str;
+	pipe->istdin=PPSI1;
+	break;
+      case PPSI2:
+	g_free(cmdfd->fstdin);
+	cmdfd->fstdin=prmcur->str;
+	pipe->istdin=PPSI2;
+	quoted=prmcur->quoted;
+	break;
+      case PPSO1:
+	g_free(cmdfd->fstdout);
+	cmdfd->fstdout=prmcur->str;
+	pipe->istdout=PPSO1;
+	break;
+      case PPSO2:
+	g_free(cmdfd->fstdout);
+	cmdfd->fstdout=prmcur->str;
+	pipe->istdout=PPSO2;
+	break;
+      }
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm);
+    } else if (prmcur->prmno==PPPIPE) {
+      pipe->pipef=TRUE;
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+    } else if (prmcur->prmno==PPEND) {
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+    } else if ((prmcur->prmno!=PPSETV) && (prmcur->prmno!=PPSETO)) {
+      pipe->pnum++;
+      prmprev=prmcur;
+      prmcur=prmcur->next;
+    } else {
+      prmprev=prmcur;
+      prmcur=prmcur->next;
+    }
+  }
+  return quoted;
+}
+
+static int
+cmdexpand(struct nshell *nshell, struct cmdexec_fd *cmdfd)
+{
+  struct prmlist *prmcur, *prmprev, *prm;
+  char *str;
+  prmprev=NULL;
+  prmcur=cmdfd->cmdcur->prm;
+  while (prmcur!=NULL) {
+    if (prmcur->prmno!=PPSI2) {
+      int quote, bquote;
+      quote='\0';
+      bquote='\0';
+      if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
+	return 1;
+      if (quote || bquote) {
+	g_free(str);
+	sherror(ERRUEXPEOF);
+	return 1;
+      }
+      prmcur->quoted=FALSE;
+    } else {
+      if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) return 1;
+      strcpy(str,prmcur->str);
+    }
+    if ((prmcur->prmno!=PPNO) || (str[0]!='\0')) {
+      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return 1;
+      if (prmprev==NULL) cmdfd->prmnewroot=prm;
+      else prmprev->next=prm;
+      prm->next=NULL;
+      prm->prmno=prmcur->prmno;
+      prm->quoted=prmcur->quoted;
+      if (prmcur->prmno!=PPSI2) {
+	if ((prm->str=fnexpand(nshell,str))==NULL) return 1;
+	if (prm->prmno==PPNO) {
+	  int num=wordsplit(prm);
+	  if (num==-1) return 1;
+	  for (int j=0;j<num;j++) {
+	    prmprev=prm;
+	    prm->prmno=PPNO;
+	    prm=prm->next;
+	  }
+	} else {
+	  wordunsplit(prm->str);
+	  prmprev=prm;
+	}
+      } else {
+	prm->str=str;
+	prmprev=prm;
+      }
+    } else g_free(str);
+    prmcur=prmcur->next;
+  }
+  return 0;
+}
+
+static int
+cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe)
+{
+  struct prmlist *prmcur,*prmprev,*prm;
+  char *name,*val,*po;
+  prmcur=cmdfd->prmnewroot;
+  prmprev=NULL;
+  while (prmcur!=NULL) {
+    if (prmcur->prmno==PPSETV) {
+      po=strchr(prmcur->str,'=');
+      if ((name=g_malloc(po-prmcur->str+1))==NULL) return 1;
+      strncpy(name,prmcur->str,po-prmcur->str);
+      name[po-prmcur->str]='\0';
+      if ((val=g_malloc(strlen(prmcur->str)-(po-prmcur->str)))==NULL) {
+	g_free(name);
+	return 1;
+      }
+      strcpy(val,po+1);
+      if (pipe->pnum==0) po=addval(nshell,name,val);
+      else po=saveval(nshell,name,val,&cmdfd->newvalroot);
+      g_free(name);
+      g_free(val);
+      if (po==NULL) return 1;
+      g_free(prmcur->str);
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm);
+    } else if (prmcur->prmno==PPSETO) {
+      /* set object */
+      if (sputobj(prmcur->str)==-1) return 1;
+      g_free(prmcur->str);
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm);
+    } else {
+      prmprev=prmcur;
+      prmcur=prmcur->next;
+    }
+  }
+  return 0;
+}
+
+static int
+cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, int quoted, struct cmdstack **stroot, int *err)
+{
+  struct prmlist *prmcur,*prm;
+  char *tmpfil, *str;
+  struct cmdlist *cmdnew;
+  char **argvsave,**argvnew,*s;
+  int argcsave,argcnew,a,looplevel,errlevel, lastc;
+  char *arg,*endptr;
+  struct cmdstack *stcur,*st;
+
+  prmcur=cmdfd->prmnewroot;
+  if ((prmcur!=NULL) && (prmcur->prmno==PPNO)) {
+
+    /* set environment variable */
+#if USE_HASH
+    {
+      struct set_env_arg se_arg;
+
+      se_arg.nshell = nshell;
+      se_arg.newenviron = &cmdfd->newenviron;
+      if (nhash_each(nshell->valroot, set_env_val, &se_arg))
+	return 1;
+    }
+#else
+    struct vallist *valcur = nshell->valroot;
+    while (valcur!=NULL) {
+      if (!valcur->func
+	  && (getexp(nshell,valcur->name) || valcur->arg ||
+	      (g_getenv(valcur->name)!=NULL))) {
+	len=strlen(valcur->name);
+	if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
+	else val=g_getenv(valcur->name);
+	if ((s=g_malloc(len+strlen(val)+2))==NULL) return 1;
+	strcpy(s,valcur->name);
+	s[len]='=';
+	strcpy(s+len+1,val);
+	if (arg_add(&cmdfd->newenviron,s)==NULL) {
+	  g_free(s);
+	  return 1;
+	}
+      }
+      valcur=valcur->next;
+    }
+#endif
+
+    cmdfd->env=MainEnviron;
+    MainEnviron=cmdfd->newenviron;
+    cmdfd->newenviron=NULL;
+    cmdfd->sout=cmdfd->sin=NOHANDLE;
+    if (pipe->istdin!=PPNO) {
+      if (pipe->istdin==PPSI1) cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
+      else if (pipe->istdin==PPSI2) {
+	cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
+	if (!quoted) {
+	  char ch;
+	  int fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &cmdfd->tmpfil2);
+	  if (fd < 0) {
+	    nclose(cmdfd->sin);
+	    return 1;
+	  }
+	  do {
+	    char *s;
+	    s = nstrnew();
+	    if (s == NULL) {
+	      nclose(cmdfd->sin);
+	      nclose(fd);
+	      return 1;
+	    }
+	    do {
+	      char buf[2];
+	      if (nread(cmdfd->sin,buf,1)>0) ch=buf[0];
+	      else ch=EOF;
+	      if (ch==EOF) break;
+	      else {
+		if (ch=='\n') ch='\0';
+		if ((s=nstrccat(s,ch))==NULL) {
+		  nclose(cmdfd->sin);
+		  nclose(fd);
+		  return 1;
+		}
+	      }
+	    } while (ch!='\0');
+	    int quote, bquote;
+	    quote=bquote='\0';
+	    char *str=s;
+	    s=expand(nshell,str,&quote,&bquote,FALSE);
+	    g_free(str);
+	    if (s==NULL) {
+	      nclose(cmdfd->sin);
+	      nclose(fd);
+	      return 1;
+	    }
+	    wordunsplit(s);
+	    int len=strlen(s);
+	    if (ch!=EOF) {
+	      s[len]='\n';
+	      len++;
+	    }
+	    nwrite(fd,s,len);
+	    g_free(s);
+	  } while (ch!=EOF);
+	  nclose(cmdfd->sin);
+	  nclose(fd);
+	  cmdfd->sin=nopen(cmdfd->tmpfil2,O_RDONLY,NFMODE);
+	}
+      }
+    } else if (cmdfd->cmdcur->pipefile!=NULL) {
+      cmdfd->sin=nopen(cmdfd->cmdcur->pipefile,O_RDONLY,NFMODE);
+    }
+    if (cmdfd->sin!=NOHANDLE) cmdfd->sin2=nredirect(0,cmdfd->sin);
+
+    /* redirect : stdout */
+    if (pipe->istdout!=PPNO) {
+      if (Security) {
+	sherror(ERRSECURITY);
+	return 1;
+      }
+      if (pipe->istdout==PPSO2)
+	cmdfd->sout=nopen(cmdfd->fstdout,O_APPEND|O_CREAT|O_WRONLY,NFMODE);
+      else cmdfd->sout=nopen(cmdfd->fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
+      /* pipe */
+    } else if (pipe->pipef) {
+      struct objlist *sys;
+      if ((sys=getobject("system"))==NULL) return 1; /* fix-me: assigned value of the variable "sys" is never used */
+      cmdfd->sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+      if (cmdfd->sout < 0)
+	return 1;
+      unlinkfile(&((cmdfd->cmdcur->next)->pipefile));
+      (cmdfd->cmdcur->next)->pipefile=tmpfil;
+    }
+    if (cmdfd->sout!=NOHANDLE) cmdfd->sout2=nredirect(1,cmdfd->sout);
+
+    if (nshell->optionx) {
+      for (int i=0;i<nshell->cmdexec;i++) printfconsole("+");
+      printfconsole(" ");
+      prm=prmcur;
+      while (prm!=NULL) {
+	printfconsole("%.256s ",prm->str);
+	prm=prm->next;
+      }
+      printfconsole("\n");
+    }
+
+    char *cmds=prmcur->str;
+    /* exec named function */
+    if ((cmdnew=getfunc(nshell,cmds))!=NULL) {
+      int rcode,needcmd;
+
+      needcmd=FALSE;
+      st=NULL;
+      rcode=syntax(nshell,cmdnew,&needcmd,&st);
+      cmdstackfree(st);
+      if ((rcode!=0) || (st!=NULL) || (needcmd)) return 1;
+      argvnew=NULL;
+      if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
+	return 1;
+      strcpy(s,(nshell->argv)[0]);
+      if (arg_add(&argvnew,s)==NULL) {
+	g_free(s);
+	arg_del(argvnew);
+	return 1;
+      }
+      prmcur=prmcur->next;
+      while (prmcur!=NULL) {
+	if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
+	  g_free(s);
+	  arg_del(argvnew);
+	  return 1;
+	}
+	strcpy(s,prmcur->str);
+	if (arg_add(&argvnew,s)==NULL) {
+	  g_free(s);
+	  arg_del(argvnew);
+	  return 1;
+	}
+	prmcur=prmcur->next;
+      }
+      argcnew=getargc(argvnew);
+      argcsave=nshell->argc;
+      argvsave=nshell->argv;
+      nshell->argc=argcnew;
+      nshell->argv=argvnew;
+      rcode=cmdexec(nshell,cmdnew,TRUE);
+      arg_del(nshell->argv);
+      nshell->argc=argcsave;
+      nshell->argv=argvsave;
+      if ((rcode==-1) || (rcode==1)) return 1;
+      /* exec special command */
+      /* . */
+    } else if (strcmp0(".",cmds)==0) {
+      prmcur=prmcur->next;
+      if (prmcur!=NULL) {
+	char *cmdname;
+	cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,TRUE);
+	if (cmdname!=NULL) {
+	  char *readbuf;
+	  int readbyte;
+	  int readpo;
+
+	  argvnew=NULL;
+	  if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
+	    return 1;
+	  strcpy(s,(nshell->argv)[0]);
+	  if (arg_add(&argvnew,s)==NULL) {
+	    g_free(s);
+	    arg_del(argvnew);
+	    return 1;
+	  }
+	  prmcur=prmcur->next;
+	  while (prmcur!=NULL) {
+	    if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
+	      g_free(s);
+	      arg_del(argvnew);
+	      return 1;
+	    }
+	    strcpy(s,prmcur->str);
+	    if (arg_add(&argvnew,s)==NULL) {
+	      g_free(s);
+	      arg_del(argvnew);
+	      return 1;
+	    }
+	    prmcur=prmcur->next;
+	  }
+	  argcnew=getargc(argvnew);
+
+	  cmdfd->sin=nopen(cmdname,O_RDONLY,NFMODE);
+	  g_free(cmdname);
+	  cmdname=NULL;
+	  if (cmdfd->sin==NOHANDLE) {
+	    sherror2(ERROPEN,cmdname);
+	    arg_del(argvnew);
+	    return 1;
+	  }
+	  argcsave=nshell->argc;
+	  argvsave=nshell->argv;
+	  nshell->argc=argcnew;
+	  nshell->argv=argvnew;
+	  int sin3=storeshhandle(nshell,cmdfd->sin,&readbuf,&readbyte,&readpo);
+	  int rcode=cmdexecute(nshell,NULL);
+	  restoreshhandle(nshell,sin3,readbuf,readbyte,readpo);
+	  nclose(cmdfd->sin);
+	  arg_del(nshell->argv);
+	  nshell->argc=argcsave;
+	  nshell->argv=argvsave;
+	  if ((rcode!=0) && (rcode!=1)) return 1;
+	} else {
+	  sherror2(ERRNOFIL,prmcur->str);
+	  return 1;
+	}
+      }
+      /* break */
+    } else if (strcmp0("break",cmds)==0) {
+      if (pipe->pnum>2) {
+	sherror(ERREXTARG);
+	return 1;
+      } else if (pipe->pnum==2) {
+	arg=(prmcur->next)->str;
+	a=strtol(arg,&endptr,10);
+	if (endptr[0]!='\0') {
+	  sherror2(ERRNUMERIC,arg);
+	  return 1;
+	}
+      } else a=1;
+      looplevel=0;
+      stcur=*stroot;
+      while (stcur!=NULL) {
+	if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	    || (stcur->cmdno==CPUNTIL)) looplevel++;
+	stcur=stcur->next;
+      }
+      if (looplevel!=0) {
+	while (a>0) {
+	  if ((stcur=cmdstackgetpo(stroot))==NULL) break;
+	  if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
+	    prmfree(stcur->prm);
+	    stcur->prm=NULL;
+	  }
+	  if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	      || (stcur->cmdno==CPUNTIL)) {
+	    cmdfd->cmdcur=stcur->cmd;
+	    while (cmdfd->cmdcur->cmdno!=CPDO) cmdfd->cmdcur=cmdfd->cmdcur->next;
+	    cmdfd->cmdcur=cmdfd->cmdcur->done;
+	    cmdstackrmlast(stroot);
+	    a--;
+	  } else cmdstackrmlast(stroot);
+	}
+      }
+      /* continue */
+    } else if (strcmp0("continue",cmds)==0) {
+      if (pipe->pnum>2) {
+	sherror(ERREXTARG);
+	return 1;
+      } else if (pipe->pnum==2) {
+	arg=(prmcur->next)->str;
+	a=strtol(arg,&endptr,10);
+	if (endptr[0]!='\0') {
+	  sherror2(ERRNUMERIC,arg);
+	  return 1;
+	}
+      } else a=1;
+      looplevel=0;
+      stcur=*stroot;
+      while (stcur!=NULL) {
+	if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	    || (stcur->cmdno==CPUNTIL)) looplevel++;
+	stcur=stcur->next;
+      }
+      if (looplevel!=0) {
+	while (a>0) {
+	  if ((stcur=cmdstackgetpo(stroot))==NULL) break;
+	  if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	      || (stcur->cmdno==CPUNTIL)) {
+	    cmdfd->cmdcur=stcur->cmd;
+	    a--;
+	    if (a>0) {
+	      if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
+		prmfree(stcur->prm);
+		stcur->prm=NULL;
+	      }
+	      cmdstackrmlast(stroot);
+	    }
+	  } else cmdstackrmlast(stroot);
+	}
+      }
+      /* return */
+    } else if (strcmp0("return",cmds)==0) {
+      if (pipe->pnum>2) {
+	sherror(ERREXTARG);
+	return 1;
+      } else if (pipe->pnum==2) {
+	arg=(prmcur->next)->str;
+	a=strtol(arg,&endptr,10);
+	if (endptr[0]!='\0') {
+	  sherror2(ERRNUMERIC,arg);
+	  return 1;
+	}
+	nshell->status=a;
+      }
+      if (namedfunc) {
+	*err=0;
+	return 1;
+      }
+      /* execute object */
+    } else if (isobject(&cmds)) {
+      int len=0;
+      prm=prmcur;
+      while (prm!=NULL) {
+	len+=strlen(prm->str)+1;
+	prm=prm->next;
+      }
+      if ((str=g_malloc(len))==NULL) return 1;
+      str[0]='\0';
+      prm=prmcur;
+      while (prm!=NULL) {
+	strcat(str,prm->str);
+	if (prm->next!=NULL) strcat(str," ");
+	prm=prm->next;
+      }
+      errlevel=sexeobj(str);
+      g_free(str);
+      if (errlevel==-1) return 1;
+      nshell->status=errlevel;
+      lastc=cmdstackgetlast(stroot);
+      if ((lastc!=CPIF) && (lastc!=CPELIF)
+	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
+	  && (nshell->optione) && (errlevel!=0)) {
+	*err=3;
+	return 1;
+      }
+      nshell->status=errlevel;
+      lastc=cmdstackgetlast(stroot);
+      if ((lastc!=CPIF) && (lastc!=CPELIF)
+	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
+	  && (nshell->optione) && (errlevel!=0)) {
+	*err=3;
+	return 1;
+      }
+      if (nshell->quit) return 0;
+      /* exec inner command */
+    } else {
+      shell_proc proc;
+      char **argv;
+      proc = check_cmd(prmcur->str);
+      if (proc) {
+	argv = NULL;
+	if (arg_add(&argv, NULL) == NULL)
+	  return 1;
+	prm = cmdfd->prmnewroot;
+	while (prm) {
+	  if (arg_add(&argv, prm->str) == NULL) {
+	    g_free(argv);
+	    return 1;
+	  }
+	  prm = prm->next;
+	}
+	errlevel = proc(nshell, pipe->pnum, (char **)argv);
+	g_free(argv);
+      } else {
+	char *cmdname;
+	cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
+	if (cmdname==NULL) {
+	  sherror2(ERRCFOUND,prmcur->str);
+	  return 1;
+	} else {
+	  if (Security) {
+	    sherror(ERRSECURITY);
+	    return 1;
+	  }
+	  argv=NULL;
+	  if (arg_add(&argv,NULL)==NULL) return 1;
+	  prm=cmdfd->prmnewroot;
+	  while (prm!=NULL) {
+	    if (arg_add(&argv,prm->str)==NULL) {
+	      g_free(argv);
+	      return 1;
+	    }
+	    prm=prm->next;
+	  }
+#if WINDOWS
+	  {
+	    GThread *thread;
+	    char *ptr, *win_cmd;
+
+	    ptr = quote_args(argv);
+	    if (ptr == NULL) {
+	      sherror(ERRMEMORY);
+	      return 1;
+	    }
+
+	    win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
+	    g_free(ptr);
+	    if (win_cmd == NULL) {
+	      sherror(ERRMEMORY);
+	      return 1;
+	    }
+
+	    errlevel = 0;
+	    thread= g_thread_new("process", proc_in_thread, win_cmd);
+	    if (thread) {
+	      WaitProc = 1;
+#if USE_EVENT_LOOP
+	      while (WaitProc) {
+		msleep(1);
+		eventloop();
+	      }
+#endif
+	      errlevel = GPOINTER_TO_INT(g_thread_join(thread));
+	    }
+	    g_free(win_cmd);
+	  }
+#else	/* WINDOWS */
+	  unset_childhandler();
+	  pid_t pid = fork();
+	  if (pid < 0) {
+	    sherror2(ERRSYSTEM,"fork");
+	    set_childhandler();
+	    return 1;
+	  } else if (pid == 0) {
+	    errlevel=execve(cmdname,(char **)argv,MainEnviron);
+	    printfstderr("shell: %.64s: %.64s",
+			 argv[0],g_strerror(errno));
+	    exit(errlevel);
+	  } else {
+#if USE_EVENT_LOOP
+	    if (has_eventloop()) {
+	      while (waitpid(pid,&errlevel,WNOHANG)==0) {
+		eventloop();
+		msleep(10);
+	      }
+	    } else {
+	      waitpid(pid, &errlevel, 0);
+	    }
+#else
+	    waitpid(pid, &errlevel, 0);
+#endif
+	    errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
+	  }
+	  set_childhandler();
+#endif	/* WINDOWS */
+	  g_free(argv);
+	  g_free(cmdname);
+	  cmdname=NULL;
+	}
+      }
+      nshell->status = errlevel;
+      lastc=cmdstackgetlast(stroot);
+      if ((lastc!=CPIF) && (lastc!=CPELIF)
+	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
+	  && (nshell->optione) && (errlevel!=0)) {
+	*err=3;
+	return 1;
+      }
+      if (nshell->quit) return 1;
+    }
+
+    if (cmdfd->sout2!=NOHANDLE) {
+      nredirect2(1,cmdfd->sout2);
+      cmdfd->sout2=NOHANDLE;
+    }
+    if (cmdfd->sin2!=NOHANDLE) {
+      nredirect2(0,cmdfd->sin2);
+      cmdfd->sin2=NOHANDLE;
+    }
+    unlinkfile(&cmdfd->tmpfil2);
+    arg_del(MainEnviron);
+    MainEnviron=cmdfd->env;
+    cmdfd->env=NULL;
+  }
+  restoreval(nshell,cmdfd->newvalroot);
+  cmdfd->newvalroot=NULL;
+
+  return 0;
+}
+
+static int
+cmdexec_cpno(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdstack **stroot, int *err)
+{
+  struct cmdexec_pipe pipe;
+  int quoted;
+
+  if (cmdexpand(nshell, cmdfd)) {
+    return 1;
+  }
+
+  /* remove null parameter & check redirect and pipe */
+  quoted = cmdparse_redirect(&pipe, cmdfd);
+
+  /* set variable */
+  cmdsetvar(nshell,cmdfd, &pipe);
+
+  if (cmdrun (nshell, namedfunc, cmdfd, &pipe, quoted, stroot, err)) {
+    return 1;
+  }
+
+  prmfree(cmdfd->prmnewroot);
+  cmdfd->prmnewroot=NULL;
+  g_free(cmdfd->fstdout);
+  g_free(cmdfd->fstdin);
+  cmdfd->fstdout=cmdfd->fstdin=NULL;
+  unlinkfile(&(cmdfd->cmdcur->pipefile));
+  cmdfd->cmdcur=cmdfd->cmdcur->next;
+
+  return 0;
+}
+
+static int
+cmdexec_cpdo(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+{
+  struct cmdstack *stcur;
+  if ((stcur=cmdstackgetpo(stroot))==NULL) return 1;
+  if (stcur->cmdno==CPFOR) {
+    if (stcur->ival==-1) {
+      struct prmlist *prmcur;
+      prmcur=stcur->prm;
+      if (prmcur==NULL) {
+	cmdfd->cmdcur=cmdfd->cmdcur->done;
+	cmdstackrmlast(stroot);
+	cmdfd->cmdcur=cmdfd->cmdcur->next;
+	return 0;
+      }
+      if (addval(nshell,stcur->val,prmcur->str)==NULL) return 1;
+      stcur->prm=prmcur->next;
+      g_free(prmcur->str);
+      g_free(prmcur);
+    } else {
+      stcur->ival++;
+      if (stcur->ival<nshell->argc) {
+	if (addval(nshell,stcur->val,nshell->argv[stcur->ival])==NULL)
+	  return 1;
+      } else {
+	cmdfd->cmdcur=cmdfd->cmdcur->done;
+	cmdstackrmlast(stroot);
+	cmdfd->cmdcur=cmdfd->cmdcur->next;
+	return 0;
+      }
+    }
+  } else if (stcur->cmdno==CPWHILE) {
+    if (nshell->status) {
+      cmdfd->cmdcur=cmdfd->cmdcur->done;
+      cmdstackrmlast(stroot);
+      cmdfd->cmdcur=cmdfd->cmdcur->next;
+      return 0;
+    }
+  } else if (stcur->cmdno==CPUNTIL) {
+    if (!nshell->status) {
+      cmdfd->cmdcur=cmdfd->cmdcur->done;
+      cmdstackrmlast(stroot);
+      cmdfd->cmdcur=cmdfd->cmdcur->next;
+      return 0;
+    }
+  }
+  cmdfd->cmdcur=cmdfd->cmdcur->next;
+  return 0;
+}
+
+static int
+cmdexec_cpfor (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+{
+  struct cmdstack *stcur;
+  struct prmlist *prmcur,*prmprev,*prm;
+  int quote,bquote;
+
+  if ((stcur=cmdstackcat(stroot,CPFOR))==NULL) return 1;
+  stcur->cmd=cmdfd->cmdcur;
+  prmcur=(cmdfd->cmdcur->prm)->next;
+  stcur->val=prmcur->str;
+  prmcur=prmcur->next;
+  if (prmcur==NULL) stcur->ival=0;
+  else {
+    stcur->ival=-1;
+    cmdfd->prmnewroot=NULL;
+    prmprev=NULL;
+    prmcur=prmcur->next;
+    while (prmcur!=NULL) {
+      char *str;
+      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return 1;
+      if (prmprev==NULL) cmdfd->prmnewroot=prm;
+      else prmprev->next=prm;
+      prm->next=NULL;
+      prm->str=NULL;
+      prm->prmno=prmcur->prmno;
+      quote='\0';
+      bquote='\0';
+      if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
+	return 1;
+      if (quote || bquote) {
+	sherror(ERRUEXPEOF);
+	return 1;
+      }
+      if (str[0]!='\0') {
+	if ((prm->str=fnexpand(nshell,str))==NULL) return 1;
+      } else {
+	g_free(str);
+	prm->str=NULL;
+      }
+      int num;
+      if ((num=wordsplit(prm))==-1) return 1;
+      for (int j=0;j<num;j++) {
+	prmprev=prm;
+	prm=prm->next;
+      }
+      prmcur=prmcur->next;
+    }
+    /* remove null parameter and command end */
+    prmcur=cmdfd->prmnewroot;
+    prmprev=NULL;
+    while (prmcur!=NULL) {
+      if ((prmcur->str==NULL) || (prmcur->prmno==PPEND)) {
+	if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+	else prmprev->next=prmcur->next;
+	prm=prmcur;
+	prmcur=prmcur->next;
+	g_free(prm->str);
+	g_free(prm);
+      } else {
+	prmprev=prmcur;
+	prmcur=prmcur->next;
+      }
+    }
+    prmfree(stcur->prm);
+    stcur->prm=cmdfd->prmnewroot;
+    cmdfd->prmnewroot=NULL;
+  }
+  cmdfd->cmdcur=cmdfd->cmdcur->next;
+  return 0;
+}
+
+static int
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
-  struct cmdlist *cmdcur,*cmdnew,*cmd;
-  struct prmlist *prmcur,*prmprev,*prm,*prmnewroot;
-  struct vallist *newvalroot;
-  int err,quote,bquote,rcode,needcmd;
-  char *str,*name,*val,*po,*cmdname;
-  int i,j,num,pnum,errlevel,a,looplevel,len;
-  char *arg,*endptr,**env;
+  struct cmdlist *cmd;
+  struct prmlist *prmcur,*prm;
+  int err,quote,bquote;
+  char *str,*cmdname;
   struct cmdstack *stroot,*stcur,*st;
-  char *fstdout,*fstdin;
-  int istdout,istdin;
-  int sout,sout2,sin,sin2,sin3,fd;
-  int lastc;
-  int pipef;
-  struct objlist *sys;
-  char *tmpfil,*tmpfil2;
-  char *cmds;
-  char *s;
-  char **argv,**newenviron;
-  char **argvsave,**argvnew;
-  int quoted;
-  int argcsave,argcnew;
+  struct cmdexec_fd cmdfd;
   int iftrue,casetrue;
   char *pat;
-  char *readbuf;
-  int readpo;
-  int readbyte;
-  int ch;
-  char buf[2];
-  shell_proc proc;
-
-#if ! WINDOWS
-  pid_t pid;
-#endif	/* WINDOWS */
 
   reset_interrupt();
   nshell->cmdexec++;
   err=-1;
   stroot=NULL;
-  prmnewroot=NULL;
-  fstdout=fstdin=NULL;
-  env=NULL;
-  newenviron=NULL;
-  newvalroot=NULL;
+  cmdfd.prmnewroot=NULL;
+  cmdfd.fstdout=cmdfd.fstdin=NULL;
+  cmdfd.env=NULL;
+  cmdfd.newenviron=NULL;
+  cmdfd.newvalroot=NULL;
   cmdname=NULL;
-  sout=sout2=sin=sin2=NOHANDLE;
-  tmpfil2=NULL;
+  cmdfd.sout=cmdfd.sout2=cmdfd.sin=cmdfd.sin2=NOHANDLE;
+  cmdfd.tmpfil2=NULL;
   if (nshell->optionv) {
     cmd=cmdroot;
     while (cmd!=NULL) {
@@ -3129,30 +3969,30 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       cmd=cmd->next;
     }
   }
-  cmdcur=cmdroot;
-  while ((cmdcur!=NULL) && (!(nshell->quit))) {
+  cmdfd.cmdcur=cmdroot;
+  while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
     if (ninterrupt()) goto errexit;
     stcur=cmdstackgetpo(&stroot);
-    if ((stcur!=NULL) && (stcur->cmdno==CPBI) && (stcur->cmd!=cmdcur)) {
-      if (addfunc(nshell,stcur->val,cmdcur)==NULL) goto errexit;
-      cmdcur=cmdcur->next;
+    if ((stcur!=NULL) && (stcur->cmdno==CPBI) && (stcur->cmd!=cmdfd.cmdcur)) {
+      if (addfunc(nshell,stcur->val,cmdfd.cmdcur)==NULL) goto errexit;
+      cmdfd.cmdcur=cmdfd.cmdcur->next;
     } else {
-      switch (cmdcur->cmdno) {
+      switch (cmdfd.cmdcur->cmdno) {
       case CPNULL:
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPIF:
 	if ((st=cmdstackcat(&stroot,CPIF))==NULL) goto errexit;
 	st->iftrue=FALSE;
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPTHEN:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
-	if (iftrue || nshell->status) cmdcur=cmdcur->done;
+	if (iftrue || nshell->status) cmdfd.cmdcur=cmdfd.cmdcur->done;
 	else {
 	  iftrue=TRUE;
-	  cmdcur=cmdcur->next;
+	  cmdfd.cmdcur=cmdfd.cmdcur->next;
 	}
 	cmdstackrmlast(&stroot);
 	if ((st=cmdstackcat(&stroot,CPTHEN))==NULL) goto errexit;
@@ -3161,8 +4001,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       case CPELIF:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
-	if (iftrue) cmdcur=cmdcur->done;
-	else cmdcur=cmdcur->next;
+	if (iftrue) cmdfd.cmdcur=cmdfd.cmdcur->done;
+	else cmdfd.cmdcur=cmdfd.cmdcur->next;
 	cmdstackrmlast(&stroot);
 	if ((st=cmdstackcat(&stroot,CPIF))==NULL) goto errexit;
 	st->iftrue=iftrue;
@@ -3170,20 +4010,20 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       case CPELSE:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
-	if (iftrue) cmdcur=cmdcur->done;
-	else cmdcur=cmdcur->next;
+	if (iftrue) cmdfd.cmdcur=cmdfd.cmdcur->done;
+	else cmdfd.cmdcur=cmdfd.cmdcur->next;
 	cmdstackrmlast(&stroot);
 	if ((st=cmdstackcat(&stroot,CPELSE))==NULL) goto errexit;
 	st->iftrue=iftrue;
 	break;
       case CPFI:
 	cmdstackrmlast(&stroot);
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPCASE:
 	if ((st=cmdstackcat(&stroot,CPCASE))==NULL) return -1;
 	st->casetrue=FALSE;
-	prmcur=(cmdcur->prm)->next;
+	prmcur=(cmdfd.cmdcur->prm)->next;
 	quote='\0';
 	bquote='\0';
 	if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
@@ -3195,16 +4035,16 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((str=fnexpand(nshell,str))==NULL) goto errexit;
 	wordunsplit(str);
 	st->pat=str;
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPPATI:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
 	st->pat = NULL;		/* hito (mem leak of pat) */
-	if (casetrue) cmdcur=cmdcur->done;
+	if (casetrue) cmdfd.cmdcur=cmdfd.cmdcur->done;
 	else {
-	  prm=cmdcur->prm;
+	  prm=cmdfd.cmdcur->prm;
 	  while (prm!=NULL) {
 	    if (wildmatch(prm->str,pat,0)) break;
 	    prm=prm->next;
@@ -3212,8 +4052,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  }
 	  if (prm!=NULL) {
 	    casetrue=TRUE;
-	    cmdcur=cmdcur->next;
-	  } else cmdcur=cmdcur->done;
+	    cmdfd.cmdcur=cmdfd.cmdcur->next;
+	  } else cmdfd.cmdcur=cmdfd.cmdcur->done;
 	}
 	cmdstackrmlast(&stroot);
 	if ((st=cmdstackcat(&stroot,CPPATI))==NULL) goto errexit;
@@ -3229,7 +4069,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((st=cmdstackcat(&stroot,CPPATO))==NULL) goto errexit;
 	st->casetrue=casetrue;
 	st->pat=pat;
-	cmdcur=cmdcur->done;
+	cmdfd.cmdcur=cmdfd.cmdcur->done;
 	break;
       case CPESAC:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
@@ -3238,810 +4078,60 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	st->pat = NULL;		/* hito (mem leak of pat) */
 	g_free(pat);
 	cmdstackrmlast(&stroot);
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPFOR:
-	if ((stcur=cmdstackcat(&stroot,CPFOR))==NULL) goto errexit;
-	stcur->cmd=cmdcur;
-	prmcur=(cmdcur->prm)->next;
-	stcur->val=prmcur->str;
-	prmcur=prmcur->next;
-	if (prmcur==NULL) stcur->ival=0;
-	else {
-	  stcur->ival=-1;
-	  prmnewroot=NULL;
-	  prmprev=NULL;
-	  prmcur=prmcur->next;
-	  while (prmcur!=NULL) {
-	    if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
-	    if (prmprev==NULL) prmnewroot=prm;
-	    else prmprev->next=prm;
-	    prm->next=NULL;
-	    prm->str=NULL;
-	    prm->prmno=prmcur->prmno;
-	    quote='\0';
-	    bquote='\0';
-	    if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
-	      goto errexit;
-	    if (quote || bquote) {
-	      sherror(ERRUEXPEOF);
-	      goto errexit;
-	    }
-	    if (str[0]!='\0') {
-	      if ((prm->str=fnexpand(nshell,str))==NULL) goto errexit;
-	    } else {
-	      g_free(str);
-	      prm->str=NULL;
-	    }
-	    if ((num=wordsplit(prm))==-1) goto errexit;
-	    for (j=0;j<num;j++) {
-	      prmprev=prm;
-	      prm=prm->next;
-	    }
-	    prmcur=prmcur->next;
-	  }
-	  /* remove null parameter and command end */
-	  prmcur=prmnewroot;
-	  prmprev=NULL;
-	  while (prmcur!=NULL) {
-	    if ((prmcur->str==NULL) || (prmcur->prmno==PPEND)) {
-	      if (prmprev==NULL) prmnewroot=prmcur->next;
-	      else prmprev->next=prmcur->next;
-	      prm=prmcur;
-	      prmcur=prmcur->next;
-	      g_free(prm->str);
-	      g_free(prm);
-	    } else {
-	      prmprev=prmcur;
-	      prmcur=prmcur->next;
-	    }
-	  }
-	  prmfree(stcur->prm);
-	  stcur->prm=prmnewroot;
-	  prmnewroot=NULL;
+	if (cmdexec_cpfor(nshell, namedfunc, &cmdfd, &stroot)) {
+	  goto errexit;
 	}
-	cmdcur=cmdcur->next;
 	break;
       case CPWHILE:
 	if ((stcur=cmdstackcat(&stroot,CPWHILE))==NULL) goto errexit;
-	stcur->cmd=cmdcur;
-	cmdcur=cmdcur->next;
+	stcur->cmd=cmdfd.cmdcur;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPUNTIL:
 	if ((stcur=cmdstackcat(&stroot,CPUNTIL))==NULL) goto errexit;
-	stcur->cmd=cmdcur;
-	cmdcur=cmdcur->next;
+	stcur->cmd=cmdfd.cmdcur;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPDO:
-	if ((stcur=cmdstackgetpo(&stroot))==NULL) goto errexit;
-	if (stcur->cmdno==CPFOR) {
-	  if (stcur->ival==-1) {
-	    prmcur=stcur->prm;
-	    if (prmcur==NULL) {
-	      cmdcur=cmdcur->done;
-	      cmdstackrmlast(&stroot);
-	      cmdcur=cmdcur->next;
-	      break;
-	    }
-	    if (addval(nshell,stcur->val,prmcur->str)==NULL) goto errexit;
-	    stcur->prm=prmcur->next;
-	    g_free(prmcur->str);
-	    g_free(prmcur);
-	  } else {
-	    stcur->ival++;
-	    if (stcur->ival<nshell->argc) {
-	      if (addval(nshell,stcur->val,nshell->argv[stcur->ival])==NULL)
-                goto errexit;
-	    } else {
-	      cmdcur=cmdcur->done;
-	      cmdstackrmlast(&stroot);
-	      cmdcur=cmdcur->next;
-	      break;
-	    }
-	  }
-	} else if (stcur->cmdno==CPWHILE) {
-	  if (nshell->status) {
-	    cmdcur=cmdcur->done;
-	    cmdstackrmlast(&stroot);
-	    cmdcur=cmdcur->next;
-	    break;
-	  }
-	} else if (stcur->cmdno==CPUNTIL) {
-	  if (!nshell->status) {
-	    cmdcur=cmdcur->done;
-	    cmdstackrmlast(&stroot);
-	    cmdcur=cmdcur->next;
-	    break;
-	  }
+	if (cmdexec_cpdo(nshell, namedfunc, &cmdfd, &stroot)) {
+	  goto errexit;
 	}
-	cmdcur=cmdcur->next;
 	break;
       case CPDONE:
 	if ((stcur=cmdstackgetpo(&stroot))==NULL) goto errexit;
-	cmdcur=stcur->cmd;
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=stcur->cmd;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPFN:
 	if ((stcur=cmdstackcat(&stroot,CPFN))==NULL) goto errexit;
-	prmcur=cmdcur->prm;
+	prmcur=cmdfd.cmdcur->prm;
 	stcur->val=prmcur->str;
 	if (newfunc(nshell,prmcur->str)==NULL) goto errexit;
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPBI:
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	if ((stcur=cmdstackcat(&stroot,CPBI))==NULL) goto errexit;
 	stcur->val=st->val;
-	stcur->cmd=cmdcur->done;
-	cmdcur=cmdcur->next;
+	stcur->cmd=cmdfd.cmdcur->done;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPBO:
 	cmdstackrmlast(&stroot);
 	cmdstackrmlast(&stroot);
-	cmdcur=cmdcur->next;
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
-
       case CPNO:
-
-	prmnewroot=NULL;
-	prmprev=NULL;
-	prmcur=cmdcur->prm;
-	while (prmcur!=NULL) {
-	  if (prmcur->prmno!=PPSI2) {
-	    quote='\0';
-	    bquote='\0';
-	    if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
-	      goto errexit;
-	    if (quote || bquote) {
-	      g_free(str);
-	      sherror(ERRUEXPEOF);
-	      goto errexit;
-	    }
-	    prmcur->quoted=FALSE;
-	  } else {
-	    if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) goto errexit;
-	    strcpy(str,prmcur->str);
-	  }
-	  if ((prmcur->prmno!=PPNO) || (str[0]!='\0')) {
-	    if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
-	    if (prmprev==NULL) prmnewroot=prm;
-	    else prmprev->next=prm;
-	    prm->next=NULL;
-	    prm->prmno=prmcur->prmno;
-	    prm->quoted=prmcur->quoted;
-	    if (prmcur->prmno!=PPSI2) {
-	      if ((prm->str=fnexpand(nshell,str))==NULL) goto errexit;
-	      if (prm->prmno==PPNO) {
-		if ((num=wordsplit(prm))==-1) goto errexit;
-		for (j=0;j<num;j++) {
-		  prmprev=prm;
-		  prm->prmno=PPNO;
-		  prm=prm->next;
-		}
-	      } else {
-		wordunsplit(prm->str);
-		prmprev=prm;
-	      }
-	    } else {
-	      prm->str=str;
-	      prmprev=prm;
-	    }
-	  } else g_free(str);
-	  prmcur=prmcur->next;
+	if (cmdexec_cpno(nshell, namedfunc, &cmdfd, &stroot, &err)) {
+	  goto errexit;
 	}
-
-	/* remove null parameter & check redirect and pipe */
-	istdout=istdin=PPNO;
-	pipef=FALSE;
-	prmcur=prmnewroot;
-	prmprev=NULL;
-	pnum=0;
-	while (prmcur!=NULL) {
-	  if (prmcur->str==NULL) {
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm->str);
-	    g_free(prm);
-	  } else if ((prmcur->prmno==PPSI1) || (prmcur->prmno==PPSI2)
-		     || (prmcur->prmno==PPSO1) || (prmcur->prmno==PPSO2)) {
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm->str);
-	    g_free(prm);
-	    switch (prmcur->prmno) {
-	    case PPSI1:
-	      g_free(fstdin);
-	      fstdin=prmcur->str;
-	      istdin=PPSI1;
-	      break;
-	    case PPSI2:
-	      g_free(fstdin);
-	      fstdin=prmcur->str;
-	      istdin=PPSI2;
-	      quoted=prmcur->quoted;
-	      break;
-	    case PPSO1:
-	      g_free(fstdout);
-	      fstdout=prmcur->str;
-	      istdout=PPSO1;
-	      break;
-	    case PPSO2:
-	      g_free(fstdout);
-	      fstdout=prmcur->str;
-	      istdout=PPSO2;
-	      break;
-	    }
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm);
-	  } else if (prmcur->prmno==PPPIPE) {
-	    pipef=TRUE;
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm->str);
-	    g_free(prm);
-	  } else if (prmcur->prmno==PPEND) {
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm->str);
-	    g_free(prm);
-	  } else if ((prmcur->prmno!=PPSETV) && (prmcur->prmno!=PPSETO)) {
-	    pnum++;
-	    prmprev=prmcur;
-	    prmcur=prmcur->next;
-	  } else {
-	    prmprev=prmcur;
-	    prmcur=prmcur->next;
-	  }
-	}
-
-	/* set variable */
-	prmcur=prmnewroot;
-	prmprev=NULL;
-	while (prmcur!=NULL) {
-	  if (prmcur->prmno==PPSETV) {
-	    po=strchr(prmcur->str,'=');
-	    if ((name=g_malloc(po-prmcur->str+1))==NULL) goto errexit;
-	    strncpy(name,prmcur->str,po-prmcur->str);
-	    name[po-prmcur->str]='\0';
-	    if ((val=g_malloc(strlen(prmcur->str)-(po-prmcur->str)))==NULL) {
-	      g_free(name);
-	      goto errexit;
-	    }
-	    strcpy(val,po+1);
-	    if (pnum==0) po=addval(nshell,name,val);
-	    else po=saveval(nshell,name,val,&newvalroot);
-	    g_free(name);
-	    g_free(val);
-	    if (po==NULL) goto errexit;
-	    g_free(prmcur->str);
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm);
-	  } else if (prmcur->prmno==PPSETO) {
-	    /* set object */
-	    if (sputobj(prmcur->str)==-1) goto errexit;
-	    g_free(prmcur->str);
-	    if (prmprev==NULL) prmnewroot=prmcur->next;
-	    else prmprev->next=prmcur->next;
-	    prm=prmcur;
-	    prmcur=prmcur->next;
-	    g_free(prm);
-	  } else {
-	    prmprev=prmcur;
-	    prmcur=prmcur->next;
-	  }
-	}
-
-	prmcur=prmnewroot;
-	if ((prmcur!=NULL) && (prmcur->prmno==PPNO)) {
-
-	  /* set environment variable */
-#if USE_HASH
-	  {
-	    struct set_env_arg se_arg;
-
-	    se_arg.nshell = nshell;
-	    se_arg.newenviron = &newenviron;
-	    if (nhash_each(nshell->valroot, set_env_val, &se_arg))
-	      goto errexit;
-	  }
-#else
-	  struct vallist *valcur = nshell->valroot;
-	  while (valcur!=NULL) {
-	    if (!valcur->func
-		&& (getexp(nshell,valcur->name) || valcur->arg ||
-		    (g_getenv(valcur->name)!=NULL))) {
-	      len=strlen(valcur->name);
-	      if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
-	      else val=g_getenv(valcur->name);
-	      if ((s=g_malloc(len+strlen(val)+2))==NULL) goto errexit;
-	      strcpy(s,valcur->name);
-	      s[len]='=';
-	      strcpy(s+len+1,val);
-	      if (arg_add(&newenviron,s)==NULL) {
-		g_free(s);
-		goto errexit;
-	      }
-	    }
-	    valcur=valcur->next;
-	  }
-#endif
-
-	  env=MainEnviron;
-	  MainEnviron=newenviron;
-	  newenviron=NULL;
-	  sout=sin=NOHANDLE;
-	  if (istdin!=PPNO) {
-	    if (istdin==PPSI1) sin=nopen(fstdin,O_RDONLY,NFMODE);
-	    else if (istdin==PPSI2) {
-	      sin=nopen(fstdin,O_RDONLY,NFMODE);
-	      if (!quoted) {
-		fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil2);
-		if (fd < 0) {
-		  nclose(sin);
-		  goto errexit;
-		}
-		do {
-		  if ((s=nstrnew())==NULL) {
-		    nclose(sin);
-		    nclose(fd);
-		    goto errexit;
-		  }
-		  do {
-		    if (nread(sin,buf,1)>0) ch=buf[0];
-		    else ch=EOF;
-		    if (ch==EOF) break;
-		    else {
-		      if (ch=='\n') ch='\0';
-		      if ((s=nstrccat(s,ch))==NULL) {
-			nclose(sin);
-			nclose(fd);
-			goto errexit;
-		      }
-		    }
-		  } while (ch!='\0');
-		  quote=bquote='\0';
-		  str=s;
-		  s=expand(nshell,str,&quote,&bquote,FALSE);
-		  g_free(str);
-		  if (s==NULL) {
-		    nclose(sin);
-		    nclose(fd);
-		    goto errexit;
-		  }
-		  wordunsplit(s);
-		  len=strlen(s);
-		  if (ch!=EOF) {
-		    s[len]='\n';
-		    len++;
-		  }
-		  nwrite(fd,s,len);
-		  g_free(s);
-		} while (ch!=EOF);
-		nclose(sin);
-		nclose(fd);
-		sin=nopen(tmpfil2,O_RDONLY,NFMODE);
-	      }
-	    }
-	  } else if (cmdcur->pipefile!=NULL) {
-	    sin=nopen(cmdcur->pipefile,O_RDONLY,NFMODE);
-	  }
-	  if (sin!=NOHANDLE) sin2=nredirect(0,sin);
-
-	  /* redirect : stdout */
-	  if (istdout!=PPNO) {
-	    if (Security) {
-	      sherror(ERRSECURITY);
-	      goto errexit;
-	    }
-	    if (istdout==PPSO2)
-	      sout=nopen(fstdout,O_APPEND|O_CREAT|O_WRONLY,NFMODE);
-	    else sout=nopen(fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
-	    /* pipe */
-	  } else if (pipef) {
-	    if ((sys=getobject("system"))==NULL) goto errexit; /* fix-me: assigned value of the variable "sys" is never used */
-	    sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
-	    if (sout < 0)
-	      goto errexit;
-	    unlinkfile(&((cmdcur->next)->pipefile));
-	    (cmdcur->next)->pipefile=tmpfil;
-	  }
-	  if (sout!=NOHANDLE) sout2=nredirect(1,sout);
-
-	  if (nshell->optionx) {
-	    for (i=0;i<nshell->cmdexec;i++) printfconsole("+");
-	    printfconsole(" ");
-	    prm=prmcur;
-	    while (prm!=NULL) {
-	      printfconsole("%.256s ",prm->str);
-	      prm=prm->next;
-	    }
-	    printfconsole("\n");
-	  }
-
-	  cmds=prmcur->str;
-	  /* exec named function */
-	  if ((cmdnew=getfunc(nshell,cmds))!=NULL) {
-	    needcmd=FALSE;
-	    st=NULL;
-	    rcode=syntax(nshell,cmdnew,&needcmd,&st);
-	    cmdstackfree(st);
-	    if ((rcode!=0) || (st!=NULL) || (needcmd)) goto errexit;
-	    argvnew=NULL;
-	    if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-	      goto errexit;
-	    strcpy(s,(nshell->argv)[0]);
-	    if (arg_add(&argvnew,s)==NULL) {
-	      g_free(s);
-	      arg_del(argvnew);
-	      goto errexit;
-	    }
-	    prmcur=prmcur->next;
-	    while (prmcur!=NULL) {
-	      if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
-		g_free(s);
-		arg_del(argvnew);
-		goto errexit;
-	      }
-	      strcpy(s,prmcur->str);
-	      if (arg_add(&argvnew,s)==NULL) {
-		g_free(s);
-		arg_del(argvnew);
-		goto errexit;
-	      }
-	      prmcur=prmcur->next;
-	    }
-	    argcnew=getargc(argvnew);
-	    argcsave=nshell->argc;
-	    argvsave=nshell->argv;
-	    nshell->argc=argcnew;
-	    nshell->argv=argvnew;
-	    rcode=cmdexec(nshell,cmdnew,TRUE);
-	    arg_del(nshell->argv);
-	    nshell->argc=argcsave;
-	    nshell->argv=argvsave;
-	    if ((rcode==-1) || (rcode==1)) goto errexit;
-	    /* exec special command */
-	    /* . */
-	  } else if (strcmp0(".",cmds)==0) {
-	    prmcur=prmcur->next;
-	    if (prmcur!=NULL) {
-	      cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,TRUE);
-	      if (cmdname!=NULL) {
-		argvnew=NULL;
-		if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-		  goto errexit;
-		strcpy(s,(nshell->argv)[0]);
-		if (arg_add(&argvnew,s)==NULL) {
-		  g_free(s);
-		  arg_del(argvnew);
-		  goto errexit;
-		}
-		prmcur=prmcur->next;
-		while (prmcur!=NULL) {
-		  if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
-		    g_free(s);
-		    arg_del(argvnew);
-		    goto errexit;
-		  }
-		  strcpy(s,prmcur->str);
-		  if (arg_add(&argvnew,s)==NULL) {
-		    g_free(s);
-		    arg_del(argvnew);
-		    goto errexit;
-		  }
-		  prmcur=prmcur->next;
-		}
-		argcnew=getargc(argvnew);
-
-		sin=nopen(cmdname,O_RDONLY,NFMODE);
-		g_free(cmdname);
-		cmdname=NULL;
-		if (sin==NOHANDLE) {
-		  sherror2(ERROPEN,cmdname);
-		  arg_del(argvnew);
-		  goto errexit;
-		}
-		argcsave=nshell->argc;
-		argvsave=nshell->argv;
-		nshell->argc=argcnew;
-		nshell->argv=argvnew;
-		sin3=storeshhandle(nshell,sin,&readbuf,&readbyte,&readpo);
-		rcode=cmdexecute(nshell,NULL);
-		restoreshhandle(nshell,sin3,readbuf,readbyte,readpo);
-		nclose(sin);
-		arg_del(nshell->argv);
-		nshell->argc=argcsave;
-		nshell->argv=argvsave;
-		if ((rcode!=0) && (rcode!=1)) goto errexit;
-	      } else {
-		sherror2(ERRNOFIL,prmcur->str);
-		goto errexit;
-	      }
-	    }
-	    /* break */
-	  } else if (strcmp0("break",cmds)==0) {
-	    if (pnum>2) {
-	      sherror(ERREXTARG);
-	      goto errexit;
-	    } else if (pnum==2) {
-	      arg=(prmcur->next)->str;
-	      a=strtol(arg,&endptr,10);
-	      if (endptr[0]!='\0') {
-		sherror2(ERRNUMERIC,arg);
-		goto errexit;
-	      }
-	    } else a=1;
-	    looplevel=0;
-	    stcur=stroot;
-	    while (stcur!=NULL) {
-	      if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-		  || (stcur->cmdno==CPUNTIL)) looplevel++;
-	      stcur=stcur->next;
-	    }
-	    if (looplevel!=0) {
-	      while (a>0) {
-		if ((stcur=cmdstackgetpo(&stroot))==NULL) break;
-		if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
-		  prmfree(stcur->prm);
-		  stcur->prm=NULL;
-		}
-		if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-		    || (stcur->cmdno==CPUNTIL)) {
-		  cmdcur=stcur->cmd;
-		  while (cmdcur->cmdno!=CPDO) cmdcur=cmdcur->next;
-		  cmdcur=cmdcur->done;
-		  cmdstackrmlast(&stroot);
-		  a--;
-		} else cmdstackrmlast(&stroot);
-	      }
-	    }
-	    /* continue */
-	  } else if (strcmp0("continue",cmds)==0) {
-	    if (pnum>2) {
-	      sherror(ERREXTARG);
-	      goto errexit;
-	    } else if (pnum==2) {
-	      arg=(prmcur->next)->str;
-	      a=strtol(arg,&endptr,10);
-	      if (endptr[0]!='\0') {
-		sherror2(ERRNUMERIC,arg);
-		goto errexit;
-	      }
-	    } else a=1;
-	    looplevel=0;
-	    stcur=stroot;
-	    while (stcur!=NULL) {
-	      if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-		  || (stcur->cmdno==CPUNTIL)) looplevel++;
-	      stcur=stcur->next;
-	    }
-	    if (looplevel!=0) {
-	      while (a>0) {
-		if ((stcur=cmdstackgetpo(&stroot))==NULL) break;
-		if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-		    || (stcur->cmdno==CPUNTIL)) {
-		  cmdcur=stcur->cmd;
-		  a--;
-		  if (a>0) {
-		    if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
-		      prmfree(stcur->prm);
-		      stcur->prm=NULL;
-		    }
-		    cmdstackrmlast(&stroot);
-		  }
-		} else cmdstackrmlast(&stroot);
-	      }
-	    }
-	    /* return */
-	  } else if (strcmp0("return",cmds)==0) {
-	    if (pnum>2) {
-	      sherror(ERREXTARG);
-	      goto errexit;
-	    } else if (pnum==2) {
-	      arg=(prmcur->next)->str;
-	      a=strtol(arg,&endptr,10);
-	      if (endptr[0]!='\0') {
-		sherror2(ERRNUMERIC,arg);
-		goto errexit;
-	      }
-	      nshell->status=a;
-	    }
-	    if (namedfunc) {
-	      err=0;
-	      goto errexit;
-	    }
-	    /* execute object */
-	  } else if (isobject(&cmds)) {
-	    len=0;
-	    prm=prmcur;
-	    while (prm!=NULL) {
-	      len+=strlen(prm->str)+1;
-	      prm=prm->next;
-	    }
-	    if ((str=g_malloc(len))==NULL) goto errexit;
-	    str[0]='\0';
-	    prm=prmcur;
-	    while (prm!=NULL) {
-	      strcat(str,prm->str);
-	      if (prm->next!=NULL) strcat(str," ");
-	      prm=prm->next;
-	    }
-	    errlevel=sexeobj(str);
-	    g_free(str);
-	    if (errlevel==-1) goto errexit;
-	    nshell->status=errlevel;
-	    lastc=cmdstackgetlast(&stroot);
-	    if ((lastc!=CPIF) && (lastc!=CPELIF)
-		&& (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-		&& (nshell->optione) && (errlevel!=0)) {
-	      err=3;
-	      goto errexit;
-	    }
-	    nshell->status=errlevel;
-	    lastc=cmdstackgetlast(&stroot);
-	    if ((lastc!=CPIF) && (lastc!=CPELIF)
-		&& (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-		&& (nshell->optione) && (errlevel!=0)) {
-	      err=3;
-	      goto errexit;
-	    }
-	    if (nshell->quit) break;
-	    /* exec inner command */
-	  } else {
-	    proc = check_cmd(prmcur->str);
-	    if (proc) {
-	      argv = NULL;
-	      if (arg_add(&argv, NULL) == NULL)
-		goto errexit;
-	      prm = prmnewroot;
-	      while (prm) {
-		if (arg_add(&argv, prm->str) == NULL) {
-		  g_free(argv);
-		  goto errexit;
-		}
-		prm = prm->next;
-	      }
-	      errlevel = proc(nshell, pnum, (char **)argv);
-	      g_free(argv);
-	    } else {
-	      cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
-	      if (cmdname==NULL) {
-		sherror2(ERRCFOUND,prmcur->str);
-		goto errexit;
-	      } else {
-		if (Security) {
-		  sherror(ERRSECURITY);
-		  goto errexit;
-		}
-		argv=NULL;
-		if (arg_add(&argv,NULL)==NULL) goto errexit;
-		prm=prmnewroot;
-		while (prm!=NULL) {
-		  if (arg_add(&argv,prm->str)==NULL) {
-		    g_free(argv);
-		    goto errexit;
-		  }
-		  prm=prm->next;
-		}
-#if WINDOWS
-		{
-		  GThread *thread;
-		  char *ptr, *win_cmd;
-
-		  ptr = quote_args(argv);
-		  if (ptr == NULL) {
-		    sherror(ERRMEMORY);
-		    goto errexit;
-		  }
-
-		  win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
-		  g_free(ptr);
-		  if (win_cmd == NULL) {
-		    sherror(ERRMEMORY);
-		    goto errexit;
-		  }
-
-		  errlevel = 0;
-		  thread= g_thread_new("process", proc_in_thread, win_cmd);
-		  if (thread) {
-		    WaitProc = 1;
-#if USE_EVENT_LOOP
-		    while (WaitProc) {
-		      msleep(1);
-		      eventloop();
-		    }
-#endif
-		    errlevel = GPOINTER_TO_INT(g_thread_join(thread));
-		  }
-		  g_free(win_cmd);
-		}
-#else	/* WINDOWS */
-		unset_childhandler();
-		pid = fork();
-		if (pid < 0) {
-		  sherror2(ERRSYSTEM,"fork");
-		  set_childhandler();
-		  goto errexit;
-		} else if (pid == 0) {
-		  errlevel=execve(cmdname,(char **)argv,MainEnviron);
-		  printfstderr("shell: %.64s: %.64s",
-			       argv[0],g_strerror(errno));
-		  exit(errlevel);
-		} else {
-#if USE_EVENT_LOOP
-		  if (has_eventloop()) {
-		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
-		      eventloop();
-		      msleep(10);
-		    }
-		  } else {
-		    waitpid(pid, &errlevel, 0);
-		  }
-#else
-                  waitpid(pid, &errlevel, 0);
-#endif
-		  errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
-		}
-		set_childhandler();
-#endif	/* WINDOWS */
-		g_free(argv);
-		g_free(cmdname);
-		cmdname=NULL;
-	      }
-	    }
-	    nshell->status = errlevel;
-	    lastc=cmdstackgetlast(&stroot);
-	    if ((lastc!=CPIF) && (lastc!=CPELIF)
-		&& (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-		&& (nshell->optione) && (errlevel!=0)) {
-	      err=3;
-	      goto errexit;
-	    }
-	    if (nshell->quit) break;
-	  }
-
-	  if (sout2!=NOHANDLE) {
-	    nredirect2(1,sout2);
-	    sout2=NOHANDLE;
-	  }
-	  if (sin2!=NOHANDLE) {
-	    nredirect2(0,sin2);
-	    sin2=NOHANDLE;
-	  }
-	  unlinkfile(&tmpfil2);
-	  arg_del(MainEnviron);
-	  MainEnviron=env;
-	  env=NULL;
-	}
-	restoreval(nshell,newvalroot);
-	newvalroot=NULL;
-
-	prmfree(prmnewroot);
-	prmnewroot=NULL;
-	g_free(fstdout);
-	g_free(fstdin);
-	fstdout=fstdin=NULL;
-	unlinkfile(&(cmdcur->pipefile));
-	cmdcur=cmdcur->next;
 	break;
       default:
-
-	unlinkfile(&(cmdcur->pipefile));
-	cmdcur=cmdcur->next;
+	unlinkfile(&(cmdfd.cmdcur->pipefile));
+	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       }
     }
@@ -4050,22 +4140,22 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 
  errexit:
   cmdstackfree(stroot);
-  prmfree(prmnewroot);
-  g_free(fstdout);
-  g_free(fstdin);
+  prmfree(cmdfd.prmnewroot);
+  g_free(cmdfd.fstdout);
+  g_free(cmdfd.fstdin);
   g_free(cmdname);
-  arg_del(newenviron);
-  if (env!=NULL) {
+  arg_del(cmdfd.newenviron);
+  if (cmdfd.env!=NULL) {
     arg_del(MainEnviron);
-    MainEnviron=env;
+    MainEnviron=cmdfd.env;
   }
-  if (newvalroot!=NULL) restoreval(nshell,newvalroot);
-  if (sout2!=NOHANDLE) nredirect2(1,sout2);
-  if (sin2!=NOHANDLE) nredirect2(0,sin2);
-  unlinkfile(&tmpfil2);
-  cmdcur=cmdroot;
-  while (cmdcur!=NULL) {
-    prmcur=cmdcur->prm;
+  if (cmdfd.newvalroot!=NULL) restoreval(nshell,cmdfd.newvalroot);
+  if (cmdfd.sout2!=NOHANDLE) nredirect2(1,cmdfd.sout2);
+  if (cmdfd.sin2!=NOHANDLE) nredirect2(0,cmdfd.sin2);
+  unlinkfile(&cmdfd.tmpfil2);
+  cmdfd.cmdcur=cmdroot;
+  while (cmdfd.cmdcur!=NULL) {
+    prmcur=cmdfd.cmdcur->prm;
     while (prmcur!=NULL) {
       if (prmcur->prmno == PPSI2 &&
 	  prmcur->next!=NULL &&
@@ -4075,8 +4165,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       }
       prmcur=prmcur->next;
     }
-    unlinkfile(&(cmdcur->pipefile));
-    cmdcur=cmdcur->next;
+    unlinkfile(&(cmdfd.cmdcur->pipefile));
+    cmdfd.cmdcur=cmdfd.cmdcur->next;
   }
   nshell->cmdexec--;
   return err;
