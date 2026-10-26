@@ -194,6 +194,7 @@ static int Interrupted = FALSE;
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 static int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc);
+static char *expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp);
 
 typedef struct {
   int sleep;
@@ -1932,448 +1933,532 @@ wordunsplit(char *str)
   return po;
 }
 
+struct expand_context {
+  int *quote;
+  int *bquote;
+  int ifsexp, escape;
+  char *sb, *se, *name, *s, *val, valf, valf2;
+};
+
+static int
+expand_bquote (struct nshell *nshell, struct expand_context *cx, int ch)
+{
+  struct objlist *sys;
+  int sout,sout2;
+  int rcode;
+  char *tmpfil;
+  int byte, n, j;
+  char *c1;
+  if (*cx->bquote) {
+    if (ch=='`') {
+      *cx->bquote='\0';
+      if (cx->se==NULL) {
+	/* command substitution */
+	if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+	sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+	if (sout < 0)
+	  return -1;
+	sout2=nredirect(1,sout);
+	rcode=cmdexecute(nshell,cx->sb);
+	if ((rcode!=0) && (rcode!=1)) {
+	  nredirect2(1,sout2);
+	  g_unlink(tmpfil);
+	  g_free(tmpfil);
+	  return -1;
+	}
+	g_free(cx->sb);
+	if ((cx->sb=nstrnew())==NULL) {
+	  nredirect2(1,sout2);
+	  g_unlink(tmpfil);
+	  g_free(tmpfil);
+	  return -1;
+	}
+	nlseek(stdoutfd(),0L,SEEK_SET);
+	while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
+	  writebuf[byte]='\0';
+	  if ((cx->sb=nstrcat(cx->sb,writebuf))==NULL) {
+	    nredirect2(1,sout2);
+	    g_unlink(tmpfil);
+	    g_free(tmpfil);
+	    return -1;
+	  }
+	}
+	nredirect2(1,sout2);
+	g_unlink(tmpfil);
+	if (byte==-1) {
+	  sherror2(ERRREAD,tmpfil);
+	  g_free(tmpfil);
+	  return -1;
+	}
+	g_free(tmpfil);
+	n = strlen(cx->sb);
+	for (int u = 0; u < n; u++) {
+	  if (cx->sb[u] == '\n') {
+	    cx->sb[u] = ' ';
+	  }
+	}
+	for (j=strlen(cx->sb)-1;(j>=0) && (cx->sb[j]==' ');j--);
+	cx->sb[j+1]='\0';
+	if ((c1=quotation(nshell,cx->sb,*cx->quote))==NULL) return -1;
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) return -1;
+	g_free(cx->sb);
+	cx->sb=NULL;
+      }
+    } else if (cx->se==NULL) {
+      if (cx->sb!=NULL) {
+	if ((cx->sb=nstrccat(cx->sb,ch))==NULL) return -1;
+      } else {
+	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      }
+    }
+    return 1;
+  } else if ((ch=='`') && (*cx->quote!='\'')) {
+    *cx->bquote='`';
+    if (cx->se==NULL) {
+      if ((cx->sb=nstrnew())==NULL) return -1;
+    }
+    return 1;
+  }
+  return 0;
+}
+
+static int
+expand_escape(struct expand_context *cx, int ch, int chn)
+{
+  if (cx->escape) {
+    if (cx->se==NULL) {
+      if (cx->sb!=NULL) {
+	if ((cx->sb=nstrccat(cx->sb,ch))==NULL) return -1;
+      } else {
+	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      }
+    }
+    cx->escape=FALSE;
+    return 1;
+  }
+
+  if (ch=='\\') {
+    if (!*cx->quote
+	|| ((*cx->quote=='"') && (strchr("\"\\'$",chn)!=NULL))
+	|| *cx->bquote ) {
+      cx->escape=TRUE;
+      if ((cx->se==NULL) && (cx->sb==NULL)) {
+	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      }
+    } else if (cx->se==NULL) {
+      if (cx->sb!=NULL) {
+	if ((cx->sb=nstrccat(cx->sb,ch))==NULL) return -1;
+      } else {
+	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      }
+    }
+    return 1;
+  }
+
+  if (ch==(char )0x02) {
+    cx->escape=TRUE;
+    if ((cx->se==NULL) && (cx->sb==NULL)) {
+      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+    }
+    return 1;
+  }
+
+  return 0; // エスケープ関連ではない文字
+}
+
+static int
+expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
+{
+  int quote2,bquote2;
+  int i, j, k, num;
+  int dummy;
+  char *c1,*c2,ch;
+  char *tmp;
+  struct narray *sarray;
+  char **sdata;
+  int snum;
+
+  i = *index;
+  if ((po[i]=='$') && (po[i+1]!='\0')
+      && (*cx->quote!='\'') && (cx->se==NULL)) {
+    if (isdigit(po[i+1])) {
+      for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
+      g_free(cx->name);
+      if ((cx->name=g_malloc(j-i))==NULL) return -1;
+      strncpy(cx->name,po+i+1,j-i-1);
+      cx->name[j-i-1]='\0';
+      num=atoi(cx->name);
+      if (num<nshell->argc) {
+	if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
+	  return -1;
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) return -1;
+      }
+      *index=j-1;
+    } else if (strchr("#?",po[i+1])!=NULL) {
+      switch (po[i+1]) {
+      case '#': g_free(cx->name);
+	if ((cx->name=g_malloc(12))==NULL) return -1;
+	sprintf(cx->name,"%d",nshell->argc-1);
+	break;
+      case '?': g_free(cx->name);
+	if ((cx->name=g_malloc(12))==NULL) return -1;
+	sprintf(cx->name,"%d",nshell->status);
+	break;
+      }
+      if ((c1=quotation(nshell,cx->name,*cx->quote))==NULL) return -1;
+      cx->s=nstrcat(cx->s,c1);
+      g_free(c1);
+      if (cx->s==NULL) return -1;
+      *index = i + 1;
+    } else if (strchr("*@",po[i+1])!=NULL) {
+      cx->val=getval(nshell,"IFS");
+      if (cx->val==NULL) ch='\0';
+      else ch=cx->val[0];
+      for (j=1;j<nshell->argc;j++) {
+	if ((c1=quotation(nshell,(nshell->argv)[j],*cx->quote))==NULL)
+	  return -1;
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) return -1;
+	if (j!=(nshell->argc-1)) {
+	  if ((*cx->quote=='"') && (po[i+1]=='*')) {
+	    if (ch!='\0') {
+	      if (strchr("\"\\'$",ch)!=NULL) {
+		if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
+	      }
+	      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	    }
+	  } else {
+	    if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
+	  }
+	}
+      }
+      *index = i + 1;
+
+      /* check variable */
+    } else if (po[i+1]=='{') {
+      for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+      if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
+	  || (po[j-1]=='{')) {
+	sherror(ERRBADSUB);
+	return -1;
+      }
+      if (po[j]=='}') {
+	g_free(cx->name);
+	if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+	strncpy(cx->name,po+i+2,j-i-2);
+	cx->name[j-i-2]='\0';
+	cx->val=getval(nshell,cx->name);
+	if (cx->val!=NULL) {
+	  if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+	  cx->s=nstrcat(cx->s,c1);
+	  g_free(c1);
+	  if (cx->s==NULL) return -1;
+	}
+	*index=j;
+      } else {
+	if ((po[j]==':')
+	    && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
+	  cx->valf='o';
+	  if ((cx->se=nstrnew())==NULL) return -1;
+	  *index = i + 2;
+	} else {
+	  g_free(cx->name);
+	  if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+	  strncpy(cx->name,po+i+2,j-i-2);
+	  cx->name[j-i-2]='\0';
+	  cx->val=getval(nshell,cx->name);
+	  quote2=*cx->quote;
+	  bquote2=*cx->bquote;
+	  cx->valf2=' ';
+	  if (po[j]==':') {
+	    cx->valf2=':';
+	    j++;
+	  }
+	  if (strchr("-=?+",po[j])!=NULL) {
+	    cx->valf=po[j];
+	    j++;
+	  } else if (strchr("#%",po[j])!=NULL) {
+	    if (po[j]==po[j+1]) {
+	      cx->valf2=po[j];
+	      j++;
+	    }
+	    cx->valf=po[j];
+	    j++;
+	  } else {
+	    sherror(ERRBADSUB);
+	    return -1;
+	  }
+	  if ((cx->se=nstrnew())==NULL) return -1;
+	  *index=j;
+	}
+      }
+    } else {
+      /* simple variable substitution */
+      for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+      g_free(cx->name);
+      if ((cx->name=g_malloc(j-i))==NULL) return -1;
+      strncpy(cx->name,po+i+1,j-i-1);
+      cx->name[j-i-1]='\0';
+      if (cx->name[0]=='\0') cx->val="$";
+      else cx->val=getval(nshell,cx->name);
+      if (cx->val!=NULL) {
+	if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) return -1;
+      }
+      *index=j-1;
+    }
+    return 1;
+    /* check variable end */
+  } else if ((po[i]=='}') && (*cx->quote!='\'') && (cx->se!=NULL)) {
+    if (cx->valf=='o') {
+      /* object replacement */
+      if ((tmp=unquotation(cx->se,&dummy))==NULL) return -1;
+      g_free(cx->se);
+      cx->se=NULL;
+      sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
+      g_free(tmp);
+      sdata=arraydata(sarray);
+      snum=arraynum(sarray);
+      for (j=0;j<snum;j++) {
+	if ((c1=quotation(nshell,sdata[j],*cx->quote))==NULL) {
+	  arrayfree2(sarray);
+	  return -1;
+	}
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) {
+	  arrayfree2(sarray);
+	  return -1;
+	}
+      }
+      arrayfree2(sarray);
+      /* variable substitution */
+    } else {
+      c1=NULL;
+      switch (cx->valf) {
+      case '-':
+	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	} else {
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	    return -1;
+	}
+	break;
+      case '=':
+	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	} else {
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	    return -1;
+	  g_free(cx->se);
+	  if ((cx->se=unquotation(c1,&dummy))==NULL) return -1;
+	  if (addval(nshell,cx->name,cx->se)==NULL) return -1;
+	}
+	break;
+      case '?':
+	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	} else {
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	    return -1;
+	  printfstdout("%.256s: %.256s\n",cx->name,c1);
+	  return -1;
+	}
+	break;
+      case '+':
+	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	    return -1;
+	}
+	break;
+      case '#':
+	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
+	  if ((c2=nstrnew())==NULL) return -1;
+	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL) {
+	    g_free(c2);
+	    return -1;
+	  }
+	  if (cx->valf2=='#') {
+	    for (k=strlen(c2);k>=0;k--) {
+	      ch=c2[k];
+	      c2[k]='\0';
+	      if (wildmatch(c1,c2,WILD_PATHNAME)) {
+		c2[k]=ch;
+		break;
+	      }
+	      c2[k]=ch;
+	    }
+	  } else {
+	    for (k = 0; k <= (int) strlen(c2); k++) {
+	      ch=c2[k];
+	      c2[k]='\0';
+	      if (wildmatch(c1,c2,WILD_PATHNAME)) {
+		c2[k]=ch;
+		break;
+	      }
+	      c2[k]=ch;
+	    }
+	  }
+	  if (k > (int) strlen(c2)) {
+	    k=0;
+	  } else if (k < 0) {
+	    k = 0;            /* fix-me: is it proper? */
+	  }
+	  g_free(c1);
+	  c1=quotation(nshell,c2+k,quote2);
+	  g_free(c2);
+	  if (c1==NULL) return -1;
+	}
+	break;
+      case '%':
+	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
+	  if ((c2=nstrnew())==NULL) return -1;
+	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
+	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL) {
+	    g_free(c2);
+	    return -1;
+	  }
+	  if (cx->valf2=='%') {
+	    int len;
+	    len = strlen(c2) - 1;
+	    for (k = 0; k <= len; k++) {
+	      if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
+	    }
+	  } else {
+	    for (k=strlen(c2);k>=0;k--) {
+	      if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
+	    }
+	  }
+	  if (k<0) k=strlen(c2);
+	  c2[k]='\0';
+	  g_free(c1);
+	  c1=quotation(nshell,c2,quote2);
+	  g_free(c2);
+	  if (c1==NULL) return -1;
+	}
+	break;
+      }
+      if (c1!=NULL) {
+	cx->s=nstrcat(cx->s,c1);
+	g_free(c1);
+	if (cx->s==NULL) return -1;
+      }
+      *cx->quote=quote2;
+      *cx->bquote=bquote2;
+      g_free(cx->se);
+      cx->se=NULL;
+    }
+    return 1;
+  }
+  return 0;
+}
+
+static int
+expand_quotation(struct expand_context *cx, int ch)
+{
+  if ((*cx->quote=='"') || (*cx->quote=='\'')) {
+    if (ch==*cx->quote) *cx->quote='\0';
+    if (cx->se==NULL) {
+      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+    }
+    return 1;
+  } else if (ch=='\'' || ch=='"') {
+    *cx->quote=ch;
+    if (cx->se==NULL) {
+      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+    }
+    return 1;
+  }
+  return 0;
+}
+
+static int
+expand_ifs (struct nshell *nshell, struct expand_context *cx, int ch, int ifsexp)
+{
+  char *ifs;
+  ifs=getval(nshell,"IFS");
+  if (cx->se==NULL) {
+    if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0')
+	&& (strchr(ifs,ch)!=NULL)) {
+      if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
+    } else {
+      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+    }
+    return 1;
+  }
+  return 0;
+}
+
 static char *
 expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
 {
   char *po;
-  int quote2,bquote2,escape;
-  int i,j,k,num;
-  unsigned int u, n;
-  char *c1,*c2,*name,*val,ch,valf,valf2,*ifs;
-  char *s,*sb,*se;
-  int sout,sout2;
-  int rcode,dummy;
-  int byte;
-  char *tmpfil;
-  struct objlist *sys;
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  char *tmp;
+  int i;
+  struct expand_context cx;
+
+  cx.quote = quote;
+  cx.bquote = bquote;
+  cx.ifsexp = ifsexp;
 
   if ((po=str)==NULL) return NULL;
-  if ((s=nstrnew())==NULL) return NULL;
-  name=NULL;
-  sb=se=NULL;
-  escape=FALSE;
-  ifs=getval(nshell,"IFS");
+  if ((cx.s=nstrnew())==NULL) return NULL;
+  cx.name=NULL;
+  cx.sb=cx.se=NULL;
+  cx.escape=FALSE;
 
   for (i=0;po[i]!='\0';i++) {
     /* check escapse */
-    if (escape) {
-      if (se==NULL) {
-        if (sb!=NULL) {
-          if ((sb=nstrccat(sb,po[i]))==NULL) goto errexit;
-        } else {
-          if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-        }
-      }
-      escape=FALSE;
-    } else if (po[i]=='\\') {
-      if (!*quote
-      || ((*quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))
-      || *bquote ) {
-        escape=TRUE;
-        if ((se==NULL) && (sb==NULL)) {
-          if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-        }
-      } else if (se==NULL) {
-        if (sb!=NULL) {
-          if ((sb=nstrccat(sb,po[i]))==NULL) goto errexit;
-        } else {
-          if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-        }
-      }
-    } else if (po[i]==(char )0x02) {
-      escape=TRUE;
-      if ((se==NULL) && (sb==NULL)) {
-        if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      }
+    int res;
+    res = expand_escape(&cx, po[i], po[i + 1]);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+
     /* check back quote */
-    } else if (*bquote) {
-      if (po[i]=='`') {
-        *bquote='\0';
-        if (se==NULL) {
-          /* command substitution */
-          if ((sys=getobject("system"))==NULL) goto errexit; /* fix-me: assigned value of the variable "sys" is never used */
-	  sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
-	  if (sout < 0)
-	    goto errexit;
-          sout2=nredirect(1,sout);
-          rcode=cmdexecute(nshell,sb);
-          if ((rcode!=0) && (rcode!=1)) {
-            nredirect2(1,sout2);
-            g_unlink(tmpfil);
-            g_free(tmpfil);
-            goto errexit;
-          }
-          g_free(sb);
-          if ((sb=nstrnew())==NULL) {
-            nredirect2(1,sout2);
-            g_unlink(tmpfil);
-            g_free(tmpfil);
-            goto errexit;
-          }
-          nlseek(stdoutfd(),0L,SEEK_SET);
-          while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
-            writebuf[byte]='\0';
-            if ((sb=nstrcat(sb,writebuf))==NULL) {
-              nredirect2(1,sout2);
-              g_unlink(tmpfil);
-              g_free(tmpfil);
-              goto errexit;
-            }
-          }
-          nredirect2(1,sout2);
-          g_unlink(tmpfil);
-          if (byte==-1) {
-            sherror2(ERRREAD,tmpfil);
-            g_free(tmpfil);
-            goto errexit;
-          }
-          g_free(tmpfil);
-	  n = strlen(sb);
-          for (u = 0; u < n; u++) {
-	    if (sb[u] == '\n') {
-	      sb[u] = ' ';
-	    }
-	  }
-          for (j=strlen(sb)-1;(j>=0) && (sb[j]==' ');j--);
-          sb[j+1]='\0';
-          if ((c1=quotation(nshell,sb,*quote))==NULL) goto errexit;
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) goto errexit;
-          g_free(sb);
-          sb=NULL;
-        }
-      } else if (se==NULL) {
-        if (sb!=NULL) {
-          if ((sb=nstrccat(sb,po[i]))==NULL) goto errexit;
-        } else {
-          if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-        }
-      }
-    } else if ((po[i]=='`') && (*quote!='\'')) {
-      *bquote='`';
-      if (se==NULL) {
-        if ((sb=nstrnew())==NULL) goto errexit;
-      }
+    res = expand_bquote (nshell, &cx, po[i]);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+
     /* check constant variable */
-    } else if ((po[i]=='$') && (po[i+1]!='\0')
-    && (*quote!='\'') && (se==NULL)) {
-      if (isdigit(po[i+1])) {
-        for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
-        g_free(name);
-        if ((name=g_malloc(j-i))==NULL) goto errexit;
-        strncpy(name,po+i+1,j-i-1);
-        name[j-i-1]='\0';
-        num=atoi(name);
-        if (num<nshell->argc) {
-          if ((c1=quotation(nshell,(nshell->argv)[num],*quote))==NULL)
-            goto errexit;
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) goto errexit;
-        }
-        i=j-1;
-      } else if (strchr("#?",po[i+1])!=NULL) {
-        switch (po[i+1]) {
-        case '#': g_free(name);
-                  if ((name=g_malloc(12))==NULL) goto errexit;
-                  sprintf(name,"%d",nshell->argc-1);
-                  break;
-        case '?': g_free(name);
-                  if ((name=g_malloc(12))==NULL) goto errexit;
-                  sprintf(name,"%d",nshell->status);
-                  break;
-        }
-        if ((c1=quotation(nshell,name,*quote))==NULL) goto errexit;
-        s=nstrcat(s,c1);
-        g_free(c1);
-        if (s==NULL) goto errexit;
-        i++;
-      } else if (strchr("*@",po[i+1])!=NULL) {
-        val=getval(nshell,"IFS");
-        if (val==NULL) ch='\0';
-        else ch=val[0];
-        for (j=1;j<nshell->argc;j++) {
-          if ((c1=quotation(nshell,(nshell->argv)[j],*quote))==NULL)
-            goto errexit;
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) goto errexit;
-          if (j!=(nshell->argc-1)) {
-            if ((*quote=='"') && (po[i+1]=='*')) {
-              if (ch!='\0') {
-                if (strchr("\"\\'$",ch)!=NULL) {
-                  if ((s=nstrccat(s,'\\'))==NULL) goto errexit;
-                }
-                if ((s=nstrccat(s,ch))==NULL) goto errexit;
-              }
-            } else {
-              if ((s=nstrccat(s,(char )0x01))==NULL) goto errexit;
-            }
-          }
-        }
-        i++;
-      /* check variable */
-      } else if (po[i+1]=='{') {
-        for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-        if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
-                          || (po[j-1]=='{')) {
-          sherror(ERRBADSUB);
-          goto errexit;
-        }
-        if (po[j]=='}') {
-          g_free(name);
-          if ((name=g_malloc(j-i-1))==NULL) goto errexit;
-          strncpy(name,po+i+2,j-i-2);
-          name[j-i-2]='\0';
-          val=getval(nshell,name);
-          if (val!=NULL) {
-            if ((c1=quotation(nshell,val,*quote))==NULL) goto errexit;
-            s=nstrcat(s,c1);
-            g_free(c1);
-            if (s==NULL) goto errexit;
-          }
-          i=j;
-        } else {
-          if ((po[j]==':')
-          && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
-            valf='o';
-            if ((se=nstrnew())==NULL) goto errexit;
-            i+=2;
-          } else {
-            g_free(name);
-            if ((name=g_malloc(j-i-1))==NULL) goto errexit;
-            strncpy(name,po+i+2,j-i-2);
-            name[j-i-2]='\0';
-            val=getval(nshell,name);
-            quote2=*quote;
-            bquote2=*bquote;
-            valf2=' ';
-            if (po[j]==':') {
-              valf2=':';
-              j++;
-            }
-	    if (strchr("-=?+",po[j])!=NULL) {
-              valf=po[j];
-              j++;
-            } else if (strchr("#%",po[j])!=NULL) {
-              if (po[j]==po[j+1]) {
-                valf2=po[j];
-                j++;
-              }
-              valf=po[j];
-              j++;
-            } else {
-              sherror(ERRBADSUB);
-              goto errexit;
-            }
-            if ((se=nstrnew())==NULL) goto errexit;
-            i=j;
-          }
-        }
-      } else {
-        /* simple variable substitution */
-        for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-        g_free(name);
-        if ((name=g_malloc(j-i))==NULL) goto errexit;
-        strncpy(name,po+i+1,j-i-1);
-        name[j-i-1]='\0';
-        if (name[0]=='\0') val="$";
-        else val=getval(nshell,name);
-        if (val!=NULL) {
-          if ((c1=quotation(nshell,val,*quote))==NULL) goto errexit;
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) goto errexit;
-        }
-        i=j-1;
-      }
-    /* check variable end */
-    } else if ((po[i]=='}') && (*quote!='\'') && (se!=NULL)) {
-      if (valf=='o') {
-      /* object replacement */
-        if ((tmp=unquotation(se,&dummy))==NULL) goto errexit;
-        g_free(se);
-        se=NULL;
-        sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
-        g_free(tmp);
-        sdata=arraydata(sarray);
-        snum=arraynum(sarray);
-        for (j=0;j<snum;j++) {
-          if ((c1=quotation(nshell,sdata[j],*quote))==NULL) {
-            arrayfree2(sarray);
-            goto errexit;
-          }
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) {
-            arrayfree2(sarray);
-            goto errexit;
-          }
-        }
-        arrayfree2(sarray);
-      /* variable substitution */
-      } else {
-        c1=NULL;
-        switch (valf) {
-        case '-':
-          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
-            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
-	  } else {
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
-              goto errexit;
-          }
-          break;
-        case '=':
-          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
-            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
-          } else {
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
-              goto errexit;
-            g_free(se);
-            if ((se=unquotation(c1,&dummy))==NULL) goto errexit;
-            if (addval(nshell,name,se)==NULL) goto errexit;
-          }
-          break;
-        case '?':
-          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
-            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
-          } else {
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
-              goto errexit;
-            printfstdout("%.256s: %.256s\n",name,c1);
-            goto errexit;
-          }
-          break;
-        case '+':
-          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
-              goto errexit;
-          }
-          break;
-        case '#':
-          if ((val!=NULL) && (val[0]!='\0')) {
-            if ((c2=nstrnew())==NULL) goto errexit;
-            if ((c2=nstrcat(c2,val))==NULL) goto errexit;
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
-              g_free(c2);
-              goto errexit;
-            }
-            if (valf2=='#') {
-              for (k=strlen(c2);k>=0;k--) {
-                ch=c2[k];
-                c2[k]='\0';
-                if (wildmatch(c1,c2,WILD_PATHNAME)) {
-                  c2[k]=ch;
-                  break;
-                }
-                c2[k]=ch;
-              }
-            } else {
-              for (k = 0; k <= (int) strlen(c2); k++) {
-                ch=c2[k];
-                c2[k]='\0';
-                if (wildmatch(c1,c2,WILD_PATHNAME)) {
-                  c2[k]=ch;
-                  break;
-                }
-                c2[k]=ch;
-              }
-            }
-            if (k > (int) strlen(c2)) {
-	      k=0;
-	    } else if (k < 0) {
-              k = 0;            /* fix-me: is it proper? */
-            }
-            g_free(c1);
-            c1=quotation(nshell,c2+k,quote2);
-            g_free(c2);
-            if (c1==NULL) goto errexit;
-          }
-          break;
-        case '%':
-          if ((val!=NULL) && (val[0]!='\0')) {
-            if ((c2=nstrnew())==NULL) goto errexit;
-            if ((c2=nstrcat(c2,val))==NULL) goto errexit;
-            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
-              g_free(c2);
-              goto errexit;
-            }
-            if (valf2=='%') {
-	      int len;
-	      len = strlen(c2) - 1;
-              for (k = 0; k <= len; k++) {
-                if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
-              }
-            } else {
-              for (k=strlen(c2);k>=0;k--) {
-                if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
-              }
-            }
-            if (k<0) k=strlen(c2);
-            c2[k]='\0';
-            g_free(c1);
-            c1=quotation(nshell,c2,quote2);
-            g_free(c2);
-            if (c1==NULL) goto errexit;
-          }
-          break;
-        }
-        if (c1!=NULL) {
-          s=nstrcat(s,c1);
-          g_free(c1);
-          if (s==NULL) goto errexit;
-        }
-        *quote=quote2;
-        *bquote=bquote2;
-        g_free(se);
-        se=NULL;
-      }
+    res = expand_variable(nshell, &cx, po, &i);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+
     /* check quotation */
-    } else if ((*quote=='"') || (*quote=='\'')) {
-      if (po[i]==*quote) *quote='\0';
-      if (se==NULL) {
-        if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      }
-    } else if (po[i]=='\'' || po[i]=='"') {
-      *quote=po[i];
-      if (se==NULL) {
-        if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      }
-    } else {
-      if (se==NULL) {
-        if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0')
-        && (strchr(ifs,po[i])!=NULL)) {
-          if ((s=nstrccat(s,(char )0x01))==NULL) goto errexit;
-        } else {
-          if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-        }
-      }
-    }
-    if (se!=NULL) {
-      if ((se=nstrccat(se,po[i]))==NULL) goto errexit;
+    res = expand_quotation(&cx, po[i]);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+
+    expand_ifs (nshell, &cx, po[i], ifsexp);
+
+  common_se:
+    if (cx.se!=NULL) {
+      if ((cx.se=nstrccat(cx.se,po[i]))==NULL) goto errexit;
     }
   }
 
-  if ((se!=NULL) || (sb!=NULL)) {
+  if ((cx.se!=NULL) || (cx.sb!=NULL)) {
     sherror(ERRBADSUB);
     goto errexit;
   }
 
-  g_free(name);
-  g_free(sb);
-  g_free(se);
-  return s;
+  g_free(cx.name);
+  g_free(cx.sb);
+  g_free(cx.se);
+  return cx.s;
 
 errexit:
-  g_free(name);
-  g_free(sb);
-  g_free(se);
-  g_free(s);
+  g_free(cx.name);
+  g_free(cx.sb);
+  g_free(cx.se);
+  g_free(cx.s);
   return NULL;
 }
 
