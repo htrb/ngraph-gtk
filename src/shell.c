@@ -1547,7 +1547,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     if (*escape) *escape=FALSE;
     else if (po[i]=='\\') {
       if (!*quote
-      || ((*quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))
+      || ((*quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))
       || *bquote ) *escape=TRUE;
     /* check back quote */
     } else if (*bquote) {
@@ -1759,14 +1759,14 @@ quotation(struct nshell *nshell,char *s,int quote)
 
   ifs=getval(nshell,"IFS");
   num=0;
-  for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++;
+  for (i=0;s[i]!='\0';i++) if (strchr("\"\\`$",s[i])!=NULL) num++;
   if ((snew=g_malloc(strlen(s)+num+1))==NULL) return NULL;
   j=0;
   for (i=0;s[i]!='\0';i++) {
     if ((quote!='"') && (ifs!=NULL) && (ifs[0]!='\0')
     && (strchr(ifs,s[i])!=NULL)) snew[j++]=(char )0x01;
     else {
-      if (strchr("\"\\'$",s[i])!=NULL) snew[j++]=(char )0x02;
+      if (strchr("\"\\`$",s[i])!=NULL) snew[j++]=(char )0x02;
       snew[j++]=s[i];
     }
   }
@@ -1793,7 +1793,7 @@ unquotation(char *s,int *quoted)
       snew[j++]=po[i];
     } else if (po[i]=='\\') {
       if (!quote
-      || ((quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))) escape=TRUE;
+      || ((quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))) escape=TRUE;
       else snew[j++]=po[i];
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if (po[i]==(char )0x01) snew[j++]=' ';
@@ -1831,7 +1831,7 @@ fnexpand(struct nshell *nshell,char *str)
       if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\\') {
       if (!quote
-      || ((quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))) escape=TRUE;
+      || ((quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))) escape=TRUE;
       else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if ((po[i]==(char )0x01) || (po[i]=='\0')) {
@@ -2037,7 +2037,7 @@ expand_escape(struct expand_context *cx, int ch, int chn)
 
   if (ch=='\\') {
     if (!*cx->quote
-	|| ((*cx->quote=='"') && (strchr("\"\\'$",chn)!=NULL))
+	|| ((*cx->quote=='"') && (strchr("\"\\`$",chn)!=NULL))
 	|| *cx->bquote ) {
       cx->escape=TRUE;
       if ((cx->se==NULL) && (cx->sb==NULL)) {
@@ -2119,7 +2119,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	if (j!=(nshell->argc-1)) {
 	  if ((*cx->quote=='"') && (po[i+1]=='*')) {
 	    if (ch!='\0') {
-	      if (strchr("\"\\'$",ch)!=NULL) {
+	      if (strchr("\"\\`$",ch)!=NULL) {
 		if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
 	      }
 	      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
