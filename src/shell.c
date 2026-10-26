@@ -1759,14 +1759,14 @@ quotation(struct nshell *nshell,char *s,int quote)
 
   ifs=getval(nshell,"IFS");
   num=0;
-  for (i=0;s[i]!='\0';i++) if (strchr("\"\\`$",s[i])!=NULL) num++;
+  for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++; /* fix me: should check "\"\\'`$"? */
   if ((snew=g_malloc(strlen(s)+num+1))==NULL) return NULL;
   j=0;
   for (i=0;s[i]!='\0';i++) {
     if ((quote!='"') && (ifs!=NULL) && (ifs[0]!='\0')
     && (strchr(ifs,s[i])!=NULL)) snew[j++]=(char )0x01;
     else {
-      if (strchr("\"\\`$",s[i])!=NULL) snew[j++]=(char )0x02;
+      if (strchr("\"\\'$",s[i])!=NULL) snew[j++]=(char )0x02;
       snew[j++]=s[i];
     }
   }
@@ -1793,7 +1793,7 @@ unquotation(char *s,int *quoted)
       snew[j++]=po[i];
     } else if (po[i]=='\\') {
       if (!quote
-      || ((quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))) escape=TRUE;
+      || ((quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))) escape=TRUE;
       else snew[j++]=po[i];
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if (po[i]==(char )0x01) snew[j++]=' ';
