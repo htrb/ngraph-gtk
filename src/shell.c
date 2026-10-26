@@ -1934,27 +1934,23 @@ wordunsplit(char *str)
 }
 
 struct expand_context {
-  int *quote;
-  int *bquote;
-  int ifsexp, escape;
+  int *quote, quote2;
+  int *bquote, bquote2;
+  int escape;
   char *sb, *se, *name, *s, *val, valf, valf2;
 };
 
 static int
 expand_bquote (struct nshell *nshell, struct expand_context *cx, int ch)
 {
-  struct objlist *sys;
-  int sout,sout2;
-  int rcode;
-  char *tmpfil;
-  int byte, n, j;
-  char *c1;
   if (*cx->bquote) {
     if (ch=='`') {
       *cx->bquote='\0';
       if (cx->se==NULL) {
 	/* command substitution */
-	if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+	int sout, sout2, rcode, byte, n, j;
+	char *tmpfil, *c1;
+	// if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
 	sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
 	if (sout < 0)
 	  return -1;
@@ -2071,19 +2067,15 @@ expand_escape(struct expand_context *cx, int ch, int chn)
 static int
 expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
-  int quote2,bquote2;
-  int i, j, k, num;
+  int i, j;
   int dummy;
   char *c1,*c2,ch;
-  char *tmp;
-  struct narray *sarray;
-  char **sdata;
-  int snum;
 
   i = *index;
   if ((po[i]=='$') && (po[i+1]!='\0')
       && (*cx->quote!='\'') && (cx->se==NULL)) {
     if (isdigit(po[i+1])) {
+      int num;
       for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
       g_free(cx->name);
       if ((cx->name=g_malloc(j-i))==NULL) return -1;
@@ -2172,8 +2164,8 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	  strncpy(cx->name,po+i+2,j-i-2);
 	  cx->name[j-i-2]='\0';
 	  cx->val=getval(nshell,cx->name);
-	  quote2=*cx->quote;
-	  bquote2=*cx->bquote;
+	  cx->quote2=*cx->quote;
+	  cx->bquote2=*cx->bquote;
 	  cx->valf2=' ';
 	  if (po[j]==':') {
 	    cx->valf2=':';
@@ -2219,6 +2211,10 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
   } else if ((po[i]=='}') && (*cx->quote!='\'') && (cx->se!=NULL)) {
     if (cx->valf=='o') {
       /* object replacement */
+      char *tmp;
+      struct narray *sarray;
+      char **sdata;
+      int snum;
       if ((tmp=unquotation(cx->se,&dummy))==NULL) return -1;
       g_free(cx->se);
       cx->se=NULL;
@@ -2241,21 +2237,22 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
       arrayfree2(sarray);
       /* variable substitution */
     } else {
+      int k;
       c1=NULL;
       switch (cx->valf) {
       case '-':
 	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
 	} else {
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
 	    return -1;
 	}
 	break;
       case '=':
 	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
 	} else {
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
 	    return -1;
 	  g_free(cx->se);
 	  if ((cx->se=unquotation(c1,&dummy))==NULL) return -1;
@@ -2264,9 +2261,9 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	break;
       case '?':
 	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,quote2))==NULL) return -1;
+	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
 	} else {
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
 	    return -1;
 	  printfstdout("%.256s: %.256s\n",cx->name,c1);
 	  return -1;
@@ -2274,7 +2271,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	break;
       case '+':
 	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL)
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
 	    return -1;
 	}
 	break;
@@ -2282,7 +2279,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
 	  if ((c2=nstrnew())==NULL) return -1;
 	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL) {
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
 	    g_free(c2);
 	    return -1;
 	  }
@@ -2313,7 +2310,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	    k = 0;            /* fix-me: is it proper? */
 	  }
 	  g_free(c1);
-	  c1=quotation(nshell,c2+k,quote2);
+	  c1=quotation(nshell,c2+k,cx->quote2);
 	  g_free(c2);
 	  if (c1==NULL) return -1;
 	}
@@ -2322,7 +2319,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
 	  if ((c2=nstrnew())==NULL) return -1;
 	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
-	  if ((c1=expand(nshell,cx->se,&quote2,&bquote2,TRUE))==NULL) {
+	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
 	    g_free(c2);
 	    return -1;
 	  }
@@ -2340,7 +2337,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	  if (k<0) k=strlen(c2);
 	  c2[k]='\0';
 	  g_free(c1);
-	  c1=quotation(nshell,c2,quote2);
+	  c1=quotation(nshell,c2,cx->quote2);
 	  g_free(c2);
 	  if (c1==NULL) return -1;
 	}
@@ -2351,8 +2348,8 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	g_free(c1);
 	if (cx->s==NULL) return -1;
       }
-      *cx->quote=quote2;
-      *cx->bquote=bquote2;
+      *cx->quote=cx->quote2;
+      *cx->bquote=cx->bquote2;
       g_free(cx->se);
       cx->se=NULL;
     }
@@ -2381,13 +2378,10 @@ expand_quotation(struct expand_context *cx, int ch)
 }
 
 static int
-expand_ifs (struct nshell *nshell, struct expand_context *cx, int ch, int ifsexp)
+expand_ifs (struct expand_context *cx, int ch, char *ifs, int ifsexp)
 {
-  char *ifs;
-  ifs=getval(nshell,"IFS");
   if (cx->se==NULL) {
-    if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0')
-	&& (strchr(ifs,ch)!=NULL)) {
+    if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0') && (strchr(ifs,ch)!=NULL)) {
       if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
     } else {
       if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
@@ -2404,15 +2398,15 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
   int i;
   struct expand_context cx;
 
-  cx.quote = quote;
-  cx.bquote = bquote;
-  cx.ifsexp = ifsexp;
-
   if ((po=str)==NULL) return NULL;
   if ((cx.s=nstrnew())==NULL) return NULL;
-  cx.name=NULL;
-  cx.sb=cx.se=NULL;
-  cx.escape=FALSE;
+
+  cx.quote = quote;
+  cx.bquote = bquote;
+  cx.name = NULL;
+  cx.sb = cx.se = NULL;
+  cx.escape = FALSE;
+  char *ifs = getval(nshell,"IFS");
 
   for (i=0;po[i]!='\0';i++) {
     /* check escapse */
@@ -2436,7 +2430,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     if (res < 0) goto errexit;
     if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
 
-    expand_ifs (nshell, &cx, po[i], ifsexp);
+    expand_ifs (&cx, po[i], ifs, ifsexp);
 
   common_se:
     if (cx.se!=NULL) {
@@ -2556,7 +2550,6 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
               if (prmcur->str[0]=='>')
                 prmcur->prmno=PPSO2;
               else {
-                struct objlist *sys;
                 prmcur->prmno=PPSI2;
                 if ((eof=unquotation((prmcur->next)->str,&quoted))==NULL)
                   return -1;
@@ -2573,7 +2566,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 
                 /* get << contents */
 
-                if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+                // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
 		sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
 		if (sout < 0)
 		  return -1;
@@ -3305,14 +3298,15 @@ cmdexpand(struct nshell *nshell, struct cmdexec_fd *cmdfd)
 }
 
 static int
-cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe)
+cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe)
 {
   struct prmlist *prmcur,*prmprev,*prm;
-  char *name,*val,*po;
+  char *name,*val;
   prmcur=cmdfd->prmnewroot;
   prmprev=NULL;
   while (prmcur!=NULL) {
     if (prmcur->prmno==PPSETV) {
+      const char *po;
       po=strchr(prmcur->str,'=');
       if ((name=g_malloc(po-prmcur->str+1))==NULL) return 1;
       strncpy(name,prmcur->str,po-prmcur->str);
@@ -3412,7 +3406,6 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	    return 1;
 	  }
 	  do {
-	    char *s;
 	    s = nstrnew();
 	    if (s == NULL) {
 	      nclose(cmdfd->sin);
@@ -3435,7 +3428,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	    } while (ch!='\0');
 	    int quote, bquote;
 	    quote=bquote='\0';
-	    char *str=s;
+	    str=s;
 	    s=expand(nshell,str,&quote,&bquote,FALSE);
 	    g_free(str);
 	    if (s==NULL) {
@@ -3473,8 +3466,8 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       else cmdfd->sout=nopen(cmdfd->fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
       /* pipe */
     } else if (pipe->pipef) {
-      struct objlist *sys;
-      if ((sys=getobject("system"))==NULL) return 1; /* fix-me: assigned value of the variable "sys" is never used */
+      // struct objlist *sys;
+      // if ((sys=getobject("system"))==NULL) return 1; /* fix-me: assigned value of the variable "sys" is never used */
       cmdfd->sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
       if (cmdfd->sout < 0)
 	return 1;
@@ -3897,7 +3890,7 @@ cmdexec_cpno(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, str
 }
 
 static int
-cmdexec_cpdo(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct cmdstack *stcur;
   if ((stcur=cmdstackgetpo(stroot))==NULL) return 1;
@@ -3947,10 +3940,10 @@ cmdexec_cpdo(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, str
 }
 
 static int
-cmdexec_cpfor (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+cmdexec_cpfor (struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct cmdstack *stcur;
-  struct prmlist *prmcur,*prmprev,*prm;
+  struct prmlist *prmcur,*prm;
   int quote,bquote;
 
   if ((stcur=cmdstackcat(stroot,CPFOR))==NULL) return 1;
@@ -3960,6 +3953,7 @@ cmdexec_cpfor (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, s
   prmcur=prmcur->next;
   if (prmcur==NULL) stcur->ival=0;
   else {
+    struct prmlist *prmprev;
     stcur->ival=-1;
     cmdfd->prmnewroot=NULL;
     prmprev=NULL;
@@ -4166,7 +4160,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPFOR:
-	if (cmdexec_cpfor(nshell, namedfunc, &cmdfd, &stroot)) {
+	if (cmdexec_cpfor(nshell, &cmdfd, &stroot)) {
 	  goto errexit;
 	}
 	break;
@@ -4181,7 +4175,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPDO:
-	if (cmdexec_cpdo(nshell, namedfunc, &cmdfd, &stroot)) {
+	if (cmdexec_cpdo(nshell, &cmdfd, &stroot)) {
 	  goto errexit;
 	}
 	break;
