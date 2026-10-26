@@ -2065,11 +2065,164 @@ expand_escape(struct expand_context *cx, int ch, int chn)
 }
 
 static int
+expand_parameter_modifier(struct nshell *nshell, struct expand_context *cx)
+{
+  int j;
+  int dummy;
+  char *c1,*c2,ch;
+
+  if (cx->valf=='o') {
+    /* object replacement */
+    char *tmp;
+    struct narray *sarray;
+    char **sdata;
+    int snum;
+    if ((tmp=unquotation(cx->se,&dummy))==NULL) return -1;
+    g_free(cx->se);
+    cx->se=NULL;
+    sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
+    g_free(tmp);
+    sdata=arraydata(sarray);
+    snum=arraynum(sarray);
+    for (j=0;j<snum;j++) {
+      if ((c1=quotation(nshell,sdata[j],*cx->quote))==NULL) {
+	arrayfree2(sarray);
+	return -1;
+      }
+      cx->s=nstrcat(cx->s,c1);
+      g_free(c1);
+      if (cx->s==NULL) {
+	arrayfree2(sarray);
+	return -1;
+      }
+    }
+    arrayfree2(sarray);
+    /* variable substitution */
+  } else {
+    int k;
+    c1=NULL;
+    switch (cx->valf) {
+    case '-':
+      if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
+      } else {
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
+	  return -1;
+      }
+      break;
+    case '=':
+      if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
+      } else {
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
+	  return -1;
+	g_free(cx->se);
+	if ((cx->se=unquotation(c1,&dummy))==NULL) return -1;
+	if (addval(nshell,cx->name,cx->se)==NULL) return -1;
+      }
+      break;
+    case '?':
+      if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
+      } else {
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
+	  return -1;
+	printfstdout("%.256s: %.256s\n",cx->name,c1);
+	return -1;
+      }
+      break;
+    case '+':
+      if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
+	  return -1;
+      }
+      break;
+    case '#':
+      if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
+	if ((c2=nstrnew())==NULL) return -1;
+	if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
+	  g_free(c2);
+	  return -1;
+	}
+	if (cx->valf2=='#') {
+	  for (k=strlen(c2);k>=0;k--) {
+	    ch=c2[k];
+	    c2[k]='\0';
+	    if (wildmatch(c1,c2,WILD_PATHNAME)) {
+	      c2[k]=ch;
+	      break;
+	    }
+	    c2[k]=ch;
+	  }
+	} else {
+	  for (k = 0; k <= (int) strlen(c2); k++) {
+	    ch=c2[k];
+	    c2[k]='\0';
+	    if (wildmatch(c1,c2,WILD_PATHNAME)) {
+	      c2[k]=ch;
+	      break;
+	    }
+	    c2[k]=ch;
+	  }
+	}
+	if (k > (int) strlen(c2)) {
+	  k=0;
+	} else if (k < 0) {
+	  k = 0;            /* fix-me: is it proper? */
+	}
+	g_free(c1);
+	c1=quotation(nshell,c2+k,cx->quote2);
+	g_free(c2);
+	if (c1==NULL) return -1;
+      }
+      break;
+    case '%':
+      if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
+	if ((c2=nstrnew())==NULL) return -1;
+	if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
+	if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
+	  g_free(c2);
+	  return -1;
+	}
+	if (cx->valf2=='%') {
+	  int len;
+	  len = strlen(c2) - 1;
+	  for (k = 0; k <= len; k++) {
+	    if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
+	  }
+	} else {
+	  for (k=strlen(c2);k>=0;k--) {
+	    if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
+	  }
+	}
+	if (k<0) k=strlen(c2);
+	c2[k]='\0';
+	g_free(c1);
+	c1=quotation(nshell,c2,cx->quote2);
+	g_free(c2);
+	if (c1==NULL) return -1;
+      }
+      break;
+    }
+    if (c1!=NULL) {
+      cx->s=nstrcat(cx->s,c1);
+      g_free(c1);
+      if (cx->s==NULL) return -1;
+    }
+    *cx->quote=cx->quote2;
+    *cx->bquote=cx->bquote2;
+    g_free(cx->se);
+    cx->se=NULL;
+  }
+  return 1;
+}
+
+static int
 expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
   int i, j;
-  int dummy;
-  char *c1,*c2,ch;
+  char *c1,ch;
 
   i = *index;
   if ((po[i]=='$') && (po[i+1]!='\0')
@@ -2209,151 +2362,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
     return 1;
     /* check variable end */
   } else if ((po[i]=='}') && (*cx->quote!='\'') && (cx->se!=NULL)) {
-    if (cx->valf=='o') {
-      /* object replacement */
-      char *tmp;
-      struct narray *sarray;
-      char **sdata;
-      int snum;
-      if ((tmp=unquotation(cx->se,&dummy))==NULL) return -1;
-      g_free(cx->se);
-      cx->se=NULL;
-      sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
-      g_free(tmp);
-      sdata=arraydata(sarray);
-      snum=arraynum(sarray);
-      for (j=0;j<snum;j++) {
-	if ((c1=quotation(nshell,sdata[j],*cx->quote))==NULL) {
-	  arrayfree2(sarray);
-	  return -1;
-	}
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) {
-	  arrayfree2(sarray);
-	  return -1;
-	}
-      }
-      arrayfree2(sarray);
-      /* variable substitution */
-    } else {
-      int k;
-      c1=NULL;
-      switch (cx->valf) {
-      case '-':
-	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
-	} else {
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
-	    return -1;
-	}
-	break;
-      case '=':
-	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
-	} else {
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
-	    return -1;
-	  g_free(cx->se);
-	  if ((cx->se=unquotation(c1,&dummy))==NULL) return -1;
-	  if (addval(nshell,cx->name,cx->se)==NULL) return -1;
-	}
-	break;
-      case '?':
-	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=quotation(nshell,cx->val,cx->quote2))==NULL) return -1;
-	} else {
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
-	    return -1;
-	  printfstdout("%.256s: %.256s\n",cx->name,c1);
-	  return -1;
-	}
-	break;
-      case '+':
-	if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL)
-	    return -1;
-	}
-	break;
-      case '#':
-	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
-	  if ((c2=nstrnew())==NULL) return -1;
-	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
-	    g_free(c2);
-	    return -1;
-	  }
-	  if (cx->valf2=='#') {
-	    for (k=strlen(c2);k>=0;k--) {
-	      ch=c2[k];
-	      c2[k]='\0';
-	      if (wildmatch(c1,c2,WILD_PATHNAME)) {
-		c2[k]=ch;
-		break;
-	      }
-	      c2[k]=ch;
-	    }
-	  } else {
-	    for (k = 0; k <= (int) strlen(c2); k++) {
-	      ch=c2[k];
-	      c2[k]='\0';
-	      if (wildmatch(c1,c2,WILD_PATHNAME)) {
-		c2[k]=ch;
-		break;
-	      }
-	      c2[k]=ch;
-	    }
-	  }
-	  if (k > (int) strlen(c2)) {
-	    k=0;
-	  } else if (k < 0) {
-	    k = 0;            /* fix-me: is it proper? */
-	  }
-	  g_free(c1);
-	  c1=quotation(nshell,c2+k,cx->quote2);
-	  g_free(c2);
-	  if (c1==NULL) return -1;
-	}
-	break;
-      case '%':
-	if ((cx->val!=NULL) && (cx->val[0]!='\0')) {
-	  if ((c2=nstrnew())==NULL) return -1;
-	  if ((c2=nstrcat(c2,cx->val))==NULL) return -1;
-	  if ((c1=expand(nshell,cx->se,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
-	    g_free(c2);
-	    return -1;
-	  }
-	  if (cx->valf2=='%') {
-	    int len;
-	    len = strlen(c2) - 1;
-	    for (k = 0; k <= len; k++) {
-	      if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
-	    }
-	  } else {
-	    for (k=strlen(c2);k>=0;k--) {
-	      if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
-	    }
-	  }
-	  if (k<0) k=strlen(c2);
-	  c2[k]='\0';
-	  g_free(c1);
-	  c1=quotation(nshell,c2,cx->quote2);
-	  g_free(c2);
-	  if (c1==NULL) return -1;
-	}
-	break;
-      }
-      if (c1!=NULL) {
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) return -1;
-      }
-      *cx->quote=cx->quote2;
-      *cx->bquote=cx->bquote2;
-      g_free(cx->se);
-      cx->se=NULL;
-    }
-    return 1;
+    return expand_parameter_modifier(nshell, cx);
   }
   return 0;
 }
