@@ -1503,6 +1503,24 @@ getfunc(struct nshell *nshell,char *name)
 #endif
 }
 
+static int
+is_dq_special(int ch)
+{
+  return (strchr("\"\\`$", ch) != NULL);
+}
+
+static int
+check_quote(int quote, int ch)
+{
+  return (!quote || ((quote == '"') && is_dq_special(ch)));
+}
+
+static int
+check_quote_bquote(int quote, int bquote, int ch)
+{
+  return (check_quote(quote, ch) || bquote);
+}
+
 static char *
 gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
 {
@@ -1546,9 +1564,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     /* check escapse */
     if (*escape) *escape=FALSE;
     else if (po[i]=='\\') {
-      if (!*quote
-      || ((*quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))
-      || *bquote ) *escape=TRUE;
+      if (check_quote_bquote(*quote, *bquote, po[i + 1])) *escape=TRUE;
     /* check back quote */
     } else if (*bquote) {
       if (po[i]=='`') *bquote='\0';
@@ -1830,8 +1846,7 @@ fnexpand(struct nshell *nshell,char *str)
       if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
       if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\\') {
-      if (!quote
-      || ((quote=='"') && (strchr("\"\\`$",po[i+1])!=NULL))) escape=TRUE;
+      if (check_quote(quote, po[i+1])) escape=TRUE;
       else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if ((po[i]==(char )0x01) || (po[i]=='\0')) {
@@ -2036,9 +2051,7 @@ expand_escape(struct expand_context *cx, int ch, int chn)
   }
 
   if (ch=='\\') {
-    if (!*cx->quote
-	|| ((*cx->quote=='"') && (strchr("\"\\`$",chn)!=NULL))
-	|| *cx->bquote ) {
+    if (check_quote_bquote(*cx->quote, *cx->bquote, chn)) {
       cx->escape=TRUE;
       if ((cx->se==NULL) && (cx->sb==NULL)) {
 	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
