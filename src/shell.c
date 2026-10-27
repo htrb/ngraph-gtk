@@ -2326,7 +2326,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
 	if (j!=(nshell->argc-1)) {
 	  if ((*cx->quote=='"') && (po[i+1]=='*')) {
 	    if (ch!='\0') {
-	      if (strchr("\"\\`$",ch)!=NULL) {
+	      if (is_dq_special(ch)) {
 		if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
 	      }
 	      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
