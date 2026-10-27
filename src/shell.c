@@ -2143,11 +2143,18 @@ expand_modifier_default(struct nshell *nshell, struct expand_context *cx, char *
   switch (cx->valf) {
   case '=':
     g_free(cx->se);
-    if ((cx->se=unquotation(c1,&dummy))==NULL) return -1;
-    if (addval(nshell,cx->name,cx->se)==NULL) return -1;
+    if ((cx->se=unquotation(c1,&dummy))==NULL) {
+      g_free (c1);
+      return -1;
+    }
+    if (addval(nshell,cx->name,cx->se)==NULL) {
+      g_free (c1);
+      return -1;
+    }
     break;
   case '?':
     printfstdout("%.256s: %.256s\n",cx->name,c1);
+    g_free (c1);
     return -1;
     break;
   }
