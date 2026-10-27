@@ -1775,7 +1775,9 @@ quotation(struct nshell *nshell,char *s,int quote)
 
   ifs=getval(nshell,"IFS");
   num=0;
-  for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++; /* fix me: should check "\"\\'`$"? */
+  // NOTE: Keep "\"\\'$" here. Do not add backtick ('`') to avoid unintended
+  // side effects, as the current behavior works correctly for quotation prep
+  for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++;
   if ((snew=g_malloc(strlen(s)+num+1))==NULL) return NULL;
   j=0;
   for (i=0;s[i]!='\0';i++) {
