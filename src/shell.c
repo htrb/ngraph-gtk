@@ -2123,7 +2123,7 @@ expand_modifier_default(struct nshell *nshell, struct expand_context *cx, char *
     case '=':
     case '?':
       c1 = quotation(nshell,cx->val,cx->quote2);
-    break;
+      break;
     case '+':
       c1 = expand(nshell,cx->param_buf,&cx->quote2,&cx->bquote2,TRUE);
       break;
