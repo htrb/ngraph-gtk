@@ -2284,9 +2284,10 @@ expand_parameter_modifier(struct nshell *nshell, struct expand_context *cx)
 }
 
 static int
-expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, int i, int *index)
+expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
   int num, j;
+  const int i = *index;
   for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i))==NULL) return -1;
@@ -2306,9 +2307,10 @@ expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, in
 }
 
 static int
-expand_special(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+expand_special(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   char *c1;
+  const int i = *index;
   switch (po[i+1]) {
   case '#': g_free(cx->name);
     if ((cx->name=g_malloc(12))==NULL) return -1;
@@ -2328,10 +2330,11 @@ expand_special(struct nshell *nshell, struct expand_context *cx, const char *po,
 }
 
 static int
-expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   char ch;
   int j;
+  const int i = *index;
   cx->val=getval(nshell,"IFS");
   if (cx->val==NULL) ch='\0';
   else ch=cx->val[0];
@@ -2424,10 +2427,11 @@ expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, 
 }
 
 static int
-expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   int j;
   for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+  const int i = *index;
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i))==NULL) return -1;
   strncpy(cx->name,po+i+1,j-i-1);
@@ -2448,25 +2452,23 @@ expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, 
 static int
 expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
-  int i;
-
-  i = *index;
+  const int i = *index;
   if ((po[i]=='$') && (po[i+1]!='\0')
       && (*cx->quote!='\'') && (cx->param_buf==NULL)) {
     if (isdigit(po[i+1])) {
-      return expand_positional(nshell, cx, po, i, index);
+      return expand_positional(nshell, cx, po, index);
     }
     if (strchr("#?",po[i+1])!=NULL) {
-      return expand_special(nshell, cx, po, i, index);
+      return expand_special(nshell, cx, po, index);
     }
     if (strchr("*@",po[i+1])!=NULL) {
-      return expand_all_args(nshell, cx, po, i, index);
+      return expand_all_args(nshell, cx, po, index);
     }
     if (po[i+1]=='{') {
       return expand_braced(nshell, cx, po, i, index);
     }
     /* simple variable substitution */
-    return expand_simple(nshell, cx, po, i, index);
+    return expand_simple(nshell, cx, po, index);
   }
   if ((po[i]=='}') && (*cx->quote!='\'') && (cx->param_buf!=NULL)) {
     return expand_parameter_modifier(nshell, cx);
