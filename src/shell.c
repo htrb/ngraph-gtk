@@ -2576,7 +2576,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     if (res < 0) goto errexit;
     if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
 
-    expand_ifs (&cx, po[i], ifs, ifsexp);
+    res = expand_ifs (&cx, po[i], ifs, ifsexp);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se;
 
   common_se:
     if (cx.param_buf!=NULL) {
