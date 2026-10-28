@@ -2467,7 +2467,8 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
     }
     /* simple variable substitution */
     return expand_simple(nshell, cx, po, i, index);
-  } else if ((po[i]=='}') && (*cx->quote!='\'') && (cx->param_buf!=NULL)) {
+  }
+  if ((po[i]=='}') && (*cx->quote!='\'') && (cx->param_buf!=NULL)) {
     return expand_parameter_modifier(nshell, cx);
   }
   return 0;
