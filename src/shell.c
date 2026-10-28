@@ -1620,6 +1620,13 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     else if ((*quote=='"') || (*quote=='\'')) {
       if (po[i]==*quote) *quote='\0';
     } else if (po[i]=='\'' || po[i]=='"') *quote=po[i];
+    /* check brace (when not in quotes) */
+    if (*quote != '\'' && po[i] == '$' && po[i+1] == '{') {
+      int modifier_end = find_brace_end(po + i + 2);
+      if (modifier_end >= 0) {
+	i += modifier_end + 2;
+      }
+    }
   }
 
   if (*escape) i--;
