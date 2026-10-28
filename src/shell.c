@@ -2284,148 +2284,189 @@ expand_parameter_modifier(struct nshell *nshell, struct expand_context *cx)
 }
 
 static int
+expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, int i, int *index)
+{
+  int num, j;
+  for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
+  g_free(cx->name);
+  if ((cx->name=g_malloc(j-i))==NULL) return -1;
+  strncpy(cx->name,po+i+1,j-i-1);
+  cx->name[j-i-1]='\0';
+  num=atoi(cx->name);
+  if (num<nshell->argc) {
+    char *c1;
+    if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
+      return -1;
+    cx->s=nstrcat(cx->s,c1);
+    g_free(c1);
+    if (cx->s==NULL) return -1;
+  }
+  *index=j-1;
+  return 1;
+}
+
+static int
+expand_special(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+{
+  char *c1;
+  switch (po[i+1]) {
+  case '#': g_free(cx->name);
+    if ((cx->name=g_malloc(12))==NULL) return -1;
+    sprintf(cx->name,"%d",nshell->argc-1);
+    break;
+  case '?': g_free(cx->name);
+    if ((cx->name=g_malloc(12))==NULL) return -1;
+    sprintf(cx->name,"%d",nshell->status);
+    break;
+  }
+  if ((c1=quotation(nshell,cx->name,*cx->quote))==NULL) return -1;
+  cx->s=nstrcat(cx->s,c1);
+  g_free(c1);
+  if (cx->s==NULL) return -1;
+  *index = i + 1;
+  return 1;
+}
+
+static int
+expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+{
+  char ch;
+  int j;
+  cx->val=getval(nshell,"IFS");
+  if (cx->val==NULL) ch='\0';
+  else ch=cx->val[0];
+  for (j=1;j<nshell->argc;j++) {
+    char *c1;
+    if ((c1=quotation(nshell,(nshell->argv)[j],*cx->quote))==NULL)
+      return -1;
+    cx->s=nstrcat(cx->s,c1);
+    g_free(c1);
+    if (cx->s==NULL) return -1;
+    if (j!=(nshell->argc-1)) {
+      if ((*cx->quote=='"') && (po[i+1]=='*')) {
+	if (ch!='\0') {
+	  if (is_dq_special(ch)) {
+	    if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
+	  }
+	  if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	}
+      } else {
+	if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
+      }
+    }
+  }
+  *index = i + 1;
+  return 1;
+}
+
+static int
+expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+{
+  int j;
+  for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+  if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
+      || (po[j-1]=='{')) {
+    sherror(ERRBADSUB);
+    return -1;
+  }
+  if (po[j]=='}') {
+    g_free(cx->name);
+    if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+    strncpy(cx->name,po+i+2,j-i-2);
+    cx->name[j-i-2]='\0';
+    cx->val=getval(nshell,cx->name);
+    if (cx->val!=NULL) {
+      char *c1;
+      if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+      cx->s=nstrcat(cx->s,c1);
+      g_free(c1);
+      if (cx->s==NULL) return -1;
+    }
+    *index=j;
+  } else {
+    if ((po[j]==':')
+	&& (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
+      cx->valf='o';
+      if ((cx->param_buf=nstrnew())==NULL) return -1;
+      *index = i + 2;
+    } else {
+      g_free(cx->name);
+      if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+      strncpy(cx->name,po+i+2,j-i-2);
+      cx->name[j-i-2]='\0';
+      cx->val=getval(nshell,cx->name);
+      cx->quote2=*cx->quote;
+      cx->bquote2=*cx->bquote;
+      cx->valf2=' ';
+      if (po[j]==':') {
+	cx->valf2=':';
+	j++;
+      }
+      if (strchr("-=?+",po[j])!=NULL) {
+	cx->valf=po[j];
+	j++;
+      } else if (strchr("#%",po[j])!=NULL) {
+	if (po[j]==po[j+1]) {
+	  cx->valf2=po[j];
+	  j++;
+	}
+	cx->valf=po[j];
+	j++;
+      } else {
+	sherror(ERRBADSUB);
+	return -1;
+      }
+      if ((cx->param_buf=nstrnew())==NULL) return -1;
+      *index=j;
+    }
+  }
+  return 1;
+}
+
+static int
+expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+{
+  int j;
+  for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+  g_free(cx->name);
+  if ((cx->name=g_malloc(j-i))==NULL) return -1;
+  strncpy(cx->name,po+i+1,j-i-1);
+  cx->name[j-i-1]='\0';
+  if (cx->name[0]=='\0') cx->val="$";
+  else cx->val=getval(nshell,cx->name);
+  if (cx->val!=NULL) {
+    char *c1;
+    if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+    cx->s=nstrcat(cx->s,c1);
+    g_free(c1);
+    if (cx->s==NULL) return -1;
+  }
+  *index=j-1;
+  return 1;
+}
+
+static int
 expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
-  int i, j;
-  char *c1,ch;
+  int i;
 
   i = *index;
   if ((po[i]=='$') && (po[i+1]!='\0')
       && (*cx->quote!='\'') && (cx->param_buf==NULL)) {
     if (isdigit(po[i+1])) {
-      int num;
-      for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
-      g_free(cx->name);
-      if ((cx->name=g_malloc(j-i))==NULL) return -1;
-      strncpy(cx->name,po+i+1,j-i-1);
-      cx->name[j-i-1]='\0';
-      num=atoi(cx->name);
-      if (num<nshell->argc) {
-	if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
-	  return -1;
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) return -1;
-      }
-      *index=j-1;
-    } else if (strchr("#?",po[i+1])!=NULL) {
-      switch (po[i+1]) {
-      case '#': g_free(cx->name);
-	if ((cx->name=g_malloc(12))==NULL) return -1;
-	sprintf(cx->name,"%d",nshell->argc-1);
-	break;
-      case '?': g_free(cx->name);
-	if ((cx->name=g_malloc(12))==NULL) return -1;
-	sprintf(cx->name,"%d",nshell->status);
-	break;
-      }
-      if ((c1=quotation(nshell,cx->name,*cx->quote))==NULL) return -1;
-      cx->s=nstrcat(cx->s,c1);
-      g_free(c1);
-      if (cx->s==NULL) return -1;
-      *index = i + 1;
-    } else if (strchr("*@",po[i+1])!=NULL) {
-      cx->val=getval(nshell,"IFS");
-      if (cx->val==NULL) ch='\0';
-      else ch=cx->val[0];
-      for (j=1;j<nshell->argc;j++) {
-	if ((c1=quotation(nshell,(nshell->argv)[j],*cx->quote))==NULL)
-	  return -1;
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) return -1;
-	if (j!=(nshell->argc-1)) {
-	  if ((*cx->quote=='"') && (po[i+1]=='*')) {
-	    if (ch!='\0') {
-	      if (is_dq_special(ch)) {
-		if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
-	      }
-	      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
-	    }
-	  } else {
-	    if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
-	  }
-	}
-      }
-      *index = i + 1;
-
-      /* check variable */
-    } else if (po[i+1]=='{') {
-      for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-      if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
-	  || (po[j-1]=='{')) {
-	sherror(ERRBADSUB);
-	return -1;
-      }
-      if (po[j]=='}') {
-	g_free(cx->name);
-	if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
-	strncpy(cx->name,po+i+2,j-i-2);
-	cx->name[j-i-2]='\0';
-	cx->val=getval(nshell,cx->name);
-	if (cx->val!=NULL) {
-	  if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
-	  cx->s=nstrcat(cx->s,c1);
-	  g_free(c1);
-	  if (cx->s==NULL) return -1;
-	}
-	*index=j;
-      } else {
-	if ((po[j]==':')
-	    && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
-	  cx->valf='o';
-	  if ((cx->param_buf=nstrnew())==NULL) return -1;
-	  *index = i + 2;
-	} else {
-	  g_free(cx->name);
-	  if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
-	  strncpy(cx->name,po+i+2,j-i-2);
-	  cx->name[j-i-2]='\0';
-	  cx->val=getval(nshell,cx->name);
-	  cx->quote2=*cx->quote;
-	  cx->bquote2=*cx->bquote;
-	  cx->valf2=' ';
-	  if (po[j]==':') {
-	    cx->valf2=':';
-	    j++;
-	  }
-	  if (strchr("-=?+",po[j])!=NULL) {
-	    cx->valf=po[j];
-	    j++;
-	  } else if (strchr("#%",po[j])!=NULL) {
-	    if (po[j]==po[j+1]) {
-	      cx->valf2=po[j];
-	      j++;
-	    }
-	    cx->valf=po[j];
-	    j++;
-	  } else {
-	    sherror(ERRBADSUB);
-	    return -1;
-	  }
-	  if ((cx->param_buf=nstrnew())==NULL) return -1;
-	  *index=j;
-	}
-      }
-    } else {
-      /* simple variable substitution */
-      for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-      g_free(cx->name);
-      if ((cx->name=g_malloc(j-i))==NULL) return -1;
-      strncpy(cx->name,po+i+1,j-i-1);
-      cx->name[j-i-1]='\0';
-      if (cx->name[0]=='\0') cx->val="$";
-      else cx->val=getval(nshell,cx->name);
-      if (cx->val!=NULL) {
-	if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) return -1;
-      }
-      *index=j-1;
+      return expand_positional(nshell, cx, po, i, index);
     }
-    return 1;
-    /* check variable end */
+    if (strchr("#?",po[i+1])!=NULL) {
+      return expand_special(nshell, cx, po, i, index);
+    }
+    if (strchr("*@",po[i+1])!=NULL) {
+      return expand_all_args(nshell, cx, po, i, index);
+    }
+    if (po[i+1]=='{') {
+      return expand_braced(nshell, cx, po, i, index);
+    }
+    /* simple variable substitution */
+    return expand_simple(nshell, cx, po, i, index);
   } else if ((po[i]=='}') && (*cx->quote!='\'') && (cx->param_buf!=NULL)) {
     return expand_parameter_modifier(nshell, cx);
   }
