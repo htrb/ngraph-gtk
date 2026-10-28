@@ -2363,67 +2363,95 @@ expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po
 }
 
 static int
-expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, int i, int *index)
+expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
+{
+  const int i = *index;
+  g_free(cx->name);
+  if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+  strncpy(cx->name,po+i+2,j-i-2);
+  cx->name[j-i-2]='\0';
+  cx->val=getval(nshell,cx->name);
+  if (cx->val!=NULL) {
+    char *c1;
+    if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+    cx->s=nstrcat(cx->s,c1);
+    g_free(c1);
+    if (cx->s==NULL) return -1;
+  }
+  *index=j;
+  return 1;
+}
+
+static int
+expand_braced_object(struct expand_context *cx, int *index)
+{
+  cx->valf='o';
+  if ((cx->param_buf=nstrnew())==NULL) return -1;
+  *index += 2;
+  return 1;
+}
+
+static int
+expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
+{
+  const int i = *index;
+  g_free(cx->name);
+  if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
+  strncpy(cx->name,po+i+2,j-i-2);
+  cx->name[j-i-2]='\0';
+  cx->val=getval(nshell,cx->name);
+  cx->quote2=*cx->quote;
+  cx->bquote2=*cx->bquote;
+  cx->valf2=' ';
+  if (po[j]==':') {
+    cx->valf2=':';
+    j++;
+  }
+  if (strchr("-=?+",po[j])!=NULL) {
+    cx->valf=po[j];
+    j++;
+  } else if (strchr("#%",po[j])!=NULL) {
+    if (po[j]==po[j+1]) {
+      cx->valf2=po[j];
+      j++;
+    }
+    cx->valf=po[j];
+    j++;
+  } else {
+    sherror(ERRBADSUB);
+    return -1;
+  }
+  if ((cx->param_buf=nstrnew())==NULL) return -1;
+  *index=j;
+  return 1;
+}
+
+static int
+find_varname_end(const char *po, int start)
 {
   int j;
-  for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
+  for (j = start; (po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_')); j++);
+  return j;
+}
+
+static int
+expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
+{
+  int j;
+  const int i = *index;
+  j = find_varname_end(po, i + 2);
   if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
       || (po[j-1]=='{')) {
     sherror(ERRBADSUB);
     return -1;
   }
   if (po[j]=='}') {
-    g_free(cx->name);
-    if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
-    strncpy(cx->name,po+i+2,j-i-2);
-    cx->name[j-i-2]='\0';
-    cx->val=getval(nshell,cx->name);
-    if (cx->val!=NULL) {
-      char *c1;
-      if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
-      cx->s=nstrcat(cx->s,c1);
-      g_free(c1);
-      if (cx->s==NULL) return -1;
-    }
-    *index=j;
-  } else {
-    if ((po[j]==':')
-	&& (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
-      cx->valf='o';
-      if ((cx->param_buf=nstrnew())==NULL) return -1;
-      *index = i + 2;
-    } else {
-      g_free(cx->name);
-      if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
-      strncpy(cx->name,po+i+2,j-i-2);
-      cx->name[j-i-2]='\0';
-      cx->val=getval(nshell,cx->name);
-      cx->quote2=*cx->quote;
-      cx->bquote2=*cx->bquote;
-      cx->valf2=' ';
-      if (po[j]==':') {
-	cx->valf2=':';
-	j++;
-      }
-      if (strchr("-=?+",po[j])!=NULL) {
-	cx->valf=po[j];
-	j++;
-      } else if (strchr("#%",po[j])!=NULL) {
-	if (po[j]==po[j+1]) {
-	  cx->valf2=po[j];
-	  j++;
-	}
-	cx->valf=po[j];
-	j++;
-      } else {
-	sherror(ERRBADSUB);
-	return -1;
-      }
-      if ((cx->param_buf=nstrnew())==NULL) return -1;
-      *index=j;
-    }
+    return expand_braced_simple(nshell, cx, po, j, index);
   }
-  return 1;
+  if ((po[j]==':') && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
+    return expand_braced_object(cx, index);
+  }
+  return expand_braced_modifier(nshell, cx, po, j, index);
 }
 
 static int
@@ -2465,7 +2493,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
       return expand_all_args(nshell, cx, po, index);
     }
     if (po[i+1]=='{') {
-      return expand_braced(nshell, cx, po, i, index);
+      return expand_braced(nshell, cx, po, index);
     }
     /* simple variable substitution */
     return expand_simple(nshell, cx, po, index);
