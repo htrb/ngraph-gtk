@@ -2458,8 +2458,8 @@ static int
 expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   int j;
-  for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
   const int i = *index;
+  j = find_varname_end(po, i + 1);
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i))==NULL) return -1;
   strncpy(cx->name,po+i+1,j-i-1);
