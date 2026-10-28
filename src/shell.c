@@ -1521,6 +1521,53 @@ check_quote_bquote(int quote, int bquote, int ch)
   return (check_quote(quote, ch) || bquote);
 }
 
+static int
+find_matching_delimiter(const char *po, char lp, char rp)
+{
+  int i;
+  int depth = 1; // 開始時の '{' を含むため 1 からスタート
+  int in_squote = 0;
+  int in_dquote = 0;
+
+  for (i = 0; po[i] != '\0'; i++) {
+    // エスケープ文字のスキップ（シングルクォート内以外で有効）
+    if (!in_squote && po[i] == '\\' && po[i + 1] != '\0') {
+      i++;
+      continue;
+    }
+
+    // クォートの状態管理
+    if (!in_dquote && po[i] == '\'') {
+      in_squote = !in_squote;
+      continue;
+    }
+    if (!in_squote && po[i] == '"') {
+      in_dquote = !in_dquote;
+      continue;
+    }
+
+    // クォート外でのブレースのカウント
+    if (!in_squote && !in_dquote) {
+      if (po[i] == lp) {
+        depth++;
+      } else if (po[i] == rp) {
+        depth--;
+        if (depth == 0) {
+          return i; // 全体のネストが 0 になった（＝外側の '}'）位置を返す
+        }
+      }
+    }
+  }
+
+  return -1;
+}
+
+static int
+find_brace_end(const char *po)
+{
+  return find_matching_delimiter(po, '{', '}');
+}
+
 static char *
 gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
 {
@@ -2392,53 +2439,6 @@ expand_braced_object(struct expand_context *cx, int *index)
 }
 
 static int
-find_matching_delimiter(const char *po, char lp, char rp)
-{
-  int i;
-  int depth = 1; // 開始時の '{' を含むため 1 からスタート
-  int in_squote = 0;
-  int in_dquote = 0;
-
-  for (i = 0; po[i] != '\0'; i++) {
-    // エスケープ文字のスキップ（シングルクォート内以外で有効）
-    if (!in_squote && po[i] == '\\' && po[i + 1] != '\0') {
-      i++;
-      continue;
-    }
-
-    // クォートの状態管理
-    if (!in_dquote && po[i] == '\'') {
-      in_squote = !in_squote;
-      continue;
-    }
-    if (!in_squote && po[i] == '"') {
-      in_dquote = !in_dquote;
-      continue;
-    }
-
-    // クォート外でのブレースのカウント
-    if (!in_squote && !in_dquote) {
-      if (po[i] == lp) {
-        depth++;
-      } else if (po[i] == rp) {
-        depth--;
-        if (depth == 0) {
-          return i; // 全体のネストが 0 になった（＝外側の '}'）位置を返す
-        }
-      }
-    }
-  }
-
-  return -1;
-}
-
-static int
-find_parameter_modifier_end(const char *po)
-{
-  return find_matching_delimiter(po, '{', '}');
-}
-
-static int
 expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
 {
   const int i = *index;
@@ -2469,7 +2469,7 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
     return -1;
   }
 
-  int last = find_parameter_modifier_end(po + j);
+  int last = find_brace_end(po + j);
   if (last < 0) {
     sherror(ERRBADSUB);
     return -1;
