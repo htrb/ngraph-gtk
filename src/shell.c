@@ -2392,6 +2392,53 @@ expand_braced_object(struct expand_context *cx, int *index)
 }
 
 static int
+find_matching_delimiter(const char *po, char lp, char rp)
+{
+  int i;
+  int depth = 1; // 開始時の '{' を含むため 1 からスタート
+  int in_squote = 0;
+  int in_dquote = 0;
+
+  for (i = 0; po[i] != '\0'; i++) {
+    // エスケープ文字のスキップ（シングルクォート内以外で有効）
+    if (!in_squote && po[i] == '\\' && po[i + 1] != '\0') {
+      i++;
+      continue;
+    }
+
+    // クォートの状態管理
+    if (!in_dquote && po[i] == '\'') {
+      in_squote = !in_squote;
+      continue;
+    }
+    if (!in_squote && po[i] == '"') {
+      in_dquote = !in_dquote;
+      continue;
+    }
+
+    // クォート外でのブレースのカウント
+    if (!in_squote && !in_dquote) {
+      if (po[i] == lp) {
+        depth++;
+      } else if (po[i] == rp) {
+        depth--;
+        if (depth == 0) {
+          return i; // 全体のネストが 0 になった（＝外側の '}'）位置を返す
+        }
+      }
+    }
+  }
+
+  return -1;
+}
+
+static int
+find_parameter_modifier_end(const char *po)
+{
+  return find_matching_delimiter(po, '{', '}');
+}
+
+static int
 expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
 {
   const int i = *index;
@@ -2421,8 +2468,21 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
     sherror(ERRBADSUB);
     return -1;
   }
-  if ((cx->param_buf=nstrnew())==NULL) return -1;
-  *index=j;
+
+  int last = find_parameter_modifier_end(po + j);
+  if (last < 0) {
+    sherror(ERRBADSUB);
+    return -1;
+  }
+
+  char *str = g_strndup(po + j, last);
+  if (str == NULL) return -1;
+  cx->param_buf = expand(nshell,str,&cx->quote2,&cx->bquote2,TRUE);
+  g_free (str);
+
+  if (cx->param_buf == NULL) return -1;
+  expand_parameter_modifier(nshell, cx);
+  *index = j + last;
   return 1;
 }
 
