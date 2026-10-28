@@ -2868,7 +2868,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
             prmcur->prmno=PPSETO;
           } else {
             po=prmcur->str;
-            for (i=0;(po[i]!='\0') && (isalnum(po[i]) || (po[i]=='_'));i++);
+	    i = find_varname_end(po, 0);
             if ((i!=0) && (po[i]=='=')) prmcur->prmno=PPSETV;
           }
           if (prmcur->prmno==PPNO) break;
