@@ -2441,6 +2441,26 @@ expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const cha
 }
 
 static int
+expand_braced_expression(struct nshell *nshell, struct expand_context *cx, const char *po, int j)
+{
+  int last = find_matching_brace(po + j);
+  if (last < 0) {
+    sherror(ERRBADSUB);
+    return -1;
+  }
+
+  char *str = g_strndup(po + j, last);
+  if (str == NULL) return -1;
+  cx->param_buf = expand(nshell, str, &cx->quote2, &cx->bquote2, TRUE);
+  g_free(str);
+
+  if (cx->param_buf == NULL) return -1;
+  if (expand_parameter_modifier(nshell, cx) < 0) return -1;
+
+  return last;
+}
+
+static int
 expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
 {
   const int i = *index;
@@ -2471,19 +2491,8 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
     return -1;
   }
 
-  int last = find_matching_brace(po + j);
-  if (last < 0) {
-    sherror(ERRBADSUB);
-    return -1;
-  }
-
-  char *str = g_strndup(po + j, last);
-  if (str == NULL) return -1;
-  cx->param_buf = expand(nshell,str,&cx->quote2,&cx->bquote2,TRUE);
-  g_free (str);
-
-  if (cx->param_buf == NULL) return -1;
-  if (expand_parameter_modifier(nshell, cx) < 0) return -1;
+  int last = expand_braced_expression(nshell,  cx, po, j);
+  if (last < 0) return -1;
 
   *index = j + last;
   return 1;
