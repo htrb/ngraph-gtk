@@ -1,0 +1,10 @@
+testeq E001 'a\ b' "a\ b"
+testeq E002 '$A' "\$A"
+testeq E003 '`abc`' "\`abc\`"     # shell: unexpected EOF.
+testeq E004 '"abc"' "\"abc\""
+testeq E005 '\' "\\"
+testeq E006 'a\ \b' "a\ \b"
+testeq E007 '$' "\$"
+testeq E008 '"' "\""
+testeq E009 '\'"'" "\'"
+testeq E010 '`' "\`"              # shell: unexpected EOF.

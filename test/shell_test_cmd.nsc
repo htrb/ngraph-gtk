@@ -1,0 +1,44 @@
+testeq C001 abc "`echo abc`"
+
+A=`echo xyz`
+testeq C002 xyz "$A"
+
+testeq C003 "a b c" "`echo a b c`"
+
+testeq C004 XYZ "`echo XYZ`"
+
+A=abc
+testeq C005 abc "`echo $A`"
+
+testeq C006 "" "`echo`"
+
+testeq C007 XabcY "X`echo abc`Y"
+
+testeq C008 hello "`echo hello`"
+
+testeq C009 123 "`echo 123`"
+
+testeq C010 abcdef "`echo abc``echo def`"
+
+testeq C011 abc "`echo abc
+`"
+
+testeq C012 abc "`echo abc `"
+
+testeq C013 abc "`echo abc    `"
+
+testeq C014 abc "`echo abc`"
+
+testeq C015 abc "`echo abc`"
+
+testeq C016 a "`echo a`"
+
+testeq C017 b "`echo b`"
+
+testeq C018 c "`echo c`"
+
+testeq C019 abc "`echo abc`"
+
+testeq C020 Xend "X`echo end`"
+
+testeq C021 Xbnd "X`echo end | sed 's/e/b/g'`"

@@ -1,0 +1,39 @@
+IFS=" "
+A="a b c"
+testeq I001 "a b c" "$A"
+
+IFS=":"
+A="a:b:c"
+testeq I002 "a:b:c" "$A"
+
+IFS=","
+A="a,b,c"
+testeq I003 "a,b,c" "$A"
+
+IFS=" "
+A="abc"
+testeq I004 abc "$A"
+
+IFS=" "
+A=""
+testeq I005 "" "$A"
+
+IFS="\t"
+A="a\tb"
+testeq I006 "a\tb" "$A"
+
+IFS=":"
+A=":"
+testeq I007 ":" "$A"
+
+IFS=","
+A=","
+testeq I008 "," "$A"
+
+IFS=" "
+A=" "
+testeq I009 " " "$A"
+
+IFS=" "
+A="  "
+testeq I010 "  " "$A"

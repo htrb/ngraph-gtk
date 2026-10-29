@@ -1,0 +1,54 @@
+A="a b c"
+testeq Q001 "a b c" "$A"
+
+testeq Q002 '$A' '$A'
+
+testeq Q003 '${A}' '${A}'
+
+testeq Q004 '`echo abc`' '`echo abc`'
+
+testeq Q005 '"' "\""
+
+testeq Q006 "" ""
+
+A=""
+testeq Q007 "" "$A"
+
+A="abc"
+testeq Q008 abc "$A"
+
+A="a b"
+testeq Q009 "xa by" "x${A}y"
+
+A="a b"
+testeq Q010 "a ba b" "$A$A"
+
+A="a b"
+testeq Q011 "a ba b" "$A""$A"
+
+A='*'
+testeq Q012 "*" "$A"
+
+A='?'
+testeq Q013 "?" "$A"
+
+A='['
+testeq Q014 "[" "$A"
+
+A='abc'
+testeq Q015 abc "$A"
+
+A='abc'
+testeq Q016 abc "${A}"
+
+A=' '
+testeq Q017 " " "$A"
+
+A='  '
+testeq Q018 "  " "$A"
+
+A='x'
+testeq Q019 xx "$A$A"
+
+A='xy'
+testeq Q020 xy "${A}"

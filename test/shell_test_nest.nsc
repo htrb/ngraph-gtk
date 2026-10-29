@@ -1,0 +1,71 @@
+A=abc
+testeq N001 abc "${A:-DEF}"
+
+unset A
+B=xyz
+testeq N002 xyz "${A:-$B}"
+
+unset A
+B=xyz
+testeq N003 xyz "${A:-${B}}"           # shell: bad substitution.
+
+A=abc
+B=xyz
+testeq N004 abc "${A:-${B}}"
+
+unset A
+testeq N005 DEF "${A:-`echo DEF`}"     # shell: bad substitution.
+
+A=abc
+testeq N006 abc "${A:-`echo DEF`}"     # shell: bad substitution.
+
+B=xyz
+testeq N007 xyz "`echo ${B}`"
+
+A=abc
+B=xyz
+testeq N008 xyz "${A:+${B}}"           # shell: bad substitution.
+
+unset A
+B=xyz
+testeq N009 "" "${A:+${B}}"
+
+unset A
+testeq N010 ok "${A:=ok}"
+
+testeq N011 ok "$A"
+
+A=abc
+testeq N012 abc "${A:+${A}}"           # shell: bad substitution.
+
+A=abc
+testeq N013 abc "`echo ${A}`"
+
+A=abc
+testeq N014 abc "${A:-${A}}"
+
+A=abc
+testeq N015 xyz "${A:+xyz}"
+
+unset A
+testeq N016 xyz "${A:-xyz}"
+
+A=test
+testeq N017 test "${A}"
+
+A=test
+testeq N018 test "`echo ${A}`"
+
+A=test
+testeq N019 test "${A:+test}"
+
+A=test
+testeq N020 test "${A:-zzz}"
+
+unset A
+B=xyz
+testeq N021 "xyz aa '{' '{' '}}}}}}}}}}}}'" "${A:-${C:-${B}} aa '{' '{' '}}}}}}}}}}}}'}"
+testeq N022 "xyzaa\\" ${A:-${C:-${B}}aa'\'}
+
+C=bcd
+testeq N022 "bcdaa\\" ${A:-${C:-${B}}aa'\'}

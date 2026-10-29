@@ -1,0 +1,41 @@
+set +e
+
+PASS=0
+FAIL=0
+
+myexpr() {
+    if which ixpr
+    then
+	iexpr "$*"
+    else
+	expr "$@"
+    fi
+}
+
+testeq() {
+  NAME=$1
+  EXPECT=$2
+  ACTUAL=$3
+
+  if test "$EXPECT" = "$ACTUAL"
+  then
+    PASS=`myexpr $PASS + 1`
+  else
+    echo "$NAME FALSE"
+    echo "  EXPECT=<$EXPECT>"
+    echo "  ACTUAL=<$ACTUAL>"
+    FAIL=`myexpr $FAIL + 1`
+  fi
+}
+
+for t in shell_test_*.nsc
+do
+    echo $t
+    . ./$t
+done
+
+echo
+echo "PASS=$PASS"
+echo "FAIL=$FAIL"
+
+exit $FAIL

@@ -1,0 +1,121 @@
+A=abc
+testeq P001 abc "$A"
+
+A=abc
+testeq P002 abc "${A}"
+
+A=""
+testeq P003 "" "${A}"
+
+unset A
+testeq P004 "" "$A"
+
+unset A
+testeq P005 "" "${A}"
+
+unset A
+testeq P006 DEF "${A:-DEF}"
+
+A=abc
+testeq P007 abc "${A:-DEF}"
+
+A=""
+testeq P008 DEF "${A:-DEF}"
+
+unset A
+TMP=${A:=XYZ}
+testeq P009 XYZ "$TMP"
+
+testeq P010 XYZ "$A"
+
+A=abc
+TMP=${A:=XYZ}
+testeq P011 abc "$TMP"
+
+testeq P012 abc "$A"
+
+unset A
+testeq P013 "" "${A:+DEF}"
+
+A=abc
+testeq P014 DEF "${A:+DEF}"
+
+A=""
+testeq P015 "" "${A:+DEF}"
+
+A=abcdef
+testeq P016 bcdef "${A#a}"
+
+A=abcdef
+testeq P017 def "${A#abc}"
+
+A=abcdef
+testeq P018 f "${A##a*e}"
+
+A=abcdef
+testeq P019 abcde "${A%f}"
+
+A=abcdef
+testeq P020 abc "${A%%d*}"
+
+A=abc
+B=def
+testeq P021 abcdef "${A}${B}"
+
+A=abc
+testeq P022 abcxyz "${A}xyz"
+
+A=abc
+testeq P023 xyzabc "xyz${A}"
+
+A=0
+testeq P024 SET "${A:+SET}"
+
+A=x
+testeq P025 "x" "${A:-}"
+
+unset A
+testeq P026 "" "${A:-}"
+
+A=abc
+testeq P027 abc "${A:+abc}"
+
+unset A
+testeq P028 "" "${A:+abc}"
+
+A=abcdef
+testeq P029 abcdef "${A#z}"
+
+A=abcdef
+testeq P030 abcdef "${A%z}"
+
+A=abcdef
+testeq P031 "" "${A##*}"
+
+A=abcdef
+testeq P032 "" "${A%%*}"
+
+A=1
+testeq P033 1 "$A"
+
+A=1
+B=2
+testeq P034 12 "$A$B"
+
+A=1
+B=2
+testeq P035 12 "${A}${B}"
+
+A=abc
+testeq P036 abc "${A:-XYZ}"
+
+A=abc
+testeq P037 XYZ "${A:+XYZ}"
+
+A=""
+testeq P038 "" "${A:+XYZ}"
+
+unset A
+testeq P039 XYZ "${A:=XYZ}"
+
+testeq P040 XYZ "$A"
