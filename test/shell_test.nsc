@@ -1,3 +1,5 @@
+#! ../src/ngraph -i
+
 set +e
 
 PASS=0
