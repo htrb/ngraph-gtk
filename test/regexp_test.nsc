@@ -18,10 +18,10 @@ check_match() {
 
     for i in ${regexp::seq}
     do
-	for j in `get sarray:$i -field seq`
+	for j in ${sarray:$i:seq}
 	do
-	    s1=`get regexp -field get:"$i $j"`
-	    s2=`get sarray:$i -field get:$j`
+	    s1=${regexp::get $i $j}
+	    s2=${sarray:$i:get $j}
 	    show_result "get" "$s1" "$s2"
 	done
     done
