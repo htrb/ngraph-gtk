@@ -2138,15 +2138,19 @@ expand_escape(struct expand_context *cx, int ch, int chn)
 static int
 expand_object_replacement (struct nshell *nshell, struct expand_context *cx)
 {
-  char *tmp;
+  char *tmp, *tmp2;
   struct narray *sarray;
   char **sdata;
   int snum, dummy;
   if ((tmp=unquotation(cx->param_buf,&dummy))==NULL) return -1;
   g_free(cx->param_buf);
   cx->param_buf=NULL;
-  sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
+  tmp2 = g_strdup_printf("%s:%s", cx->name, tmp);
   g_free(tmp);
+  if (tmp2 == NULL) return -1;
+
+  sarray=sgetobj(tmp2,FALSE,FALSE,FALSE);
+  g_free(tmp2);
   sdata=arraydata(sarray);
   snum=arraynum(sarray);
   for (int j=0;j<snum;j++) {
@@ -2437,15 +2441,6 @@ expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const cha
 }
 
 static int
-expand_braced_object(struct expand_context *cx, int *index)
-{
-  cx->valf='o';
-  if ((cx->param_buf=nstrnew())==NULL) return -1;
-  *index += 2;
-  return 1;
-}
-
-static int
 expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
 {
   const int i = *index;
@@ -2471,7 +2466,7 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
     }
     cx->valf=po[j];
     j++;
-  } else {
+  } else if (cx->valf != 'o') {
     sherror(ERRBADSUB);
     return -1;
   }
@@ -2488,7 +2483,8 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
   g_free (str);
 
   if (cx->param_buf == NULL) return -1;
-  expand_parameter_modifier(nshell, cx);
+  if (expand_parameter_modifier(nshell, cx) < 0) return -1;
+
   *index = j + last;
   return 1;
 }
@@ -2516,7 +2512,7 @@ expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, 
     return expand_braced_simple(nshell, cx, po, j, index);
   }
   if ((po[j]==':') && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
-    return expand_braced_object(cx, index);
+    cx->valf='o';
   }
   return expand_braced_modifier(nshell, cx, po, j, index);
 }
