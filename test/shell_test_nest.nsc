@@ -69,3 +69,14 @@ testeq N022 "xyzaa\\" ${A:-${C:-${B}}aa'\'}
 
 C=bcd
 testeq N022 "bcdaa\\" ${A:-${C:-${B}}aa'\'}
+
+unset A
+unset B
+testeq N023 abc "${A:-${B:-abc}}"
+
+A=hello
+B=xyz
+testeq N024 hello ${A:-${B}}
+
+unset A
+testeq N025 xyz ${A:-`echo xyz`}
