@@ -1563,7 +1563,7 @@ find_matching_delimiter(const char *po, char lp, char rp)
 }
 
 static int
-find_brace_end(const char *po)
+find_matching_brace(const char *po)
 {
   return find_matching_delimiter(po, '{', '}');
 }
@@ -1622,7 +1622,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     } else if (po[i]=='\'' || po[i]=='"') *quote=po[i];
     /* check brace (when not in quotes) */
     if (*quote != '\'' && po[i] == '$' && po[i+1] == '{') {
-      int modifier_end = find_brace_end(po + i + 2);
+      int modifier_end = find_matching_brace(po + i + 2);
       if (modifier_end >= 0) {
 	i += modifier_end + 2;
       }
@@ -2476,7 +2476,7 @@ expand_braced_modifier(struct nshell *nshell, struct expand_context *cx, const c
     return -1;
   }
 
-  int last = find_brace_end(po + j);
+  int last = find_matching_brace(po + j);
   if (last < 0) {
     sherror(ERRBADSUB);
     return -1;
