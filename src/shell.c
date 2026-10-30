@@ -882,11 +882,11 @@ cmdstackgetpo(struct cmdstack **stroot)
 }
 
 static int
-cmdstackgetlast(struct cmdstack **stroot)
+cmdstackgetlast(const struct cmdstack *stroot)
 {
-  struct cmdstack *stcur,*stprev;
+  const struct cmdstack *stcur,*stprev;
 
-  stcur=*stroot;
+  stcur=stroot;
   stprev=NULL;
   while (stcur!=NULL) {
     stprev=stcur;
@@ -2975,7 +2975,7 @@ syntax(struct nshell *nshell,
   while (cmdcur!=NULL) {
     int cmd, c;
     cmd=cmdcur->cmdno;
-    c=cmdstackgetlast(sx);
+    c=cmdstackgetlast(*sx);
     if ((c==CPFOR) && (cmd!=CPDO)) {
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
       return 2;
@@ -3008,7 +3008,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPTHEN:
-      if (cmdstackgetlast(sx)!=CPIF) {
+      if (cmdstackgetlast(*sx)!=CPIF) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3019,7 +3019,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPELIF:
-      if (cmdstackgetlast(sx)!=CPTHEN) {
+      if (cmdstackgetlast(*sx)!=CPTHEN) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3030,7 +3030,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPELSE:
-      if (cmdstackgetlast(sx)!=CPTHEN) {
+      if (cmdstackgetlast(*sx)!=CPTHEN) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3041,7 +3041,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPFI:
-      c=cmdstackgetlast(sx);
+      c=cmdstackgetlast(*sx);
       if ((c!=CPTHEN) && (c!=CPELSE)) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
@@ -3069,7 +3069,7 @@ syntax(struct nshell *nshell,
       }
       break;
     case CPPATI:
-      c=cmdstackgetlast(sx);
+      c=cmdstackgetlast(*sx);
       if ((c!=CPCASE) && (c!=CPPATO)) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
@@ -3100,7 +3100,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPPATO:
-      if (cmdstackgetlast(sx)!=CPPATI) {
+      if (cmdstackgetlast(*sx)!=CPPATI) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3111,7 +3111,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPESAC:
-      c=cmdstackgetlast(sx);
+      c=cmdstackgetlast(*sx);
       if ((c!=CPCASE) && (c!=CPPATI) && (c!=CPPATO)) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
@@ -3150,7 +3150,7 @@ syntax(struct nshell *nshell,
       if (cmdstackcat(sx,CPUNTIL)==NULL) return -1;
       break;
     case CPDO:
-      c=cmdstackgetlast(sx);
+      c=cmdstackgetlast(*sx);
       if ((c!=CPFOR) && (c!=CPWHILE) && (c!=CPUNTIL)) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
@@ -3160,7 +3160,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPDONE:
-      if (cmdstackgetlast(sx)!=CPDO) {
+      if (cmdstackgetlast(*sx)!=CPDO) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3178,7 +3178,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPBI:
-      if (cmdstackgetlast(sx)!=CPFN) {
+      if (cmdstackgetlast(*sx)!=CPFN) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3186,7 +3186,7 @@ syntax(struct nshell *nshell,
       st->cmd=cmdcur;
       break;
     case CPBO:
-      if (cmdstackgetlast(sx)!=CPBI) {
+      if (cmdstackgetlast(*sx)!=CPBI) {
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
@@ -3822,7 +3822,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
   g_free(str);
   if (errlevel==-1) return -1;
   nshell->status=errlevel;
-  lastc=cmdstackgetlast(stroot);
+  lastc=cmdstackgetlast(*stroot);
   if ((lastc!=CPIF) && (lastc!=CPELIF)
       && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
       && (nshell->optione) && (errlevel!=0)) {
@@ -3830,7 +3830,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
     return -1;
   }
   // nshell->status=errlevel;
-  lastc=cmdstackgetlast(stroot);
+  lastc=cmdstackgetlast(*stroot);
   if ((lastc!=CPIF) && (lastc!=CPELIF)
       && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
       && (nshell->optione) && (errlevel!=0)) {
@@ -3951,7 +3951,7 @@ cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_
     }
   }
   nshell->status = errlevel;
-  lastc=cmdstackgetlast(stroot);
+  lastc=cmdstackgetlast(*stroot);
   if ((lastc!=CPIF) && (lastc!=CPELIF)
       && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
       && (nshell->optione) && (errlevel!=0)) {
