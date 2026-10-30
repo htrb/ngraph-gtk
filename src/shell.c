@@ -3799,6 +3799,21 @@ cmdrun_return(struct nshell *nshell, int namedfunc, const struct cmdexec_pipe *p
 }
 
 static int
+cmdrun_set_status(struct nshell *nshell, struct cmdstack **stroot, int errlevel, int *err)
+{
+  int lastc;
+  nshell->status=errlevel;
+  lastc=cmdstackgetlast(*stroot);
+  if ((lastc!=CPIF) && (lastc!=CPELIF)
+      && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
+      && (nshell->optione) && (errlevel!=0)) {
+    *err=3;
+    return -1;
+  }
+  return 0;
+}
+
+static int
 cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdstack **stroot, int *err)
 {
   const struct prmlist *prm;
