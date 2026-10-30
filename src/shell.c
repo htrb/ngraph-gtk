@@ -3842,122 +3842,133 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
 }
 
 static int
-cmdrun_command(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist  *prmcur, int *err)
+cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, shell_proc proc, int *errlevel)
 {
   struct prmlist *prm;
-  shell_proc proc;
-  int errlevel, lastc;
   char **argv;
-  proc = check_cmd(prmcur->str);
-  if (proc) {
-    argv = NULL;
-    if (arg_add(&argv, NULL) == NULL)
-      return -1;
-    prm = cmdfd->prmnewroot;
-    while (prm) {
-      if (arg_add(&argv, prm->str) == NULL) {
-	g_free(argv);
-	return -1;
-      }
-      prm = prm->next;
-    }
-    errlevel = proc(nshell, pipe->pnum, (char **)argv);
-    g_free(argv);
-  } else {
-    char *cmdname;
-    cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
-    if (cmdname==NULL) {
-      sherror2(ERRCFOUND,prmcur->str);
-      return -1;
-    } else {
-      if (Security) {
-	sherror(ERRSECURITY);
-	return -1;
-      }
-      argv=NULL;
-      if (arg_add(&argv,NULL)==NULL) return -1;
-      prm=cmdfd->prmnewroot;
-      while (prm!=NULL) {
-	if (arg_add(&argv,prm->str)==NULL) {
-	  g_free(argv);
-	  return -1;
-	}
-	prm=prm->next;
-      }
-#if WINDOWS
-      {
-	GThread *thread;
-	char *ptr, *win_cmd;
-
-	ptr = quote_args(argv);
-	if (ptr == NULL) {
-	  sherror(ERRMEMORY);
-	  return -1;
-	}
-
-	win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
-	g_free(ptr);
-	if (win_cmd == NULL) {
-	  sherror(ERRMEMORY);
-	  return -1;
-	}
-
-	errlevel = 0;
-	thread= g_thread_new("process", proc_in_thread, win_cmd);
-	if (thread) {
-	  WaitProc = 1;
-#if USE_EVENT_LOOP
-	  while (WaitProc) {
-	    msleep(1);
-	    eventloop();
-	  }
-#endif
-	  errlevel = GPOINTER_TO_INT(g_thread_join(thread));
-	}
-	g_free(win_cmd);
-      }
-#else	/* WINDOWS */
-      unset_childhandler();
-      pid_t pid = fork();
-      if (pid < 0) {
-	sherror2(ERRSYSTEM,"fork");
-	set_childhandler();
-	return -1;
-      } else if (pid == 0) {
-	errlevel=execve(cmdname,(char **)argv,MainEnviron);
-	printfstderr("shell: %.64s: %.64s",
-		     argv[0],g_strerror(errno));
-	exit(errlevel);
-      } else {
-#if USE_EVENT_LOOP
-	if (has_eventloop()) {
-	  while (waitpid(pid,&errlevel,WNOHANG)==0) {
-	    eventloop();
-	    msleep(10);
-	  }
-	} else {
-	  waitpid(pid, &errlevel, 0);
-	}
-#else
-	waitpid(pid, &errlevel, 0);
-#endif
-	errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
-      }
-      set_childhandler();
-#endif	/* WINDOWS */
+  argv = NULL;
+  if (arg_add(&argv, NULL) == NULL)
+    return -1;
+  prm = cmdfd->prmnewroot;
+  while (prm) {
+    if (arg_add(&argv, prm->str) == NULL) {
       g_free(argv);
-      g_free(cmdname);
-      cmdname=NULL;
+      return -1;
     }
+    prm = prm->next;
   }
-  nshell->status = errlevel;
-  lastc=cmdstackgetlast(*stroot);
-  if ((lastc!=CPIF) && (lastc!=CPELIF)
-      && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-      && (nshell->optione) && (errlevel!=0)) {
-    *err=3;
+  *errlevel = proc(nshell, pipe->pnum, (char **)argv);
+  g_free(argv);
+  return 0;
+}
+
+static int
+cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist *prmcur, int *errlevel)
+{
+  char *cmdname;
+  char **argv;
+  struct prmlist *prm;
+
+  cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
+  if (cmdname==NULL) {
+    sherror2(ERRCFOUND,prmcur->str);
     return -1;
   }
+
+  if (Security) {
+    sherror(ERRSECURITY);
+    return -1;
+  }
+  argv=NULL;
+  if (arg_add(&argv,NULL)==NULL) return -1;
+  prm=cmdfd->prmnewroot;
+  while (prm!=NULL) {
+    if (arg_add(&argv,prm->str)==NULL) {
+      g_free(argv);
+      return -1;
+    }
+    prm=prm->next;
+  }
+#if WINDOWS
+  {
+    GThread *thread;
+    char *ptr, *win_cmd;
+
+    ptr = quote_args(argv);
+    if (ptr == NULL) {
+      sherror(ERRMEMORY);
+      return -1;
+    }
+
+    win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
+    g_free(ptr);
+    if (win_cmd == NULL) {
+      sherror(ERRMEMORY);
+      return -1;
+    }
+
+    *errlevel = 0;
+    thread= g_thread_new("process", proc_in_thread, win_cmd);
+    if (thread) {
+      WaitProc = 1;
+#if USE_EVENT_LOOP
+      while (WaitProc) {
+	msleep(1);
+	eventloop();
+      }
+#endif
+      *errlevel = GPOINTER_TO_INT(g_thread_join(thread));
+    }
+    g_free(win_cmd);
+  }
+#else	/* WINDOWS */
+  unset_childhandler();
+  pid_t pid = fork();
+  if (pid < 0) {
+    sherror2(ERRSYSTEM,"fork");
+    set_childhandler();
+    return -1;
+  } else if (pid == 0) {
+    *errlevel=execve(cmdname,(char **)argv,MainEnviron);
+    printfstderr("shell: %.64s: %.64s",
+		 argv[0],g_strerror(errno));
+    exit(*errlevel);
+  } else {
+#if USE_EVENT_LOOP
+    if (has_eventloop()) {
+      while (waitpid(pid,errlevel,WNOHANG)==0) {
+	eventloop();
+	msleep(10);
+      }
+    } else {
+      waitpid(pid, errlevel, 0);
+    }
+#else
+    waitpid(pid, errlevel, 0);
+#endif
+    *errlevel = WIFEXITED(*errlevel) ? WEXITSTATUS(*errlevel) : 1;
+  }
+  set_childhandler();
+#endif	/* WINDOWS */
+  g_free(argv);
+  g_free(cmdname);
+  cmdname=NULL;
+
+  return 0;
+}
+
+static int
+cmdrun_command(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist *prmcur, int *err)
+{
+  shell_proc proc;
+  int errlevel;
+  proc = check_cmd(prmcur->str);
+  if (proc) {
+    if (cmdrun_internal(nshell, cmdfd, pipe, proc, &errlevel) < 0) return -1;
+  } else {
+    if (cmdrun_external(nshell, cmdfd, prmcur, &errlevel) < 0) return -1;
+  }
+  if (cmdrun_set_status(nshell, stroot, errlevel, err) < 0) return -1;
   if (nshell->quit) return -1;
   return 0;
 }
