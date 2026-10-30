@@ -4078,7 +4078,6 @@ static int
 cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, int quoted, struct cmdstack **stroot, int *err)
 {
   struct prmlist *prmcur,*prm;
-  char *tmpfil;
   struct cmdlist *cmdnew;
 
   prmcur=cmdfd->prmnewroot;
@@ -4120,33 +4119,8 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
     MainEnviron=cmdfd->newenviron;
     cmdfd->newenviron=NULL;
     cmdfd->sout=cmdfd->sin=NOHANDLE;
-    if (pipe->istdin!=PPNO) {
-      if (cmdrun_prepare_pipe(nshell, cmdfd, pipe, quoted) < 0) return -1;
-    } else if (cmdfd->cmdcur->pipefile!=NULL) {
-      cmdfd->sin=nopen(cmdfd->cmdcur->pipefile,O_RDONLY,NFMODE);
-    }
-    if (cmdfd->sin!=NOHANDLE) cmdfd->sin2=nredirect(0,cmdfd->sin);
-
-    /* redirect : stdout */
-    if (pipe->istdout!=PPNO) {
-      if (Security) {
-	sherror(ERRSECURITY);
-	return -1;
-      }
-      if (pipe->istdout==PPSO2)
-	cmdfd->sout=nopen(cmdfd->fstdout,O_APPEND|O_CREAT|O_WRONLY,NFMODE);
-      else cmdfd->sout=nopen(cmdfd->fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
-      /* pipe */
-    } else if (pipe->pipef) {
-      // struct objlist *sys;
-      // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
-      cmdfd->sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
-      if (cmdfd->sout < 0)
-	return -1;
-      unlinkfile(&((cmdfd->cmdcur->next)->pipefile));
-      (cmdfd->cmdcur->next)->pipefile=tmpfil;
-    }
-    if (cmdfd->sout!=NOHANDLE) cmdfd->sout2=nredirect(1,cmdfd->sout);
+    if (cmdrun_prepare_sttdin(nshell, cmdfd, pipe, quoted) < 0) return -1;
+    if (cmdrun_prepare_sttdout(nshell, cmdfd, pipe) < 0) return -1;
 
     if (nshell->optionx) {
       for (int i=0;i<nshell->cmdexec;i++) printfconsole("+");
