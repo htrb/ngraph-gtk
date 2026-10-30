@@ -3658,6 +3658,8 @@ cmdrun_dot(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct prmlist
       cmdfd->sin=nopen(cmdname,O_RDONLY,NFMODE);
       if (cmdfd->sin==NOHANDLE) {
 	sherror2(ERROPEN,cmdname);
+	g_free(cmdname);
+	cmdname=NULL;
 	arg_del(argvnew);
 	return -1;
       }
