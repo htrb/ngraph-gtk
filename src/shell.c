@@ -4048,6 +4048,33 @@ cmdrun_prepare_sttdin(struct nshell *nshell, struct cmdexec_fd *cmdfd, const str
 }
 
 static int
+cmdrun_prepare_sttdout(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe)
+{
+  /* redirect : stdout */
+  if (pipe->istdout!=PPNO) {
+    if (Security) {
+      sherror(ERRSECURITY);
+      return -1;
+    }
+    if (pipe->istdout==PPSO2)
+      cmdfd->sout=nopen(cmdfd->fstdout,O_APPEND|O_CREAT|O_WRONLY,NFMODE);
+    else cmdfd->sout=nopen(cmdfd->fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
+    /* pipe */
+  } else if (pipe->pipef) {
+    char *tmpfil;
+    // struct objlist *sys;
+    // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+    cmdfd->sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+    if (cmdfd->sout < 0)
+      return -1;
+    unlinkfile(&((cmdfd->cmdcur->next)->pipefile));
+    (cmdfd->cmdcur->next)->pipefile=tmpfil;
+  }
+  if (cmdfd->sout!=NOHANDLE) cmdfd->sout2=nredirect(1,cmdfd->sout);
+  return 0;
+}
+
+static int
 cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, int quoted, struct cmdstack **stroot, int *err)
 {
   struct prmlist *prmcur,*prm;
