@@ -1,0 +1,234 @@
+#! ../src/ngraph -i
+
+myexpr() {
+    if which ixpr
+    then
+	iexpr "$*"
+    else
+	expr "$@"
+    fi
+}
+
+FAILED=0
+
+echo "=== POSIX Shell Loop Control Comprehensive Test ==="
+
+# -------------------------------------------------------------------
+# Test 1: 基本的な break のテスト
+# -------------------------------------------------------------------
+res=""
+for i in 1 2 3 4 5; do
+  if [ "$i" = "3" ]; then
+    break
+  fi
+  res="${res}${i}"
+done
+
+if [ "$res" = "12" ]; then
+  echo "[ OK ] Test 1: basic break"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 1: basic break (Expected '12', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 2: 基本的な continue のテスト
+# -------------------------------------------------------------------
+res=""
+for i in 1 2 3 4 5; do
+  if [ "$i" = "3" ]; then
+    continue
+  fi
+  res="${res}${i}"
+done
+
+if [ "$res" = "1245" ]; then
+  echo "[ OK ] Test 2: basic continue"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 2: basic continue (Expected '1245', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 3: 多重ループを抜ける break 2 のテスト
+# -------------------------------------------------------------------
+res=""
+for out in a b c; do
+  for in in 1 2 3; do
+      if [ "$out" = "b" ] ; then
+	  if [ "$in" = "2" ]; then
+	      break 2
+	  fi
+      fi
+    res="${res}${out}${in}"
+  done
+done
+
+# b2 のタイミングで外側も抜けるため、a1, a2, a3, b1 で止まるはず
+if [ "$res" = "a1a2a3b1" ]; then
+  echo "[ OK ] Test 3: break 2"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 3: break 2 (Expected 'a1a2a3b1', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 4: 外側ループをスキップする continue 2 のテスト
+# -------------------------------------------------------------------
+res=""
+for out in a b c; do
+  for in in 1 2 3; do
+    if [ "$in" = "2" ]; then
+      continue 2
+    fi
+    res="${res}${out}${in}"
+  done
+done
+
+# 各外側ループで in=1 の処理（a1, b1, c1）だけが行われ、in=2 で次の外側ループへ進むはず
+if [ "$res" = "a1b1c1" ]; then
+  echo "[ OK ] Test 4: continue 2"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 4: continue 2 (Expected 'a1b1c1', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 5: while ループでの break / continue
+# -------------------------------------------------------------------
+res=""
+i=1
+while [ "$i" = "1" -o "$i" = "2" -o "$i" = "3" -o "$i" = "4" -o "$i" = "5" ]; do
+  if [ "$i" = "3" ]; then
+    i="4"
+    continue
+  fi
+  if [ "$i" = "5" ]; then
+    break
+  fi
+  res="${res}${i}"
+  i=`myexpr $i + 1`
+done
+
+# 3がスキップされ、5でブレイクするので「124」になるはず
+if [ "$res" = "124" ]; then
+  echo "[ OK ] Test 5: while break/continue"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 5: while break/continue (Expected '124', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 6: until ループでの break / continue
+# -------------------------------------------------------------------
+res=""
+i=1
+# 複雑な条件を避け、i が 6 になるまで（等しくない間）繰り返すシンプルな判定
+until [ "$i" = "6" ]; do
+  if [ "$i" = "3" ]; then
+    i="4"
+    continue
+  fi
+  if [ "$i" = "5" ]; then
+    break
+  fi
+  res="${res}${i}"
+  i=`myexpr $i + 1`
+done
+
+# while と同様に 3がスキップ、5でブレイクするので「124」になるはず
+if [ "$res" = "124" ]; then
+  echo "[ OK ] Test 6: until break/continue"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 6: until break/continue (Expected '124', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 7: 引数なし break が現在のループのみ（break 1）を抜けるか
+# -------------------------------------------------------------------
+res=""
+for out in a b; do
+  for inner in 1 2 3; do
+    if [ "$inner" = "2" ]; then
+      break
+    fi
+    res="${res}${out}${inner}"
+  done
+done
+
+# 各外側ループにおいて、inner=2 で内側だけを抜けるため「a1b1」になるはず
+if [ "$res" = "a1b1" ]; then
+  echo "[ OK ] Test 7: implicit break 1"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 7: implicit break 1 (Expected 'a1b1', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 8: ネスト if を使った多重ループの break 2
+# -------------------------------------------------------------------
+res=""
+for out in a b c; do
+  for inner in 1 2 3; do
+    if [ "$out" = "b" ]; then
+      if [ "$inner" = "2" ]; then
+        break 2
+      fi
+    fi
+    res="${res}${out}${inner}"
+  done
+done
+
+# b2 のタイミングで外側も抜けるため「a1a2a3b1」で止まるはず
+if [ "$res" = "a1a2a3b1" ]; then
+  echo "[ OK ] Test 8: break 2 with nested if"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 8: break 2 with nested if (Expected 'a1a2a3b1', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# Test 9: ネスト if を使った多重ループの continue 2
+# -------------------------------------------------------------------
+res=""
+for out in a b c; do
+  for inner in 1 2 3; do
+    if [ "$out" = "b" ]; then
+      if [ "$inner" = "2" ]; then
+        continue 2
+      fi
+    fi
+    res="${res}${out}${inner}"
+  done
+done
+
+# b2 のタイミングで外側ループの次（c）へ飛ぶため「a1a2a3b1c1c2c3」になるはず
+if [ "$res" = "a1a2a3b1c1c2c3" ]; then
+  echo "[ OK ] Test 9: continue 2 with nested if"
+  PASS=`myexpr $PASS + 1`
+else
+  echo "[FAIL] Test 9: continue 2 with nested if (Expected 'a1a2a3b1c1c2c3', got '$res')"
+  FAILED=`myexpr $FAILED + 1`
+fi
+
+# -------------------------------------------------------------------
+# 最終判定
+# -------------------------------------------------------------------
+echo "==================================================="
+FAIL=`myexpr $FAIL + $FAILED`
+if [ "$FAILED" = "0" ]; then
+  echo "RESULT: SUCCESS"
+  exit 0
+else
+  echo "RESULT: FAIL"
+  exit 1
+fi

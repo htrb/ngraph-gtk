@@ -1,0 +1,103 @@
+#!/bin/sh
+# posix_var_expansion_test.sh - POSIX shell variable expansion & eval test suite
+set +e
+
+tests_total=0
+tests_failed=0
+
+check() {
+    _expected="$1"
+    _actual="$2"
+    _name="$3"
+    tests_total=`expr $tests_total + 1`
+    if [ "$_expected" = "$_actual" ]; then
+        echo "PASS: $_name"
+    else
+        echo "FAIL: $_name (Expected: '$_expected', Got: '$_actual')"
+        tests_failed=`expr $tests_failed + 1`
+    fi
+}
+
+echo "=== 1. basic test ==="
+var_space="hello   world"
+# ダブルクォーテーションなしでは空白やタブがIFSで分割・圧縮される、あるいは連結される（環境によるがPOSIX標準の基本確認）
+# ダブルクォーテーションありでは空白が保持される
+check "hello   world" "$var_space" "double quoted preserves spaces"
+
+
+echo "=== 2. test for  B='$A' series ==="
+A="secret_value"
+B='$A'
+
+# 1. echo $B
+res1=`echo $B`
+check '$A' "$res1" "echo \$B (literal \$A)"
+
+# 2. echo "$B"
+res2=`echo "$B"`
+check '$A' "$res2" "echo \"\$B\" (literal \$A with quotes)"
+
+# 3. eval "echo $B"
+# 展開の仕組み: eval が外側のダブルクォーテーションを解釈して $B を展開 ('$A' になる)
+# -> その後 echo '$A' が実行されるため、出力は secret_value になる
+res3=`eval "echo $B"`
+check 'secret_value' "$res3" "eval \"echo \$B\" (double expansion to value)"
+
+# 4. eval "echo \"$B\""
+# 展開の仕組み: $B が展開されて '$A' になり、eval には echo '$A' が渡される
+# -> シングルクォーテーションで囲まれているため $A は展開されず文字通りの $A になる
+res4=`eval "echo \"$B\""`
+check 'secret_value' "$res4" "eval \"echo \\\"\$B\\\"\" (outer quoted, inner expanded)"
+
+# 5. eval "echo '$B'"
+# 展開の仕組み: ダブルクォーテーション内のシングルクォーテーションはリテラル扱いなので
+# $B は展開されず、eval にはそのまま echo '$B' が渡される
+# -> 結果は文字通りの $B になる
+res5=`eval "echo '$B'"`
+check '$A' "$res5" "eval \"echo '\$B'\" (outer quoted, inner expanded to literal)"
+
+echo "=== 3. undefined and empty variables  ==="
+# 未定義の変数は空文字（""）として展開されるべき
+check "" "$UNDEFINED_VAR" "undefined variable expands to empty"
+
+# 空文字が代入された変数の展開
+EMPTY=""
+check "" "$EMPTY" "empty string variable"
+# ダブルクォーテーションの有無による引数の数の違い（簡易テスト）
+f_arg_count() {
+    echo "$#"
+}
+# 引数を渡さない場合、 "" は1つの空の引数として数えられるか
+check "1" "`f_arg_count "$EMPTY"`" "empty quoted variable as 1 argument"
+
+
+echo "=== 4. special parameter and exit status ==="
+# $? のテスト
+true
+check "0" "$?" "exit status of true (?)"
+false
+check "1" "$?" "exit status of false (?)"
+
+# $$ (現在のプロセスのPID) が数値として展開されるか
+# （簡易的に空でないこと、数字のみで構成されていることをチェック）
+# $$ は未実装
+# case "$$" in
+#     *[!0-9]*|'') _pid_ok=0 ;;
+#     *) _pid_ok=1 ;;
+# esac
+# check "1" "$_pid_ok" "special parameter \$\$ is numeric PID"
+
+
+echo "---"
+echo "Test Summary:"
+echo "Total:   $tests_total"
+echo "Failed:  $tests_failed"
+
+FAIL=`myexpr $FAIL + $tests_failed`
+PASS=`myexpr $PASS + $tests_total - $tests_failed`
+
+if [ "$tests_failed" -gt 0 ]; then
+    exit 1
+else
+    exit 0
+fi

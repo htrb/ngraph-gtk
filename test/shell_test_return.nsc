@@ -1,0 +1,159 @@
+#! ../src/ngraph -i
+# posix_return_test.sh - POSIX shell compatible 'return' test suite
+
+tests_total=0
+tests_failed=0
+
+# テスト結果を検証するヘルパー関数
+check() {
+    _expected="$1"
+    _actual="$2"
+    _name="$3"
+    tests_total=`myexpr $tests_total + 1`
+    if [ "$_expected" -eq "$_actual" ]; then
+        echo "PASS: $_name"
+    else
+        echo "FAIL: $_name (Expected: $_expected, Got: $_actual)"
+        tests_failed=`myexpr $tests_failed + 1`
+    fi
+}
+
+echo "=== 1. basic test ==="
+f_ret0() { return 0; }
+f_ret42() { return 42; }
+f_ret255() { return 255; }
+
+f_ret0; check 0 $? "return 0"
+f_ret42; check 42 $? "return 42"
+f_ret255; check 255 $? "return 255"
+
+
+echo "=== 2. return without arguments ==="
+# 引数なしの return は、直前に実行されたコマンドの終了ステータスを継承するべき
+f_default_true() { true; return; }
+f_default_false() { false; return; }
+
+f_default_true; check 0 $? "return without args (after true)"
+f_default_false; check 1 $? "return without args (after false)"
+
+
+echo "=== 3. return from nested functions ==="
+inner() { return 77; }
+outer() {
+    inner
+    # inner の終了ステータスが外側で勝手に上書きされないか、
+    # あるいは outer 自体の戻り値が正しく機能するか
+    return 10
+}
+outer
+check 10 $? "nested function return (outer status)"
+
+# inner のステータスを保持できているかの検証用関数
+inner_check() {
+    inner
+    check 77 $? "nested function return (inner status inside outer)"
+    return 0
+}
+inner_check
+
+
+echo "=== 4. return from if, while and until ==="
+f_in_if() {
+    if true; then
+        return 15
+    fi
+    return 99
+}
+f_in_if; check 15 $? "return inside if-statement"
+
+f_in_while() {
+    i=0
+    while [ $i -lt 10 ]; do
+        if [ $i -eq 3 ]; then
+            return 33
+        fi
+        i=`myexpr $i + 1`
+    done
+    return 99
+}
+f_in_while; check 33 $? "return inside while-loop"
+
+f_in_for() {
+    for x in 10 20 30 40; do
+        if [ "$x" -eq 30 ]; then
+            return 77  # 30 に達したら即座に関数を終了し 77 を返す
+        fi
+    done
+    return 99  # ループが最後まで回ってしまった場合
+}
+
+f_in_for
+check 77 $? "return inside for-loop"
+
+f_in_until() {
+    n=0
+    until [ "$n" -ge 10 ]; do
+        if [ "$n" -eq 4 ]; then
+            return 88  # n=4 に達したら即座に関数を終了し 88 を返す
+        fi
+        n=`myexpr $n + 1`
+    done
+    return 99  # ループが最後まで回ってしまった場合
+}
+
+f_in_until
+check 88 $? "return inside until-loop"
+
+# echo "=== 5. サブシェル内での関数実行と return テスト ==="
+# サブシェル内で関数を呼び、その中で return した際、
+# サブシェル自体の終了ステータスが正しく伝搬するか
+# サブシェルは未実装
+# subshell_test_func() {
+#     return 55
+# }
+# ( subshell_test_func )
+# check 55 $? "return inside a subshell execution"
+
+
+#echo "=== 5. エッジケース・異常系テスト ==="
+# 不正な引数（数値以外）を与えた場合、エラー（非ゼロの終了ステータス）になるか
+# 不正な引数の場合は異常終了
+# f_invalid_arg() {
+#     return abc
+# }
+# f_invalid_arg
+# tests_total=`myexpr $tests_total + 1`
+# if [ $? -ne 0 ]; then
+#     echo "PASS: return with non-numeric argument (returns non-zero)"
+# else
+#     echo "FAIL: return with non-numeric argument (expected non-zero, got 0)"
+#     tests_failed=`myexpr $tests_failed + 1`
+# fi
+
+# 関数外（トップレベル）で return を実行した場合のエラー動作
+# POSIXでは関数またはドットスクリプト外での return はエラーとなるべき
+# eval "return 0"
+# status_toplevel=$?
+# echo $status_toplevel
+# tests_total=`myexpr $tests_total + 1`
+# if [ $status_toplevel -ne 0 ]; then
+#     echo "PASS: return outside function (returns non-zero)"
+# else
+#     echo "FAIL: return outside function (expected non-zero, got 0)"
+#     tests_failed=`myexpr $tests_failed + 1`
+# fi
+
+
+echo "---"
+echo "Test Summary:"
+echo "Total:   $tests_total"
+echo "Failed:  $tests_failed"
+
+FAIL=`myexpr $FAIL + $tests_failed`
+PASS=`myexpr $PASS + $tests_total - $tests_failed`
+
+if [ "$tests_failed" -gt 0 ]; then
+    exit 1
+else
+    exit 0
+fi
