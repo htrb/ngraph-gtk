@@ -3475,29 +3475,29 @@ cmdexpand(struct nshell *nshell, struct cmdexec_fd *cmdfd)
       quote='\0';
       bquote='\0';
       if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
-	return 1;
+	return -1;
       if (quote || bquote) {
 	g_free(str);
 	sherror(ERRUEXPEOF);
-	return 1;
+	return -1;
       }
       prmcur->quoted=FALSE;
     } else {
-      if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) return 1;
+      if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) return -1;
       strcpy(str,prmcur->str);
     }
     if ((prmcur->prmno!=PPNO) || (str[0]!='\0')) {
-      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return 1;
+      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return -1;
       if (prmprev==NULL) cmdfd->prmnewroot=prm;
       else prmprev->next=prm;
       prm->next=NULL;
       prm->prmno=prmcur->prmno;
       prm->quoted=prmcur->quoted;
       if (prmcur->prmno!=PPSI2) {
-	if ((prm->str=fnexpand(nshell,str))==NULL) return 1;
+	if ((prm->str=fnexpand(nshell,str))==NULL) return -1;
 	if (prm->prmno==PPNO) {
 	  int num=wordsplit(prm);
-	  if (num==-1) return 1;
+	  if (num==-1) return -1;
 	  for (int j=0;j<num;j++) {
 	    prmprev=prm;
 	    prm->prmno=PPNO;
@@ -3528,19 +3528,19 @@ cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_
     if (prmcur->prmno==PPSETV) {
       const char *po;
       po=strchr(prmcur->str,'=');
-      if ((name=g_malloc(po-prmcur->str+1))==NULL) return 1;
+      if ((name=g_malloc(po-prmcur->str+1))==NULL) return -1;
       strncpy(name,prmcur->str,po-prmcur->str);
       name[po-prmcur->str]='\0';
       if ((val=g_malloc(strlen(prmcur->str)-(po-prmcur->str)))==NULL) {
 	g_free(name);
-	return 1;
+	return -1;
       }
       strcpy(val,po+1);
       if (pipe->pnum==0) po=addval(nshell,name,val);
       else po=saveval(nshell,name,val,&cmdfd->newvalroot);
       g_free(name);
       g_free(val);
-      if (po==NULL) return 1;
+      if (po==NULL) return -1;
       g_free(prmcur->str);
       if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
       else prmprev->next=prmcur->next;
@@ -3549,7 +3549,7 @@ cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_
       g_free(prm);
     } else if (prmcur->prmno==PPSETO) {
       /* set object */
-      if (sputobj(prmcur->str)==-1) return 1;
+      if (sputobj(prmcur->str)==-1) return -1;
       g_free(prmcur->str);
       if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
       else prmprev->next=prmcur->next;
@@ -3586,7 +3586,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       se_arg.nshell = nshell;
       se_arg.newenviron = &cmdfd->newenviron;
       if (nhash_each(nshell->valroot, set_env_val, &se_arg))
-	return 1;
+	return -1;
     }
 #else
     struct vallist *valcur = nshell->valroot;
@@ -3597,13 +3597,13 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	len=strlen(valcur->name);
 	if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
 	else val=g_getenv(valcur->name);
-	if ((s=g_malloc(len+strlen(val)+2))==NULL) return 1;
+	if ((s=g_malloc(len+strlen(val)+2))==NULL) return -1;
 	strcpy(s,valcur->name);
 	s[len]='=';
 	strcpy(s+len+1,val);
 	if (arg_add(&cmdfd->newenviron,s)==NULL) {
 	  g_free(s);
-	  return 1;
+	  return -1;
 	}
       }
       valcur=valcur->next;
@@ -3623,14 +3623,14 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  int fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &cmdfd->tmpfil2);
 	  if (fd < 0) {
 	    nclose(cmdfd->sin);
-	    return 1;
+	    return -1;
 	  }
 	  do {
 	    s = nstrnew();
 	    if (s == NULL) {
 	      nclose(cmdfd->sin);
 	      nclose(fd);
-	      return 1;
+	      return -1;
 	    }
 	    do {
 	      char buf[2];
@@ -3642,7 +3642,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 		if ((s=nstrccat(s,ch))==NULL) {
 		  nclose(cmdfd->sin);
 		  nclose(fd);
-		  return 1;
+		  return -1;
 		}
 	      }
 	    } while (ch!='\0');
@@ -3654,7 +3654,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	    if (s==NULL) {
 	      nclose(cmdfd->sin);
 	      nclose(fd);
-	      return 1;
+	      return -1;
 	    }
 	    wordunsplit(s);
 	    int len=strlen(s);
@@ -3679,7 +3679,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
     if (pipe->istdout!=PPNO) {
       if (Security) {
 	sherror(ERRSECURITY);
-	return 1;
+	return -1;
       }
       if (pipe->istdout==PPSO2)
 	cmdfd->sout=nopen(cmdfd->fstdout,O_APPEND|O_CREAT|O_WRONLY,NFMODE);
@@ -3687,10 +3687,10 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       /* pipe */
     } else if (pipe->pipef) {
       // struct objlist *sys;
-      // if ((sys=getobject("system"))==NULL) return 1; /* fix-me: assigned value of the variable "sys" is never used */
+      // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
       cmdfd->sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
       if (cmdfd->sout < 0)
-	return 1;
+	return -1;
       unlinkfile(&((cmdfd->cmdcur->next)->pipefile));
       (cmdfd->cmdcur->next)->pipefile=tmpfil;
     }
@@ -3716,28 +3716,28 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       st=NULL;
       rcode=syntax(nshell,cmdnew,&needcmd,&st);
       cmdstackfree(st);
-      if ((rcode!=0) || (st!=NULL) || (needcmd)) return 1;
+      if ((rcode!=0) || (st!=NULL) || (needcmd)) return -1;
       argvnew=NULL;
       if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-	return 1;
+	return -1;
       strcpy(s,(nshell->argv)[0]);
       if (arg_add(&argvnew,s)==NULL) {
 	g_free(s);
 	arg_del(argvnew);
-	return 1;
+	return -1;
       }
       prmcur=prmcur->next;
       while (prmcur!=NULL) {
 	if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
 	  g_free(s);
 	  arg_del(argvnew);
-	  return 1;
+	  return -1;
 	}
 	strcpy(s,prmcur->str);
 	if (arg_add(&argvnew,s)==NULL) {
 	  g_free(s);
 	  arg_del(argvnew);
-	  return 1;
+	  return -1;
 	}
 	prmcur=prmcur->next;
       }
@@ -3750,7 +3750,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       arg_del(nshell->argv);
       nshell->argc=argcsave;
       nshell->argv=argvsave;
-      if ((rcode==-1) || (rcode==1)) return 1;
+      if ((rcode==-1) || (rcode==1)) return -1;
       /* exec special command */
       /* . */
     } else if (strcmp0(".",cmds)==0) {
@@ -3765,25 +3765,25 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 
 	  argvnew=NULL;
 	  if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-	    return 1;
+	    return -1;
 	  strcpy(s,(nshell->argv)[0]);
 	  if (arg_add(&argvnew,s)==NULL) {
 	    g_free(s);
 	    arg_del(argvnew);
-	    return 1;
+	    return -1;
 	  }
 	  prmcur=prmcur->next;
 	  while (prmcur!=NULL) {
 	    if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
 	      g_free(s);
 	      arg_del(argvnew);
-	      return 1;
+	      return -1;
 	    }
 	    strcpy(s,prmcur->str);
 	    if (arg_add(&argvnew,s)==NULL) {
 	      g_free(s);
 	      arg_del(argvnew);
-	      return 1;
+	      return -1;
 	    }
 	    prmcur=prmcur->next;
 	  }
@@ -3795,7 +3795,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  if (cmdfd->sin==NOHANDLE) {
 	    sherror2(ERROPEN,cmdname);
 	    arg_del(argvnew);
-	    return 1;
+	    return -1;
 	  }
 	  argcsave=nshell->argc;
 	  argvsave=nshell->argv;
@@ -3808,23 +3808,23 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  arg_del(nshell->argv);
 	  nshell->argc=argcsave;
 	  nshell->argv=argvsave;
-	  if ((rcode!=0) && (rcode!=1)) return 1;
+	  if ((rcode!=0) && (rcode!=1)) return -1;
 	} else {
 	  sherror2(ERRNOFIL,prmcur->str);
-	  return 1;
+	  return -1;
 	}
       }
       /* break */
     } else if (strcmp0("break",cmds)==0) {
       if (pipe->pnum>2) {
 	sherror(ERREXTARG);
-	return 1;
+	return -1;
       } else if (pipe->pnum==2) {
 	arg=(prmcur->next)->str;
 	a=strtol(arg,&endptr,10);
 	if (endptr[0]!='\0') {
 	  sherror2(ERRNUMERIC,arg);
-	  return 1;
+	  return -1;
 	}
       } else a=1;
       looplevel=0;
@@ -3855,13 +3855,13 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
     } else if (strcmp0("continue",cmds)==0) {
       if (pipe->pnum>2) {
 	sherror(ERREXTARG);
-	return 1;
+	return -1;
       } else if (pipe->pnum==2) {
 	arg=(prmcur->next)->str;
 	a=strtol(arg,&endptr,10);
 	if (endptr[0]!='\0') {
 	  sherror2(ERRNUMERIC,arg);
-	  return 1;
+	  return -1;
 	}
       } else a=1;
       looplevel=0;
@@ -3892,19 +3892,19 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
     } else if (strcmp0("return",cmds)==0) {
       if (pipe->pnum>2) {
 	sherror(ERREXTARG);
-	return 1;
+	return -1;
       } else if (pipe->pnum==2) {
 	arg=(prmcur->next)->str;
 	a=strtol(arg,&endptr,10);
 	if (endptr[0]!='\0') {
 	  sherror2(ERRNUMERIC,arg);
-	  return 1;
+	  return -1;
 	}
 	nshell->status=a;
       }
       if (namedfunc) {
 	*err=0;
-	return 1;
+	return -1;
       }
       /* execute object */
     } else if (isobject(&cmds)) {
@@ -3914,7 +3914,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	len+=strlen(prm->str)+1;
 	prm=prm->next;
       }
-      if ((str=g_malloc(len))==NULL) return 1;
+      if ((str=g_malloc(len))==NULL) return -1;
       str[0]='\0';
       prm=prmcur;
       while (prm!=NULL) {
@@ -3924,14 +3924,14 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       }
       errlevel=sexeobj(str);
       g_free(str);
-      if (errlevel==-1) return 1;
+      if (errlevel==-1) return -1;
       nshell->status=errlevel;
       lastc=cmdstackgetlast(stroot);
       if ((lastc!=CPIF) && (lastc!=CPELIF)
 	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
 	  && (nshell->optione) && (errlevel!=0)) {
 	*err=3;
-	return 1;
+	return -1;
       }
       nshell->status=errlevel;
       lastc=cmdstackgetlast(stroot);
@@ -3939,7 +3939,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
 	  && (nshell->optione) && (errlevel!=0)) {
 	*err=3;
-	return 1;
+	return -1;
       }
       if (nshell->quit) return 0;
       /* exec inner command */
@@ -3950,12 +3950,12 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       if (proc) {
 	argv = NULL;
 	if (arg_add(&argv, NULL) == NULL)
-	  return 1;
+	  return -1;
 	prm = cmdfd->prmnewroot;
 	while (prm) {
 	  if (arg_add(&argv, prm->str) == NULL) {
 	    g_free(argv);
-	    return 1;
+	    return -1;
 	  }
 	  prm = prm->next;
 	}
@@ -3966,19 +3966,19 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
 	if (cmdname==NULL) {
 	  sherror2(ERRCFOUND,prmcur->str);
-	  return 1;
+	  return -1;
 	} else {
 	  if (Security) {
 	    sherror(ERRSECURITY);
-	    return 1;
+	    return -1;
 	  }
 	  argv=NULL;
-	  if (arg_add(&argv,NULL)==NULL) return 1;
+	  if (arg_add(&argv,NULL)==NULL) return -1;
 	  prm=cmdfd->prmnewroot;
 	  while (prm!=NULL) {
 	    if (arg_add(&argv,prm->str)==NULL) {
 	      g_free(argv);
-	      return 1;
+	      return -1;
 	    }
 	    prm=prm->next;
 	  }
@@ -3990,14 +3990,14 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	    ptr = quote_args(argv);
 	    if (ptr == NULL) {
 	      sherror(ERRMEMORY);
-	      return 1;
+	      return -1;
 	    }
 
 	    win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
 	    g_free(ptr);
 	    if (win_cmd == NULL) {
 	      sherror(ERRMEMORY);
-	      return 1;
+	      return -1;
 	    }
 
 	    errlevel = 0;
@@ -4020,7 +4020,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  if (pid < 0) {
 	    sherror2(ERRSYSTEM,"fork");
 	    set_childhandler();
-	    return 1;
+	    return -1;
 	  } else if (pid == 0) {
 	    errlevel=execve(cmdname,(char **)argv,MainEnviron);
 	    printfstderr("shell: %.64s: %.64s",
@@ -4054,9 +4054,9 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
 	  && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
 	  && (nshell->optione) && (errlevel!=0)) {
 	*err=3;
-	return 1;
+	return -1;
       }
-      if (nshell->quit) return 1;
+      if (nshell->quit) return -1;
     }
 
     if (cmdfd->sout2!=NOHANDLE) {
@@ -4085,7 +4085,7 @@ cmdexec_cpno(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, str
   int quoted;
 
   if (cmdexpand(nshell, cmdfd)) {
-    return 1;
+    return -1;
   }
 
   /* remove null parameter & check redirect and pipe */
@@ -4095,7 +4095,7 @@ cmdexec_cpno(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, str
   cmdsetvar(nshell,cmdfd, &pipe);
 
   if (cmdrun (nshell, namedfunc, cmdfd, &pipe, quoted, stroot, err)) {
-    return 1;
+    return -1;
   }
 
   prmfree(cmdfd->prmnewroot);
@@ -4113,7 +4113,7 @@ static int
 cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct cmdstack *stcur;
-  if ((stcur=cmdstackgetpo(stroot))==NULL) return 1;
+  if ((stcur=cmdstackgetpo(stroot))==NULL) return -1;
   if (stcur->cmdno==CPFOR) {
     if (stcur->ival==-1) {
       struct prmlist *prmcur;
@@ -4124,7 +4124,7 @@ cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
 	cmdfd->cmdcur=cmdfd->cmdcur->next;
 	return 0;
       }
-      if (addval(nshell,stcur->val,prmcur->str)==NULL) return 1;
+      if (addval(nshell,stcur->val,prmcur->str)==NULL) return -1;
       stcur->prm=prmcur->next;
       g_free(prmcur->str);
       g_free(prmcur);
@@ -4132,7 +4132,7 @@ cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
       stcur->ival++;
       if (stcur->ival<nshell->argc) {
 	if (addval(nshell,stcur->val,nshell->argv[stcur->ival])==NULL)
-	  return 1;
+	  return -1;
       } else {
 	cmdfd->cmdcur=cmdfd->cmdcur->done;
 	cmdstackrmlast(stroot);
@@ -4166,7 +4166,7 @@ cmdexec_cpfor (struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack 
   struct prmlist *prmcur,*prm;
   int quote,bquote;
 
-  if ((stcur=cmdstackcat(stroot,CPFOR))==NULL) return 1;
+  if ((stcur=cmdstackcat(stroot,CPFOR))==NULL) return -1;
   stcur->cmd=cmdfd->cmdcur;
   prmcur=(cmdfd->cmdcur->prm)->next;
   stcur->val=prmcur->str;
@@ -4180,7 +4180,7 @@ cmdexec_cpfor (struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack 
     prmcur=prmcur->next;
     while (prmcur!=NULL) {
       char *str;
-      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return 1;
+      if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return -1;
       if (prmprev==NULL) cmdfd->prmnewroot=prm;
       else prmprev->next=prm;
       prm->next=NULL;
@@ -4189,19 +4189,19 @@ cmdexec_cpfor (struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack 
       quote='\0';
       bquote='\0';
       if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
-	return 1;
+	return -1;
       if (quote || bquote) {
 	sherror(ERRUEXPEOF);
-	return 1;
+	return -1;
       }
       if (str[0]!='\0') {
-	if ((prm->str=fnexpand(nshell,str))==NULL) return 1;
+	if ((prm->str=fnexpand(nshell,str))==NULL) return -1;
       } else {
 	g_free(str);
 	prm->str=NULL;
       }
       int num;
-      if ((num=wordsplit(prm))==-1) return 1;
+      if ((num=wordsplit(prm))==-1) return -1;
       for (int j=0;j<num;j++) {
 	prmprev=prm;
 	prm=prm->next;
