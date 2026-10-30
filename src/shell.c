@@ -868,17 +868,17 @@ cmdstackcat(struct cmdstack **stroot,int cmdno)
 }
 
 static struct cmdstack *
-cmdstackgetpo(struct cmdstack **stroot)
+cmdstackgetpo(const struct cmdstack *stroot)
 {
-  struct cmdstack *stcur,*stprev;
+  const struct cmdstack *stcur,*stprev;
 
-  stcur=*stroot;
+  stcur=stroot;
   stprev=NULL;
   while (stcur!=NULL) {
     stprev=stcur;
     stcur=stcur->next;
   }
-  return stprev;
+  return (struct cmdstack *) stprev;
 }
 
 static int
@@ -3012,7 +3012,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       if ((st=cmdstackcat(sx,CPTHEN))==NULL) return -1;
@@ -3023,7 +3023,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
@@ -3034,7 +3034,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       if ((st=cmdstackcat(sx,CPELSE))==NULL) return -1;
@@ -3046,7 +3046,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       break;
@@ -3093,7 +3093,7 @@ syntax(struct nshell *nshell,
         }
         prmcur=(prmcur->next)->next;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       if ((st=cmdstackcat(sx,CPPATI))==NULL) return -1;
@@ -3104,7 +3104,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       if ((st=cmdstackcat(sx,CPPATO))==NULL) return -1;
@@ -3116,7 +3116,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       break;
@@ -3164,7 +3164,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       break;
@@ -3190,7 +3190,7 @@ syntax(struct nshell *nshell,
         sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
         return 2;
       }
-      if ((st=cmdstackgetpo(sx))==NULL) return -1;
+      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
       (st->cmd)->done=cmdcur;
       cmdstackrmlast(sx);
       cmdstackrmlast(sx);
@@ -3712,7 +3712,7 @@ cmdrun_break(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struct c
   }
   if (looplevel!=0) {
     while (a>0) {
-      if ((stcur=cmdstackgetpo(stroot))==NULL) break;
+      if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
       if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
 	prmfree(stcur->prm);
 	stcur->prm=NULL;
@@ -3756,7 +3756,7 @@ cmdrun_continue(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struc
   }
   if (looplevel!=0) {
     while (a>0) {
-      if ((stcur=cmdstackgetpo(stroot))==NULL) break;
+      if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
       if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
 	  || (stcur->cmdno==CPUNTIL)) {
 	cmdfd->cmdcur=stcur->cmd;
@@ -4188,7 +4188,7 @@ static int
 cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct cmdstack *stcur;
-  if ((stcur=cmdstackgetpo(stroot))==NULL) return -1;
+  if ((stcur=cmdstackgetpo(*stroot))==NULL) return -1;
   if (stcur->cmdno==CPFOR) {
     if (stcur->ival==-1) {
       struct prmlist *prmcur;
@@ -4346,7 +4346,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   cmdfd.cmdcur=cmdroot;
   while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
     if (ninterrupt()) goto errexit;
-    stcur=cmdstackgetpo(&stroot);
+    stcur=cmdstackgetpo(stroot);
     if ((stcur!=NULL) && (stcur->cmdno==CPBI) && (stcur->cmd!=cmdfd.cmdcur)) {
       if (addfunc(nshell,stcur->val,cmdfd.cmdcur)==NULL) goto errexit;
       cmdfd.cmdcur=cmdfd.cmdcur->next;
@@ -4361,7 +4361,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPTHEN:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
 	if (iftrue || nshell->status) cmdfd.cmdcur=cmdfd.cmdcur->done;
 	else {
@@ -4373,7 +4373,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	st->iftrue=iftrue;
 	break;
       case CPELIF:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
 	if (iftrue) cmdfd.cmdcur=cmdfd.cmdcur->done;
 	else cmdfd.cmdcur=cmdfd.cmdcur->next;
@@ -4382,7 +4382,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	st->iftrue=iftrue;
 	break;
       case CPELSE:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	iftrue=st->iftrue;
 	if (iftrue) cmdfd.cmdcur=cmdfd.cmdcur->done;
 	else cmdfd.cmdcur=cmdfd.cmdcur->next;
@@ -4412,7 +4412,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPPATI:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
 	st->pat = NULL;		/* hito (mem leak of pat) */
@@ -4435,7 +4435,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	st->pat=pat;
 	break;
       case CPPATO:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
 	st->pat = NULL;		/* hito (mem leak of pat) */
@@ -4446,7 +4446,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->done;
 	break;
       case CPESAC:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
 	st->pat = NULL;		/* hito (mem leak of pat) */
@@ -4475,7 +4475,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	}
 	break;
       case CPDONE:
-	if ((stcur=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((stcur=cmdstackgetpo(stroot))==NULL) goto errexit;
 	cmdfd.cmdcur=stcur->cmd;
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
@@ -4487,7 +4487,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	cmdfd.cmdcur=cmdfd.cmdcur->next;
 	break;
       case CPBI:
-	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
+	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
 	if ((stcur=cmdstackcat(&stroot,CPBI))==NULL) goto errexit;
 	stcur->val=st->val;
 	stcur->cmd=cmdfd.cmdcur->done;
