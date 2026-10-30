@@ -4036,6 +4036,18 @@ cmdrun_prepare_pipe(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struc
 }
 
 static int
+cmdrun_prepare_sttdin(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, int quoted)
+{
+  if (pipe->istdin!=PPNO) {
+    if (cmdrun_prepare_pipe(nshell, cmdfd, pipe, quoted) < 0) return -1;
+  } else if (cmdfd->cmdcur->pipefile!=NULL) {
+    cmdfd->sin=nopen(cmdfd->cmdcur->pipefile,O_RDONLY,NFMODE);
+  }
+  if (cmdfd->sin!=NOHANDLE) cmdfd->sin2=nredirect(0,cmdfd->sin);
+  return 0;
+}
+
+static int
 cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, int quoted, struct cmdstack **stroot, int *err)
 {
   struct prmlist *prmcur,*prm;
