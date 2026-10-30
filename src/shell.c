@@ -3687,22 +3687,22 @@ cmdrun_dot(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct prmlist
 }
 
 static int
-cmdrun_break(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist *prmcur)
+cmdrun_loop_common(const struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist *prmcur, int *level)
 {
-  int a, looplevel;
-  struct cmdstack *stcur;
+  int looplevel;
+  const struct cmdstack *stcur;
   if (pipe->pnum>2) {
     sherror(ERREXTARG);
     return -1;
   } else if (pipe->pnum==2) {
     char *arg, *endptr;
     arg=(prmcur->next)->str;
-    a=strtol(arg,&endptr,10);
+    *level=strtol(arg,&endptr,10);
     if (endptr[0]!='\0') {
       sherror2(ERRNUMERIC,arg);
       return -1;
     }
-  } else a=1;
+  } else *level=1;
   looplevel=0;
   stcur=*stroot;
   while (stcur!=NULL) {
@@ -3710,6 +3710,16 @@ cmdrun_break(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struct c
 	|| (stcur->cmdno==CPUNTIL)) looplevel++;
     stcur=stcur->next;
   }
+  return looplevel;
+}
+
+static int
+cmdrun_break(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist *prmcur)
+{
+  int a, looplevel;
+  struct cmdstack *stcur;
+  looplevel = cmdrun_loop_common(pipe, stroot, prmcur, &a);
+  if (looplevel < 0) return -1;
   if (looplevel!=0) {
     while (a>0) {
       if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
@@ -3735,25 +3745,8 @@ cmdrun_continue(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struc
 {
   int a, looplevel;
   struct cmdstack *stcur;
-  if (pipe->pnum>2) {
-    sherror(ERREXTARG);
-    return -1;
-  } else if (pipe->pnum==2) {
-    char *arg, *endptr;
-    arg=(prmcur->next)->str;
-    a=strtol(arg,&endptr,10);
-    if (endptr[0]!='\0') {
-      sherror2(ERRNUMERIC,arg);
-      return -1;
-    }
-  } else a=1;
-  looplevel=0;
-  stcur=*stroot;
-  while (stcur!=NULL) {
-    if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-	|| (stcur->cmdno==CPUNTIL)) looplevel++;
-    stcur=stcur->next;
-  }
+  looplevel = cmdrun_loop_common(pipe, stroot, prmcur, &a);
+  if (looplevel < 0) return -1;
   if (looplevel!=0) {
     while (a>0) {
       if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
