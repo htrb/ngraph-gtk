@@ -3818,7 +3818,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
 {
   const struct prmlist *prm;
   char *str;
-  int errlevel, lastc;
+  int errlevel;
   int len=0;
   prm=prmcur;
   while (prm!=NULL) {
@@ -3836,14 +3836,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
   errlevel=sexeobj(str);
   g_free(str);
   if (errlevel==-1) return -1;
-  nshell->status=errlevel;
-  lastc=cmdstackgetlast(*stroot);
-  if ((lastc!=CPIF) && (lastc!=CPELIF)
-      && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-      && (nshell->optione) && (errlevel!=0)) {
-    *err=3;
-    return -1;
-  }
+  if (cmdrun_set_status(nshell, stroot, errlevel, err) < 0) return -1;
   if (nshell->quit) return 0;
   return 0;
 }
