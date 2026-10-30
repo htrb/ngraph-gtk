@@ -3829,14 +3829,6 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
     *err=3;
     return -1;
   }
-  // nshell->status=errlevel;
-  lastc=cmdstackgetlast(*stroot);
-  if ((lastc!=CPIF) && (lastc!=CPELIF)
-      && (lastc!=CPWHILE) && (lastc!=CPUNTIL)
-      && (nshell->optione) && (errlevel!=0)) {
-    *err=3;
-    return -1;
-  }
   if (nshell->quit) return 0;
   return 0;
 }
