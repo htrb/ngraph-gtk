@@ -3834,7 +3834,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
 }
 
 static int
-cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist  *prmcur, int *err)
+cmdrun_command(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, struct cmdstack **stroot, struct prmlist  *prmcur, int *err)
 {
   struct prmlist *prm;
   shell_proc proc;
@@ -4123,7 +4123,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       if (cmdrun_object(nshell, prmcur, stroot, err) < 0) return -1;
       /* exec inner command */
     } else {
-      if (cmdrun_internal(nshell, cmdfd, pipe, stroot, prmcur, err) < 0) return -1;
+      if (cmdrun_command(nshell, cmdfd, pipe, stroot, prmcur, err) < 0) return -1;
     }
 
     if (cmdfd->sout2!=NOHANDLE) {
