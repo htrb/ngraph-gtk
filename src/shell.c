@@ -3981,7 +3981,6 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
 {
   char *cmdname;
   char **argv;
-  struct prmlist *prm;
 
   cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
   if (cmdname==NULL) {
@@ -3994,19 +3993,10 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
     sherror(ERRSECURITY);
     return -1;
   }
-  argv=NULL;
-  if (arg_add(&argv,NULL)==NULL) {
+  argv = cmdrun_build_argv(cmdfd->prmnewroot, NULL);
+  if (argv == NULL) {
     g_free(cmdname);
     return -1;
-  }
-  prm=cmdfd->prmnewroot;
-  while (prm!=NULL) {
-    if (arg_add(&argv,prm->str)==NULL) {
-      g_free(cmdname);
-      g_free(argv);
-      return -1;
-    }
-    prm=prm->next;
   }
 #if WINDOWS
   {
@@ -4016,7 +4006,7 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
     ptr = quote_args(argv);
     if (ptr == NULL) {
       g_free(cmdname);
-      g_free(argv);
+      arg_del(argv);
       sherror(ERRMEMORY);
       return -1;
     }
@@ -4025,7 +4015,7 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
     g_free(ptr);
     if (win_cmd == NULL) {
       g_free(cmdname);
-      g_free(argv);
+      arg_del(argv);
       sherror(ERRMEMORY);
       return -1;
     }
@@ -4049,7 +4039,7 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
   pid_t pid = fork();
   if (pid < 0) {
     g_free(cmdname);
-    g_free(argv);
+    arg_del(argv);
     sherror2(ERRSYSTEM,"fork");
     set_childhandler();
     return -1;
@@ -4075,7 +4065,7 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
   }
   set_childhandler();
 #endif	/* WINDOWS */
-  g_free(argv);
+  arg_del(argv);
   g_free(cmdname);
   cmdname=NULL;
 
