@@ -3773,35 +3773,16 @@ cmdrun_dot(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct prmlist
     char *cmdname;
     cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,TRUE);
     if (cmdname!=NULL) {
-      char *readbuf, *s;
+      char *readbuf;
       char **argvsave, **argvnew;
       int argcsave, argcnew;
       int readbyte;
       int readpo;
 
-      argvnew=NULL;
-      if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-	return -1;
-      strcpy(s,(nshell->argv)[0]);
-      if (arg_add(&argvnew,s)==NULL) {
-	g_free(s);
+      argvnew = cmdrun_build_argv(prmcur->next, (nshell->argv)[0]);
+      if (argvnew == NULL) {
 	arg_del(argvnew);
 	return -1;
-      }
-      prmcur=prmcur->next;
-      while (prmcur!=NULL) {
-	if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
-	  g_free(s);
-	  arg_del(argvnew);
-	  return -1;
-	}
-	strcpy(s,prmcur->str);
-	if (arg_add(&argvnew,s)==NULL) {
-	  g_free(s);
-	  arg_del(argvnew);
-	  return -1;
-	}
-	prmcur=prmcur->next;
       }
       argcnew=getargc(argvnew);
 
