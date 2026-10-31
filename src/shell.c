@@ -3966,7 +3966,7 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
 }
 
 static int
-cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, shell_proc proc, int *errlevel)
+cmdrun_internal(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, shell_proc proc, int *errlevel)
 {
   char **argv;
   argv = cmdrun_build_argv(cmdfd->prmnewroot, NULL);
@@ -3977,7 +3977,7 @@ cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_
 }
 
 static int
-cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist *prmcur, int *errlevel)
+cmdrun_external(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct prmlist *prmcur, int *errlevel)
 {
   char *cmdname;
   char **argv;
