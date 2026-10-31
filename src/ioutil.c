@@ -566,7 +566,7 @@ static int
 nglob2(const char *path,int po,int *num,char ***list)
 {
   int i,j,p1,escape;
-  char **namelist, *s;
+  char **namelist;
 
   if (path==NULL) return 0;
   p1=po;
@@ -586,9 +586,7 @@ nglob2(const char *path,int po,int *num,char ***list)
   }
   if (path[i]=='\0') {
     if (naccess(path,R_OK)==0) {
-      if ((s=g_malloc(strlen(path)+1))==NULL) return -1;
-      strcpy(s,path);
-      if (arg_add(list,s)==NULL) return -1;
+      if (arg_add_str(list,path)==NULL) return -1;
       (*num)++;
     }
   } else {
@@ -619,11 +617,8 @@ nglob2(const char *path,int po,int *num,char ***list)
           strcat(path2,namelist[i]);
           err=FALSE;
           if (s3[0]=='\0') {
-            if ((s=g_malloc(strlen(path2)+1))!=NULL) {
-              strcpy(s,path2);
-              if (arg_add(list,s)!=NULL) {
-                (*num)++;
-              } else err=TRUE;
+	    if (arg_add_str(list,path2)!=NULL) {
+	      (*num)++;
             } else err=TRUE;
           } else {
             strcat(path2,s3);
