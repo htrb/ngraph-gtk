@@ -126,8 +126,6 @@ static int MultiLine = FALSE;
 #endif	/* WINDOWS */
 #include <sys/time.h>
 
-#define USE_HASH 1
-
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
@@ -962,7 +960,6 @@ char *
 addval(struct nshell *nshell,char *name,char *val)
 /* addval() returns NULL on error */
 {
-#if USE_HASH
   struct vallist *valnew, *valcur;
   int hkey;
 
@@ -982,52 +979,12 @@ addval(struct nshell *nshell,char *name,char *val)
   nhash_set_ptr_with_hkey(nshell->valroot, valnew->name, hkey, valnew);
 
   return valnew->name;
-#else
-  struct vallist *valcur,*valprev,*valnew;
-
-  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
-    g_free(valnew);
-    return NULL;
-  }
-  if ((valnew->val=g_malloc(strlen(val)+1))==NULL) {
-    g_free(valnew->name);
-    g_free(valnew);
-    return NULL;
-  }
-  valnew->func=FALSE;
-  valnew->arg=FALSE;
-  strcpy(valnew->name,name);
-  strcpy(valnew->val,val);
-  valcur=nshell->valroot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    if (strcmp2(name,valcur->name)<=0) break;
-    valprev=valcur;
-    valcur=valcur->next;
-  }
-  if (valprev==NULL) nshell->valroot=valnew;
-  else valprev->next=valnew;
-  if (valcur==NULL) {
-    valnew->next=NULL;
-  } else if (strcmp0(name,valcur->name)==0) {
-    valnew->next=valcur->next;
-    g_free(valcur->name);
-    if (valcur->func) cmdfree(valcur->val);
-    else g_free(valcur->val);
-    g_free(valcur);
-  } else {
-    valnew->next=valcur;
-  }
-  return valnew->name;
-#endif
 }
 
 static char *
 saveval(struct nshell *nshell,char *name,char *val, struct vallist **newvalroot)
 /* saveval() returns NULL on error */
 {
-#if USE_HASH
   struct vallist *valnew, *valcur;
   int hkey;
 
@@ -1053,45 +1010,6 @@ saveval(struct nshell *nshell,char *name,char *val, struct vallist **newvalroot)
   nhash_set_ptr_with_hkey(nshell->valroot, name, hkey, valnew);
 
   return valnew->name;
-#else
-  struct vallist *valcur,*valprev,*valnew;
-
-  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
-    g_free(valnew);
-    return NULL;
-  }
-  if ((valnew->val=g_malloc(strlen(val)+1))==NULL) {
-    g_free(valnew->name);
-    g_free(valnew);
-    return NULL;
-  }
-  valnew->func=FALSE;
-  valnew->arg=TRUE;
-  strcpy(valnew->name,name);
-  strcpy(valnew->val,val);
-  valcur=nshell->valroot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    if (strcmp2(name,valcur->name)<=0) break;
-    valprev=valcur;
-    valcur=valcur->next;
-  }
-  if (valprev==NULL) nshell->valroot=valnew;
-  else valprev->next=valnew;
-  if (valcur==NULL) {
-    valnew->next=NULL;
-  } else if (strcmp0(name,valcur->name)==0) {
-    valnew->next=valcur->next;
-    //    valcur->next = *newvalroot;    /* this code may be wrong. */
-    valcur->next=NULL;
-    if (*newvalroot==NULL) *newvalroot=valcur;
-    else (*newvalroot)->next=valcur;
-  } else {
-    valnew->next=valcur;
-  }
-  return valnew->name;
-#endif
 }
 
 static int
@@ -1115,7 +1033,6 @@ static void
 restoreval(struct nshell *nshell,struct vallist *newvalroot)
 /* restoreval() returns NULL on error */
 {
-#if USE_HASH
   struct vallist *valcur,*valnext, *valcur2;
 
   nhash_each(nshell->valroot, delete_save_val, nshell);
@@ -1134,91 +1051,21 @@ restoreval(struct nshell *nshell,struct vallist *newvalroot)
     }
     valcur = valnext;
   }
-#else
-  struct vallist *valcur,*valprev,*valnext;
-  struct vallist *valcur2,*valprev2;
-
-  valcur=nshell->valroot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    valnext=valcur->next;
-    if (valcur->arg==1) {
-      if (valprev==NULL) nshell->valroot=valcur->next;
-      else valprev->next=valcur->next;
-      g_free(valcur->name);
-      g_free(valcur->val);
-      g_free(valcur);
-    } else valprev=valcur;
-    valcur=valnext;
-  }
-  valcur=newvalroot;
-  while (valcur!=NULL) {
-    valnext=valcur->next;
-    valcur2=nshell->valroot;
-    valprev2=NULL;
-    while (valcur2!=NULL) {
-      if (strcmp2(valcur->name,valcur2->name)<=0) break;
-      valprev2=valcur2;
-      valcur2=valcur2->next;
-    }
-    if (valcur2==NULL) {
-      if (valprev2==NULL) nshell->valroot=valcur;
-      else valprev2->next=valcur;
-      valcur->next=NULL;
-    } else if (strcmp0(valcur->name,valcur2->name)==0) {
-      g_free(valcur->name);
-      if (valcur->func) cmdfree(valcur->val);
-      else g_free(valcur->val);
-      g_free(valcur);
-    } else {
-      if (valprev2==NULL) nshell->valroot=valcur;
-      else valprev2->next=valcur;
-      valcur->next=valcur2;
-    }
-    valcur=valnext;
-  }
-#endif
 }
 
 char *
 addexp(struct nshell *nshell,char *name)
 /* addexp() returns NULL on error */
 {
-#if USE_HASH
   if (nhash_set_int(nshell->exproot, name, TRUE))
     return NULL;
 
   return name;
-#else
-  struct explist *valcur,*valprev,*valnew;
-  int cmp;
-
-  valcur=nshell->exproot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    cmp=strcmp2(name,valcur->val);
-    if (cmp==0) return valcur->val;
-    else if (cmp<0) break;
-    valprev=valcur;
-    valcur=valcur->next;
-  }
-  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->val=g_malloc(strlen(name)+1))==NULL) {
-    g_free(valnew);
-    return NULL;
-  }
-  if (valprev==NULL) nshell->exproot=valnew;
-  else valprev->next=valnew;
-  strcpy(valnew->val,name);
-  valnew->next=valcur;
-  return valnew->val;
-#endif
 }
 
 int
 delval(struct nshell *nshell,char *name)
 {
-#if USE_HASH
   struct vallist *val;
   int r, hkey;
 
@@ -1231,32 +1078,11 @@ delval(struct nshell *nshell,char *name)
   }
 
   return FALSE;
-#else
-  struct vallist *valcur,*valprev;
-
-  valcur=nshell->valroot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    if (strcmp0(valcur->name,name)==0) {
-      if (valprev==NULL) nshell->valroot=valcur->next;
-      else valprev->next=valcur->next;
-      g_free(valcur->name);
-      if (valcur->func) cmdfree(valcur->val);
-      else g_free(valcur->val);
-      g_free(valcur);
-      return TRUE;
-    }
-    valprev=valcur;
-    valcur=valcur->next;
-  }
-  return FALSE;
-#endif
 }
 
 char *
 getval(struct nshell *nshell,char *name)
 {
-#if USE_HASH
   struct vallist *val;
 
   nhash_get_ptr(nshell->valroot, name, (void **) &val);
@@ -1264,43 +1090,21 @@ getval(struct nshell *nshell,char *name)
     return val->val;
   }
   return FALSE;
-#else
-  struct vallist *valcur;
-
-  valcur=nshell->valroot;
-  while (valcur!=NULL) {
-    if ((strcmp0(valcur->name,name)==0) && (!valcur->func)) return valcur->val;
-    valcur=valcur->next;
-  }
-  return NULL;
-#endif
 }
 
 static int
 getexp(struct nshell *nshell,char *name)
 {
-#if USE_HASH
   int i, r;
 
   r = nhash_get_int(nshell->exproot, name, &i);
   return ! r;
-#else
-  struct explist *valcur;
-
-  valcur=nshell->exproot;
-  while (valcur!=NULL) {
-    if (strcmp0(valcur->val,name)==0) return TRUE;
-    valcur=valcur->next;
-  }
-  return FALSE;
-#endif
 }
 
 static char *
 newfunc(struct nshell *nshell,char *name)
 /* newfunc() returns NULL on error */
 {
-#if USE_HASH
   struct vallist *valnew, *valcur;
   int hkey;
 
@@ -1320,47 +1124,12 @@ newfunc(struct nshell *nshell,char *name)
   nhash_set_ptr_with_hkey(nshell->valroot, valnew->name, hkey, valnew);
 
   return valnew->name;
-#else
-  struct vallist *valcur,*valprev,*valnew;
-
-  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
-    g_free(valnew);
-    return NULL;
-  }
-  valnew->func=TRUE;
-  valnew->arg=FALSE;
-  strcpy(valnew->name,name);
-  valnew->val=NULL;
-  valcur=nshell->valroot;
-  valprev=NULL;
-  while (valcur!=NULL) {
-    if (strcmp2(name,valcur->name)<=0) break;
-    valprev=valcur;
-    valcur=valcur->next;
-  }
-  if (valprev==NULL) nshell->valroot=valnew;
-  else valprev->next=valnew;
-  if (valcur==NULL) {
-    valnew->next=NULL;
-  } else if (strcmp0(name,valcur->name)==0) {
-    valnew->next=valcur->next;
-    g_free(valcur->name);
-    if (valcur->func) cmdfree(valcur->val);
-    else g_free(valcur->val);
-    g_free(valcur);
-  } else {
-    valnew->next=valcur;
-  }
-  return valnew->name;
-#endif
 }
 
 static char *
 addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
 /* addfunc() returns NULL on error */
 {
-#if USE_HASH
   struct vallist *valcur;
   struct cmdlist *cmdcur,*cmdprev,*cmdnew;
   struct prmlist *prmcur,*prmprev,*prmnew;
@@ -1426,64 +1195,11 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
   }
 
   return valcur->name;
-#else
-  struct vallist *valcur;
-  struct cmdlist *cmdcur,*cmdprev,*cmdnew;
-  struct prmlist *prmcur,*prmprev,*prmnew;
-  char *snew;
-
-  valcur=nshell->valroot;
-  while (valcur!=NULL) {
-    if ((strcmp0(valcur->name,name)==0) && (valcur->func)) {
-      cmdcur=valcur->val;
-      cmdprev=NULL;
-      while (cmdcur!=NULL) {
-        cmdprev=cmdcur;
-        cmdcur=cmdcur->next;
-      }
-      if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) {
-        delval(nshell,name);
-        return NULL;
-      }
-      if (cmdprev==NULL) valcur->val=cmdnew;
-      else cmdprev->next=cmdnew;
-      *cmdnew=*val;
-      cmdnew->prm=NULL;
-      cmdnew->next=NULL;
-      prmcur=val->prm;
-      prmprev=NULL;
-      while (prmcur!=NULL) {
-        if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) {
-          delval(nshell,name);
-          return NULL;
-        }
-        if (prmprev==NULL) cmdnew->prm=prmnew;
-        else prmprev->next=prmnew;
-        *prmnew=*prmcur;
-        prmnew->next=NULL;
-        if (prmcur->str!=NULL) {
-          if ((snew=g_malloc(strlen(prmcur->str)+1))==NULL) {
-            delval(nshell,name);
-            return NULL;
-          }
-          strcpy(snew,prmcur->str);
-          prmnew->str=snew;
-        }
-        prmprev=prmnew;
-        prmcur=prmcur->next;
-      }
-      break;
-    }
-    valcur=valcur->next;
-  }
-  return valcur->name;
-#endif
 }
 
 struct cmdlist *
 getfunc(struct nshell *nshell,char *name)
 {
-#if USE_HASH
   struct vallist *val;
 
   nhash_get_ptr(nshell->valroot, name, (void **) &val);
@@ -1491,16 +1207,6 @@ getfunc(struct nshell *nshell,char *name)
     return val->val;
   }
   return FALSE;
-#else
-  struct vallist *valcur;
-
-  valcur=nshell->valroot;
-  while (valcur!=NULL) {
-    if ((strcmp0(valcur->name,name)==0) && (valcur->func)) return valcur->val;
-    valcur=valcur->next;
-  }
-  return NULL;
-#endif
 }
 
 static int
@@ -4199,7 +3905,6 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
   if ((prmcur!=NULL) && (prmcur->prmno==PPNO)) {
 
     /* set environment variable */
-#if USE_HASH
     {
       struct set_env_arg se_arg;
 
@@ -4208,27 +3913,6 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       if (nhash_each(nshell->valroot, set_env_val, &se_arg))
 	return -1;
     }
-#else
-    struct vallist *valcur = nshell->valroot;
-    while (valcur!=NULL) {
-      if (!valcur->func
-	  && (getexp(nshell,valcur->name) || valcur->arg ||
-	      (g_getenv(valcur->name)!=NULL))) {
-	len=strlen(valcur->name);
-	if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
-	else val=g_getenv(valcur->name);
-	if ((s=g_malloc(len+strlen(val)+2))==NULL) return -1;
-	strcpy(s,valcur->name);
-	s[len]='=';
-	strcpy(s+len+1,val);
-	if (arg_add(&cmdfd->newenviron,s)==NULL) {
-	  g_free(s);
-	  return -1;
-	}
-      }
-      valcur=valcur->next;
-    }
-#endif
 
     cmdfd->env=MainEnviron;
     MainEnviron=cmdfd->newenviron;
@@ -4800,13 +4484,8 @@ newshell(void)
   if (nshell == NULL)
     return NULL;
 
-#if USE_HASH
   nshell->valroot = nhash_new();
   nshell->exproot = nhash_new();
-#else
-  nshell->valroot = NULL;
-  nshell->exproot = NULL;
-#endif
 
   env = MainEnviron;
 
@@ -4870,39 +4549,12 @@ del_vallist(struct nhash *h, void *data)
 void
 delshell(struct nshell *nshell)
 {
-#if ! USE_HASH
-  struct vallist *valcur, *valdel;
-  struct explist *expcur,*expdel;
-#endif
-
   if (nshell==NULL) return;
 
-#if USE_HASH
   nhash_each(nshell->valroot, del_vallist, NULL);
   nhash_free(nshell->valroot);
-#else
-  valcur=nshell->valroot;
-  while (valcur!=NULL) {
-    g_free(valcur->name);
-    if (valcur->func) cmdfree(valcur->val);
-    else g_free(valcur->val);
-    valdel=valcur;
-    valcur=valcur->next;
-    g_free(valdel);
-  }
-#endif
 
-#if USE_HASH
   nhash_free(nshell->exproot);
-#else
-  expcur=nshell->exproot;
-  while (expcur!=NULL) {
-    g_free(expcur->val);
-    expdel=expcur;
-    expcur=expcur->next;
-    g_free(expdel);
-  }
-#endif
   arg_del(nshell->argv);
   g_free(nshell->readbuf);
   g_free(nshell);
