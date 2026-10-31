@@ -3747,22 +3747,22 @@ cmdrun_continue(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struc
   struct cmdstack *stcur;
   looplevel = cmdrun_loop_common(pipe, stroot, prmcur, &a);
   if (looplevel < 0) return -1;
-  if (looplevel!=0) {
-    while (a>0) {
-      if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
-      if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-	  || (stcur->cmdno==CPUNTIL)) {
-	cmdfd->cmdcur=stcur->cmd;
-	a--;
-	if (a>0) {
-	  if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
-	    prmfree(stcur->prm);
-	    stcur->prm=NULL;
-	  }
-	  cmdstackrmlast(stroot);
+  if (looplevel == 0) return 0;
+
+  while (a>0) {
+    if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
+    if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	|| (stcur->cmdno==CPUNTIL)) {
+      cmdfd->cmdcur=stcur->cmd;
+      a--;
+      if (a>0) {
+	if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
+	  prmfree(stcur->prm);
+	  stcur->prm=NULL;
 	}
-      } else cmdstackrmlast(stroot);
-    }
+	cmdstackrmlast(stroot);
+      }
+    } else cmdstackrmlast(stroot);
   }
   return 0;
 }
