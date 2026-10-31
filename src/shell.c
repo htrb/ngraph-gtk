@@ -5017,30 +5017,18 @@ getshelloption(struct nshell *nshell,char opt)
 int
 set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char **argv)
 {
-  char *s, **argv2;
+  char **argv2;
   int argc2;
 
   argv2 = NULL;
-  s = g_strdup(argv0);
-  if (s == NULL) {
-    return ERRMEMORY;
-  }
-
-  if (arg_add(&argv2, s) == NULL) {
-    g_free(s);
+  if (arg_add_str(&argv2, argv0) == NULL) {
     arg_del(argv2);
     return ERRMEMORY;
   }
 
   for (; j < argc; j++) {
     if (argv[j]) {
-      s = g_strdup(argv[j]);
-      if (s == NULL) {
-	return ERRMEMORY;
-      }
-
-      if (arg_add(&argv2, s) == NULL) {
-	g_free(s);
+      if (arg_add_str(&argv2, argv[j]) == NULL) {
 	arg_del(argv2);
 	return ERRMEMORY;
       }
