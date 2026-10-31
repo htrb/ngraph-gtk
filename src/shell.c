@@ -3968,21 +3968,11 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
 static int
 cmdrun_internal(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, shell_proc proc, int *errlevel)
 {
-  struct prmlist *prm;
   char **argv;
-  argv = NULL;
-  if (arg_add(&argv, NULL) == NULL)
-    return -1;
-  prm = cmdfd->prmnewroot;
-  while (prm) {
-    if (arg_add(&argv, prm->str) == NULL) {
-      g_free(argv);
-      return -1;
-    }
-    prm = prm->next;
-  }
+  argv = cmdrun_build_argv(cmdfd->prmnewroot, NULL);
+  if (argv == NULL) return -1;
   *errlevel = proc(nshell, pipe->pnum, (char **)argv);
-  g_free(argv);
+  arg_del(argv);
   return 0;
 }
 
