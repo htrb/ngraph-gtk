@@ -3258,8 +3258,7 @@ syntax_check_transition(struct cmdlist *cmdcur, int *needcmd, struct cmdstack **
 }
 
 static int
-syntax(struct nshell *nshell,
-       struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
+syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
 /* syntax() returns
      -1: fatal error
       0: noerror
@@ -3723,7 +3722,7 @@ cmdrun_function(struct nshell *nshell, struct cmdlist *cmdnew, const struct prml
 
   needcmd=FALSE;
   st=NULL;
-  rcode=syntax(nshell,cmdnew,&needcmd,&st);
+  rcode=syntax(cmdnew,&needcmd,&st);
   cmdstackfree(st);
   if ((rcode!=0) || (st!=NULL) || (needcmd)) return -1;
   argvnew=NULL;
@@ -4755,7 +4754,7 @@ cmdexecute(struct nshell *nshell, const char *cline)
     do {
       if ((rcode=getcmdline(nshell,&cmdnew,cmdroot,cline,&istr))!=0) break;
       if ((rcode=checkcmd(nshell,&cmdnew))!=0) break;
-      if ((rcode=syntax(nshell,cmdnew,&needcmd,&stroot))!=0) break;
+      if ((rcode=syntax(cmdnew,&needcmd,&stroot))!=0) break;
       if (cmdnew!=NULL) {
         if (cmdcur==NULL) cmdroot=cmdnew;
         else cmdcur->next=cmdnew;
