@@ -3720,22 +3720,22 @@ cmdrun_break(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struct c
   struct cmdstack *stcur;
   looplevel = cmdrun_loop_common(pipe, stroot, prmcur, &a);
   if (looplevel < 0) return -1;
-  if (looplevel!=0) {
-    while (a>0) {
-      if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
-      if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
-	prmfree(stcur->prm);
-	stcur->prm=NULL;
-      }
-      if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
-	  || (stcur->cmdno==CPUNTIL)) {
-	cmdfd->cmdcur=stcur->cmd;
-	while (cmdfd->cmdcur->cmdno!=CPDO) cmdfd->cmdcur=cmdfd->cmdcur->next;
-	cmdfd->cmdcur=cmdfd->cmdcur->done;
-	cmdstackrmlast(stroot);
-	a--;
-      } else cmdstackrmlast(stroot);
+  if (looplevel == 0) return 0;
+
+  while (a>0) {
+    if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
+    if ((stcur->cmdno==CPFOR) && (stcur->ival==-1)) {
+      prmfree(stcur->prm);
+      stcur->prm=NULL;
     }
+    if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
+	|| (stcur->cmdno==CPUNTIL)) {
+      cmdfd->cmdcur=stcur->cmd;
+      while (cmdfd->cmdcur->cmdno!=CPDO) cmdfd->cmdcur=cmdfd->cmdcur->next;
+      cmdfd->cmdcur=cmdfd->cmdcur->done;
+      cmdstackrmlast(stroot);
+      a--;
+    } else cmdstackrmlast(stroot);
   }
   return 0;
 }
