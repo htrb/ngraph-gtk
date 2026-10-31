@@ -658,10 +658,7 @@ nglob(char *path,char ***namelist)
     return -1;
   }
   if (num==0) {
-    char *s;
-    s = g_strdup(path);
-    if (s == NULL) return -1;
-    if (arg_add(namelist,s)==NULL) return -1;
+    if (arg_add_str(namelist,path)==NULL) return -1;
     num = 1;
   }
   return num;
