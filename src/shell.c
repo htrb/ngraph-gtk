@@ -3737,7 +3737,7 @@ static int
 cmdrun_function(struct nshell *nshell, struct cmdlist *cmdnew, const struct prmlist *prmcur)
 {
   struct cmdstack *st;
-  char **argvsave, **argvnew, *s;
+  char **argvsave, **argvnew;
   int rcode, needcmd;
   int argcsave, argcnew;
 
@@ -3746,29 +3746,10 @@ cmdrun_function(struct nshell *nshell, struct cmdlist *cmdnew, const struct prml
   rcode=syntax(cmdnew,&needcmd,&st);
   cmdstackfree(st);
   if ((rcode!=0) || (st!=NULL) || (needcmd)) return -1;
-  argvnew=NULL;
-  if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
-    return -1;
-  strcpy(s,(nshell->argv)[0]);
-  if (arg_add(&argvnew,s)==NULL) {
-    g_free(s);
+  argvnew = cmdrun_build_argv(prmcur->next, (nshell->argv)[0]);
+  if (argvnew == NULL) {
     arg_del(argvnew);
     return -1;
-  }
-  prmcur=prmcur->next;
-  while (prmcur!=NULL) {
-    if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
-      g_free(s);
-      arg_del(argvnew);
-      return -1;
-    }
-    strcpy(s,prmcur->str);
-    if (arg_add(&argvnew,s)==NULL) {
-      g_free(s);
-      arg_del(argvnew);
-      return -1;
-    }
-    prmcur=prmcur->next;
   }
   argcnew=getargc(argvnew);
   argcsave=nshell->argc;
