@@ -2954,7 +2954,6 @@ InputYN(const char *mes)
   return response.response;
 }
 
-#if ! USE_EVENT_LOOP
 static void
 script_exec_finalize(gpointer user_data)
 {
@@ -3054,89 +3053,6 @@ script_exec(struct script *fcur)
   menu_save_undo(UNDO_TYPE_ADDIN, NULL);
   g_thread_new(NULL, script_exec_main, sarray);
 }
-#else
-void
-script_exec(GtkWidget *w, gpointer client_data)
-{
-  char *name, *option, *s, *argv[2], mes[256];
-  int newid, allocnow = FALSE, len, idn;
-  struct narray sarray;
-  struct objlist *robj, *shell;
-  struct script *fcur;
-
-  if (Menulock || Globallock || client_data == NULL) {
-    return;
-  }
-
-  shell = chkobject("shell");
-  if (shell == NULL)
-    return;
-
-  fcur = (struct script *) client_data;
-  if (fcur->script == NULL)
-    return;
-
-  name = g_strdup(fcur->script);
-  if (name == NULL)
-    return;
-
-  newid = newobj(shell);
-  if (newid < 0) {
-    g_free(name);
-    return;
-  }
-
-  arrayinit(&sarray, sizeof(char *));
-  if (arrayadd(&sarray, &name) == NULL) {
-    delobj(shell, newid);
-    g_free(name);
-    arraydel2(&sarray);
-    return;
-  }
-
-  option = fcur->option;
-  while ((s = getitok2(&option, &len, " \t")) != NULL) {
-    if (arrayadd(&sarray, &s) == NULL) {
-      delobj(shell, newid);
-      g_free(s);
-      arraydel2(&sarray);
-      return;
-    }
-  }
-
-  if (Menulocal.addinconsole) {
-    allocnow = allocate_console();
-  }
-
-  snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
-  SetStatusBar(mes);
-
-  menu_lock(TRUE);
-
-  menu_save_undo(UNDO_TYPE_ADDIN, NULL);
-  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
-  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
-  argv[0] = (char *) &sarray;
-  argv[1] = NULL;
-  exeobj(shell, "shell", newid, 1, argv);
-  unregisterevloop(robj, idn, Menulocal.inst);
-
-  menu_lock(FALSE);
-
-  ResetStatusBar();
-  arraydel2(&sarray);
-
-  if (Menulocal.addinconsole) {
-    free_console(allocnow);
-  }
-
-  GetPageSettingsFromGRA();
-  UpdateAll(NULL);
-
-  delobj(shell, newid);
-  main_window_redraw();
-}
-#endif
 
 static void
 CmViewerButtonArm(GtkWidget *action, gpointer client_data)

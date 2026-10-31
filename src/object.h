@@ -233,13 +233,6 @@ char **arg_add(char ***arg,void *ptr);
 char **arg_add_str(char ***arg, const char *str);
 void arg_del(char **arg);
 
-#if USE_EVENT_LOOP
-void registerevloop(const char *objname, const char *evname,
-                    struct objlist *obj,int idn,N_VALUE *inst,void *local);
-void unregisterevloop(const struct objlist *obj, int idn, const N_VALUE *inst);
-void eventloop(void);
-#endif
-
 struct objlist *chkobjroot(void);
 void *addobject(char *name,char *alias,const char *parentname,
                 char *ver,int tblnum,struct objtable *table,

@@ -225,12 +225,6 @@ nsleep(double a)
     return;
   }
   thread= g_thread_new("sleep", sleep_thread, &th);
-#if USE_EVENT_LOOP
-  while (th.sleep) {
-    eventloop();
-    msleep(1);
-  }
-#endif
   g_thread_join(thread);
 
   return;
@@ -335,52 +329,6 @@ unset_childhandler(void)
 }
 #endif	/* WINDOWS */
 
-
-#if USE_EVENT_LOOP
-static int EvLoopActive = FALSE;
-static GThread *EvLoopThread = NULL;
-
-static void *
-shellevloop(void *ptr)
-{
-  EvLoopActive = TRUE;
-  while (EvLoopActive) {
-    eventloop();
-    msleep(10);
-  }
-
-  return NULL;
-}
-
-static void
-set_shellevloop(int sig)
-{
-  if (! has_eventloop())
-    return;
-
-  if (EvLoopActive)
-    return;
-
-  EvLoopThread = g_thread_new("evloop", shellevloop, NULL);
-
-  if (EvLoopThread == NULL)
-    return;
-
-  while (! EvLoopActive) {
-    msleep(10);
-  }
-}
-
-static void
-reset_shellevloop(void)
-{
-  if (EvLoopActive) {
-    EvLoopActive = FALSE;
-    g_thread_join(EvLoopThread);
-  }
-}
-#endif
-
 static int
 shgetstdin(void)
 {
@@ -388,15 +336,9 @@ shgetstdin(void)
   int byte;
 
   if (nisatty(stdinfd())) {
-#if USE_EVENT_LOOP
-    set_shellevloop(0);
-#endif
     do {
       byte=read(stdinfd(),buf,1);
     } while (byte<0);
-#if USE_EVENT_LOOP
-    reset_shellevloop();
-#endif
   } else {
     do {
       byte=read(stdinfd(),buf,1);
@@ -408,46 +350,6 @@ shgetstdin(void)
 }
 
 #if HAVE_READLINE_READLINE_H
-#if USE_EVENT_LOOP
-static int ReadlineLock = FALSE;
-
-static void *
-readline_thread(void *prompt)
-{
-  char *str;
-
-  str = readline(prompt);
-
-  ReadlineLock = FALSE;
-
-  return str;
-}
-
-static char *
-nreadline(char *prompt)
-{
-  GThread *thread;
-
-  if (ReadlineLock) {
-    return NULL;
-  }
-
-
-  ReadlineLock = TRUE;
-  thread= g_thread_new("readline", readline_thread, prompt);
-  if (thread == NULL) {
-    ReadlineLock = FALSE;
-    return NULL;
-  }
-
-  while (ReadlineLock) {
-    eventloop();
-    msleep(10);
-  }
-
-  return (char *) g_thread_join(thread);
-}
-#else
 static char *
 nreadline(char *prompt)
 {
@@ -472,7 +374,6 @@ remove_duplicate_history(char *str)
     }
   }
 }
-#endif
 
 static int
 shget(struct nshell *nshell)
@@ -523,15 +424,9 @@ shget(struct nshell *nshell)
       }
     }
 #else  /* HAVE_READLINE_READLINE_H */
-#if USE_EVENT_LOOP
-    set_shellevloop(0);
-#endif
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
-#if USE_EVENT_LOOP
-    reset_shellevloop();
-#endif
 #endif	/* HAVE_READLINE_READLINE_H */
   } else {
     do {
@@ -3730,12 +3625,6 @@ cmdrun_external(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct pr
     thread= g_thread_new("process", proc_in_thread, win_cmd);
     if (thread) {
       WaitProc = 1;
-#if USE_EVENT_LOOP
-      while (WaitProc) {
-	msleep(1);
-	eventloop();
-      }
-#endif
       *errlevel = GPOINTER_TO_INT(g_thread_join(thread));
     }
     g_free(win_cmd);
@@ -3755,18 +3644,7 @@ cmdrun_external(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct pr
 		 argv[0],g_strerror(errno));
     exit(*errlevel);
   } else {
-#if USE_EVENT_LOOP
-    if (has_eventloop()) {
-      while (waitpid(pid,errlevel,WNOHANG)==0) {
-	eventloop();
-	msleep(10);
-      }
-    } else {
-      waitpid(pid, errlevel, 0);
-    }
-#else
     waitpid(pid, errlevel, 0);
-#endif
     *errlevel = WIFEXITED(*errlevel) ? WEXITSTATUS(*errlevel) : 1;
   }
   set_childhandler();

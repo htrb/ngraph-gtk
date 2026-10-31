@@ -45,10 +45,6 @@
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;
-#if USE_EVENT_LOOP
-static struct loopproc *looproot=NULL, *loopnext=NULL;
-#endif
-
 static struct objlist *errobj=NULL;
 
 #define ERR_MSG_BUF_SIZE 2048
@@ -1284,54 +1280,6 @@ arg_del(char **arg)
   g_free(arg);
 }
 
-#if USE_EVENT_LOOP
-void
-registerevloop(const char *objname, const char *evname,
-                    struct objlist *obj,int idn,N_VALUE *inst,
-                    void *local)
-{
-  struct loopproc *lpcur,*lpnew;
-
-  if (obj==NULL) return;
-  if ((lpnew=g_malloc(sizeof(struct loopproc)))==NULL) return;
-  lpcur=looproot;
-  if (lpcur==NULL) looproot=lpnew;
-  else {
-    while (lpcur->next!=NULL) lpcur=lpcur->next;
-    lpcur->next=lpnew;
-  }
-  lpnew->next=NULL;
-  lpnew->objname=objname;
-  lpnew->evname=evname;
-  lpnew->obj=obj;
-  lpnew->idn=idn;
-  lpnew->inst=inst;
-  lpnew->local=local;
-}
-
-void
-unregisterevloop(const struct objlist *obj, int idn, const N_VALUE *inst)
-{
-  struct loopproc *lpcur,*lpdel,*lpprev;
-
-  lpcur=looproot;
-  lpprev=NULL;
-  while (lpcur!=NULL) {
-    if ((lpcur->obj==obj) && (lpcur->idn==idn) && (lpcur->inst==inst)) {
-      lpdel=lpcur;
-      if (loopnext==lpdel) loopnext=lpdel->next;
-      if (lpprev==NULL) looproot=lpcur->next;
-      else lpprev->next=lpdel->next;
-      lpcur=lpcur->next;
-      g_free(lpdel);
-    } else {
-      lpprev=lpcur;
-      lpcur=lpcur->next;
-    }
-  }
-}
-#endif
-
 #ifdef COMPILE_UNUSED_FUNCTIONS
 static void
 unregisterallevloop(void)
@@ -1349,38 +1297,6 @@ unregisterallevloop(void)
   loopnext=NULL;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
-
-#if USE_EVENT_LOOP
-int
-has_eventloop(void) {
-  return looproot != NULL;
-}
-
-void
-eventloop(void)
-{
-  static int ineventloop = FALSE;
-  struct loopproc *lpcur;
-  char *argv[4];
-
-  if (looproot==NULL) return;
-  if (ineventloop) return;
-  ineventloop=TRUE;
-  ignorestdio(NULL);
-  lpcur=looproot;
-  while (lpcur!=NULL) {
-    argv[0]= (char *) lpcur->objname;
-    argv[1]= (char *) lpcur->evname;
-    argv[2]=lpcur->local;
-    argv[3]=NULL;
-    loopnext=lpcur->next;
-    __exeobj(lpcur->obj,lpcur->idn,lpcur->inst,3,argv);
-    lpcur=loopnext;
-  }
-  restorestdio(NULL);
-  ineventloop=FALSE;
-}
-#endif
 
 struct objlist *
 chkobjroot()

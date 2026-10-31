@@ -69,6 +69,4 @@ void displaystatus(const char *str);
 
 #define DOUBLE_STR_FORMAT "%.16g"
 
-#define USE_EVENT_LOOP 0
-
 #endif	/* COMMON_HEADER */
