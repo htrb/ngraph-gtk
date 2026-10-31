@@ -3869,14 +3869,19 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
   }
 
   if (Security) {
+    g_free(cmdname);
     sherror(ERRSECURITY);
     return -1;
   }
   argv=NULL;
-  if (arg_add(&argv,NULL)==NULL) return -1;
+  if (arg_add(&argv,NULL)==NULL) {
+    g_free(cmdname);
+    return -1;
+  }
   prm=cmdfd->prmnewroot;
   while (prm!=NULL) {
     if (arg_add(&argv,prm->str)==NULL) {
+      g_free(cmdname);
       g_free(argv);
       return -1;
     }
@@ -3889,6 +3894,8 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
 
     ptr = quote_args(argv);
     if (ptr == NULL) {
+      g_free(cmdname);
+      g_free(argv);
       sherror(ERRMEMORY);
       return -1;
     }
@@ -3896,6 +3903,8 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
     win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
     g_free(ptr);
     if (win_cmd == NULL) {
+      g_free(cmdname);
+      g_free(argv);
       sherror(ERRMEMORY);
       return -1;
     }
@@ -3918,6 +3927,8 @@ cmdrun_external(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct prmlist 
   unset_childhandler();
   pid_t pid = fork();
   if (pid < 0) {
+    g_free(cmdname);
+    g_free(argv);
     sherror2(ERRSYSTEM,"fork");
     set_childhandler();
     return -1;
