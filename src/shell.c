@@ -3466,7 +3466,7 @@ quote_args(char **args)
 
   ptr = cmd;
   for (i = 0; args[i]; i++) {
-    char *arg;
+    const char *arg;
 
     *ptr = '"';
     ptr++;
