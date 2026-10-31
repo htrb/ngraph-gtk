@@ -2958,6 +2958,306 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 }
 
 static int
+syntax_if(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_then(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPIF) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPTHEN))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_elif(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPTHEN) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_else(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPTHEN) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPELSE))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_fi(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  int c;
+  struct cmdstack *st;
+  c=cmdstackgetlast(*sx);
+  if ((c!=CPTHEN) && (c!=CPELSE)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  return 0;
+}
+
+static int
+syntax_case(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct prmlist *prmcur;
+  struct cmdstack *st;
+  if ((st=cmdstackcat(sx,CPCASE))==NULL) return -1;
+  st->cmd=cmdcur;
+  prmcur=(cmdcur->prm)->next;
+  if ((prmcur==NULL) || (prmcur->next==NULL)) {
+    sherror2(ERRSYNTAX,(cmdcur->prm)->str);
+    return 2;
+  }
+  prmcur=prmcur->next;
+  if ((prmcur->str==NULL) || (strcmp0("in",prmcur->str)!=0)) {
+    sherror2(ERRSYNTAX,prmcur->str);
+    return 2;
+  }
+  if (prmcur->next!=NULL) {
+    sherror2(ERRUEXPTOK,(prmcur->next)->str);
+    return 2;
+  }
+  return 0;
+}
+
+static int
+syntax_pati(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct prmlist *prmcur;
+  struct cmdstack *st;
+  int c;
+  c=cmdstackgetlast(*sx);
+  if ((c!=CPCASE) && (c!=CPPATO)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  prmcur=cmdcur->prm;
+  if (prmcur->str[0]==')') {
+    sherror2(ERRUEXPTOK,prmcur->str);
+    return 2;
+  }
+  prmcur=prmcur->next;
+  while (TRUE) {
+    if (prmcur->str[0]==')') break;
+    if (prmcur->prmno!=PPPATOR) {
+      sherror2(ERRUEXPTOK,prmcur->str);
+      return 2;
+    }
+    if ((prmcur->next==NULL)
+        || ((prmcur->next)->next==NULL)) {
+      sherror2(ERRUEXPTOK,prmcur->str);
+      return 2;
+    }
+    prmcur=(prmcur->next)->next;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPPATI))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_pato(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPPATI) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPPATO))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_esac(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  int c;
+  c=cmdstackgetlast(*sx);
+  if ((c!=CPCASE) && (c!=CPPATI) && (c!=CPPATO)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  return 0;
+}
+
+static int
+syntax_for(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct prmlist *prmcur;
+  if (cmdstackcat(sx,CPFOR)==NULL) return -1;
+  prmcur=(cmdcur->prm)->next;
+  if (prmcur==NULL) {
+    sherror2(ERRSYNTAX,(cmdcur->prm)->str);
+    return 2;
+  }
+  prmcur=prmcur->next;
+  if (prmcur!=NULL) {
+    if (strcmp0("in",prmcur->str)!=0) {
+      sherror2(ERRSYNTAX,prmcur->str);
+      return 2;
+    }
+    prmcur=prmcur->next;
+    while (prmcur!=NULL) {
+      if ((prmcur->prmno!=PPNO) && (prmcur->prmno!=PPEND)) {
+	sherror2(ERRUEXPTOK,prmcur->str);
+	return 2;
+      }
+      prmcur=prmcur->next;
+    }
+  }
+  return 0;
+}
+
+static int
+syntax_do(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  int c;
+  c=cmdstackgetlast(*sx);
+  if ((c!=CPFOR) && (c!=CPWHILE) && (c!=CPUNTIL)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  cmdstackrmlast(sx);
+  if ((st=cmdstackcat(sx,CPDO))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_done(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPDO) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  return 0;
+}
+
+static int
+syntax_fn(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  char *s;
+  int i;
+  s=(cmdcur->prm)->str;
+  for (i=0;s[i]!='\0';i++) if (!isalnum(s[i]) && (s[i]!='_')) {
+      sherror2(ERRIDENT,s);
+      return 2;
+    }
+  if ((st=cmdstackcat(sx,CPFN))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_bi(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPFN) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackcat(sx,CPBI))==NULL) return -1;
+  st->cmd=cmdcur;
+  return 0;
+}
+
+static int
+syntax_bo(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct cmdstack *st;
+  if (cmdstackgetlast(*sx)!=CPBI) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((st=cmdstackgetpo(*sx))==NULL) return -1;
+  (st->cmd)->done=cmdcur;
+  cmdstackrmlast(sx);
+  cmdstackrmlast(sx);
+  return 0;
+}
+
+static int
+syntax_check_transition(struct cmdlist *cmdcur, int *needcmd, struct cmdstack **sx, int cmd)
+{
+  int c;
+  c=cmdstackgetlast(*sx);
+  if ((c==CPFOR) && (cmd!=CPDO)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((c==CPCASE) && (cmd!=CPPATI) && (cmd!=CPESAC)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((c==CPFN) && (cmd!=CPBI)) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((*needcmd) &&
+      !((cmd==CPIF) || (cmd==CPCASE) || (cmd==CPFOR) || (cmd==CPWHILE)
+	|| (cmd==CPUNTIL) || (cmd==CPFN) || (cmd==CPNO))) {
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+  }
+  if ((cmd==CPIF) || (cmd==CPTHEN) || (cmd==CPELSE) || (cmd==CPELIF)
+      || (cmd==CPWHILE) || (cmd==CPUNTIL) || (cmd==CPDO) || (cmd==CPBI))
+    *needcmd=TRUE;
+  else if (cmdcur->cmdend==PPPIPE) *needcmd=TRUE;
+  else *needcmd=FALSE;
+  return 0;
+}
+
+static int
 syntax(struct nshell *nshell,
        struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
 /* syntax() returns
@@ -2966,182 +3266,57 @@ syntax(struct nshell *nshell,
       2: syntax error */
 {
   struct cmdlist *cmdcur;
-  struct prmlist *prmcur;
-  int i;
-  char *s;
-  struct cmdstack *st;
+  int ret;
 
   cmdcur=cmdroot;
   while (cmdcur!=NULL) {
-    int cmd, c;
+    int cmd;
     cmd=cmdcur->cmdno;
-    c=cmdstackgetlast(*sx);
-    if ((c==CPFOR) && (cmd!=CPDO)) {
-      sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-      return 2;
-    }
-    if ((c==CPCASE) && (cmd!=CPPATI) && (cmd!=CPESAC)) {
-      sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-      return 2;
-    }
-    if ((c==CPFN) && (cmd!=CPBI)) {
-      sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-      return 2;
-    }
-    if ((*needcmd) &&
-       !((cmd==CPIF) || (cmd==CPCASE) || (cmd==CPFOR) || (cmd==CPWHILE)
-     || (cmd==CPUNTIL) || (cmd==CPFN) || (cmd==CPNO))) {
-      sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-      return 2;
-    }
-    if ((cmd==CPIF) || (cmd==CPTHEN) || (cmd==CPELSE) || (cmd==CPELIF)
-     || (cmd==CPWHILE) || (cmd==CPUNTIL) || (cmd==CPDO) || (cmd==CPBI))
-      *needcmd=TRUE;
-    else if (cmdcur->cmdend==PPPIPE) *needcmd=TRUE;
-    else *needcmd=FALSE;
+    ret = syntax_check_transition(cmdcur, needcmd, sx, cmd);
+    if (ret) return ret;
     switch (cmd) {
     case CPNULL:
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
       return 2;
     case CPIF:
-      if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_if(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPTHEN:
-      if (cmdstackgetlast(*sx)!=CPIF) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPTHEN))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_then(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPELIF:
-      if (cmdstackgetlast(*sx)!=CPTHEN) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_elif(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPELSE:
-      if (cmdstackgetlast(*sx)!=CPTHEN) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPELSE))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_else(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPFI:
-      c=cmdstackgetlast(*sx);
-      if ((c!=CPTHEN) && (c!=CPELSE)) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
+      ret = syntax_fi(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPCASE:
-      if ((st=cmdstackcat(sx,CPCASE))==NULL) return -1;
-      st->cmd=cmdcur;
-      prmcur=(cmdcur->prm)->next;
-      if ((prmcur==NULL) || (prmcur->next==NULL)) {
-        sherror2(ERRSYNTAX,(cmdcur->prm)->str);
-        return 2;
-      }
-      prmcur=prmcur->next;
-      if ((prmcur->str==NULL) || (strcmp0("in",prmcur->str)!=0)) {
-        sherror2(ERRSYNTAX,prmcur->str);
-        return 2;
-      }
-      if (prmcur->next!=NULL) {
-        sherror2(ERRUEXPTOK,(prmcur->next)->str);
-        return 2;
-      }
+      ret = syntax_case(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPPATI:
-      c=cmdstackgetlast(*sx);
-      if ((c!=CPCASE) && (c!=CPPATO)) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      prmcur=cmdcur->prm;
-      if (prmcur->str[0]==')') {
-        sherror2(ERRUEXPTOK,prmcur->str);
-        return 2;
-      }
-      prmcur=prmcur->next;
-      while (TRUE) {
-        if (prmcur->str[0]==')') break;
-        if (prmcur->prmno!=PPPATOR) {
-          sherror2(ERRUEXPTOK,prmcur->str);
-          return 2;
-        }
-        if ((prmcur->next==NULL)
-        || ((prmcur->next)->next==NULL)) {
-          sherror2(ERRUEXPTOK,prmcur->str);
-          return 2;
-        }
-        prmcur=(prmcur->next)->next;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPPATI))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_pati(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPPATO:
-      if (cmdstackgetlast(*sx)!=CPPATI) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPPATO))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_pato(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPESAC:
-      c=cmdstackgetlast(*sx);
-      if ((c!=CPCASE) && (c!=CPPATI) && (c!=CPPATO)) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
+      ret = syntax_esac(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPFOR:
-      if (cmdstackcat(sx,CPFOR)==NULL) return -1;
-      prmcur=(cmdcur->prm)->next;
-      if (prmcur==NULL) {
-        sherror2(ERRSYNTAX,(cmdcur->prm)->str);
-        return 2;
-      }
-      prmcur=prmcur->next;
-      if (prmcur!=NULL) {
-        if (strcmp0("in",prmcur->str)!=0) {
-          sherror2(ERRSYNTAX,prmcur->str);
-          return 2;
-        }
-        prmcur=prmcur->next;
-        while (prmcur!=NULL) {
-          if ((prmcur->prmno!=PPNO) && (prmcur->prmno!=PPEND)) {
-            sherror2(ERRUEXPTOK,prmcur->str);
-            return 2;
-          }
-          prmcur=prmcur->next;
-        }
-      }
+      ret = syntax_for(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPWHILE:
       if (cmdstackcat(sx,CPWHILE)==NULL) return -1;
@@ -3150,50 +3325,24 @@ syntax(struct nshell *nshell,
       if (cmdstackcat(sx,CPUNTIL)==NULL) return -1;
       break;
     case CPDO:
-      c=cmdstackgetlast(*sx);
-      if ((c!=CPFOR) && (c!=CPWHILE) && (c!=CPUNTIL)) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      cmdstackrmlast(sx);
-      if ((st=cmdstackcat(sx,CPDO))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_do(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPDONE:
-      if (cmdstackgetlast(*sx)!=CPDO) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
+      ret = syntax_done(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPFN:
-      s=(cmdcur->prm)->str;
-      for (i=0;s[i]!='\0';i++) if (!isalnum(s[i]) && (s[i]!='_')) {
-        sherror2(ERRIDENT,s);
-        return 2;
-      }
-      if ((st=cmdstackcat(sx,CPFN))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_fn(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPBI:
-      if (cmdstackgetlast(*sx)!=CPFN) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackcat(sx,CPBI))==NULL) return -1;
-      st->cmd=cmdcur;
+      ret = syntax_bi(cmdcur, sx);
+      if (ret) return ret;
       break;
     case CPBO:
-      if (cmdstackgetlast(*sx)!=CPBI) {
-        sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-        return 2;
-      }
-      if ((st=cmdstackgetpo(*sx))==NULL) return -1;
-      (st->cmd)->done=cmdcur;
-      cmdstackrmlast(sx);
-      cmdstackrmlast(sx);
+      ret = syntax_bo(cmdcur, sx);
+      if (ret) return ret;
       break;
     default:
       break;
