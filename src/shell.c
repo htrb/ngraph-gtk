@@ -3276,6 +3276,7 @@ syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
     case CPNULL:
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
       return 2;
+      /* if family */
     case CPIF:
       ret = syntax_if(cmdcur, sx);
       if (ret) return ret;
@@ -3296,6 +3297,7 @@ syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
       ret = syntax_fi(cmdcur, sx);
       if (ret) return ret;
       break;
+      /* case family */
     case CPCASE:
       ret = syntax_case(cmdcur, sx);
       if (ret) return ret;
@@ -3312,6 +3314,7 @@ syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
       ret = syntax_esac(cmdcur, sx);
       if (ret) return ret;
       break;
+      /* loop family */
     case CPFOR:
       ret = syntax_for(cmdcur, sx);
       if (ret) return ret;
@@ -3330,6 +3333,7 @@ syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
       ret = syntax_done(cmdcur, sx);
       if (ret) return ret;
       break;
+      /* function family */
     case CPFN:
       ret = syntax_fn(cmdcur, sx);
       if (ret) return ret;
