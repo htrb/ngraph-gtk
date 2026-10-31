@@ -3715,6 +3715,24 @@ cmdsetvar(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_
   return 0;
 }
 
+static char **
+cmdrun_build_argv(const struct prmlist *prmnewroot, const char *arg0)
+{
+  const struct prmlist *prm;
+  char **argv;
+  argv = NULL;
+  if (arg_add_str(&argv, arg0) == NULL) return NULL;
+  prm = prmnewroot;
+  while (prm) {
+    if (arg_add_str(&argv, prm->str) == NULL) {
+      arg_del(argv);
+      return NULL;
+    }
+    prm = prm->next;
+  }
+  return argv;
+}
+
 static int
 cmdrun_function(struct nshell *nshell, struct cmdlist *cmdnew, const struct prmlist *prmcur)
 {
