@@ -42,8 +42,6 @@
 
 #include "math/math_equation.h"
 
-#define USE_HASH 1
-
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;
@@ -69,9 +67,7 @@ int (*inputyn)(const char *mes);
 void (*ndisplaydialog)(const char *str);
 void (*ndisplaystatus)(const char *str);
 
-#if USE_HASH
 static NHASH ObjHash = NULL;
-#endif
 
 static char *errorlist[]={
      "",
@@ -1392,7 +1388,6 @@ chkobjroot()
   return objroot;
 }
 
-#if USE_HASH
 static int
 add_obj_to_hash(char *name, char *alias, void *obj)
 {
@@ -1421,7 +1416,6 @@ add_obj_to_hash(char *name, char *alias, void *obj)
 
   return 0;
 }
-#endif
 
 static int
 check_arglist(int type, const char *arglist)
@@ -1484,7 +1478,6 @@ addobject(char *name,char *alias,const char *parentname,char *ver,
   }
   if ((objnew=g_malloc(sizeof(struct objlist)))==NULL) return NULL;
 
-#if USE_HASH
   if (add_obj_to_hash(name, alias, objnew)) {
     g_free(objnew);
     error2(NULL,ERRHEAP,name);
@@ -1497,7 +1490,6 @@ addobject(char *name,char *alias,const char *parentname,char *ver,
     error2(NULL,ERRHEAP,name);
     return NULL;
   }
-#endif
 
   objprev = NULL;
   if (parent) {
@@ -1541,9 +1533,7 @@ addobject(char *name,char *alias,const char *parentname,char *ver,
   objnew->tblnum=tblnum;
   objnew->fieldnum=-1;
   objnew->table=table;
-#if USE_HASH
   objnew->table_hash=tbl_hash;
-#endif
   objnew->errnum=errnum;
   objnew->errtable=errtable;
   objnew->parent=parent;
@@ -1576,11 +1566,9 @@ addobject(char *name,char *alias,const char *parentname,char *ver,
     if (table[i].attrib & NEXEC) {
       table[i].attrib &= ~NWRITE;
     }
-#if USE_HASH
     if (nhash_set_int(tbl_hash, table[i].name, i)) {
       goto errexit;
     }
-#endif
   }
   objnew->size=offset;
   objnew->idp=chkobjoffset(objnew,"id");
@@ -2010,7 +1998,6 @@ struct objlist *
 chkobject(const char *name)
 /* chkobject() returns NULL when the named object is not found */
 {
-#if USE_HASH
   struct objlist *obj;
   int r;
 
@@ -2022,25 +2009,6 @@ chkobject(const char *name)
     return NULL;
 
   return obj;
-#else
-  struct objlist *obj,*objcur;
-  char *s,*aliasname;
-  int len;
-
-  objcur=objroot;
-  obj=NULL;
-  while (objcur!=NULL) {
-    if (strcmp0(objcur->name,name)==0) obj=objcur;
-    if (objcur->alias!=NULL) {
-      s=objcur->alias;
-      while ((aliasname=getitok(&s,&len,":"))!=NULL) {
-        if (strncmp(aliasname,name,len)==0) obj=objcur;
-      }
-    }
-    objcur=objcur->next;
-  }
-  return obj;
-#endif
 }
 
 const char *
@@ -2125,7 +2093,6 @@ int
 chkobjoffset(struct objlist *obj, const char *name)
 /* chkobjoffset() returns -1 on error */
 {
-#if USE_HASH
   struct objlist *objcur;
   int i;
 
@@ -2133,20 +2100,6 @@ chkobjoffset(struct objlist *obj, const char *name)
   if (i < 0) return -1;
 
   return objcur->table[i].offset;
-#else
-  struct objlist *objcur;
-  int i;
-
-  if (obj==NULL) return -1;
-  objcur=obj;
-  while (objcur!=NULL) {
-    for (i=0;i<objcur->tblnum;i++)
-      if (strcmp0(objcur->table[i].name,name)==0)
-        return objcur->table[i].offset;
-    objcur=objcur->parent;
-  }
-  return -1;
-#endif
 }
 
 int
@@ -2181,7 +2134,6 @@ static int
 chkobjtblpos(struct objlist *obj, const char *name, struct objlist **robj)
 /* chkobjtblpos() returns -1 on error */
 {
-#if USE_HASH
   struct objlist *objcur;
   int i;
 
@@ -2195,22 +2147,6 @@ chkobjtblpos(struct objlist *obj, const char *name, struct objlist **robj)
   }
   *robj = NULL;
   return -1;
-#else
-  struct objlist *objcur;
-  int i;
-
-  objcur=obj;
-  while (objcur!=NULL) {
-    for (i=0;i<objcur->tblnum;i++)
-      if (strcmp0(objcur->table[i].name,name)==0) {
-        *robj=objcur;
-        return i;
-      }
-    objcur=objcur->parent;
-  }
-  *robj=NULL;
-  return -1;
-#endif
 }
 
 N_VALUE *
@@ -2431,7 +2367,6 @@ match:
 int
 chkobjfield(struct objlist *obj, const char *name)
 {
-#if USE_HASH
   struct objlist *objcur;
   int i;
 
@@ -2439,18 +2374,6 @@ chkobjfield(struct objlist *obj, const char *name)
   if (i < 0) return -1;
 
   return 0;
-#else
-  struct objlist *objcur;
-  int i;
-
-  objcur=obj;
-  while (objcur!=NULL) {
-    for (i=0;i<objcur->tblnum;i++)
-      if (strcmp0(objcur->table[i].name,name)==0) return 0;
-    objcur=objcur->parent;
-  }
-  return -1;
-#endif
 }
 
 int

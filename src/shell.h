@@ -25,6 +25,7 @@
 
 #include "common.h"
 #include "ioutil.h"
+#include "nhash.h"
 
 #define SHELLBUFSIZE 4096
 
@@ -63,12 +64,7 @@ struct explist {
 
 struct nshell {
   struct objlist *obj;
-#if USE_HASH
   NHASH exproot, valroot;
-#else
-  struct vallist *valroot;
-  struct explist *exproot;
-#endif
   int argc;
   char **argv;
   int cmdexec;

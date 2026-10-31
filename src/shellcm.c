@@ -32,8 +32,6 @@
 #include <unistd.h>
 #include <math.h>
 
-#define USE_HASH 1
-
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
@@ -254,19 +252,16 @@ cmexit(struct nshell *nshell,int argc,char **argv)
   }
 }
 
-#if USE_HASH
 static int
 printexp(struct nhash *h, void *data)
 {
   printfstdout("%.256s\n", h->key);
   return 0;
 }
-#endif
 
 int
 cmexport(struct nshell *nshell,int argc,char **argv)
 {
-#if USE_HASH
   if (argv[1] == NULL) {
     nhash_each(nshell->exproot, printexp, NULL);
   } else {
@@ -277,23 +272,6 @@ cmexport(struct nshell *nshell,int argc,char **argv)
     }
   }
   return 0;
-#else
-  struct explist *valcur;
-
-  if (argv[1]==NULL) {
-    valcur=nshell->exproot;
-    while (valcur!=NULL) {
-      printfstdout("%.256s\n",valcur->val);
-      valcur=valcur->next;
-    }
-    return 0;
-  } else {
-    int i;
-    for (i=1;i<argc;i++)
-      if (addexp(nshell,argv[i])==NULL) return ERR;
-    return 0;
-  }
-#endif
 }
 
 int
@@ -355,7 +333,6 @@ print_func(struct nhash *h, void *data)
 int
 cmset(struct nshell *nshell,int argc,char **argv)
 {
-#if USE_HASH
   char *s;
   int j, r, ops;
 
@@ -420,102 +397,6 @@ cmset(struct nshell *nshell,int argc,char **argv)
       break;
     }
   }
-#else
-  struct vallist *valcur;
-  struct cmdlist *cmdcur;
-  struct prmlist *prmcur;
-  char *s;
-  unsigned int n;
-  int j,ops;
-  char **argv2;
-  int argc2;
-
-  if (argc<2) {
-    valcur=nshell->valroot;
-    while (valcur!=NULL) {
-      if (!valcur->func)
-        printfstdout("%.256s=%.256s\n",valcur->name,(char *)(valcur->val));
-      valcur=valcur->next;
-    }
-    valcur=nshell->valroot;
-    while (valcur!=NULL) {
-      if (valcur->func) {
-        printfstdout("%.256s=()\n",valcur->name);
-        putstdout("{");
-        cmdcur=valcur->val;
-        while (cmdcur!=NULL) {
-          prmcur=cmdcur->prm;
-          printfstdout("    ");
-          while (prmcur!=NULL) {
-            if (prmcur->str!=NULL) printfstdout("%.256s ",prmcur->str);
-            prmcur=prmcur->next;
-          }
-          printfstdout("\n");
-          cmdcur=cmdcur->next;
-        }
-        putstdout("}");
-      }
-      valcur=valcur->next;
-    }
-  } else {
-    for (j=1;j<argc;j++) {
-      s=argv[j];
-      if ((s[0]=='-') && (s[1]=='-')) {
-	n = strlen(argv[j]);
-#if 0
-        for (i = 1; i <= n; i++) {
-	  argv[j][i-1]=argv[j][i];
-	}
-#else
-	memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
-#endif
-        break;
-      } else if ((s[0]=='-') || (s[0]=='+')) {
-        if ((s[1]=='\0') || (strchr("efvx",s[1])==NULL)) {
-          sherror3(argv[0],ERRILOPS,s);
-          return ERRILOPS;
-        }
-      } else break;
-    }
-    if (j!=argc) {
-      argv2=NULL;
-      if (arg_add_str(&argv2,(nshell->argv)[0])==NULL) {
-        arg_del(argv2);
-        return ERR;
-      }
-      for (;j<argc;j++) {
-        if (arg_add_str(&argv2,argv[j])==NULL) {
-          arg_del(argv2);
-          return ERR;
-        }
-      }
-      argc2=getargc(argv2);
-      arg_del(nshell->argv);
-      nshell->argv=argv2;
-      nshell->argc=argc2;
-    }
-    for (j=1;j<argc;j++) {
-      s=argv[j];
-      if (s[0]=='-') ops=TRUE;
-      else if (s[0]=='+') ops=FALSE;
-      else break;
-      switch (s[1]) {
-      case 'e':
-        nshell->optione=ops;
-        break;
-      case 'f':
-        nshell->optionf=ops;
-        break;
-      case 'v':
-        nshell->optionv=ops;
-        break;
-      case 'x':
-        nshell->optionx=ops;
-        break;
-      }
-    }
-  }
-#endif
   return 0;
 }
 
