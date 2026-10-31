@@ -3265,11 +3265,10 @@ syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
       2: syntax error */
 {
   struct cmdlist *cmdcur;
-  int ret;
 
   cmdcur=cmdroot;
   while (cmdcur!=NULL) {
-    int cmd;
+    int cmd, ret;
     cmd=cmdcur->cmdno;
     ret = syntax_check_transition(cmdcur, needcmd, sx, cmd);
     if (ret) return ret;
