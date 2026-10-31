@@ -1241,6 +1241,24 @@ arg_add(char ***arg,void *ptr)
   return *arg;
 }
 
+char **
+arg_add_str(char ***arg, const char *str)
+{
+  char *ptr, **arg2;
+  if (str == NULL) {
+    return arg_add (arg, NULL);
+  }
+  ptr = g_strdup (str);
+  if (ptr == NULL) {
+    return NULL;
+  }
+  arg2 = arg_add (arg, ptr);
+  if (arg2 == NULL) {
+    g_free (ptr);
+  }
+  return arg2;
+}
+
 static char **
 arg_add2(char ***arg,int argc,...)
 {

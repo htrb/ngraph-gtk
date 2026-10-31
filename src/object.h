@@ -230,6 +230,7 @@ int arraycpy(struct narray *a, struct narray *b);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
+char **arg_add_str(char ***arg, const char *str);
 void arg_del(char **arg);
 
 #if USE_EVENT_LOOP
