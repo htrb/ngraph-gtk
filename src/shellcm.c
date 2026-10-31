@@ -479,18 +479,12 @@ cmset(struct nshell *nshell,int argc,char **argv)
     }
     if (j!=argc) {
       argv2=NULL;
-      if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL) return ERR;
-      strcpy(s,(nshell->argv)[0]);
-      if (arg_add(&argv2,s)==NULL) {
-        g_free(s);
+      if (arg_add_str(&argv2,(nshell->argv)[0])==NULL) {
         arg_del(argv2);
         return ERR;
       }
       for (;j<argc;j++) {
-        if ((s=g_malloc(strlen(argv[j])+1))==NULL) return ERR;
-        strcpy(s,argv[j]);
-        if (arg_add(&argv2,s)==NULL) {
-          g_free(s);
+        if (arg_add_str(&argv2,argv[j])==NULL) {
           arg_del(argv2);
           return ERR;
         }
