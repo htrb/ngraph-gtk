@@ -1564,7 +1564,7 @@ fnexpand(struct nshell *nshell,char *str)
       else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if ((po[i]==(char )0x01) || (po[i]=='\0')) {
-      if (strlen(s)!=0) {
+      if (s[0]) {
         if (!nshell->optionf && str_expand && !str_noexpand) {
           if ((num=nglob(s,&namelist))==-1) goto errexit;
           for (j=0;j<num;j++) {
@@ -2497,7 +2497,7 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
     do {
       ch=shget(nshell);
       if (ch==EOF) {
-	if (strlen(s)!=0) {
+	if (s[0]) {
 	  if (!nisatty(nshell->fd)) break;
 	  else printfconsole("%c",(char )0x07);
 	} else break;
