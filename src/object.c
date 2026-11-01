@@ -4757,7 +4757,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
     } else if (arglist[alp]=='c') {
-      if (strlen(s2)>1) {
+      if (s2[0] && s2[1]) {	/* strlen(s2)>1 */
         err=3;
         goto errexit;
       }
