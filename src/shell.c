@@ -1236,6 +1236,203 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   return spo;
 }
 
+static char *
+getcmdline_fetch_from_str(const char *str, int *istr, int *err, struct cmdlist *cmdroot, struct cmdlist *cmd)
+{
+  char *tok = NULL;
+  int i;
+  if (str[*istr]=='\0') {
+    if ((cmd!=NULL) || (cmdroot!=NULL)) {
+      sherror(ERRUEXPEOF);
+      *err=-2;
+    } else {
+      *err=1;
+    }
+    return NULL;
+  }
+  for (i=*istr;(str[i]!='\0') && (str[i]!='\n');i++);
+  if ((tok=g_malloc(i-*istr+1))==NULL) {
+    return NULL;
+  }
+  strncpy(tok,str+*istr,i-*istr);
+  tok[i-*istr]='\0';
+  if (str[i]=='\n') {
+    *istr=i+1;
+  } else {
+    *istr=i;
+  }
+  return tok;
+}
+
+static int
+getcmdline_fetch_from_tty(struct nshell *nshell, int *eofcount, int *err)
+{
+  char *ignoreeof, *endptr;
+  int eofnum;
+  int ch;
+  (*eofcount)++;
+  ignoreeof = getval(nshell,"IGNOREEOF");
+  if (ignoreeof == NULL) {
+    eofnum=0;
+  } else {
+    if (ignoreeof[0] == '\0') {
+      eofnum = 10;
+    } else {
+      eofnum = strtol(ignoreeof,&endptr,10);
+      if (endptr[0] != '\0')
+	eofnum = 10;
+    }
+  }
+  if (*eofcount > eofnum) {
+    *err=1;
+    putconsole("exit");
+    nshell->quit=TRUE;
+    return -1;
+  } else {
+    sherror(ERREOF);
+    ch='\0';
+  }
+  return ch;
+}
+
+static char *
+getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdlist *cmd, int *err)
+{
+  char *prompt, *tok = NULL;
+  int ch, eofcount = 0;
+  if ((tok=nstrnew())==NULL) return NULL;
+  if (nisatty(nshell->fd)) {
+    if (cmd == NULL && cmdroot == NULL) {
+      prompt = getval(nshell, "PS1");
+#ifdef HAVE_READLINE_READLINE_H
+      MultiLine = FALSE;
+#endif
+    } else {
+      prompt = getval(nshell, "PS2");
+#ifdef HAVE_READLINE_READLINE_H
+      MultiLine = TRUE;
+#endif
+    }
+#ifdef HAVE_READLINE_READLINE_H
+    Prompt = prompt;
+#else
+    if (prompt!=NULL) printfconsole("%.256s",prompt);
+#endif
+  }
+  do {
+    ch=shget(nshell);
+    if (ch==EOF) {
+      if (strlen(tok)!=0) {
+	if (!nisatty(nshell->fd)) break;
+	else printfconsole("%c",(char )0x07);
+      } else {
+	if ((cmd!=NULL) || (cmdroot!=NULL)) {
+	  sherror(ERRUEXPEOF);
+	  *err=-2;
+	  return NULL;
+	}
+	if (!nisatty(nshell->fd)) {
+	  *err=1;
+	  return NULL;
+	} else {
+	  ch = getcmdline_fetch_from_tty(nshell, &eofcount, err);
+	  if (ch < 0) return NULL;
+	}
+      }
+    } else {
+      eofcount=0;
+      if (ch=='\n') ch='\0';
+      if ((tok=nstrccat(tok,ch))==NULL) return NULL;
+    }
+  } while (ch!='\0');
+  return tok;
+}
+
+static char *
+getcmdline_fetch_input(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdlist *cmd, const char *str, int *istr, int *err)
+{
+  if (str==NULL) {
+    return getcmdline_fetch_from_stdin(nshell, cmdroot, cmd, err);
+  }
+  return getcmdline_fetch_from_str(str, istr, err, cmdroot, cmd);
+}
+
+static char *
+getcmdline_validate_utf8(char *tok)
+{
+  if (! g_utf8_validate(tok, -1, NULL)) {
+    char *tmp;
+
+    tmp = g_locale_to_utf8(tok, -1, NULL, NULL, NULL);
+    if (tmp) {
+      g_free(tok);
+      tok = tmp;
+    }
+  }
+  return tok;
+}
+
+struct quote {
+  int quote, bquote, escape;
+};
+
+static int
+getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **pcmdcur, struct prmlist **pprmcur, struct quote *quote)
+{
+  struct cmdlist *cmdcur = *pcmdcur;
+  struct prmlist *prmcur = *pprmcur, *prmnew;
+  int quote2, bquote2, escape2;
+  char *spo,*po;
+  int cend,l;
+  quote2 = bquote2='\0';
+  escape2 = FALSE;
+  cend='\0';
+  do {
+    int len;
+
+    spo=gettok(&tok2,&len,&quote->quote,&quote->bquote,&cend,&quote->escape);
+    if (quote2 || bquote2 || escape2) {
+      l=strlen(prmcur->str);
+      if (quote2 || bquote2) l++;
+      if ((po=g_malloc(len+l+1))==NULL) return -1;
+      strcpy(po,prmcur->str);
+      if (quote2 || bquote2) *(po+l-1)='\n';
+      if (spo!=NULL) strncpy(po+l,spo,len);
+      *(po+len+l)='\0';
+      g_free(prmcur->str);
+      prmcur->str=po;
+    } else if (spo!=NULL) {
+      if (*cmdroot==NULL) {
+	if ((cmdcur=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
+	*cmdroot=cmdcur;
+	cmdcur->next=NULL;
+	cmdcur->prm=NULL;
+      }
+      if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) return -1;
+      if (cmdcur->prm==NULL) cmdcur->prm=prmnew;
+      else prmcur->next=prmnew;
+      prmcur=prmnew;
+      prmcur->next=NULL;
+      if ((prmcur->str=g_malloc(len+1))==NULL) return -1;
+      strncpy(prmcur->str,spo,len);
+      prmcur->str[len]='\0';
+    }
+    if (cend) {
+      if ((cmdcur->next=g_malloc(sizeof(struct cmdlist)))==NULL)
+	return -1;
+      cmdcur=cmdcur->next;
+      cmdcur->next=NULL;
+      cmdcur->prm=NULL;
+    }
+    quote2=quote->quote;
+    bquote2=quote->bquote;
+    escape2=quote->escape;
+  } while ((spo!=NULL) && (!quote->escape) && (!quote->quote) && (!quote->bquote));
+  *pcmdcur = cmdcur;
+  *pprmcur = prmcur;
+  return 0;
+}
+
 static int
 getcmdline(struct nshell *nshell,
 	   struct cmdlist **rcmdroot,struct cmdlist *cmd,
@@ -1247,170 +1444,28 @@ getcmdline(struct nshell *nshell,
       1: eof detected */
 {
   struct cmdlist *cmdroot,*cmdcur;
-  struct prmlist *prmcur,*prmnew;
-  int quote,quote2,bquote,bquote2,escape,escape2;
-  int cend,l;
-  char *spo,*po,*prompt,*tok,*tok2;
-  char *ignoreeof,*endptr;
-  int ch;
-  int i,eofnum;
-  int err,eofcount;
+  struct prmlist *prmcur;
+  struct quote quote;
+  char *tok;
+  int err;
 
   err=-1;
-  escape=escape2=FALSE;
-  quote=quote2=bquote=bquote2='\0';
-  cend='\0';
+  quote.escape=FALSE;
+  quote.quote=quote.bquote='\0';
   cmdroot=NULL;
   cmdcur=NULL;
   prmcur=NULL;
   tok=NULL;
-  eofcount=0;
   do {
     g_free(tok);
-    tok=NULL;
-    if (str==NULL) {
-      if ((tok=nstrnew())==NULL) goto errexit;
-      if (nisatty(nshell->fd)) {
-        if (cmd == NULL && cmdroot == NULL) {
-	  prompt = getval(nshell, "PS1");
-#ifdef HAVE_READLINE_READLINE_H
-	  MultiLine = FALSE;
-#endif
-	} else {
-	  prompt = getval(nshell, "PS2");
-#ifdef HAVE_READLINE_READLINE_H
-	  MultiLine = TRUE;
-#endif
-	}
-#ifdef HAVE_READLINE_READLINE_H
-	Prompt = prompt;
-#else
-        if (prompt!=NULL) printfconsole("%.256s",prompt);
-#endif
-      }
-      do {
-        ch=shget(nshell);
-        if (ch==EOF) {
-          if (strlen(tok)!=0) {
-            if (!nisatty(nshell->fd)) break;
-            else printfconsole("%c",(char )0x07);
-          } else {
-            if (!nisatty(nshell->fd)) {
-              if ((cmd!=NULL) || (cmdroot!=NULL)) {
-                sherror(ERRUEXPEOF);
-                err=-2;
-              } else err=1;
-              goto errexit;
-            } else {
-              if ((cmd!=NULL) || (cmdroot!=NULL)) {
-                sherror(ERRUEXPEOF);
-                err=-2;
-                goto errexit;
-              }
-              eofcount++;
-	      ignoreeof = getval(nshell,"IGNOREEOF");
-              if (ignoreeof == NULL) {
-		eofnum=0;
-	      } else {
-                if (ignoreeof[0] == '\0') {
-		  eofnum = 10;
-                } else {
-                  eofnum = strtol(ignoreeof,&endptr,10);
-                  if (endptr[0] != '\0')
-		    eofnum = 10;
-                }
-              }
-              if (eofcount > eofnum) {
-                err=1;
-                putconsole("exit");
-                nshell->quit=TRUE;
-                goto errexit;
-              } else {
-                sherror(ERREOF);
-                ch='\0';
-              }
-            }
-          }
-        } else {
-          eofcount=0;
-          if (ch=='\n') ch='\0';
-          if ((tok=nstrccat(tok,ch))==NULL) goto errexit;
-        }
-      } while (ch!='\0');
-    } else {
-      if (str[*istr]=='\0') {
-        if ((cmd!=NULL) || (cmdroot!=NULL)) {
-          sherror(ERRUEXPEOF);
-          err=-2;
-        } else {
-	  err=1;
-	}
-        goto errexit;
-      }
-      for (i=*istr;(str[i]!='\0') && (str[i]!='\n');i++);
-      if ((tok=g_malloc(i-*istr+1))==NULL) {
-	goto errexit;
-      }
-      strncpy(tok,str+*istr,i-*istr);
-      tok[i-*istr]='\0';
-      if (str[i]=='\n') {
-	*istr=i+1;
-      } else {
-	*istr=i;
-      }
-    }
-    if (! g_utf8_validate(tok, -1, NULL)) {
-      char *tmp;
+    tok = getcmdline_fetch_input(nshell, cmdroot, cmd, str, istr, &err);
+    if (tok == NULL) goto errexit;
 
-      tmp = g_locale_to_utf8(tok, -1, NULL, NULL, NULL);
-      if (tmp) {
-	g_free(tok);
-	tok = tmp;
-      }
-    }
-    tok2=tok;
-    do {
-      int len;
+    tok = getcmdline_validate_utf8(tok);
+    if (tok == NULL) goto errexit;
 
-      spo=gettok(&tok2,&len,&quote,&bquote,&cend,&escape);
-      if (quote2 || bquote2 || escape2) {
-        l=strlen(prmcur->str);
-        if (quote2 || bquote2) l++;
-        if ((po=g_malloc(len+l+1))==NULL) goto errexit;
-        strcpy(po,prmcur->str);
-        if (quote2 || bquote2) *(po+l-1)='\n';
-        if (spo!=NULL) strncpy(po+l,spo,len);
-        *(po+len+l)='\0';
-        g_free(prmcur->str);
-        prmcur->str=po;
-      } else if (spo!=NULL) {
-        if (cmdroot==NULL) {
-          if ((cmdcur=g_malloc(sizeof(struct cmdlist)))==NULL) goto errexit;
-          cmdroot=cmdcur;
-          cmdcur->next=NULL;
-          cmdcur->prm=NULL;
-        }
-        if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
-        if (cmdcur->prm==NULL) cmdcur->prm=prmnew;
-        else prmcur->next=prmnew;
-        prmcur=prmnew;
-        prmcur->next=NULL;
-        if ((prmcur->str=g_malloc(len+1))==NULL) goto errexit;
-        strncpy(prmcur->str,spo,len);
-        prmcur->str[len]='\0';
-      }
-      if (cend) {
-        if ((cmdcur->next=g_malloc(sizeof(struct cmdlist)))==NULL)
-          goto errexit;
-        cmdcur=cmdcur->next;
-        cmdcur->next=NULL;
-        cmdcur->prm=NULL;
-      }
-      quote2=quote;
-      bquote2=bquote;
-      escape2=escape;
-    } while ((spo!=NULL) && (!escape) && (!quote) && (!bquote));
-  } while (quote || bquote || escape || (cmdroot==NULL));
+    if (getcmdline_parse_tokens(tok, &cmdroot, &cmdcur, &prmcur, &quote) < 0) goto errexit;
+  } while (quote.quote || quote.bquote || quote.escape || (cmdroot==NULL));
   *rcmdroot=cmdroot;
   g_free(tok);
   return 0;
