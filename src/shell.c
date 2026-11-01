@@ -1377,26 +1377,22 @@ struct quote {
 };
 
 static int
-getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **pcmdcur, struct prmlist **pprmcur, struct quote *quote)
+getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **pcmdcur, struct prmlist **pprmcur, struct quote *quote, struct quote *quote2, int *cend)
 {
   struct cmdlist *cmdcur = *pcmdcur;
   struct prmlist *prmcur = *pprmcur, *prmnew;
-  int quote2, bquote2, escape2;
   char *spo,*po;
-  int cend,l;
-  quote2 = bquote2='\0';
-  escape2 = FALSE;
-  cend='\0';
+  int l;
   do {
     int len;
 
-    spo=gettok(&tok2,&len,&quote->quote,&quote->bquote,&cend,&quote->escape);
-    if (quote2 || bquote2 || escape2) {
+    spo=gettok(&tok2,&len,&quote->quote,&quote->bquote,cend,&quote->escape);
+    if (quote2->quote || quote2->bquote || quote2->escape) {
       l=strlen(prmcur->str);
-      if (quote2 || bquote2) l++;
+      if (quote2->quote || quote2->bquote) l++;
       if ((po=g_malloc(len+l+1))==NULL) return -1;
       strcpy(po,prmcur->str);
-      if (quote2 || bquote2) *(po+l-1)='\n';
+      if (quote2->quote || quote2->bquote) *(po+l-1)='\n';
       if (spo!=NULL) strncpy(po+l,spo,len);
       *(po+len+l)='\0';
       g_free(prmcur->str);
@@ -1417,16 +1413,14 @@ getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **p
       strncpy(prmcur->str,spo,len);
       prmcur->str[len]='\0';
     }
-    if (cend) {
+    if (*cend) {
       if ((cmdcur->next=g_malloc(sizeof(struct cmdlist)))==NULL)
 	return -1;
       cmdcur=cmdcur->next;
       cmdcur->next=NULL;
       cmdcur->prm=NULL;
     }
-    quote2=quote->quote;
-    bquote2=quote->bquote;
-    escape2=quote->escape;
+    *quote2=*quote;
   } while ((spo!=NULL) && (!quote->escape) && (!quote->quote) && (!quote->bquote));
   *pcmdcur = cmdcur;
   *pprmcur = prmcur;
@@ -1445,13 +1439,16 @@ getcmdline(struct nshell *nshell,
 {
   struct cmdlist *cmdroot,*cmdcur;
   struct prmlist *prmcur;
-  struct quote quote;
+  struct quote quote, quote2;
   char *tok;
   int err;
+  int cend;
 
   err=-1;
   quote.escape=FALSE;
   quote.quote=quote.bquote='\0';
+  quote2 = quote;
+  cend='\0';
   cmdroot=NULL;
   cmdcur=NULL;
   prmcur=NULL;
@@ -1464,7 +1461,7 @@ getcmdline(struct nshell *nshell,
     tok = getcmdline_validate_utf8(tok);
     if (tok == NULL) goto errexit;
 
-    if (getcmdline_parse_tokens(tok, &cmdroot, &cmdcur, &prmcur, &quote) < 0) goto errexit;
+    if (getcmdline_parse_tokens(tok, &cmdroot, &cmdcur, &prmcur, &quote, &quote2, &cend) < 0) goto errexit;
   } while (quote.quote || quote.bquote || quote.escape || (cmdroot==NULL));
   *rcmdroot=cmdroot;
   g_free(tok);
