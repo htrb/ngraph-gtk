@@ -2972,6 +2972,90 @@ syntax_check_transition(struct cmdlist *cmdcur, int *needcmd, struct cmdstack **
 }
 
 static int
+syntax_check(struct cmdlist *cmdcur, struct cmdstack **sx, int cmd)
+{
+  int ret;
+  switch (cmd) {
+  case CPNULL:
+    sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
+    return 2;
+    /* if family */
+  case CPIF:
+    ret = syntax_if(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPTHEN:
+    ret = syntax_then(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPELIF:
+    ret = syntax_elif(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPELSE:
+    ret = syntax_else(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPFI:
+    ret = syntax_fi(cmdcur, sx);
+    if (ret) return ret;
+    break;
+    /* case family */
+  case CPCASE:
+    ret = syntax_case(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPPATI:
+    ret = syntax_pati(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPPATO:
+    ret = syntax_pato(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPESAC:
+    ret = syntax_esac(cmdcur, sx);
+    if (ret) return ret;
+    break;
+    /* loop family */
+  case CPFOR:
+    ret = syntax_for(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPWHILE:
+    if (cmdstackcat(sx,CPWHILE)==NULL) return -1;
+    break;
+  case CPUNTIL:
+    if (cmdstackcat(sx,CPUNTIL)==NULL) return -1;
+    break;
+  case CPDO:
+    ret = syntax_do(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPDONE:
+    ret = syntax_done(cmdcur, sx);
+    if (ret) return ret;
+    break;
+    /* function family */
+  case CPFN:
+    ret = syntax_fn(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPBI:
+    ret = syntax_bi(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPBO:
+    ret = syntax_bo(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  default:
+    break;
+  }
+  return 0;
+}
+
+static int
 syntax(struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
 /* syntax() returns
      -1: fatal error
