@@ -4186,17 +4186,17 @@ cmdexec_cpfor (struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack 
 static void
 cmdexec_print_options(struct nshell *nshell, struct cmdlist *cmdroot)
 {
-  if (nshell->optionv) {
-    struct cmdlist *cmd = cmdroot;
-    while (cmd!=NULL) {
-      struct prmlist *prm = cmd->prm;
-      while (prm!=NULL) {
-	printfconsole("%.256s ",prm->str);
-	prm=prm->next;
-      }
-      printfconsole("\n");
-      cmd=cmd->next;
+  struct cmdlist *cmd = cmdroot;
+  if (! nshell->optionv) return;
+
+  while (cmd!=NULL) {
+    struct prmlist *prm = cmd->prm;
+    while (prm!=NULL) {
+      printfconsole("%.256s ",prm->str);
+      prm=prm->next;
     }
+    printfconsole("\n");
+    cmd=cmd->next;
   }
 }
 
