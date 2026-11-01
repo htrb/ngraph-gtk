@@ -2519,7 +2519,7 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
 }
 
 static int
-checkcmd_read_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+checkcmd_read_heredoc(struct nshell *nshell, struct prmlist *prmcur)
 {
   char *tmpfil;
   int sout, ret;
@@ -2575,7 +2575,7 @@ checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct pr
       prmcur->prmno=PPSO2;
     } else {
       prmcur->prmno=PPSI2;
-      if (checkcmd_read_heredoc(nshell, prmcur, prmprev) < 0) return -1;
+      if (checkcmd_read_heredoc(nshell, prmcur) < 0) return -1;
     }
   } else {
     if (prmcur->str[0]=='>') {
