@@ -4323,7 +4323,7 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
 }
 
 static int
-cmdexec_cpwhile_until(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+cmdexec_cpwhile_until(struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct cmdstack *stcur;
   if ((stcur=cmdstackcat(stroot,cmdfd->cmdcur->cmdno))==NULL) return -1;
@@ -4404,7 +4404,7 @@ cmdexec_step(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
     break;
   case CPWHILE:
   case CPUNTIL:
-    if (cmdexec_cpwhile_until(nshell, cmdfd, stroot) < 0) return -1;
+    if (cmdexec_cpwhile_until(cmdfd, stroot) < 0) return -1;
     break;
   case CPDO:
     if (cmdexec_cpdo(nshell, cmdfd, stroot)) {
