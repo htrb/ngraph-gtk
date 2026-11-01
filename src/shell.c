@@ -4398,18 +4398,14 @@ cmdexec_step(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
     if (cmdexec_handle_case(nshell, cmdfd, stroot) < 0) return -1;
     break;
   case CPFOR:
-    if (cmdexec_cpfor(nshell, cmdfd, stroot)) {
-      return -1;
-    }
+    if (cmdexec_cpfor(nshell, cmdfd, stroot)) return -1;
     break;
   case CPWHILE:
   case CPUNTIL:
     if (cmdexec_cpwhile_until(cmdfd, stroot) < 0) return -1;
     break;
   case CPDO:
-    if (cmdexec_cpdo(nshell, cmdfd, stroot)) {
-      return -1;
-    }
+    if (cmdexec_cpdo(nshell, cmdfd, stroot)) return -1;
     break;
   case CPDONE:
     if ((stcur=cmdstackgetpo(*stroot))==NULL) return -1;
@@ -4436,9 +4432,7 @@ cmdexec_step(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
     cmdfd->cmdcur=cmdfd->cmdcur->next;
     break;
   case CPNO:
-    if (cmdexec_cpno(nshell, namedfunc, cmdfd, stroot, err)) {
-      return -1;
-    }
+    if (cmdexec_cpno(nshell, namedfunc, cmdfd, stroot, err)) return -1;
     break;
   default:
     unlinkfile(&(cmdfd->cmdcur->pipefile));
