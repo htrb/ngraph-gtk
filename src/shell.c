@@ -1265,11 +1265,10 @@ getcmdline_fetch_from_str(const char *str, int *istr, int *err, struct cmdlist *
 }
 
 static int
-getcmdline_fetch_from_tty(struct nshell *nshell, int *eofcount, int *err)
+getcmdline_fetch_from_tty(struct nshell *nshell, int *eofcount, int *ch, int *err)
 {
   char *ignoreeof, *endptr;
   int eofnum;
-  int ch;
   (*eofcount)++;
   ignoreeof = getval(nshell,"IGNOREEOF");
   if (ignoreeof == NULL) {
@@ -1290,9 +1289,9 @@ getcmdline_fetch_from_tty(struct nshell *nshell, int *eofcount, int *err)
     return -1;
   } else {
     sherror(ERREOF);
-    ch='\0';
+    *ch='\0';
   }
-  return ch;
+  return 0;
 }
 
 static void
@@ -1342,8 +1341,7 @@ getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, stru
 	  *err=1;
 	  return NULL;
 	} else {
-	  ch = getcmdline_fetch_from_tty(nshell, &eofcount, err);
-	  if (ch < 0) return NULL;
+	  if (getcmdline_fetch_from_tty(nshell, &eofcount, &ch, err) < 0) return NULL;
 	}
       }
     } else {
