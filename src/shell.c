@@ -2277,283 +2277,396 @@ errexit:
   return NULL;
 }
 
+static struct cmdlist *
+checkcmd_remove_empty_cmd(struct cmdlist **cmdroot, struct cmdlist *cmdcur, struct cmdlist *cmdprev)
+{
+  struct cmdlist *cmddel;
+  if (cmdprev == NULL) {
+    *cmdroot = cmdcur->next;
+  } else {
+    cmdprev->next = cmdcur->next;
+  }
+  cmddel = cmdcur;
+  cmdcur = cmdcur->next;
+  g_free(cmddel);
+  return cmdcur;
+}
+
+static struct cmdlist *
+checkcmd_create_cmdnew(struct cmdlist *cmdcur, struct prmlist *prmcur)
+{
+  struct cmdlist *cmdnew;
+  cmdnew = g_malloc(sizeof(struct cmdlist));
+  if (cmdnew == NULL) return NULL;
+
+  cmdnew->next = cmdcur->next;
+  cmdcur->next = cmdnew;
+  cmdnew->prm = prmcur->next;
+  prmcur->next = NULL;
+  cmdnew->cmdno = CPNO;
+  return cmdnew;
+}
+
 static int
-checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
+checkcmd_determine_cmdno(struct cmdlist *cmdcur)
+{
+  struct prmlist *prmcur;
+  int cmd,i;
+  prmcur=cmdcur->prm;
+  cmd=CPNO;
+  while (prmcur->next!=NULL) prmcur=prmcur->next;
+  if (prmcur->str[0]==')') cmd=CPPATI;
+  prmcur=cmdcur->prm;
+  if ((prmcur->str[0]!='\0')
+      && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
+
+  i = check_cpcmd(prmcur->str);
+  if (i >= 0) {
+    cmd = i + 1;
+  } else {
+    prmcur=prmcur->next;
+    if ((prmcur!=NULL) && (prmcur->str[0]=='(')) {
+      prmcur=prmcur->next;
+      if ((prmcur!=NULL) && (prmcur->str[0]==')')) cmd=CPFN;
+    }
+  }
+  cmdcur->cmdno=cmd;
+  if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO)
+      && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)) {
+    struct cmdlist *cmdnew;
+    cmdnew = checkcmd_create_cmdnew(cmdcur, cmdcur->prm);
+    if (cmdnew == NULL) return -1;
+  }
+  return 0;
+}
+
+static int
+checkcmd_case_pattern(struct cmdlist *cmdcur)
+{
+  struct cmdlist *cmdnew;
+  struct prmlist *prmcur, *prmprev;
+
+  if (cmdcur->cmdno != CPCASE) return 0;
+  prmcur=cmdcur->prm; /* case */
+
+  if (prmcur->next == NULL) return 0;
+  prmcur=prmcur->next; /* word */
+
+  if (prmcur->next == NULL) return 0;
+  prmprev=prmcur->next; /* in */
+
+  if (prmprev->next == NULL) return 0;
+
+  cmdnew = checkcmd_create_cmdnew(cmdcur, prmprev);
+  if (cmdnew == NULL) return -1;
+  return 0;
+}
+
+static int
+checkcmd_read_heredoc_fast(struct nshell *nshell, int sout, const char *eof, int ignore_indent)
+{
+  int eoflen, match;
+  int ch;
+  int remove_tab;
+  remove_tab = ignore_indent;
+  eoflen=strlen(eof);
+  match=0;
+  writepo=0;
+  while (TRUE) {
+    ch=shget(nshell);
+    if ((ch==EOF) || (ch=='\0')) break;
+    if (remove_tab && ch == '\t') continue;
+    remove_tab = FALSE;
+    if (ch=='\n') {
+      if (match==eoflen) break;
+      writebuf[writepo]=ch;
+      writepo++;
+      if (writepo==WRITEBUFSIZE) {
+	nwrite(sout,writebuf,WRITEBUFSIZE);
+	writepo=0;
+      }
+      match=0;
+      remove_tab = ignore_indent;
+    } else if (match==-1) {
+      writebuf[writepo]=ch;
+      writepo++;
+      if (writepo==WRITEBUFSIZE) {
+	nwrite(sout,writebuf,WRITEBUFSIZE);
+	writepo=0;
+      }
+    } else if ((match==eoflen) || (ch!=eof[match])) {
+      for (int i=0;i<match;i++) {
+	writebuf[writepo]=eof[i];
+	writepo++;
+	if (writepo==WRITEBUFSIZE) {
+	  nwrite(sout,writebuf,WRITEBUFSIZE);
+	  writepo=0;
+	}
+      }
+      writebuf[writepo]=ch;
+      writepo++;
+      if (writepo==WRITEBUFSIZE) {
+	nwrite(sout,writebuf,WRITEBUFSIZE);
+	writepo=0;
+      }
+      match=-1;
+    } else match++;
+  }
+  if (writepo!=0) nwrite(sout,writebuf,writepo);
+  return 0;
+}
+
+static int
+checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *eof, int ignore_indent)
+{
+  int ch;
+  int remove_tab;
+  remove_tab = ignore_indent;
+  do {
+    char *s, *prompt;
+    remove_tab = ignore_indent;
+    if ((s=nstrnew())==NULL) {
+      return -1;
+    }
+    if (nisatty(nshell->fd)) {
+      prompt = getval(nshell,"PS2");
+#ifdef HAVE_READLINE_READLINE_H
+      Prompt = prompt;
+      MultiLine = TRUE;
+#else
+      if (prompt) printfconsole("%.256s", prompt);
+#endif
+    }
+    do {
+      ch=shget(nshell);
+      if (ch==EOF) {
+	if (strlen(s)!=0) {
+	  if (!nisatty(nshell->fd)) break;
+	  else printfconsole("%c",(char )0x07);
+	} else break;
+      } else {
+	if (ch=='\n') ch='\0';
+	if (remove_tab && ch == '\t') continue;
+	remove_tab = FALSE;
+	if ((s=nstrccat(s,ch))==NULL) {
+	  return -1;
+	}
+      }
+    } while (ch!='\0');
+    if (strcmp0(eof,s)!=0) {
+      int len = strlen(s);
+      s[len]='\n';
+      nwrite(sout,s,len+1);
+      g_free(s);
+    } else {
+      g_free(s);
+      break;
+    }
+  } while (ch!=EOF);
+  return 0;
+}
+
+static int
+checkcmd_read_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+{
+  char *tmpfil;
+  int sout, ret;
+  int quoted;
+  char *eof;
+  int ignore_indent;
+  struct prmlist *prmnext;
+  prmnext = prmcur->next;
+  if ((eof=unquotation(prmnext->str,&quoted))==NULL)
+    return -1;
+  g_free(prmnext->str);
+  prmnext->str=eof;
+  prmnext->quoted=quoted;
+  if (prmcur->str[2] == '-') {
+    ignore_indent = TRUE;
+  } else {
+    ignore_indent = FALSE;
+  }
+
+  /* get << contents */
+
+  // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+  sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+  if (sout < 0)
+    return -1;
+  if ((quoted) && !nisatty(nshell->fd)) {
+    ret = checkcmd_read_heredoc_fast(nshell, sout, eof, ignore_indent);
+  } else {
+    ret = checkcmd_read_heredoc_interactive(nshell, sout, eof, ignore_indent);
+  }
+  if (ret < 0) {
+    nclose(sout);
+    unlinkfile(&tmpfil);
+    return -1;
+  }
+
+  nclose(sout);
+  g_free(prmnext->str);
+  prmnext->str=tmpfil;
+  return 0;
+}
+
+static int
+checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+{
+  if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
+      || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
+    sherror2(ERRUEXPTOK,prmprev ? prmprev->str : "");
+    return 2;
+  }
+  if (prmcur->str[0]==prmcur->str[1]) {
+    if (prmcur->str[0]=='>') {
+      prmcur->prmno=PPSO2;
+    } else {
+      prmcur->prmno=PPSI2;
+      if (checkcmd_read_heredoc(nshell, prmcur, prmprev) < 0) return -1;
+    }
+  } else {
+    if (prmcur->str[0]=='>') {
+      prmcur->prmno=PPSO1;
+    } else {
+      prmcur->prmno=PPSI1;
+    }
+  }
+
+  (prmcur->next)->prmno=prmcur->prmno;
+  return 0;
+}
+
+static int
+checkcmd_pipe(struct cmdlist *cmdcur, struct prmlist *prmcur)
+{
+  struct cmdlist *cmdnew;
+  if (cmdcur->cmdno==CPPATI) {
+    prmcur->prmno=PPPATOR;
+    return 0;
+  }
+
+  cmdcur->cmdend=PPPIPE;
+  prmcur->prmno=PPPIPE;
+  if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
+      || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
+    sherror2(ERRUEXPTOK,prmcur->str);
+    return 2;
+  }
+  cmdnew = checkcmd_create_cmdnew(cmdcur, prmcur);
+  if (cmdnew == NULL) return -1;
+
+  return 0;
+}
+
+static void
+checkcmd_end(struct cmdlist *cmdcur, struct prmlist *prmcur)
+{
+  if (prmcur->str[1]==';') {
+    cmdcur->cmdno=CPPATO;
+    /* how is prmcur->prmno ? */
+    prmcur->prmno=PPNULL; /* is it right? */
+  } else {
+    prmcur->prmno=PPEND;
+  }
+}
+
+static int
+checkcmd_parse_redirects_and_pipes(struct nshell *nshell, struct cmdlist *cmdcur)
+{
+  struct prmlist *prmcur, *prmprev;
+
+  cmdcur->cmdend=PPEND;
+  cmdcur->pipefile=NULL;
+  prmcur=cmdcur->prm;
+  prmprev=NULL;
+  while (prmcur) {
+    if (prmcur->str) {
+      int ret;
+      switch (prmcur->str[0]) {
+      case '>':
+      case '<':
+	ret = checkcmd_handle_heredoc(nshell, prmcur, prmprev);
+	if (ret) return ret;
+	prmcur=prmcur->next;
+	break;
+      case '|':
+	ret = checkcmd_pipe(cmdcur, prmcur);
+	if (ret) return ret;
+	break;
+      case '&':
+	prmcur->prmno=PPAND;
+	cmdcur->cmdend=PPAND;
+	break;
+      case ';':
+	checkcmd_end(cmdcur, prmcur);
+	break;
+      default:
+	prmcur->prmno=PPNO;
+	break;
+      }
+    } else {
+      prmcur->prmno=PPNULL;
+    }
+    prmprev=prmcur;
+    prmcur=prmcur->next;
+  }
+  return 0;
+}
+
+static void
+checkcmd_variable_setting(struct cmdlist *cmdcur)
+{
+  struct prmlist *prmcur;
+  prmcur=cmdcur->prm;
+  while (prmcur!=NULL) {
+    if (prmcur->prmno == PPNO) {
+      char *po;
+      po=prmcur->str;
+      if (isobject(&po) && (po[0]=='=')) {
+	prmcur->prmno=PPSETO;
+      } else {
+	po=prmcur->str;
+	int i = find_varname_end(po, 0);
+	if ((i!=0) && (po[i]=='=')) prmcur->prmno=PPSETV;
+      }
+      if (prmcur->prmno==PPNO) break;
+    }
+    prmcur=prmcur->next;
+  }
+}
+
+static int
+checkcmd(struct nshell *nshell,struct  cmdlist **cmdroot)
 /* checkcmd() returns
      -1: fatal error
       0: noerror
       2: error */
 {
-  struct cmdlist *cmdcur,*cmdprev,*cmddel,*cmdnew;
-  struct prmlist *prmcur,*prmprev;
-  int cmd,i;
-  char *po;
-  char *s,*eof, *prompt;
-  int quoted,ch;
-  int eoflen,match,len;
-  char *tmpfil;
-  int sout;
-  int ignore_indent, remove_tab;
+  struct cmdlist *cmdcur, *cmdprev;
 
-  cmdcur=*cmdroot;
-  cmdprev=NULL;
-  while (cmdcur!=NULL) {
-    if (cmdcur->prm==NULL) {
-      if (cmdprev==NULL) *cmdroot=cmdcur->next;
-      else cmdprev->next=cmdcur->next;
-      cmddel=cmdcur;
-      cmdcur=cmdcur->next;
-      g_free(cmddel);
-    } else {
-      /* remove zero length parameter */
-      prmcur=cmdcur->prm;
-      cmd=CPNO;
-      while (prmcur->next!=NULL) prmcur=prmcur->next;
-      if (prmcur->str[0]==')') cmd=CPPATI;
-      prmcur=cmdcur->prm;
-      if ((prmcur->str[0]!='\0')
-      && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
-
-      i = check_cpcmd(prmcur->str);
-      if (i >= 0) {
-	cmd = i + 1;
-      } else {
-        prmcur=prmcur->next;
-        if ((prmcur!=NULL) && (prmcur->str[0]=='(')) {
-          prmcur=prmcur->next;
-          if ((prmcur!=NULL) && (prmcur->str[0]==')')) cmd=CPFN;
-        }
-      }
-      cmdcur->cmdno=cmd;
-      if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO)
-      && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)) {
-        if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
-        cmdnew->next=cmdcur->next;
-        cmdcur->next=cmdnew;
-        cmdnew->prm=(cmdcur->prm)->next;
-        (cmdcur->prm)->next=NULL;
-        cmdnew->cmdno=CPNO;
-      }
-
-      /* check pattern */
-      if (cmdcur->cmdno==CPCASE) {
-        prmcur=cmdcur->prm; /* case */
-        if (prmcur->next!=NULL) {
-          prmcur=prmcur->next; /* word */
-          if (prmcur->next!=NULL) {
-            prmprev=prmcur->next; /* in */
-            if (prmprev->next!=NULL) {
-              prmcur=prmprev->next;
-              prmprev->next=NULL;
-              if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
-              cmdnew->next=cmdcur->next;
-              cmdcur->next=cmdnew;
-              cmdnew->prm=prmcur;
-            }
-          }
-        }
-      }
-
-      /* check redirect and pipe */
-      cmdcur->cmdend=PPEND;
-      cmdcur->pipefile=NULL;
-      prmcur=cmdcur->prm;
-      prmprev=NULL;
-      while (prmcur!=NULL) {
-        if (prmcur->str!=NULL) {
-          if ((prmcur->str[0]=='>') || (prmcur->str[0]=='<')) {
-            if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
-             || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
-              sherror2(ERRUEXPTOK,prmprev->str);
-              return 2;
-            }
-            if (prmcur->str[0]==prmcur->str[1]) {
-              if (prmcur->str[0]=='>')
-                prmcur->prmno=PPSO2;
-              else {
-                prmcur->prmno=PPSI2;
-                if ((eof=unquotation((prmcur->next)->str,&quoted))==NULL)
-                  return -1;
-                g_free((prmcur->next)->str);
-                (prmcur->next)->str=eof;
-                (prmcur->next)->quoted=quoted;
-		if (prmcur->str[2] == '-') {
-		  ignore_indent = TRUE;
-		  remove_tab = TRUE;
-		} else {
-		  ignore_indent = FALSE;
-		  remove_tab = FALSE;
-		}
-
-                /* get << contents */
-
-                // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
-		sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
-		if (sout < 0)
-		  return -1;
-                if ((quoted) && !nisatty(nshell->fd)) {
-                  eoflen=strlen(eof);
-                  match=0;
-                  writepo=0;
-                  while (TRUE) {
-                    ch=shget(nshell);
-                    if ((ch==EOF) || (ch=='\0')) break;
-		    if (remove_tab && ch == '\t') continue;
-		    remove_tab = FALSE;
-                    if (ch=='\n') {
-                      if (match==eoflen) break;
-                      writebuf[writepo]=ch;
-                      writepo++;
-                      if (writepo==WRITEBUFSIZE) {
-                        nwrite(sout,writebuf,WRITEBUFSIZE);
-                        writepo=0;
-                      }
-                      match=0;
-		      remove_tab = ignore_indent;
-                    } else if (match==-1) {
-                      writebuf[writepo]=ch;
-                      writepo++;
-                      if (writepo==WRITEBUFSIZE) {
-                        nwrite(sout,writebuf,WRITEBUFSIZE);
-                        writepo=0;
-                      }
-                    } else if ((match==eoflen) || (ch!=eof[match])) {
-                      for (i=0;i<match;i++) {
-                        writebuf[writepo]=eof[i];
-                        writepo++;
-                        if (writepo==WRITEBUFSIZE) {
-                          nwrite(sout,writebuf,WRITEBUFSIZE);
-                          writepo=0;
-                        }
-                      }
-                      writebuf[writepo]=ch;
-                      writepo++;
-                      if (writepo==WRITEBUFSIZE) {
-                        nwrite(sout,writebuf,WRITEBUFSIZE);
-                        writepo=0;
-                      }
-                      match=-1;
-                    } else match++;
-                  }
-                  if (writepo!=0) nwrite(sout,writebuf,writepo);
-                } else {
-                  do {
-		    remove_tab = ignore_indent;
-                    if ((s=nstrnew())==NULL) {
-                      nclose(sout);
-                      unlinkfile(&tmpfil);
-                      return -1;
-                    }
-		    if (nisatty(nshell->fd)) {
-		      prompt = getval(nshell,"PS2");
-#ifdef HAVE_READLINE_READLINE_H
-		      Prompt = prompt;
-		      MultiLine = TRUE;
-#else
-		      if (prompt) printfconsole("%.256s", prompt);
-#endif
-		    }
-                    do {
-                      ch=shget(nshell);
-                      if (ch==EOF) {
-                        if (strlen(s)!=0) {
-                          if (!nisatty(nshell->fd)) break;
-                          else printfconsole("%c",(char )0x07);
-                        } else break;
-                      } else {
-                        if (ch=='\n') ch='\0';
-			if (remove_tab && ch == '\t') continue;
-			remove_tab = FALSE;
-                        if ((s=nstrccat(s,ch))==NULL) {
-                          nclose(sout);
-                          unlinkfile(&tmpfil);
-                          return -1;
-                        }
-                      }
-                    } while (ch!='\0');
-                    if (strcmp0(eof,s)!=0) {
-                      len=strlen(s);
-                      s[len]='\n';
-                      nwrite(sout,s,len+1);
-                      g_free(s);
-                    } else {
-                      g_free(s);
-                      break;
-                    }
-                  } while (ch!=EOF);
-                }
-                nclose(sout);
-                g_free((prmcur->next)->str);
-                (prmcur->next)->str=tmpfil;
-              }
-            } else {
-              if (prmcur->str[0]=='>')
-                prmcur->prmno=PPSO1;
-              else
-                prmcur->prmno=PPSI1;
-            }
-
-            (prmcur->next)->prmno=prmcur->prmno;
-            prmcur=prmcur->next;
-          } else if (prmcur->str[0]=='|') {
-            if (cmdcur->cmdno==CPPATI) {
-	      prmcur->prmno=PPPATOR;
-            } else {
-              cmdcur->cmdend=PPPIPE;
-              prmcur->prmno=PPPIPE;
-              if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
-               || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
-                sherror2(ERRUEXPTOK,prmcur->str);
-                return 2;
-              }
-              if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
-              cmdnew->next=cmdcur->next;
-              cmdcur->next=cmdnew;
-              cmdnew->prm=prmcur->next;
-              prmcur->next=NULL;
-              cmdnew->cmdno=CPNO;
-            }
-          } else if (prmcur->str[0]=='&') {
-            prmcur->prmno=PPAND;
-            cmdcur->cmdend=PPAND;
-          } else if (prmcur->str[0]==';') {
-            if (prmcur->str[1]==';') {
-	      cmdcur->cmdno=CPPATO;
-	      /* how is prmcur->prmno ? */
-	      prmcur->prmno=PPNULL; /* is it right? */
-	    } else {
-	      prmcur->prmno=PPEND;
-	    }
-          } else {
-	    prmcur->prmno=PPNO;
-	  }
-        } else {
-	  prmcur->prmno=PPNULL;
-	}
-        prmprev=prmcur;
-        prmcur=prmcur->next;
-      }
-
-      /* check variable setting command */
-      prmcur=cmdcur->prm;
-      while (prmcur!=NULL) {
-        if (prmcur->prmno == PPNO) {
-          po=prmcur->str;
-          if (isobject(&po) && (po[0]=='=')) {
-            prmcur->prmno=PPSETO;
-          } else {
-            po=prmcur->str;
-	    i = find_varname_end(po, 0);
-            if ((i!=0) && (po[i]=='=')) prmcur->prmno=PPSETV;
-          }
-          if (prmcur->prmno==PPNO) break;
-        }
-        prmcur=prmcur->next;
-      }
-
-      cmdprev=cmdcur;
-      cmdcur=cmdcur->next;
+  cmdcur = *cmdroot;
+  cmdprev = NULL;
+  while (cmdcur) {
+    if (cmdcur->prm == NULL) {
+      cmdcur = checkcmd_remove_empty_cmd(cmdroot, cmdcur, cmdprev);
+      continue;
     }
+    /* remove zero length parameter */
+    if (checkcmd_determine_cmdno(cmdcur) < 0) return -1;
+
+    /* check pattern */
+    if (checkcmd_case_pattern(cmdcur) < 0) return -1;
+
+    /* check redirect and pipe */
+    int ret = checkcmd_parse_redirects_and_pipes(nshell, cmdcur);
+    if (ret != 0) return ret;
+
+    /* check variable setting command */
+    checkcmd_variable_setting(cmdcur);
+
+    cmdprev = cmdcur;
+    cmdcur = cmdcur->next;
   }
   return 0;
 }
