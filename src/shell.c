@@ -1328,7 +1328,7 @@ getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, stru
   do {
     ch=shget(nshell);
     if (ch==EOF) {
-      if (strlen(tok)!=0) {
+      if (tok[0]) {
 	if (!nisatty(nshell->fd)) break;
 	else printfconsole("%c",(char )0x07);
       } else {
