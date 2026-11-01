@@ -607,7 +607,7 @@ nglob2(const char *path,int po,int *num,char ***list)
     strncpy(s2,path+p1,i-p1);
     s2[i-p1]='\0';
     strcpy(s3,path+i);
-    if (strlen(s1)==0) scannum=nscandir("./",&namelist,nalphasort);
+    if (s1[0]=='\0') scannum=nscandir("./",&namelist,nalphasort);
     else scannum=nscandir(s1,&namelist,nalphasort);
     for (i=0;i<scannum;i++) {
       if (wildmatch(s2,namelist[i],WILD_PATHNAME | WILD_PERIOD)) {
