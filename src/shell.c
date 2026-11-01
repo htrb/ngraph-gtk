@@ -3494,7 +3494,6 @@ cmdrun_dot(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct prmlist
 
       argvnew = cmdrun_build_argv(prmcur->next, (nshell->argv)[0]);
       if (argvnew == NULL) {
-	arg_del(argvnew);
 	return -1;
       }
       argcnew=getargc(argvnew);
