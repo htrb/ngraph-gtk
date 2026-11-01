@@ -3462,7 +3462,6 @@ cmdrun_function(struct nshell *nshell, struct cmdlist *cmdnew, const struct prml
   if ((rcode!=0) || (st!=NULL) || (needcmd)) return -1;
   argvnew = cmdrun_build_argv(prmcur->next, (nshell->argv)[0]);
   if (argvnew == NULL) {
-    arg_del(argvnew);
     return -1;
   }
   argcnew=getargc(argvnew);
