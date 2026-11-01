@@ -3948,10 +3948,20 @@ cmdrun_prepare_sttdout(struct nshell *nshell, struct cmdexec_fd *cmdfd, const st
   return 0;
 }
 
+static void
+print_prm(struct prmlist *prm)
+{
+  while (prm!=NULL) {
+    printfconsole("%.256s ",prm->str);
+    prm=prm->next;
+  }
+  printfconsole("\n");
+}
+
 static int
 cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct cmdexec_pipe *pipe, int quoted, struct cmdstack **stroot, int *err)
 {
-  struct prmlist *prmcur,*prm;
+  struct prmlist *prmcur;
   struct cmdlist *cmdnew;
 
   prmcur=cmdfd->prmnewroot;
@@ -3977,12 +3987,7 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
     if (nshell->optionx) {
       for (int i=0;i<nshell->cmdexec;i++) printfconsole("+");
       printfconsole(" ");
-      prm=prmcur;
-      while (prm!=NULL) {
-	printfconsole("%.256s ",prm->str);
-	prm=prm->next;
-      }
-      printfconsole("\n");
+      print_prm(prmcur);
     }
 
     char *cmds=prmcur->str;
@@ -4190,12 +4195,7 @@ cmdexec_print_options(struct nshell *nshell, struct cmdlist *cmdroot)
   if (! nshell->optionv) return;
 
   while (cmd!=NULL) {
-    struct prmlist *prm = cmd->prm;
-    while (prm!=NULL) {
-      printfconsole("%.256s ",prm->str);
-      prm=prm->next;
-    }
-    printfconsole("\n");
+    print_prm(cmd->prm);
     cmd=cmd->next;
   }
 }
