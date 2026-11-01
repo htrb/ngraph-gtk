@@ -4253,6 +4253,16 @@ cmdexec_handle_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdsta
 }
 
 static int
+cmdexec_handle_case_pop(struct cmdstack *stroot, struct cmdstack **st, int *casetrue, char **pat)
+{
+  if ((*st=cmdstackgetpo(stroot))==NULL) return -1;
+  *casetrue=(*st)->casetrue;
+  *pat=(*st)->pat;
+  (*st)->pat = NULL;		/* hito (mem leak of pat) */
+  return 0;
+}
+
+static int
 cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
   struct prmlist *prmcur, *prm;
@@ -4280,10 +4290,7 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
     cmdfd->cmdcur=cmdfd->cmdcur->next;
     break;
   case CPPATI:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    casetrue=st->casetrue;
-    pat=st->pat;
-    st->pat = NULL;		/* hito (mem leak of pat) */
+    if (cmdexec_handle_case_pop(*stroot, &st, &casetrue, &pat) < 0) return -1;
     if (casetrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else {
       prm=cmdfd->cmdcur->prm;
@@ -4303,10 +4310,7 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
     st->pat=pat;
     break;
   case CPPATO:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    casetrue=st->casetrue;
-    pat=st->pat;
-    st->pat = NULL;		/* hito (mem leak of pat) */
+    if (cmdexec_handle_case_pop(*stroot, &st, &casetrue, &pat) < 0) return -1;
     cmdstackrmlast(stroot);
     if ((st=cmdstackcat(stroot,CPPATO))==NULL) return -1;
     st->casetrue=casetrue;
@@ -4314,10 +4318,7 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
     cmdfd->cmdcur=cmdfd->cmdcur->done;
     break;
   case CPESAC:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    casetrue=st->casetrue;
-    pat=st->pat;
-    st->pat = NULL;		/* hito (mem leak of pat) */
+    if (cmdexec_handle_case_pop(*stroot, &st, &casetrue, &pat) < 0) return -1;
     g_free(pat);
     cmdstackrmlast(stroot);
     cmdfd->cmdcur=cmdfd->cmdcur->next;
