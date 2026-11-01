@@ -4201,9 +4201,38 @@ cmdexec_print_options(struct nshell *nshell, struct cmdlist *cmdroot)
 }
 
 static int
+cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
+{
+  int iftrue, cmdno;
+  struct cmdstack *st;
+  cmdno = cmdfd->cmdcur->cmdno;
+  if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
+  iftrue=st->iftrue;
+  switch (cmdno) {
+  case CPTHEN:
+    if (iftrue || nshell->status) cmdfd->cmdcur=cmdfd->cmdcur->done;
+    else {
+      iftrue=TRUE;
+      cmdfd->cmdcur=cmdfd->cmdcur->next;
+    }
+    break;
+  case CPELIF:
+    cmdno = CPIF;
+    /* fall-through */
+  case CPELSE:
+    if (iftrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
+    else cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  }
+  cmdstackrmlast(stroot);
+  if ((st=cmdstackcat(stroot, cmdno))==NULL) return -1;
+  st->iftrue=iftrue;
+  return 0;
+}
+
+static int
 cmdexec_handle_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
-  int iftrue;
   struct cmdstack *st;
   switch (cmdfd->cmdcur->cmdno) {
   case CPIF:
@@ -4212,34 +4241,9 @@ cmdexec_handle_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdsta
     cmdfd->cmdcur=cmdfd->cmdcur->next;
     break;
   case CPTHEN:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    iftrue=st->iftrue;
-    if (iftrue || nshell->status) cmdfd->cmdcur=cmdfd->cmdcur->done;
-    else {
-      iftrue=TRUE;
-      cmdfd->cmdcur=cmdfd->cmdcur->next;
-    }
-    cmdstackrmlast(stroot);
-    if ((st=cmdstackcat(stroot,CPTHEN))==NULL) return -1;
-    st->iftrue=iftrue;
-    break;
   case CPELIF:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    iftrue=st->iftrue;
-    if (iftrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
-    else cmdfd->cmdcur=cmdfd->cmdcur->next;
-    cmdstackrmlast(stroot);
-    if ((st=cmdstackcat(stroot,CPIF))==NULL) return -1;
-    st->iftrue=iftrue;
-    break;
   case CPELSE:
-    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
-    iftrue=st->iftrue;
-    if (iftrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
-    else cmdfd->cmdcur=cmdfd->cmdcur->next;
-    cmdstackrmlast(stroot);
-    if ((st=cmdstackcat(stroot,CPELSE))==NULL) return -1;
-    st->iftrue=iftrue;
+    if (cmdexec_replace_stack_if(nshell, cmdfd, stroot) < 0) return -1;
     break;
   case CPFI:
     cmdstackrmlast(stroot);
