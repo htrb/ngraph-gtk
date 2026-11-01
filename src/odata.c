@@ -4158,7 +4158,7 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
     math=(char *)(argv[2]);
     return check_putmath(obj, inst, field, math);
   } else if (strcmp(field,"ifs")==0) {
-    if (strlen((char *)argv[2])==0) {
+    if (((char *)argv[2])[0]=='\0') {
       error(obj,ERRIFS);
       return 1;
     }
