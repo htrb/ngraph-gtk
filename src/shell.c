@@ -4371,11 +4371,91 @@ cmdexec_finalize(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdexec_
 }
 
 static int
-cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
+cmdexec_step(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot, int namedfunc, int *err)
 {
   struct prmlist *prmcur;
+  struct cmdstack *stcur,*st;
+  if (ninterrupt()) return -1;
+  stcur=cmdstackgetpo(*stroot);
+
+  if ((stcur!=NULL) && (stcur->cmdno==CPBI) && (stcur->cmd!=cmdfd->cmdcur)) {
+    if (addfunc(nshell,stcur->val,cmdfd->cmdcur)==NULL) return -1;
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    return 0;
+  }
+  switch (cmdfd->cmdcur->cmdno) {
+  case CPNULL:
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  case CPIF:
+  case CPTHEN:
+  case CPELIF:
+  case CPELSE:
+  case CPFI:
+    if (cmdexec_handle_if(nshell, cmdfd, stroot) < 0) return -1;
+    break;
+  case CPCASE:
+  case CPPATI:
+  case CPPATO:
+  case CPESAC:
+    if (cmdexec_handle_case(nshell, cmdfd, stroot) < 0) return -1;
+    break;
+  case CPFOR:
+    if (cmdexec_cpfor(nshell, cmdfd, stroot)) {
+      return -1;
+    }
+    break;
+  case CPWHILE:
+  case CPUNTIL:
+    if (cmdexec_cpwhile_until(nshell, cmdfd, stroot) < 0) return -1;
+    break;
+  case CPDO:
+    if (cmdexec_cpdo(nshell, cmdfd, stroot)) {
+      return -1;
+    }
+    break;
+  case CPDONE:
+    if ((stcur=cmdstackgetpo(*stroot))==NULL) return -1;
+    cmdfd->cmdcur=stcur->cmd;
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  case CPFN:
+    if ((stcur=cmdstackcat(stroot,CPFN))==NULL) return -1;
+    prmcur=cmdfd->cmdcur->prm;
+    stcur->val=prmcur->str;
+    if (newfunc(nshell,prmcur->str)==NULL) return -1;
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  case CPBI:
+    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
+    if ((stcur=cmdstackcat(stroot,CPBI))==NULL) return -1;
+    stcur->val=st->val;
+    stcur->cmd=cmdfd->cmdcur->done;
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  case CPBO:
+    cmdstackrmlast(stroot);
+    cmdstackrmlast(stroot);
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  case CPNO:
+    if (cmdexec_cpno(nshell, namedfunc, cmdfd, stroot, err)) {
+      return -1;
+    }
+    break;
+  default:
+    unlinkfile(&(cmdfd->cmdcur->pipefile));
+    cmdfd->cmdcur=cmdfd->cmdcur->next;
+    break;
+  }
+  return 0;
+}
+
+static int
+cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
+{
   int err;
-  struct cmdstack *stroot,*stcur,*st;
+  struct cmdstack *stroot;
   struct cmdexec_fd cmdfd;
 
   reset_interrupt();
@@ -4394,77 +4474,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 
   cmdfd.cmdcur=cmdroot;
   while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
-    if (ninterrupt()) goto errexit;
-    stcur=cmdstackgetpo(stroot);
-    if ((stcur!=NULL) && (stcur->cmdno==CPBI) && (stcur->cmd!=cmdfd.cmdcur)) {
-      if (addfunc(nshell,stcur->val,cmdfd.cmdcur)==NULL) goto errexit;
-      cmdfd.cmdcur=cmdfd.cmdcur->next;
-    } else {
-      switch (cmdfd.cmdcur->cmdno) {
-      case CPNULL:
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      case CPIF:
-      case CPTHEN:
-      case CPELIF:
-      case CPELSE:
-      case CPFI:
-	if (cmdexec_handle_if(nshell, &cmdfd, &stroot) < 0) goto errexit;
-	break;
-      case CPCASE:
-      case CPPATI:
-      case CPPATO:
-      case CPESAC:
-	if (cmdexec_handle_case(nshell, &cmdfd, &stroot) < 0) goto errexit;
-	break;
-      case CPFOR:
-	if (cmdexec_cpfor(nshell, &cmdfd, &stroot)) {
-	  goto errexit;
-	}
-	break;
-      case CPWHILE:
-      case CPUNTIL:
-	if (cmdexec_cpwhile_until(nshell, &cmdfd, &stroot) < 0) goto errexit;
-	break;
-      case CPDO:
-	if (cmdexec_cpdo(nshell, &cmdfd, &stroot)) {
-	  goto errexit;
-	}
-	break;
-      case CPDONE:
-	if ((stcur=cmdstackgetpo(stroot))==NULL) goto errexit;
-	cmdfd.cmdcur=stcur->cmd;
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      case CPFN:
-	if ((stcur=cmdstackcat(&stroot,CPFN))==NULL) goto errexit;
-	prmcur=cmdfd.cmdcur->prm;
-	stcur->val=prmcur->str;
-	if (newfunc(nshell,prmcur->str)==NULL) goto errexit;
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      case CPBI:
-	if ((st=cmdstackgetpo(stroot))==NULL) goto errexit;
-	if ((stcur=cmdstackcat(&stroot,CPBI))==NULL) goto errexit;
-	stcur->val=st->val;
-	stcur->cmd=cmdfd.cmdcur->done;
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      case CPBO:
-	cmdstackrmlast(&stroot);
-	cmdstackrmlast(&stroot);
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      case CPNO:
-	if (cmdexec_cpno(nshell, namedfunc, &cmdfd, &stroot, &err)) {
-	  goto errexit;
-	}
-	break;
-      default:
-	unlinkfile(&(cmdfd.cmdcur->pipefile));
-	cmdfd.cmdcur=cmdfd.cmdcur->next;
-	break;
-      }
+    if (cmdexec_step(nshell, &cmdfd, &stroot, namedfunc, &err) < 0) {
+      goto errexit;
     }
   }
   err=0;
