@@ -1295,29 +1295,36 @@ getcmdline_fetch_from_tty(struct nshell *nshell, int *eofcount, int *err)
   return ch;
 }
 
+static void
+getcmdline_show_prompt(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdlist *cmd)
+{
+  char *prompt;
+  if (cmd == NULL && cmdroot == NULL) {
+    prompt = getval(nshell, "PS1");
+#ifdef HAVE_READLINE_READLINE_H
+    MultiLine = FALSE;
+#endif
+  } else {
+    prompt = getval(nshell, "PS2");
+#ifdef HAVE_READLINE_READLINE_H
+    MultiLine = TRUE;
+#endif
+  }
+#ifdef HAVE_READLINE_READLINE_H
+  Prompt = prompt;
+#else
+  if (prompt!=NULL) printfconsole("%.256s",prompt);
+#endif
+}
+
 static char *
 getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdlist *cmd, int *err)
 {
-  char *prompt, *tok = NULL;
+  char *tok = NULL;
   int ch, eofcount = 0;
   if ((tok=nstrnew())==NULL) return NULL;
   if (nisatty(nshell->fd)) {
-    if (cmd == NULL && cmdroot == NULL) {
-      prompt = getval(nshell, "PS1");
-#ifdef HAVE_READLINE_READLINE_H
-      MultiLine = FALSE;
-#endif
-    } else {
-      prompt = getval(nshell, "PS2");
-#ifdef HAVE_READLINE_READLINE_H
-      MultiLine = TRUE;
-#endif
-    }
-#ifdef HAVE_READLINE_READLINE_H
-    Prompt = prompt;
-#else
-    if (prompt!=NULL) printfconsole("%.256s",prompt);
-#endif
+    getcmdline_show_prompt(nshell, cmdroot, cmd);
   }
   do {
     ch=shget(nshell);
