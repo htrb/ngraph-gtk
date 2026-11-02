@@ -1675,45 +1675,24 @@ static int
 expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
 {
   /* command substitution */
-  int sout, sout2, rcode, byte, n, j;
-  char *tmpfil, *c1, *buf;
+  int sout, sout2, rcode, byte, n, j, ret = -1;
+  char *tmpfil, *c1, *buf = NULL;
   // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
   sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
   if (sout < 0) return -1;
   sout2=nredirect(1,sout);
   rcode=cmdexecute(nshell,cmd);
-  if ((rcode!=0) && (rcode!=1)) {
-    nredirect2(1,sout2);
-    g_unlink(tmpfil);
-    g_free(tmpfil);
-    return -1;
-  }
+  if ((rcode!=0) && (rcode!=1)) goto errexit;
+  if ((buf=nstrnew())==NULL) goto errexit;
 
-  if ((buf=nstrnew())==NULL) {
-    nredirect2(1,sout2);
-    g_unlink(tmpfil);
-    g_free(tmpfil);
-    return -1;
-  }
   nlseek(stdoutfd(),0L,SEEK_SET);
   while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
     writebuf[byte]='\0';
-    if ((buf=nstrcat(buf,writebuf))==NULL) {
-      nredirect2(1,sout2);
-      g_unlink(tmpfil);
-      g_free(tmpfil);
-      return -1;
-    }
+    if ((buf=nstrcat(buf,writebuf))==NULL) goto errexit;
   }
   nredirect2(1,sout2);
-  g_unlink(tmpfil);
-  if (byte==-1) {
-    sherror2(ERRREAD,tmpfil);
-    g_free(tmpfil);
-    g_free(buf);
-    return -1;
-  }
-  g_free(tmpfil);
+  sout2 = -1;
+  if (byte==-1) goto errexit;
   n = strlen(buf);
   for (int u = 0; u < n; u++) {
     if (buf[u] == '\n') {
@@ -1722,15 +1701,17 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
   }
   for (j=strlen(buf)-1;(j>=0) && (buf[j]==' ');j--);
   buf[j+1]='\0';
-  if ((c1=quotation(nshell,buf,*cx->quote))==NULL) {
-    g_free(buf);
-    return -1;
-  }
+  if ((c1=quotation(nshell,buf,*cx->quote))==NULL) goto errexit;
   cx->s=nstrcat(cx->s,c1);
   g_free(c1);
+  if (cx->s) ret = 0;
+
+ errexit:
+  if (sout2 >= 0) nredirect2(1,sout2);
+  g_unlink(tmpfil);
+  g_free(tmpfil);
   g_free(buf);
-  if (cx->s==NULL) return -1;
-  return 0;
+  return ret;
 }
 
 static int
