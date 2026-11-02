@@ -87,6 +87,14 @@ ndate(const time_t *timep, int style)
     c = g_strdup_printf("%d/%d/%d",
 			ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
     break;
+  case 5:
+    c = g_strdup_printf("%04d-%02d-%02d",
+			1900 + ltime->tm_year, ltime->tm_mon + 1, ltime->tm_mday);
+    break;
+  case 6:
+    c = g_strdup_printf("%04d/%02d/%02d",
+			1900 + ltime->tm_year, ltime->tm_mon + 1, ltime->tm_mday);
+    break;
   default:
     c = g_strdup_printf("%s %s %d %d",
 			weekstr[ltime->tm_wday], monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
