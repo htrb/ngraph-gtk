@@ -1672,66 +1672,78 @@ struct expand_context {
 };
 
 static int
+expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
+{
+  /* command substitution */
+  int sout, sout2, rcode, byte, n, j;
+  char *tmpfil, *c1, *buf;
+  // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
+  sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+  if (sout < 0) return -1;
+  sout2=nredirect(1,sout);
+  rcode=cmdexecute(nshell,cmd);
+  if ((rcode!=0) && (rcode!=1)) {
+    nredirect2(1,sout2);
+    g_unlink(tmpfil);
+    g_free(tmpfil);
+    return -1;
+  }
+
+  if ((buf=nstrnew())==NULL) {
+    nredirect2(1,sout2);
+    g_unlink(tmpfil);
+    g_free(tmpfil);
+    return -1;
+  }
+  nlseek(stdoutfd(),0L,SEEK_SET);
+  while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
+    writebuf[byte]='\0';
+    if ((buf=nstrcat(buf,writebuf))==NULL) {
+      nredirect2(1,sout2);
+      g_unlink(tmpfil);
+      g_free(tmpfil);
+      return -1;
+    }
+  }
+  nredirect2(1,sout2);
+  g_unlink(tmpfil);
+  if (byte==-1) {
+    sherror2(ERRREAD,tmpfil);
+    g_free(tmpfil);
+    g_free(buf);
+    return -1;
+  }
+  g_free(tmpfil);
+  n = strlen(buf);
+  for (int u = 0; u < n; u++) {
+    if (buf[u] == '\n') {
+      buf[u] = ' ';
+    }
+  }
+  for (j=strlen(buf)-1;(j>=0) && (buf[j]==' ');j--);
+  buf[j+1]='\0';
+  if ((c1=quotation(nshell,buf,*cx->quote))==NULL) {
+    g_free(buf);
+    return -1;
+  }
+  cx->s=nstrcat(cx->s,c1);
+  g_free(c1);
+  g_free(buf);
+  if (cx->s==NULL) return -1;
+  return 0;
+}
+
+static int
 expand_bquote (struct nshell *nshell, struct expand_context *cx, int ch)
 {
   if (*cx->bquote) {
     if (ch=='`') {
       *cx->bquote='\0';
       if (cx->param_buf==NULL) {
-	/* command substitution */
-	int sout, sout2, rcode, byte, n, j;
-	char *tmpfil, *c1;
-	// if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
-	sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
-	if (sout < 0)
-	  return -1;
-	sout2=nredirect(1,sout);
-	rcode=cmdexecute(nshell,cx->cmd_buf);
-	if ((rcode!=0) && (rcode!=1)) {
-	  nredirect2(1,sout2);
-	  g_unlink(tmpfil);
-	  g_free(tmpfil);
-	  return -1;
-	}
+	int ret = expand_command(nshell, cx, cx->cmd_buf);
 	g_free(cx->cmd_buf);
-	if ((cx->cmd_buf=nstrnew())==NULL) {
-	  nredirect2(1,sout2);
-	  g_unlink(tmpfil);
-	  g_free(tmpfil);
-	  return -1;
-	}
-	nlseek(stdoutfd(),0L,SEEK_SET);
-	while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
-	  writebuf[byte]='\0';
-	  if ((cx->cmd_buf=nstrcat(cx->cmd_buf,writebuf))==NULL) {
-	    nredirect2(1,sout2);
-	    g_unlink(tmpfil);
-	    g_free(tmpfil);
-	    return -1;
-	  }
-	}
-	nredirect2(1,sout2);
-	g_unlink(tmpfil);
-	if (byte==-1) {
-	  sherror2(ERRREAD,tmpfil);
-	  g_free(tmpfil);
-	  return -1;
-	}
-	g_free(tmpfil);
-	n = strlen(cx->cmd_buf);
-	for (int u = 0; u < n; u++) {
-	  if (cx->cmd_buf[u] == '\n') {
-	    cx->cmd_buf[u] = ' ';
-	  }
-	}
-	for (j=strlen(cx->cmd_buf)-1;(j>=0) && (cx->cmd_buf[j]==' ');j--);
-	cx->cmd_buf[j+1]='\0';
-	if ((c1=quotation(nshell,cx->cmd_buf,*cx->quote))==NULL) return -1;
-	cx->s=nstrcat(cx->s,c1);
-	g_free(c1);
-	if (cx->s==NULL) return -1;
-	g_free(cx->cmd_buf);
-	cx->cmd_buf=NULL;
+	cx->cmd_buf = NULL;
+	if (ret < 0) return -1;
       }
     } else if (cx->param_buf==NULL) {
       if (cx->cmd_buf!=NULL) {
