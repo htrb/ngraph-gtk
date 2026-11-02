@@ -1699,7 +1699,7 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
       buf[u] = ' ';
     }
   }
-  for (j=strlen(buf)-1;(j>=0) && (buf[j]==' ');j--);
+  for (j=n-1;(j>=0) && (buf[j]==' ');j--);
   buf[j+1]='\0';
   if ((c1=quotation(nshell,buf,*cx->quote))==NULL) goto errexit;
   cx->s=nstrcat(cx->s,c1);
