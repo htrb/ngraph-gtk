@@ -1151,23 +1151,23 @@ find_matching_delimiter(const char *po, char lp, char rp)
     }
 
     if (in_squote || in_dquote) continue;
-      // skip {...}
-      if (lp != '{' && po[i] == '$' && po[i + 1] == '{') {
-        int brace_end = find_matching_brace(po + i + 2);
-        if (brace_end >= 0) {
-          i += brace_end + 2;
-          continue;
-        }
+    // skip {...}
+    if (lp != '{' && po[i] == '$' && po[i + 1] == '{') {
+      int brace_end = find_matching_brace(po + i + 2);
+      if (brace_end >= 0) {
+	i += brace_end + 2;
+	continue;
       }
-      // skip lp...rp
-      if (po[i] == lp) {
-        depth++;
-      } else if (po[i] == rp) {
-        depth--;
-        if (depth == 0) {
-          return i; // Returns the position where the overall nesting level reaches 0 (i.e., the outermost rp)
-        }
+    }
+    // skip lp...rp
+    if (po[i] == lp) {
+      depth++;
+    } else if (po[i] == rp) {
+      depth--;
+      if (depth == 0) {
+	return i; // Returns the position where the overall nesting level reaches 0 (i.e., the outermost rp)
       }
+    }
   }
 
   return -1;
