@@ -1150,7 +1150,7 @@ find_matching_delimiter(const char *po, char lp, char rp)
       continue;
     }
 
-    if (!in_squote && !in_dquote) {
+    if (in_squote || in_dquote) continue;
       // skip {...}
       if (lp != '{' && po[i] == '$' && po[i + 1] == '{') {
         int brace_end = find_matching_brace(po + i + 2);
@@ -1168,7 +1168,6 @@ find_matching_delimiter(const char *po, char lp, char rp)
           return i; // Returns the position where the overall nesting level reaches 0 (i.e., the outermost rp)
         }
       }
-    }
   }
 
   return -1;
