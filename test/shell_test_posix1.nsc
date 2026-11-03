@@ -90,8 +90,8 @@ echo "  [PASS]: $success_count"
 echo "  [FAIL]: $failure_count"
 echo "========================================"
 
-PASS=$(myexpr $PASS + $success_count)
-FAILED=$(myexpr $FAILED + $failure_count)
+PASS=$(($PASS + $success_count))
+FAILED=$(($FAILED + $failure_count))
 
 if [ "$failure_count" -ne 0 ]; then
   exit 1

@@ -93,8 +93,8 @@ echo "Test Summary:"
 echo "Total:   $tests_total"
 echo "Failed:  $tests_failed"
 
-FAIL=`myexpr $FAIL + $tests_failed`
-PASS=`myexpr $PASS + $tests_total - $tests_failed`
+FAIL=$(($FAIL + $tests_failed))
+PASS=$(($PASS + $tests_total - $tests_failed))
 
 if [ "$tests_failed" -gt 0 ]; then
     exit 1

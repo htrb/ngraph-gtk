@@ -9,12 +9,12 @@ check() {
     _expected="$1"
     _actual="$2"
     _name="$3"
-    tests_total=`myexpr $tests_total + 1`
+    tests_total=$(($tests_total + 1))
     if [ "$_expected" -eq "$_actual" ]; then
         echo "PASS: $_name"
     else
         echo "FAIL: $_name (Expected: $_expected, Got: $_actual)"
-        tests_failed=`myexpr $tests_failed + 1`
+        tests_failed=$(($tests_failed + 1))
     fi
 }
 
@@ -72,7 +72,7 @@ f_in_while() {
         if [ $i -eq 3 ]; then
             return 33
         fi
-        i=`myexpr $i + 1`
+        i=$(($i + 1))
     done
     return 99
 }
@@ -96,7 +96,7 @@ f_in_until() {
         if [ "$n" -eq 4 ]; then
             return 88  # n=4 に達したら即座に関数を終了し 88 を返す
         fi
-        n=`myexpr $n + 1`
+        n=$(($n + 1))
     done
     return 99  # ループが最後まで回ってしまった場合
 }
@@ -122,12 +122,12 @@ check 88 $? "return inside until-loop"
 #     return abc
 # }
 # f_invalid_arg
-# tests_total=`myexpr $tests_total + 1`
+# tests_total=$(($tests_total + 1))
 # if [ $? -ne 0 ]; then
 #     echo "PASS: return with non-numeric argument (returns non-zero)"
 # else
 #     echo "FAIL: return with non-numeric argument (expected non-zero, got 0)"
-#     tests_failed=`myexpr $tests_failed + 1`
+#     tests_failed=$(($tests_failed + 1))
 # fi
 
 # 関数外（トップレベル）で return を実行した場合のエラー動作
@@ -135,12 +135,12 @@ check 88 $? "return inside until-loop"
 # eval "return 0"
 # status_toplevel=$?
 # echo $status_toplevel
-# tests_total=`myexpr $tests_total + 1`
+# tests_total=$(($tests_total + 1))
 # if [ $status_toplevel -ne 0 ]; then
 #     echo "PASS: return outside function (returns non-zero)"
 # else
 #     echo "FAIL: return outside function (expected non-zero, got 0)"
-#     tests_failed=`myexpr $tests_failed + 1`
+#     tests_failed=$(($tests_failed + 1))
 # fi
 
 
@@ -149,8 +149,8 @@ echo "Test Summary:"
 echo "Total:   $tests_total"
 echo "Failed:  $tests_failed"
 
-FAIL=`myexpr $FAIL + $tests_failed`
-PASS=`myexpr $PASS + $tests_total - $tests_failed`
+FAIL=$(($FAIL + $tests_failed))
+PASS=$(($PASS + $tests_total - $tests_failed))
 
 if [ "$tests_failed" -gt 0 ]; then
     exit 1

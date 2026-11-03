@@ -1,14 +1,5 @@
 #! ../src/ngraph -i
 
-myexpr() {
-    if which ixpr
-    then
-	iexpr "$*"
-    else
-	expr "$@"
-    fi
-}
-
 FAILED=0
 
 echo "=== POSIX Shell Loop Control Comprehensive Test ==="
@@ -26,10 +17,10 @@ done
 
 if [ "$res" = "12" ]; then
   echo "[ OK ] Test 1: basic break"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 1: basic break (Expected '12', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -45,10 +36,10 @@ done
 
 if [ "$res" = "1245" ]; then
   echo "[ OK ] Test 2: basic continue"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 2: basic continue (Expected '1245', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -69,10 +60,10 @@ done
 # b2 のタイミングで外側も抜けるため、a1, a2, a3, b1 で止まるはず
 if [ "$res" = "a1a2a3b1" ]; then
   echo "[ OK ] Test 3: break 2"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 3: break 2 (Expected 'a1a2a3b1', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -91,10 +82,10 @@ done
 # 各外側ループで in=1 の処理（a1, b1, c1）だけが行われ、in=2 で次の外側ループへ進むはず
 if [ "$res" = "a1b1c1" ]; then
   echo "[ OK ] Test 4: continue 2"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 4: continue 2 (Expected 'a1b1c1', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -111,16 +102,16 @@ while [ "$i" = "1" -o "$i" = "2" -o "$i" = "3" -o "$i" = "4" -o "$i" = "5" ]; do
     break
   fi
   res="${res}${i}"
-  i=`myexpr $i + 1`
+  i=$(($i + 1))
 done
 
 # 3がスキップされ、5でブレイクするので「124」になるはず
 if [ "$res" = "124" ]; then
   echo "[ OK ] Test 5: while break/continue"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 5: while break/continue (Expected '124', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -138,16 +129,16 @@ until [ "$i" = "6" ]; do
     break
   fi
   res="${res}${i}"
-  i=`myexpr $i + 1`
+  i=$(($i + 1))
 done
 
 # while と同様に 3がスキップ、5でブレイクするので「124」になるはず
 if [ "$res" = "124" ]; then
   echo "[ OK ] Test 6: until break/continue"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 6: until break/continue (Expected '124', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -166,10 +157,10 @@ done
 # 各外側ループにおいて、inner=2 で内側だけを抜けるため「a1b1」になるはず
 if [ "$res" = "a1b1" ]; then
   echo "[ OK ] Test 7: implicit break 1"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 7: implicit break 1 (Expected 'a1b1', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -190,10 +181,10 @@ done
 # b2 のタイミングで外側も抜けるため「a1a2a3b1」で止まるはず
 if [ "$res" = "a1a2a3b1" ]; then
   echo "[ OK ] Test 8: break 2 with nested if"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 8: break 2 with nested if (Expected 'a1a2a3b1', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
@@ -214,17 +205,17 @@ done
 # b2 のタイミングで外側ループの次（c）へ飛ぶため「a1a2a3b1c1c2c3」になるはず
 if [ "$res" = "a1a2a3b1c1c2c3" ]; then
   echo "[ OK ] Test 9: continue 2 with nested if"
-  PASS=`myexpr $PASS + 1`
+  PASS=$(($PASS + 1))
 else
   echo "[FAIL] Test 9: continue 2 with nested if (Expected 'a1a2a3b1c1c2c3', got '$res')"
-  FAILED=`myexpr $FAILED + 1`
+  FAILED=$(($FAILED + 1))
 fi
 
 # -------------------------------------------------------------------
 # 最終判定
 # -------------------------------------------------------------------
 echo "==================================================="
-FAIL=`myexpr $FAIL + $FAILED`
+FAIL=$(($FAIL + $FAILED))
 if [ "$FAILED" = "0" ]; then
   echo "RESULT: SUCCESS"
   exit 0

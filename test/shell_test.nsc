@@ -5,15 +5,6 @@ set +e
 PASS=0
 FAIL=0
 
-myexpr() {
-    if which ixpr
-    then
-	iexpr "$*"
-    else
-	expr "$@"
-    fi
-}
-
 testeq() {
   NAME=$1
   EXPECT=$2
@@ -21,12 +12,12 @@ testeq() {
 
   if test "$EXPECT" = "$ACTUAL"
   then
-    PASS=`myexpr $PASS + 1`
+    PASS=$(($PASS + 1))
   else
     echo "$NAME FALSE"
     echo "  EXPECT=<$EXPECT>"
     echo "  ACTUAL=<$ACTUAL>"
-    FAIL=`myexpr $FAIL + 1`
+    FAIL=$(($FAIL + 1))
   fi
 }
 
