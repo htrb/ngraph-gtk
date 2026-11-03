@@ -135,6 +135,7 @@ static int MultiLine = FALSE;
 #include "shellcm.h"
 #include "shellux.h"
 #include "math/math_equation.h"
+#include "shell_arithmetic.h"
 
 #define TEMPPFX "NGS"
 
@@ -1738,9 +1739,45 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
 }
 
 static int
+expand_arithmetic (struct nshell *nshell, struct expand_context *cx, char *str, int len)
+{
+  int quote, bquote;
+
+  if (str[len - 1] != ')') return -1;
+  str[len - 1] = '\0';
+
+  quote='"';
+  bquote='\0';
+  char *eq_str = expand(nshell, str + 1, &quote, &bquote, FALSE);
+  if (eq_str == NULL) {
+    sherror(ERRMEMORY);
+    return -1;
+  }
+
+  ShellArithmeticContext ctx;
+  ctx.src = eq_str;
+  ctx.nshell = nshell;
+  long long val = shell_arithmetic_eval(&ctx);
+  g_free(eq_str);
+  if (ctx.err) {
+    return -1;
+  }
+
+  char *result = g_strdup_printf ("%lld", val);
+  cx->s = nstrcat(cx->s, result);
+  g_free(result);
+  if (cx->s == NULL) {
+    sherror(ERRMEMORY);
+    return -1;
+  }
+
+  return 1;
+}
+
+static int
 expand_dollar_paren (struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
-  int i = *index;
+  int ret, i = *index;
   if (*cx->quote == '\'' || cx->param_buf != NULL || po[i] != '$' || po[i+1] != '(') return 0;
 
   int last = find_matching_parenthesis(po + i + 2);
@@ -1752,7 +1789,15 @@ expand_dollar_paren (struct nshell *nshell, struct expand_context *cx, const cha
   char *inner_script = g_strndup(po + i + 2, last);
   if (inner_script == NULL) return -1;
 
-  int ret = expand_command(nshell, cx, inner_script);
+  if (po[i + 2] == '(') {
+    ret = expand_arithmetic (nshell, cx, inner_script, last);
+    g_free (inner_script);
+    if (ret < 0) return -1;
+    *index = i + 2 + last;
+    return 1;
+  }
+
+  ret = expand_command(nshell, cx, inner_script);
   g_free(inner_script);
   if (ret < 0) return -1;
 
