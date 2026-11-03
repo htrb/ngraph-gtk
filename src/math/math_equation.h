@@ -172,7 +172,7 @@ int math_equation_set_const_by_name(MathEquation *eq, const char *name, const Ma
 int math_equation_set_const(MathEquation *eq, int idx, const MathValue *val);
 int math_equation_get_const_by_name(MathEquation *eq, const char *name, MathValue *val);
 int math_equation_get_const(MathEquation *eq, int idx, MathValue *val);
-char *math_equation_get_const_name(MathEquation *eq, int idx);
+const char *math_equation_get_const_name(MathEquation *eq, int idx);
 const char *math_equation_get_var_name(MathEquation *eq, int idx);
 
 int math_equation_add_var(MathEquation *eq, const char *name);

@@ -1319,7 +1319,7 @@ math_equation_get_var_name(MathEquation *eq, int idx)
   return v.name;
 }
 
-char *
+const char *
 math_equation_get_const_name(MathEquation *eq, int idx)
 {
   struct search_val v;
