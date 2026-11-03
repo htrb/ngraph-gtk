@@ -1303,7 +1303,7 @@ search_val_cb(struct nhash *hash, void *ptr)
   return 0;
 }
 
-char *
+const char *
 math_equation_get_var_name(MathEquation *eq, int idx)
 {
   struct search_val v;
