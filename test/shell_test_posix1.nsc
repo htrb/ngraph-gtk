@@ -1,0 +1,99 @@
+#! ../src/ngraph -i
+
+# カウンターの初期化
+success_count=0
+failure_count=0
+
+assert_result() {
+  eq="'$2' == '$3'"
+  result=$(iexpr "$eq")
+  if [ "$result" = "1" ]; then
+    echo "PASS: $1"
+    success_count=$(iexpr $success_count + 1)
+  else
+    echo "FAIL: $1"
+    echo "  [実際の出力]: '$2'"
+    echo "  [期待の出力]: '$3'"
+    failure_count=$(iexpr $failure_count + 1)
+  fi
+}
+
+echo "=== $() Command Substitution Test Started ==="
+
+# ---------------------------------------------------------
+# Test 1: 基本的なネストのテスト
+res1=$(echo $(echo $(echo aaa) bbb) ccc)
+assert_result "1. Basic nesting" "$res1" "aaa bbb ccc"
+
+# ---------------------------------------------------------
+# Test 2: ダブルクォートとの入れ子テスト
+res2_1=$(echo "(")
+assert_result "2-1. \$() outside of quotes" "$res2_1" "("
+
+res2_2="$(echo "(")"
+assert_result "2-2. \$() inside double quotes" "$res2_2" "("
+
+res2_3="$(echo '"hello"')"
+assert_result "2-3. Double quotes within single quotes inside \$()" "$res2_3" '"hello"'
+
+# ---------------------------------------------------------
+# Test 3: パラメータ展開（波カッコ）との複合テスト
+A="val"
+res3_1=$(echo ${A})
+assert_result "3-1. Simple brace-enclosed variables inside \$()" "$res3_1" "val"
+
+res3_2=$(echo ${A:-)})
+assert_result "3-2. Closing parenthesis within braces: \${A:-)}" "$res3_2" "val"
+
+res3_3=$(echo ${A:-(})
+assert_result "3-3. Opening parenthesis within braces: \${A:-(}" "$res3_3" "val"
+
+# ---------------------------------------------------------
+# Test 4: 空の出力・スペースのトリミングテスト
+res4_1="[$(printf "abc\n\ndef")]"
+expected_res4_1="[abc  def]"
+assert_result "4-1. Trimming newlines (removing only trailing ones)" "$res4_1" "$expected_res4_1"
+
+res4_2="[$(true)]"
+assert_result "4-2. Command with empty output" "$res4_2" "[]"
+
+# ---------------------------------------------------------
+# Test 5: クォートの独立性（独立したクォート空間）
+res5_1='$(echo "text")'
+assert_result "5-1. Outer single quotes (disabling expansion)" "$res5_1" '$(echo "text")'
+
+res5_2="$(echo 'text')"
+assert_result "5-2. \$() expansion within outer double quotes" "$res5_2" "text"
+
+# ---------------------------------------------------------
+# Test 6: エスケープ文字との組み合わせ
+res6_1="\$(echo \"escaped\")"
+assert_result "6-1. Escaping the \$ symbol" "$res6_1" '$(echo "escaped")'
+
+res6_2="$(printf '\\\\')"
+expected_res6_2=$(printf '\\\\')
+assert_result "6-2. Escaped backslash inside \$()" "$res6_2" "$expected_res6_2"
+
+# ---------------------------------------------------------
+# Test 7: コメント・複数行を含む処理
+res7="$(
+  # ここはコメント
+  echo hello
+)"
+assert_result "7. Multiple lines and comments" "$res7" "hello"
+
+# ---------------------------------------------------------
+# 結果の集計表示
+echo "========================================"
+echo "Test Finished"
+echo "  [PASS]: $success_count"
+echo "  [FAIL]: $failure_count"
+echo "========================================"
+
+PASS=$(myexpr $PASS + $success_count)
+FAILED=$(myexpr $FAILED + $failure_count)
+
+if [ "$failure_count" -ne 0 ]; then
+  exit 1
+fi
+exit 0
