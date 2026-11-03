@@ -52,7 +52,8 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h	\
 	ngraph_api.c oparameter.c oparameter.h spreadsheet.c		\
-	spreadsheet.h orcus.cpp orcus.h nfreexl.c nfreexl.h
+	spreadsheet.h orcus.cpp orcus.h nfreexl.c nfreexl.h		\
+	shell_arithmetic.h shell_arithmetic.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I$(top_builddir) -DCCNAME="$(CC)" $(GTKSOURCEVIEW_CFLAGS)
 if HAVE_LIBORCUS
