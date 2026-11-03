@@ -78,7 +78,8 @@ check_error_position(MathEquation *eq, const char *code)
 char *
 math_err_get_error_message(MathEquation *eq, const char *code, int err)
 {
-  char *code_buf = NULL, *buf = NULL, *ptr;
+  char *code_buf = NULL, *buf = NULL;
+  const char *ptr;
 
   ErrorLine = 1;
   switch (err) {
