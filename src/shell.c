@@ -38,6 +38,7 @@
  *
  *    command replacement
  *        `command`
+ *        $(command)
  *
  *    parameter replacement
  *        name=value [ name=value ] ...
@@ -1122,6 +1123,8 @@ check_quote_bquote(int quote, int bquote, int ch)
   return (check_quote(quote, ch) || bquote);
 }
 
+static int find_matching_brace(const char *po);
+
 static int
 find_matching_delimiter(const char *po, char lp, char rp)
 {
@@ -1131,13 +1134,13 @@ find_matching_delimiter(const char *po, char lp, char rp)
   int in_dquote = 0;
 
   for (i = 0; po[i] != '\0'; i++) {
-    // エスケープ文字のスキップ（シングルクォート内以外で有効）
+    // skip escaped character
     if (!in_squote && po[i] == '\\' && po[i + 1] != '\0') {
       i++;
       continue;
     }
 
-    // クォートの状態管理
+    // check quote
     if (!in_dquote && po[i] == '\'') {
       in_squote = !in_squote;
       continue;
@@ -1147,14 +1150,22 @@ find_matching_delimiter(const char *po, char lp, char rp)
       continue;
     }
 
-    // クォート外でのブレースのカウント
     if (!in_squote && !in_dquote) {
+      // skip {...}
+      if (lp != '{' && po[i] == '$' && po[i + 1] == '{') {
+        int brace_end = find_matching_brace(po + i + 2);
+        if (brace_end >= 0) {
+          i += brace_end + 2;
+          continue;
+        }
+      }
+      // skip lp...rp
       if (po[i] == lp) {
         depth++;
       } else if (po[i] == rp) {
         depth--;
         if (depth == 0) {
-          return i; // 全体のネストが 0 になった（＝外側の '}'）位置を返す
+          return i; // Returns the position where the overall nesting level reaches 0 (i.e., the outermost rp)
         }
       }
     }
@@ -1167,6 +1178,12 @@ static int
 find_matching_brace(const char *po)
 {
   return find_matching_delimiter(po, '{', '}');
+}
+
+static int
+find_matching_parenthesis(const char *po)
+{
+  return find_matching_delimiter(po, '(', ')');
 }
 
 static char *
@@ -1209,6 +1226,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   for (;(po[i]!='\0') &&
        (*quote || *bquote || *escape || (strchr(";&|^<> \t()",po[i])==NULL));
         i++) {
+    int modifier_end;
     /* check escapse */
     if (*escape) *escape=FALSE;
     else if (po[i]=='\\') {
@@ -1223,7 +1241,13 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     } else if (po[i]=='\'' || po[i]=='"') *quote=po[i];
     /* check brace (when not in quotes) */
     if (*quote != '\'' && po[i] == '$' && po[i+1] == '{') {
-      int modifier_end = find_matching_brace(po + i + 2);
+      modifier_end = find_matching_brace(po + i + 2);
+      if (modifier_end >= 0) {
+        i += modifier_end + 2;
+      }
+    }
+    if (*quote != '\'' && po[i] == '$' && po[i+1] == '(') {
+      modifier_end = find_matching_parenthesis(po + i + 2);
       if (modifier_end >= 0) {
 	i += modifier_end + 2;
       }
@@ -1712,6 +1736,29 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
   g_free(tmpfil);
   g_free(buf);
   return ret;
+}
+
+static int
+expand_dollar_paren (struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
+{
+  int i = *index;
+  if (*cx->quote == '\'' || cx->param_buf != NULL || po[i] != '$' || po[i+1] != '(') return 0;
+
+  int last = find_matching_parenthesis(po + i + 2);
+  if (last < 0) {
+    sherror(ERRBADSUB);
+    return -1;
+  }
+
+  char *inner_script = g_strndup(po + i + 2, last);
+  if (inner_script == NULL) return -1;
+
+  int ret = expand_command(nshell, cx, inner_script);
+  g_free(inner_script);
+  if (ret < 0) return -1;
+
+  *index = i + 2 + last;
+  return 1;
 }
 
 static int
@@ -2288,6 +2335,11 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     res = expand_bquote (nshell, &cx, po[i]);
     if (res < 0) goto errexit;
     if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+
+    /* check $() */
+    res = expand_dollar_paren(nshell, &cx, po, &i);
+    if (res < 0) goto errexit;
+    if (res > 0) goto common_se;
 
     /* check constant variable */
     res = expand_variable(nshell, &cx, po, &i);
