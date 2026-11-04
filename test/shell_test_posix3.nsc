@@ -1,7 +1,7 @@
 #!/bin/sh
 # ==============================================================================
 # POSIX Shell Parameter Expansion Test Script
-# ターゲット: POSIX 準拠シェル (dash, ash, ksh, bash --posix など)
+# Target: POSIX-compliant shells (e.g., dash, ash, ksh, bash --posix)
 # ==============================================================================
 
 set +e
@@ -26,19 +26,19 @@ assert_eq() {
 }
 
 echo "=== 1. Expansion of default values (${parameter-word} / ${parameter:-word}) ==="
-# コロン (:) 有りは「未定義または空文字列」、無しは「未定義のみ」が対象
+# With a colon (:), it applies to "unset or empty string"; without it, only to "unset".
 
-# (1) 未定義 (unset) の場合
+# (1) When unset
 unset v_unset
 assert_eq "unset + '-' (default)" "default" "${v_unset-default}"
 assert_eq "unset + ':-' (default)" "default" "${v_unset:-default}"
 
-# (2) 空文字列 ("") の場合
+# (2) When empty string ("")
 v_empty=""
 assert_eq "empty + '-' (keeps empty)" "" "${v_empty-default}"
 assert_eq "empty + ':-' (default for empty)" "default" "${v_empty:-default}"
 
-# (3) 値がある場合
+# (3) When a value exists
 v_val="hello"
 assert_eq "value + '-' (keeps value)" "hello" "${v_val-default}"
 assert_eq "value + ':-' (keeps value)" "hello" "${v_val:-default}"
@@ -47,7 +47,7 @@ assert_eq "value + ':-' (keeps value)" "hello" "${v_val:-default}"
 echo ""
 echo "=== 2. Assigning default values (${parameter=word} / ${parameter:=word}) ==="
 
-# (1) 未定義 (unset) の場合 (変数に代入されることの確認)
+# (1) When unset (Verification of assignment to a variable)
 unset v_unset
 res="${v_unset=assigned}"
 assert_eq "unset + '=' (returns value)" "assigned" "$res"
@@ -58,7 +58,7 @@ res="${v_unset:=assigned_colon}"
 assert_eq "unset + ':=' (returns value)" "assigned_colon" "$res"
 assert_eq "unset + ':=' (variable is now set)" "assigned_colon" "$v_unset"
 
-# (2) 空文字列 ("") の場合
+# (2) Case of an empty string ("")
 v_empty=""
 res="${v_empty=assigned_empty}"
 assert_eq "empty + '=' (keeps empty, no assign)" "" "$res"
@@ -72,7 +72,7 @@ assert_eq "empty + ':=' (var is now assigned)" "assigned_colon_empty" "$v_empty"
 
 echo ""
 echo "=== 3. Expansion of Alternative Values​ (${parameter+word} / ${parameter:+word}) ==="
-# 値が存在（または設定）する場合に別の値を返す
+# Returns an alternative value if the parameter exists (or is set)
 
 unset v_unset
 v_empty=""
@@ -93,19 +93,19 @@ echo "=== 4. Deletion via pattern matching (#, ##, %, %%) ==="
 
 str="file.tar.gz"
 
-# (1) 前方一致削除: 最短一致 (#) / 最長一致 (##)
+# (1) Deletion from the beginning (prefix): shortest match (#) / longest match (##)
 assert_eq "shortest prefix (#*.)" "tar.gz" "${str#*.}"
 assert_eq "longest prefix (##*.)" "gz" "${str##*.}"
 
-# (2) 後方一致削除: 最短一致 (%) / 最長一致 (%%)
+# (2) Deletion from the end (suffix): shortest match (%) / longest match (%%)
 assert_eq "shortest suffix (%.*)" "file.tar" "${str%.*}"
 assert_eq "longest suffix (%%.*)" "file" "${str%%.*}"
 
-# (3) エッジケース：パターンが一致しない場合
+# (3) Edge case: No pattern match
 assert_eq "no match prefix (#)" "file.tar.gz" "${str#notfound}"
 assert_eq "no match suffix (%)" "file.tar.gz" "${str%notfound}"
 
-# (4) エッジケース：空パターン
+# (4) Edge case: Empty pattern
 assert_eq "empty pattern (#)" "file.tar.gz" "${str#}"
 assert_eq "empty pattern (%)" "file.tar.gz" "${str%}"
 
@@ -114,27 +114,59 @@ echo ""
 echo "=== 5. Testing bracket expressions ([...]) and negated character classes ([!...]) ==="
 str_mix="item_123-abc.txt"
 
-# (1) 文字クラスを用いた前方一致・後方一致（実際のシェルの挙動に合わせた期待値）
+# (4) エッジケース：空パターン
 assert_eq "shortest prefix with char class (#*[0-9])" "23-abc.txt" "${str_mix#*[0-9]}"
 assert_eq "longest prefix with char class (##*[0-9])" "-abc.txt" "${str_mix##*[0-9]}"
 
 assert_eq "shortest suffix with char class (%[a-z]*)" "item_123-abc.tx" "${str_mix%[a-z]*}"
 assert_eq "longest suffix with char class (%%[a-z]*)" "" "${str_mix%%[a-z]*}"
 
-# (2) 否定文字クラス ([!...]) を用いた削除
+# (2) Deletion using a negated character class ([!...])
 str_num="123abc456"
 
 assert_eq "shortest prefix with negated char class (#*[!0-9])" "bc456" "${str_num#*[!0-9]}"
 assert_eq "suffix with negated char class (%[!0-9]*)" "123ab" "${str_num%[!0-9]*}"
 
-# (3) 否定文字クラスを用いた最長一致 (##, %%)
+# (3) Longest match using a negated character class (##, %%)
 str_test="123-456-789"
-# [!0-9] はハイフン (-) に一致。
-#  ## は最長前方一致なので、最後のハイフンまでを巻き込んで削除し "789" になる
+# [!0-9] matches the hyphen (-).
+# `##` performs the longest prefix match; it removes everything up to and including the last hyphen, resulting in "789"
 assert_eq "longest prefix with negated char class (##*[!0-9])" "789" "${str_test##*[!0-9]}"
 
-# %% は最長後方一致なので、後ろから見て最初のハイフンから後ろをすべて削除し "123" になる
+# `%%` performs the longest suffix match; it removes everything from the first hyphen (when viewed from the end) to the end of the string, resulting in "123"
 assert_eq "longest suffix with negated char class (%%[!0-9]*)" "123" "${str_test%%[!0-9]*}"
+
+
+echo ""
+echo "=== 6. \${#var} test ==="
+
+# 1. Standard alphanumeric characters
+var_normal="Hello123"
+assert_eq "Standard alphanumeric characters (Hello123)" "8" "${#var_normal}"
+
+# 2. Empty string
+var_empty=""
+assert_eq "Empty string (\"\")" "0" "${#var_empty}"
+
+# 3. Undefined variable
+assert_eq "Undefined variable" "0" "${#safe_unset}"
+
+# 4. Spaces
+var_space="   "
+assert_eq "Three spaces (   )" "3" "${#var_space}"
+
+# 5. String containing newlines and tabs
+var_control=$(printf "A\nB\tC")
+assert_eq "Containing newline and tab (A\\nB\\tC)" "5" "${#var_control}"
+
+# 6. String containing a null character (\0)
+var_null=$(printf "A\0B")
+assert_eq "Containing a null character (A\\0B)" "2" "${#var_null}"
+
+# 7. UTF-8 multi-byte characters (Japanese)
+var_ja="こんにちは"
+assert_eq "日本語 (こんにちは)" "5" "${#var_ja}"
+
 
 echo ""
 echo "=================================================================="
