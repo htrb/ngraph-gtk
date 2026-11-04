@@ -252,22 +252,30 @@ wildmatch2(const char *pat, const char *s,int flags)
           spo++;
         } else return 0;
       } else {
+        int invert = FALSE;
+        if (patpo[1] == '!') {
+          patpo++;
+          invert = TRUE;
+        }
         patpo++;
-        while (patpo!=po) {
-          if ((*(patpo+1)=='-') && (*(patpo+2)!=']')) {
-            if ((*patpo<=*spo) && (*spo<=*(patpo+2))) {
-              patpo=po+1;
-              spo++;
-              break;
-	    } else patpo+=3;
+        while (patpo != po) {
+          int is_range = (*(patpo + 1) == '-') && (*(patpo + 2) != ']');
+          int matched;
+
+          if (is_range) {
+            int in_range = (*patpo <= *spo) && (*spo <= *(patpo + 2));
+            matched = invert ? (!in_range && *spo > 0) : in_range;
           } else {
-            if (*patpo==*spo) {
-              patpo=po+1;
-              spo++;
-              break;
-            } else patpo++;
-	  }
-	}
+            int equals = (*patpo == *spo);
+            matched = invert ? !equals : equals;
+          }
+          if (matched) {
+            patpo = po + 1;
+            spo++;
+            break;
+          }
+          patpo += is_range ? 3 : 1;
+        }
       }
     } else if (*patpo==*spo) {
       patpo++;
