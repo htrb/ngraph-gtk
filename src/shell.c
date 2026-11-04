@@ -37,13 +37,17 @@
  *        name() { list; } * { } is needed
  *
  *    command replacement
- *        `command`
  *        $(command)
+ *        `command`
+ *
+ *    arithmetic expansion
+ *        $((math expression))
  *
  *    parameter replacement
  *        name=value [ name=value ] ...
  *        $# $? $num $* $@
  *        ${parameter}
+ *        ${#parameter}
  *        ${parameter:-word}
  *        ${parameter:=word}
  *        ${parameter:?word}
@@ -2171,21 +2175,35 @@ expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po
 }
 
 static int
-expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index)
+expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index, int vlen)
 {
   const int i = *index;
+  int ofst = vlen ? 3 : 2;
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
-  strncpy(cx->name,po+i+2,j-i-2);
-  cx->name[j-i-2]='\0';
+  strncpy(cx->name, po + i + ofst, j - i - ofst);
+  cx->name[j-i-ofst]='\0';
   cx->val=getval(nshell,cx->name);
   if (cx->val!=NULL) {
     char *c1;
-    if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
+    if (vlen) {
+      long len;
+      if (g_utf8_validate(cx->val, -1, NULL)) {
+	len = g_utf8_strlen (cx->val, -1);
+      } else {
+	len = strlen (cx->val);
+      }
+      c1 = g_strdup_printf ("%ld", len);
+    } else {
+      c1=quotation(nshell,cx->val,*cx->quote);
+    }
+    if (c1 == NULL) return -1;
     cx->s=nstrcat(cx->s,c1);
     g_free(c1);
-    if (cx->s==NULL) return -1;
+  } else if (vlen) {
+    cx->s=nstrcat(cx->s, "0");
   }
+  if (cx->s == NULL) return -1;
   *index=j;
   return 1;
 }
@@ -2259,16 +2277,17 @@ find_varname_end(const char *po, int start)
 static int
 expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
-  int j;
+  int j, vlen;
   const int i = *index;
-  j = find_varname_end(po, i + 2);
+  vlen = (po[i + 2] == '#');
+  j = find_varname_end(po, i + (vlen ? 3 : 2));
   if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
-      || (po[j-1]=='{')) {
+      || (po[j - (vlen ? 2 : 1)]=='{')) {
     sherror(ERRBADSUB);
     return -1;
   }
   if (po[j]=='}') {
-    return expand_braced_simple(nshell, cx, po, j, index);
+    return expand_braced_simple(nshell, cx, po, j, index, vlen);
   }
   if ((po[j]==':') && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
     cx->valf='o';
