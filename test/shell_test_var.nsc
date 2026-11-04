@@ -1,5 +1,5 @@
 #!/bin/sh
-# posix_var_expansion_test.sh - POSIX shell variable expansion & eval test suite
+# POSIX shell variable expansion & eval test suite
 set +e
 
 tests_total=0
@@ -9,12 +9,12 @@ check() {
     _expected="$1"
     _actual="$2"
     _name="$3"
-    tests_total=`expr $tests_total + 1`
+    tests_total=$((tests_total + 1))
     if [ "$_expected" = "$_actual" ]; then
         echo "PASS: $_name"
     else
         echo "FAIL: $_name (Expected: '$_expected', Got: '$_actual')"
-        tests_failed=`expr $tests_failed + 1`
+        tests_failed=$((tests_failed + 1))
     fi
 }
 
@@ -30,30 +30,30 @@ A="secret_value"
 B='$A'
 
 # 1. echo $B
-res1=`echo $B`
+res1=$(echo $B)
 check '$A' "$res1" "echo \$B (literal \$A)"
 
 # 2. echo "$B"
-res2=`echo "$B"`
+res2=$(echo "$B")
 check '$A' "$res2" "echo \"\$B\" (literal \$A with quotes)"
 
 # 3. eval "echo $B"
 # 展開の仕組み: eval が外側のダブルクォーテーションを解釈して $B を展開 ('$A' になる)
 # -> その後 echo '$A' が実行されるため、出力は secret_value になる
-res3=`eval "echo $B"`
+res3=$(eval "echo $B")
 check 'secret_value' "$res3" "eval \"echo \$B\" (double expansion to value)"
 
 # 4. eval "echo \"$B\""
 # 展開の仕組み: $B が展開されて '$A' になり、eval には echo '$A' が渡される
 # -> シングルクォーテーションで囲まれているため $A は展開されず文字通りの $A になる
-res4=`eval "echo \"$B\""`
+res4=$(eval "echo \"$B\"")
 check 'secret_value' "$res4" "eval \"echo \\\"\$B\\\"\" (outer quoted, inner expanded)"
 
 # 5. eval "echo '$B'"
 # 展開の仕組み: ダブルクォーテーション内のシングルクォーテーションはリテラル扱いなので
 # $B は展開されず、eval にはそのまま echo '$B' が渡される
 # -> 結果は文字通りの $B になる
-res5=`eval "echo '$B'"`
+res5=$(eval "echo '$B'")
 check '$A' "$res5" "eval \"echo '\$B'\" (outer quoted, inner expanded to literal)"
 
 echo "=== 3. undefined and empty variables  ==="
@@ -93,8 +93,8 @@ echo "Test Summary:"
 echo "Total:   $tests_total"
 echo "Failed:  $tests_failed"
 
-FAIL=$(($FAIL + $tests_failed))
-PASS=$(($PASS + $tests_total - $tests_failed))
+FAIL=$((FAIL + tests_failed))
+PASS=$((PASS + tests_total - tests_failed))
 
 if [ "$tests_failed" -gt 0 ]; then
     exit 1

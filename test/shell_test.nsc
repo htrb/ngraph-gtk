@@ -12,17 +12,18 @@ testeq() {
 
   if test "$EXPECT" = "$ACTUAL"
   then
-    PASS=$(($PASS + 1))
+    PASS=$((PASS + 1))
   else
     echo "$NAME FALSE"
     echo "  EXPECT=<$EXPECT>"
     echo "  ACTUAL=<$ACTUAL>"
-    FAIL=$(($FAIL + 1))
+    FAIL=$((FAIL + 1))
   fi
 }
 
 for t in shell_test_*.nsc
 do
+    echo
     echo $t
     . ./$t
 done

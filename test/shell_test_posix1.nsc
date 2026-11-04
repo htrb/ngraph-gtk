@@ -9,12 +9,12 @@ assert_result() {
   result=$(iexpr "$eq")
   if [ "$result" = "1" ]; then
     echo "PASS: $1"
-    success_count=$(iexpr $success_count + 1)
+    success_count=$((success_count + 1))
   else
     echo "FAIL: $1"
     echo "  [実際の出力]: '$2'"
     echo "  [期待の出力]: '$3'"
-    failure_count=$(iexpr $failure_count + 1)
+    failure_count=$((failure_count + 1))
   fi
 }
 
