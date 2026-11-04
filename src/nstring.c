@@ -219,6 +219,35 @@ strcmp2(const char *s1, const char *s2)
 }
 
 static int
+check_range(const char *spo, const char **p_patpo, const char *po)
+{
+  const char *patpo;
+  int match = FALSE;
+  int invert = FALSE;
+  patpo = *p_patpo;
+  if (patpo[1] == '!') {
+    patpo++;
+    invert = TRUE;
+  }
+  patpo++;
+  while (patpo != po) {
+    if ((*(patpo + 1) == '-') && (*(patpo + 2) != ']')) {
+      if ((*patpo <= *spo) && (*spo <= *(patpo + 2))) {
+	match = TRUE;
+	break;
+      } else patpo += 3;
+    } else {
+      if (*patpo == *spo) {
+	match = TRUE;
+	break;
+      } else patpo++;
+    }
+  }
+  *p_patpo = po + 1;
+  return invert ? ! match : match;
+}
+
+static int
 wildmatch2(const char *pat, const char *s,int flags)
 {
   const char *spo,*patpo,*po;
@@ -226,10 +255,8 @@ wildmatch2(const char *pat, const char *s,int flags)
   if ((s==NULL) || (pat==NULL)) return 0;
   spo=s;
   patpo=pat;
-  while (1) {
-    if ((*spo=='\0') && (*patpo=='\0')) return 1;
-    else if (*patpo=='\0') return 0;
-    else if ((flags & WILD_PATHNAME) && (*spo=='/')) {
+  while (*patpo) {
+    if ((flags & WILD_PATHNAME) && (*spo=='/')) {
       if (*patpo!='/') return 0;
       patpo++;
       spo++;
@@ -239,12 +266,14 @@ wildmatch2(const char *pat, const char *s,int flags)
       spo++;
     } else if (*patpo=='*') {
       patpo++;
-      while (1) {
-        if (wildmatch2(patpo,spo,flags)) return 1;
-        if (*spo=='\0') return 0;
+      if (*patpo == '\0') return TRUE;
+      while (*spo) {
+        if (wildmatch2(patpo,spo,flags)) return TRUE;
         spo++;
       }
+      return wildmatch2(patpo,spo,flags);
     } else if (*patpo=='[') {
+      if (*spo=='\0') return FALSE;
       for(po=patpo+1;(*po!='\0') && (*po!=']');po++);
       if (*po=='\0') {
         if (*patpo==*spo) {
@@ -252,36 +281,16 @@ wildmatch2(const char *pat, const char *s,int flags)
           spo++;
         } else return 0;
       } else {
-        int invert = FALSE;
-        if (patpo[1] == '!') {
-          patpo++;
-          invert = TRUE;
-        }
-        patpo++;
-        while (patpo != po) {
-          int is_range = (*(patpo + 1) == '-') && (*(patpo + 2) != ']');
-          int matched;
-
-          if (is_range) {
-            int in_range = (*patpo <= *spo) && (*spo <= *(patpo + 2));
-            matched = invert ? (!in_range && *spo > 0) : in_range;
-          } else {
-            int equals = (*patpo == *spo);
-            matched = invert ? !equals : equals;
-          }
-          if (matched) {
-            patpo = po + 1;
-            spo++;
-            break;
-          }
-          patpo += is_range ? 3 : 1;
-        }
+	if (! check_range(spo, &patpo, po)) return FALSE;
+	spo++;
       }
-    } else if (*patpo==*spo) {
+    } else {
+      if (*spo == '\0' || *patpo != *spo) return FALSE;
       patpo++;
       spo++;
-    } else return 0;
+    }
   }
+  return *spo == '\0';
 }
 
 int
