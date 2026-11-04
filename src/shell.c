@@ -1712,6 +1712,14 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
   nlseek(stdoutfd(),0L,SEEK_SET);
   while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
     writebuf[byte]='\0';
+    for (int i = 0; i < byte - 1; i ++) {
+      /* ignored null byte in input */
+      if (writebuf[i] == '\0') {
+	writebuf[i] = writebuf[i + 1];
+	writebuf[i + 1] = '\0';
+	i++;
+      }
+    }
     if ((buf=nstrcat(buf,writebuf))==NULL) goto errexit;
   }
   nredirect2(1,sout2);
