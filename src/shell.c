@@ -3021,6 +3021,14 @@ syntax_pati(struct cmdlist *cmdcur, struct cmdstack **sx)
     return 2;
   }
   prmcur=cmdcur->prm;
+  if (prmcur->str[0]=='(' && prmcur->str[1]=='\0') {
+    struct prmlist *prm;
+    prm = prmcur;
+    prmcur = prm->next;
+    cmdcur->prm = prmcur;
+    g_free(prm->str);
+    g_free(prm);
+  }
   if (prmcur->str[0]==')') {
     sherror2(ERRUEXPTOK,prmcur->str);
     return 2;
