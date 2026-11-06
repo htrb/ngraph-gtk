@@ -1409,6 +1409,35 @@ struct quote {
   int quote, bquote, escape;
 };
 
+#if 0
+/* for debug */
+static void
+show_prm(struct prmlist *prmcur, int i)
+{
+  struct prmlist *prm;
+  char indent[] = "                       ";
+  indent[i] = '\0';
+  for (prm = prmcur; prm; prm = prm->next) {
+    printfstderr ("%s%s (%d)\n", indent, prm->str, prm->prmno);
+  }
+}
+
+static void
+show_cmd(struct cmdlist *cmdcur)
+{
+  struct cmdlist *cmd;
+  char indent[] = "                       ";
+  int i = 0;
+  for (cmd = cmdcur; cmd; cmd = cmd->next) {
+    indent[i] = '\0';
+    printfstderr ("%s%d\n", indent, cmd->cmdno);
+    indent[i] = ' ';
+    i++;
+    show_prm(cmd->prm, i);
+  }
+}
+#endif
+
 static int
 getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **pcmdcur, struct prmlist **pprmcur, struct quote *quote, struct quote *quote2, int *cend)
 {
