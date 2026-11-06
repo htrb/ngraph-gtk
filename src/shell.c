@@ -1110,7 +1110,7 @@ getfunc(struct nshell *nshell,char *name)
   return FALSE;
 }
 
-static int
+int
 is_dq_special(int ch)
 {
   return (strchr("\"\\`$", ch) != NULL);

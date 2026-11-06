@@ -135,6 +135,7 @@ int system_bg(char *cmd);
 void set_interrupt(void);
 int check_interrupt(void);
 void reset_interrupt(void);
+int is_dq_special(int ch);
 #if WINDOWS
 void show_system_error(void);
 #else
