@@ -2520,6 +2520,28 @@ checkcmd_determine_cmdno(struct cmdlist *cmdcur)
 }
 
 static int
+checkcmd_case_prm(struct cmdlist *cmdcur)
+{
+  struct prmlist *prm, *prmpre = NULL;
+  struct prmlist *prmcur = cmdcur->prm;
+  for (prm = prmcur; prm; prm = prm->next) {
+    if (prm->str && prm->str[0] == ';' && prm->str[1] == ';' && prmpre) {
+      struct cmdlist *cmd;
+      prmpre->next = prm->next;
+      if ((cmd=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
+      cmd->next = cmdcur->next;
+      cmd->prm = prm;
+      cmd->cmdno = 0;
+      cmdcur->next = cmd;
+      cmdcur = cmd;
+      break;
+    }
+    prmpre = prm;
+  }
+  return 0;
+}
+
+static int
 checkcmd_case_pattern(struct cmdlist *cmdcur)
 {
   struct cmdlist *cmdnew;
@@ -2831,6 +2853,9 @@ checkcmd(struct nshell *nshell,struct  cmdlist **cmdroot)
       cmdcur = checkcmd_remove_empty_cmd(cmdroot, cmdcur, cmdprev);
       continue;
     }
+    /* check combined ;; */
+    if (checkcmd_case_prm(cmdcur) < 0) return -1;
+
     /* remove zero length parameter */
     if (checkcmd_determine_cmdno(cmdcur) < 0) return -1;
 
