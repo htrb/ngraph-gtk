@@ -1568,6 +1568,14 @@ unquotation(char *s,int *quoted)
   return snew;
 }
 
+/**
+ * Expands wildcard characters (globbing) and handles quotes/escapes
+ * in a shell argument string.
+ *
+ * @param nshell Pointer to the shell context.
+ * @param str    The target string to be expanded.
+ * @return       The expanded string, or NULL on failure.
+ */
 static char *
 fnexpand(struct nshell *nshell,char *str)
 {
