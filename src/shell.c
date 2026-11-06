@@ -1758,13 +1758,19 @@ expand_arithmetic (struct nshell *nshell, struct expand_context *cx, char *str, 
   if (str[len - 1] != ')') return -1;
   str[len - 1] = '\0';
 
-  quote='"';
+  quote='\0';
   bquote='\0';
   char *eq_str = expand(nshell, str + 1, &quote, &bquote, FALSE);
   if (eq_str == NULL) {
     sherror(ERRMEMORY);
     return -1;
   }
+  if (quote || bquote) {
+    g_free(eq_str);
+    sherror(ERRUEXPEOF);
+    return -1;
+  }
+  wordunsplit(eq_str);
 
   ShellArithmeticContext ctx;
   ctx.src = eq_str;
