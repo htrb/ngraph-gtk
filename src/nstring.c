@@ -219,7 +219,7 @@ strcmp2(const char *s1, const char *s2)
 }
 
 static int
-check_range(const char *spo, const char **p_patpo, const char *po)
+check_range(unsigned char sch, const char **p_patpo)
 {
   const char *patpo;
   int match = FALSE;
@@ -231,34 +231,39 @@ check_range(const char *spo, const char **p_patpo, const char *po)
     invert = TRUE;
   }
   patpo++;
+  if (*patpo == '\0') return -1;
   if (*patpo == ']') escape = TRUE;
-  while (patpo != po) {
-    if (patpo[0] == '\\') {
+  while (*patpo != '\0') {
+    if (*patpo == '\\') {
       escape = TRUE;
       patpo++;
       continue;
     }
-    if (! escape && (patpo + 2 < po) &&  patpo[1] == '-' && patpo[2] != ']') {
+    if (! escape && patpo[1] == '-' && patpo[2] != '\0' && patpo[2] != ']') {
       unsigned char start, end;
       start = *patpo;
-      if (patpo[2] == '\\' && patpo + 3 < po) {
-	end = patpo[3];
+      if (patpo[2] == '\\' && patpo[3] != '\0' && patpo[3] != ']') {
+        end = patpo[3];
+        patpo += 4;
       } else {
-	end = patpo[2];
+        end = patpo[2];
+        patpo += 3;
       }
-      if ((start <= (unsigned char)*spo) && ((unsigned char)*spo <= end)) {
-	match = TRUE;
-	break;
-      } else patpo += 3;
+      if (! match && (start <= sch) && (sch <= end)) {
+        match = TRUE;
+      }
     } else {
-      if (*patpo == *spo) {
-	match = TRUE;
-	break;
-      } else patpo++;
+      if (! match && *patpo == sch) {
+        match = TRUE;
+      }
+      patpo++;
     }
     escape = FALSE;
+    if (*patpo == ']') break;
   }
-  *p_patpo = po + 1;
+  if (*patpo == '\0') return -1;
+
+  *p_patpo = patpo + 1;
   return invert ? ! match : match;
 }
 
@@ -289,15 +294,18 @@ wildmatch2(const char *pat, const char *s,int flags)
       return wildmatch2(patpo,spo,flags);
     } else if (*patpo=='[') {
       if (*spo=='\0') return FALSE;
-      for(po=patpo+1;(*po!='\0') && (*po!=']');po++);
-      if (*po=='\0') {
-        if (*patpo==*spo) {
+      int ret = check_range(*spo, &patpo);
+      if (ret < 0) {
+        if (*patpo == *spo) {
           patpo++;
           spo++;
-        } else return 0;
-      } else {
-	if (! check_range(spo, &patpo, po)) return FALSE;
+        } else {
+          return FALSE;
+        }
+      } else if (ret) {
 	spo++;
+      } else {
+        return FALSE;
       }
     } else {
       if (*spo == '\0' || *patpo != *spo) return FALSE;
