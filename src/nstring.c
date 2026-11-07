@@ -29,6 +29,7 @@
 #include <glib.h>
 
 #include "object.h"
+#include "shell.h"
 #include "nstring.h"
 #include "math/math_equation.h"
 
@@ -270,21 +271,43 @@ check_range(unsigned char sch, const char **p_patpo)
 static int
 wildmatch2(const char *pat, const char *s,int flags)
 {
-  const char *spo,*patpo,*po;
+  const char *spo,*patpo;
+  int sq = 0, dq = 0;
 
   if ((s==NULL) || (pat==NULL)) return 0;
   spo=s;
   patpo=pat;
   while (*patpo) {
+    if (!sq && patpo[0] == '\\') {
+      if (patpo[1] == '\0') return FALSE;
+      if (dq && is_dq_special(patpo[1])) {
+        patpo++;
+        continue;
+      } else if (!dq) {
+        patpo++;
+        if (*spo == '\0' || *patpo != *spo) return FALSE;
+        patpo++;
+        spo++;
+        continue;
+      }
+    } else if (! sq && *patpo == '"') {
+      dq = ! dq;
+      patpo++;
+      continue;
+    } else if (! dq && *patpo == '\'') {
+      sq = ! sq;
+      patpo++;
+      continue;
+    }
     if ((flags & WILD_PATHNAME) && (*spo=='/')) {
       if (*patpo!='/') return 0;
       patpo++;
       spo++;
-    } else if (*patpo=='?') {
+    } else if (! sq && ! dq && *patpo=='?') {
       if (*spo=='\0') return 0;
       patpo++;
       spo++;
-    } else if (*patpo=='*') {
+    } else if (! sq && ! dq && *patpo=='*') {
       patpo++;
       if (*patpo == '\0') return TRUE;
       while (*spo) {
@@ -292,7 +315,7 @@ wildmatch2(const char *pat, const char *s,int flags)
         spo++;
       }
       return wildmatch2(patpo,spo,flags);
-    } else if (*patpo=='[') {
+    } else if (! sq && ! dq && *patpo=='[') {
       if (*spo=='\0') return FALSE;
       int ret = check_range(*spo, &patpo);
       if (ret < 0) {
