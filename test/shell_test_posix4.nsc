@@ -1,0 +1,166 @@
+#!/bin/sh
+
+TEST_COUNT=0
+SUCCESS_COUNT=0
+
+assert_match() {
+    TEST_COUNT=$((TEST_COUNT + 1))
+    target="$1"
+    pattern_desc="$2"
+    result="$3"
+
+    if [ "$result" = "MATCH" ]; then
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+        printf "Test %2d: [OK] %s matched; %s\n" "$TEST_COUNT" "$target" "$pattern_desc"
+    else
+        printf "Test %2d: [FAIL] %s DID NOT match; %s\n" "$TEST_COUNT" "$target" "$pattern_desc"
+    fi
+}
+
+assert_nomatch() {
+    TEST_COUNT=$((TEST_COUNT + 1))
+    target="$1"
+    pattern_desc="$2"
+    result="$3"
+
+    if [ "$result" = "NOMATCH" ]; then
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+        printf "Test %2d: [OK] %s correctly skipped; %s\n" "$TEST_COUNT" "$target" "$pattern_desc"
+    else
+        printf "Test %2d: [FAIL] %s UNEXPECTEDLY matched; %s\n" "$TEST_COUNT" "$target" "$pattern_desc"
+    fi
+}
+
+echo '=== POSIX Shell "case" Statement Comprehensive Test Started ==='
+
+# ----------------------------------------------------
+# 1. 基本的な変数展開
+# ----------------------------------------------------
+VAR_A="apple"
+case "apple" in $VAR_A) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "apple" "\$VAR_A" "$res"
+
+case "banana" in $VAR_A) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_nomatch "banana" "\$VAR_A" "$res"
+
+# ----------------------------------------------------
+# 2. 複雑なパラメータ展開
+# ----------------------------------------------------
+UNSET_VAR=""
+SET_VAR="orange"
+case "default_val" in ${UNSET_VAR:-default_val}) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "default_val" "\text_val" "$res"
+
+case "orange" in ${UNSET_VAR:-$SET_VAR}) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "orange" "\${UNSET_VAR:-\$SET_VAR}" "$res"
+
+# ----------------------------------------------------
+# 3. コマンド置換
+# ----------------------------------------------------
+case "hello" in $(echo hello)) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "hello" "\$(echo hello)" "$res"
+
+case "trim_test" in $(printf "trim_test\n\n\n")) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "trim_test" "\$(printf 'trim_test\\n\\n\\n')" "$res"
+
+# ----------------------------------------------------
+# 4. 算術式展開
+# ----------------------------------------------------
+case "5" in $((2 + 3))) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "5" "\$((2 + 3))" "$res"
+
+# ----------------------------------------------------
+# 5. 複数パターン
+# ----------------------------------------------------
+case "cherry" in apple | banana | cherry) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "cherry" "apple | banana | cherry" "$res"
+
+case "dog" in $(echo cat) | $(echo dog)) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "dog" "\$(echo cat) | \$(echo dog)" "$res"
+
+# ----------------------------------------------------
+# 6. クォーテーションの扱い（ワイルドカード無効化）
+# ----------------------------------------------------
+WILD_VAR="*.txt"
+case "file.txt" in $WILD_VAR) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "file.txt" "unquoted \$WILD_VAR (*.txt)" "$res"
+
+case "file.txt" in "$WILD_VAR") res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_nomatch "file.txt" "double-quoted \"\$WILD_VAR\"" "$res"
+
+case "*.txt" in "$WILD_VAR") res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "*.txt" "double-quoted \"\$WILD_VAR\"" "$res"
+
+# ----------------------------------------------------
+# 7. 部分的なクォート (*".png")
+# ----------------------------------------------------
+case "image.png" in *".png") res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "image.png" "*\".png\"" "$res"
+
+# ----------------------------------------------------
+# 8. スペースを含む展開
+# ----------------------------------------------------
+SPACE_VAR="hello world"
+case "hello world" in $SPACE_VAR) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "hello world" "\$SPACE_VAR (containing spaces)" "$res"
+
+# ----------------------------------------------------
+# 9. 生のバックスラッシュによるエスケープ
+# ----------------------------------------------------
+case "file.txt" in \*.txt) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_nomatch "file.txt" "raw-escaped \\*.txt" "$res"
+
+case "*.txt" in \*.txt) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "*.txt" "raw-escaped \\*.txt" "$res"
+
+case ")" in \)) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match ")" "escaped closing parenthesis \\)" "$res"
+
+case "|" in \|) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match "|" "escaped pipe \\|" "$res"
+
+# ----------------------------------------------------
+# 10. ダブルクォーテーション（""）内での \ の挙動
+# ----------------------------------------------------
+case '$VAR_A' in "\$VAR_A") res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match '$VAR_A' "\"\\\$VAR_A\" (inside double quotes)" "$res"
+
+case '\a' in "\a") res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match '\\a' "\"\\a\" (inside double quotes)" "$res"
+
+# ----------------------------------------------------
+# 11. 変数展開「後」の文字列に含まれる \ の扱い（正しいPOSIX挙動版）
+# ----------------------------------------------------
+# ESC_WILD='\*' の場合、展開された \ は有効なエスケープ文字として機能するため、
+# パターンとしては「文字通りの * （1文字）」と同義になります。
+
+ESC_WILD='\*'
+
+# 「\anything」にはマッチしない（* のみにマッチするため）
+case '\anything' in $ESC_WILD) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_nomatch '\\anything' "\$ESC_WILD  (after expansion)" "$res"
+
+# 「any_string」にもマッチしない
+case "any_string" in $ESC_WILD) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_nomatch "any_string" "\$ESC_WILD  (after expansion)" "$res"
+
+# 「*」（アスタリスク文字そのもの）にだけマッチする
+case '*' in $ESC_WILD) res="MATCH" ;; *) res="NOMATCH" ;; esac
+assert_match '*' "\$ESC_WILD after expansion (literal *)" "$res"
+
+# ----------------------------------------------------
+# 結果発表
+# ----------------------------------------------------
+printf "=== Tests completed ===\n"
+printf "Result: %d / %d Passed\n" "$SUCCESS_COUNT" "$TEST_COUNT"
+
+PASS=$((PASS + TOTAL - FAILED))
+FAIL=$((FAIL + FAILED))
+
+if [ $SUCCESS_COUNT -eq $TEST_COUNT ]; then
+    printf "All POSIX-compatible tests passed!\n"
+    exit 0
+else
+    printf "Some tests have failed. Please check the logs.\n"
+    exit 1
+fi

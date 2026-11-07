@@ -9,7 +9,8 @@ EXTRA_DIST = math_test.nsc math_test_utf8.dat math_test_new.dat		\
 	shell_test_nest.nsc shell_test_prm.nsc shell_test_quote.nsc	\
 	shell_test_loop.nsc shell_test_return.nsc shell_test_var.nsc	\
 	shell_test_posix1.nsc shell_test_posix2.nsc			\
-	shell_test_posix3.nsc shell_test.nsc test.sh $(TESTS)
+	shell_test_posix3.nsc shell_test_posix4.nsc shell_test.nsc	\
+	test.sh $(TESTS)
 
 # original Ngraph causes following errors
 #
