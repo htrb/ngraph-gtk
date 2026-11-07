@@ -1536,6 +1536,14 @@ errexit:
   return err;
 }
 
+/**
+ * @brief Escapes special characters and handles IFS substitution for string quoting.
+ *
+ * @param nshell Pointer to the shell structure.
+ * @param s The input string to process.
+ * @param quote The current quoting state context.
+ * @return char* A newly allocated string with quotes and escapes applied, or NULL on failure.
+ */
 static char *
 quotation(struct nshell *nshell,char *s,int quote)
 {
