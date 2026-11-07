@@ -231,6 +231,7 @@ check_range(const char *spo, const char **p_patpo, const char *po)
     invert = TRUE;
   }
   patpo++;
+  if (*patpo == ']') escape = TRUE;
   while (patpo != po) {
     if (patpo[0] == '\\') {
       escape = TRUE;
