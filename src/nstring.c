@@ -224,6 +224,7 @@ check_range(const char *spo, const char **p_patpo, const char *po)
   const char *patpo;
   int match = FALSE;
   int invert = FALSE;
+  int escape = FALSE;
   patpo = *p_patpo;
   if (patpo[1] == '!') {
     patpo++;
@@ -231,8 +232,20 @@ check_range(const char *spo, const char **p_patpo, const char *po)
   }
   patpo++;
   while (patpo != po) {
-    if ((*(patpo + 1) == '-') && (*(patpo + 2) != ']')) {
-      if ((*patpo <= *spo) && (*spo <= *(patpo + 2))) {
+    if (patpo[0] == '\\') {
+      escape = TRUE;
+      patpo++;
+      continue;
+    }
+    if (! escape && (patpo + 2 < po) &&  patpo[1] == '-' && patpo[2] != ']') {
+      unsigned char start, end;
+      start = *patpo;
+      if (patpo[2] == '\\' && patpo + 3 < po) {
+	end = patpo[3];
+      } else {
+	end = patpo[2];
+      }
+      if ((start <= (unsigned char)*spo) && ((unsigned char)*spo <= end)) {
 	match = TRUE;
 	break;
       } else patpo += 3;
@@ -242,6 +255,7 @@ check_range(const char *spo, const char **p_patpo, const char *po)
 	break;
       } else patpo++;
     }
+    escape = FALSE;
   }
   *p_patpo = po + 1;
   return invert ? ! match : match;
