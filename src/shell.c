@@ -1569,6 +1569,13 @@ quotation(struct nshell *nshell,char *s,int quote)
   return snew;
 }
 
+/**
+ * @brief Removes quotes, handles escapes, and unescapes special control characters from a string.
+ *
+ * @param s The input string to process.
+ * @param quoted Pointer to an integer set to TRUE if quotes were found, FALSE otherwise.
+ * @return char* A newly allocated string with quotes removed, or NULL on failure.
+ */
 static char *
 unquotation(char *s,int *quoted)
 {
