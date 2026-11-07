@@ -4475,9 +4475,40 @@ cmdexec_handle_case_pop(struct cmdstack *stroot, struct cmdstack **st, int *case
 }
 
 static int
+cmdexec_handle_case_compare (struct nshell *nshell, struct prmlist *prm, const char *pat)
+{
+  while (prm) {
+    int quote, bquote;
+    char *estr;
+    quote='\0';
+    bquote='\0';
+
+    estr = expand(nshell, prm->str, &quote, &bquote, FALSE);
+    if (estr == NULL) {
+      sherror(ERRMEMORY);
+      return -1;
+    }
+    if (quote || bquote) {
+      g_free (estr);
+      return -1;
+    }
+    wordunsplit(estr);
+
+    if (wildmatch(estr, pat, 0)) {
+      g_free (estr);
+      break;
+    }
+    g_free (estr);
+    prm=prm->next;
+    prm=prm->next;
+  }
+  return prm ? TRUE : FALSE;
+}
+
+static int
 cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
-  struct prmlist *prmcur, *prm;
+  struct prmlist *prmcur;
   int quote, bquote;
   int casetrue;
   char *str;
@@ -4505,13 +4536,9 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
     if (cmdexec_handle_case_pop(*stroot, &st, &casetrue, &pat) < 0) return -1;
     if (casetrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else {
-      prm=cmdfd->cmdcur->prm;
-      while (prm!=NULL) {
-	if (wildmatch(prm->str,pat,0)) break;
-	prm=prm->next;
-	prm=prm->next;
-      }
-      if (prm!=NULL) {
+      int ret = cmdexec_handle_case_compare (nshell, cmdfd->cmdcur->prm, pat);
+      if (ret < 0) return -1;
+      if (ret) {
 	casetrue=TRUE;
 	cmdfd->cmdcur=cmdfd->cmdcur->next;
       } else cmdfd->cmdcur=cmdfd->cmdcur->done;
