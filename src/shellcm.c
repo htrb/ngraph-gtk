@@ -385,6 +385,7 @@ cmset(struct nshell *nshell,int argc,char **argv)
     switch (s[1]) {
     case 'e':
       nshell->optione = ops;
+      nshell->optione_changed = TRUE;
       break;
     case 'f':
       nshell->optionf = ops;

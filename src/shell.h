@@ -73,7 +73,7 @@ struct nshell {
   int quit;
   int options;
   int optionf;
-  int optione;
+  int optione, optione_changed;
   int optionv;
   int optionx;
   int fd;

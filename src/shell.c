@@ -25,6 +25,8 @@
  * SYNTAX:
  *
  *    name1=val1 name2=val2 ... command arg1 arg2 arg3 ...
+ *    command || command
+ *    command && command
  *
  *    # comment
  *
@@ -608,7 +610,7 @@ enum {PPNULL=0,PPNO,PPSETV,PPSETO,PPSO1,PPSO2,PPSI1,PPSI2,PPPATOR,PPPIPE,
 struct cmdstack {
   int cmdno;
   char *val;
-  int ival,iftrue,casetrue;
+  int ival,iftrue,casetrue,executed;
   char *pat;
   struct prmlist *prm;
   struct cmdlist *cmd;
@@ -4356,6 +4358,7 @@ cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
     }
   } else if (stcur->cmdno==CPWHILE) {
     if (nshell->status) {
+      if (! stcur->executed) nshell->status = 0;
       cmdfd->cmdcur=cmdfd->cmdcur->done;
       cmdstackrmlast(stroot);
       cmdfd->cmdcur=cmdfd->cmdcur->next;
@@ -4363,12 +4366,14 @@ cmdexec_cpdo(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
     }
   } else if (stcur->cmdno==CPUNTIL) {
     if (!nshell->status) {
+      if (! stcur->executed) nshell->status = 0;
       cmdfd->cmdcur=cmdfd->cmdcur->done;
       cmdstackrmlast(stroot);
       cmdfd->cmdcur=cmdfd->cmdcur->next;
       return 0;
     }
   }
+  stcur->executed = TRUE;
   cmdfd->cmdcur=cmdfd->cmdcur->next;
   return 0;
 }
@@ -4470,6 +4475,7 @@ cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct
   case CPTHEN:
     if (iftrue || nshell->status) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else {
+      st->executed = TRUE;
       iftrue=TRUE;
       cmdfd->cmdcur=cmdfd->cmdcur->next;
     }
@@ -4480,6 +4486,7 @@ cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct
   case CPELSE:
     if (iftrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else cmdfd->cmdcur=cmdfd->cmdcur->next;
+    if (cmdno == CPELSE && ! iftrue) st->executed = TRUE;
     break;
   }
   cmdstackrmlast(stroot);
@@ -4496,6 +4503,7 @@ cmdexec_handle_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdsta
   case CPIF:
     if ((st=cmdstackcat(stroot,CPIF))==NULL) return -1;
     st->iftrue=FALSE;
+    st->executed = FALSE;
     cmdfd->cmdcur=cmdfd->cmdcur->next;
     break;
   case CPTHEN:
@@ -4504,6 +4512,8 @@ cmdexec_handle_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdsta
     if (cmdexec_replace_stack_if(nshell, cmdfd, stroot) < 0) return -1;
     break;
   case CPFI:
+    if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
+    if (! st->executed) nshell->status = 0;
     cmdstackrmlast(stroot);
     cmdfd->cmdcur=cmdfd->cmdcur->next;
   }
@@ -4619,6 +4629,7 @@ cmdexec_cpwhile_until(struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
   if ((stcur=cmdstackcat(stroot,cmdfd->cmdcur->cmdno))==NULL) return -1;
   stcur->cmd=cmdfd->cmdcur;
   cmdfd->cmdcur=cmdfd->cmdcur->next;
+  stcur->executed = FALSE;
   return 0;
 }
 
@@ -4789,7 +4800,10 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
     int and_or = 0;
     if (cmdfd.cmdcur->next) and_or = cmdfd.cmdcur->next->and_or;
-    if (and_or) nshell->optione = FALSE;
+    if (and_or) {
+      nshell->optione_changed = FALSE;
+      nshell->optione = FALSE;
+    }
     if ((ret = cmdexec_step(nshell, &cmdfd, &stroot, namedfunc, &err)) < 0) {
       goto errexit;
     }
@@ -4800,7 +4814,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       }
     }
   }
-  nshell->optione = optione;
+  if (! nshell->optione_changed) nshell->optione = optione;
   err=0;
 
  errexit:
@@ -4964,6 +4978,7 @@ newshell(void)
   nshell->options=TRUE;
   nshell->optionf=FALSE;
   nshell->optione=TRUE;
+  nshell->optione_changed=FALSE;
   nshell->optionv=FALSE;
   nshell->optionx=FALSE;
   nshell->readbuf=g_malloc(SHELLBUFSIZE);
@@ -5067,6 +5082,7 @@ setshelloption(struct nshell *nshell,char *opt)
     nshell->options=flag;
     break;
   case 'e':
+    nshell->optione_changed = TRUE;
     nshell->optione=flag;
     break;
   case 'v':
