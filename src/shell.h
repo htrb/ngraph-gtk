@@ -45,6 +45,7 @@ struct cmdlist {
   struct prmlist *prm;
   void *done;
   char *pipefile;
+  int and_or;
 };
 
 struct vallist;

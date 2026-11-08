@@ -603,7 +603,7 @@ enum {CPNULL=1,CPIF,CPTHEN,CPELSE,CPELIF,CPFI,CPCASE,CPESAC,
       CPPATI,CPPATO,CPFN,CPNO};
 
 enum {PPNULL=0,PPNO,PPSETV,PPSETO,PPSO1,PPSO2,PPSI1,PPSI2,PPPATOR,PPPIPE,
-      PPAND,PPEND};
+      PPAND,PPANDAND,PPOROR,PPEND};
 
 struct cmdstack {
   int cmdno;
@@ -1052,7 +1052,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
     cmdcur = cmdcur->next;
   }
 
-  cmdnew = g_malloc(sizeof(* cmdnew));
+  cmdnew = g_malloc0(sizeof(* cmdnew));
   if (cmdnew == NULL) {
     delval(nshell, name);
     return NULL;
@@ -1213,8 +1213,13 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   if (!*quote && !*bquote) {
     /* check speecial character */
     if (strchr(";&|^<>()",po[i])!=NULL) {
-      if (strchr(";&)",po[i])!=NULL) *cend=po[i];
-      if ((strchr("<>",po[i])!=NULL) && (po[i]==po[i+1])) {
+      if ((po[i]=='&') && (po[i+1]=='&')) {
+	i++;
+      } else if ((po[i]=='|') && (po[i+1]=='|')) {
+	i++;
+      } else if (strchr(";&)",po[i])!=NULL) {
+	*cend=po[i];
+      } else if ((strchr("<>",po[i])!=NULL) && (po[i]==po[i+1])) {
 	i++;
 	if (po[i] == '<' && po[i + 1] == '-') {
 	  i++;
@@ -1409,7 +1414,7 @@ struct quote {
   int quote, bquote, escape;
 };
 
-#if 0
+#if 1
 /* for debug */
 static void
 show_prm(struct prmlist *prmcur, int i)
@@ -1430,7 +1435,7 @@ show_cmd(struct cmdlist *cmdcur)
   int i = 0;
   for (cmd = cmdcur; cmd; cmd = cmd->next) {
     indent[i] = '\0';
-    printfstderr ("%s%d\n", indent, cmd->cmdno);
+    printfstderr ("%scmdno=%d, and_or = %c\n", indent, cmd->cmdno, cmd->and_or);
     indent[i] = ' ';
     i++;
     show_prm(cmd->prm, i);
@@ -1461,7 +1466,7 @@ getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **p
       prmcur->str=po;
     } else if (spo!=NULL) {
       if (*cmdroot==NULL) {
-	if ((cmdcur=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
+	if ((cmdcur=g_malloc0(sizeof(struct cmdlist)))==NULL) return -1;
 	*cmdroot=cmdcur;
 	cmdcur->next=NULL;
 	cmdcur->prm=NULL;
@@ -1476,7 +1481,7 @@ getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **p
       prmcur->str[len]='\0';
     }
     if (*cend) {
-      if ((cmdcur->next=g_malloc(sizeof(struct cmdlist)))==NULL)
+      if ((cmdcur->next=g_malloc0(sizeof(struct cmdlist)))==NULL)
 	return -1;
       cmdcur=cmdcur->next;
       cmdcur->next=NULL;
@@ -2527,7 +2532,7 @@ static struct cmdlist *
 checkcmd_create_cmdnew(struct cmdlist *cmdcur, struct prmlist *prmcur)
 {
   struct cmdlist *cmdnew;
-  cmdnew = g_malloc(sizeof(struct cmdlist));
+  cmdnew = g_malloc0(sizeof(struct cmdlist));
   if (cmdnew == NULL) return NULL;
 
   cmdnew->next = cmdcur->next;
@@ -2535,6 +2540,7 @@ checkcmd_create_cmdnew(struct cmdlist *cmdcur, struct prmlist *prmcur)
   cmdnew->prm = prmcur->next;
   prmcur->next = NULL;
   cmdnew->cmdno = CPNO;
+  cmdnew->and_or = 0;
   return cmdnew;
 }
 
@@ -2550,6 +2556,9 @@ checkcmd_determine_cmdno(struct cmdlist *cmdcur)
   prmcur=cmdcur->prm;
   if ((prmcur->str[0]!='\0')
       && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
+
+  if (prmcur->str[0]=='|' && prmcur->str[1]=='|') cmd=CPNO;
+  if (prmcur->str[0]=='&' && prmcur->str[1]=='&') cmd=CPNO;
 
   i = check_cpcmd(prmcur->str);
   if (i >= 0) {
@@ -2580,7 +2589,7 @@ checkcmd_case_prm(struct cmdlist *cmdcur)
     if (prm->str && prm->str[0] == ';' && prm->str[1] == ';' && prmpre) {
       struct cmdlist *cmd;
       prmpre->next = prm->next;
-      if ((cmd=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
+      if ((cmd=g_malloc0(sizeof(struct cmdlist)))==NULL) return -1;
       cmd->next = cmdcur->next;
       cmd->prm = prm;
       cmd->cmdno = 0;
@@ -2812,6 +2821,20 @@ checkcmd_pipe(struct cmdlist *cmdcur, struct prmlist *prmcur)
   return 0;
 }
 
+static int
+checkcmd_and_or(struct cmdlist *cmdcur, struct prmlist *prmcur, int type)
+{
+  struct cmdlist *cmdnew;
+  cmdcur->cmdend = (type == '|')  ? PPOROR : PPANDAND;
+  prmcur->prmno = (type == '|')  ? PPOROR : PPANDAND;
+  cmdnew = checkcmd_create_cmdnew(cmdcur, prmcur);
+  if (cmdnew == NULL) return -1;
+
+  cmdnew->and_or = type;
+
+  return 0;
+}
+
 static void
 checkcmd_end(struct cmdlist *cmdcur, struct prmlist *prmcur)
 {
@@ -2844,12 +2867,21 @@ checkcmd_parse_redirects_and_pipes(struct nshell *nshell, struct cmdlist *cmdcur
 	prmcur=prmcur->next;
 	break;
       case '|':
-	ret = checkcmd_pipe(cmdcur, prmcur);
+	if (prmcur->str[1] == '|') {
+	  ret = checkcmd_and_or(cmdcur, prmcur, prmcur->str[1]);
+	} else {
+	  ret = checkcmd_pipe(cmdcur, prmcur);
+	}
 	if (ret) return ret;
 	break;
       case '&':
-	prmcur->prmno=PPAND;
-	cmdcur->cmdend=PPAND;
+	if (prmcur->str[1] == '&') {
+	  ret = checkcmd_and_or(cmdcur, prmcur, prmcur->str[1]);
+	  if (ret) return ret;
+	} else {
+	  prmcur->prmno=PPAND;
+	  cmdcur->cmdend=PPAND;
+	}
 	break;
       case ';':
 	checkcmd_end(cmdcur, prmcur);
@@ -3578,6 +3610,20 @@ cmdparse_redirect(struct cmdexec_pipe *pipe, struct cmdexec_fd *cmdfd)
       g_free(prm);
     } else if (prmcur->prmno==PPPIPE) {
       pipe->pipef=TRUE;
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+    } else if (prmcur->prmno==PPOROR) {
+      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
+      else prmprev->next=prmcur->next;
+      prm=prmcur;
+      prmcur=prmcur->next;
+      g_free(prm->str);
+      g_free(prm);
+    } else if (prmcur->prmno==PPANDAND) {
       if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
       else prmprev->next=prmcur->next;
       prm=prmcur;
@@ -4686,10 +4732,41 @@ cmdexec_step(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **
   return 0;
 }
 
+/*
+ * Short-circuit evaluation for && and ||.
+ *
+ * Skip commands belonging to the same logical chain.
+ * If a skipped command is part of a pipeline,
+ * skip the rest of the pipeline as well.
+ */
+static void
+cmdexec_jump_unused(struct cmdexec_fd *cmdfd, int and_or)
+{
+  struct cmdlist *previous_cmd = NULL;
+  /*
+   * Skip subsequent commands connected by the same
+   * logical operator. Their execution condition
+   * can never become true after short-circuiting.
+   */
+  while (cmdfd->cmdcur && cmdfd->cmdcur->and_or == and_or) {
+    previous_cmd = cmdfd->cmdcur;
+    cmdfd->cmdcur = cmdfd->cmdcur->next;
+  }
+  /* skip remaining commands in same pipeline */
+  while (cmdfd->cmdcur && previous_cmd && previous_cmd->cmdend == PPPIPE) {
+    previous_cmd = cmdfd->cmdcur;
+    cmdfd->cmdcur = cmdfd->cmdcur->next;
+  }
+  if (cmdfd->cmdcur && cmdfd->cmdcur->and_or == and_or) {
+    cmdexec_jump_unused(cmdfd, and_or);
+  }
+}
+
+
 static int
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
-  int err;
+  int err, ret;
   struct cmdstack *stroot;
   struct cmdexec_fd cmdfd;
 
@@ -4708,11 +4785,22 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   cmdexec_print_options(nshell, cmdroot);
 
   cmdfd.cmdcur=cmdroot;
+  int optione = nshell->optione;
   while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
-    if (cmdexec_step(nshell, &cmdfd, &stroot, namedfunc, &err) < 0) {
+    int and_or = 0;
+    if (cmdfd.cmdcur->next) and_or = cmdfd.cmdcur->next->and_or;
+    if (and_or) nshell->optione = FALSE;
+    if ((ret = cmdexec_step(nshell, &cmdfd, &stroot, namedfunc, &err)) < 0) {
       goto errexit;
     }
+    if (cmdfd.cmdcur && cmdfd.cmdcur->and_or) {
+      int status = (and_or == '&') ? nshell->status : ! nshell->status;
+      if (status) {
+	cmdexec_jump_unused(&cmdfd, and_or);
+      }
+    }
   }
+  nshell->optione = optione;
   err=0;
 
  errexit:
