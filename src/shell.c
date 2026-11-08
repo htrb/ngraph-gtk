@@ -4780,6 +4780,7 @@ static int
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
   int err, ret;
+  int optione;
   struct cmdstack *stroot;
   struct cmdexec_fd cmdfd;
 
@@ -4797,12 +4798,14 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 
   cmdexec_print_options(nshell, cmdroot);
 
+  optione = nshell->optione;
+  nshell->optione_changed = FALSE;
   cmdfd.cmdcur=cmdroot;
-  int optione = nshell->optione;
   while ((cmdfd.cmdcur!=NULL) && (!(nshell->quit))) {
     int and_or = 0;
     if (cmdfd.cmdcur->next) and_or = cmdfd.cmdcur->next->and_or;
     if (and_or) {
+      if (nshell->optione_changed) optione = nshell->optione;
       nshell->optione_changed = FALSE;
       nshell->optione = FALSE;
     }
@@ -4816,10 +4819,10 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       }
     }
   }
-  if (! nshell->optione_changed) nshell->optione = optione;
   err=0;
 
  errexit:
+  if (! nshell->optione_changed) nshell->optione = optione;
   cmdexec_finalize(nshell, cmdroot, &cmdfd, stroot);
   return err;
 }
