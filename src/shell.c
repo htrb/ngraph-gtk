@@ -4260,9 +4260,11 @@ cmdrun (struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, struct c
       if (cmdrun_dot(nshell, cmdfd, prmcur) < 0) return -1;
       /* break */
     } else if (strcmp0("break",cmds)==0) {
+      nshell->status = 0;
       if (cmdrun_break(cmdfd, pipe, stroot, prmcur) < 0) return -1;
       /* continue */
     } else if (strcmp0("continue",cmds)==0) {
+      nshell->status = 0;
       if (cmdrun_continue(cmdfd, pipe, stroot, prmcur) < 0) return -1;
       /* return */
     } else if (strcmp0("return",cmds)==0) {
