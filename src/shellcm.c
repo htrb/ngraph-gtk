@@ -489,7 +489,7 @@ cmunset(struct nshell *nshell,int argc,char **argv)
   for (i=1;i<argc;i++) {
     if ((strcmp0(argv[i],"PATH")!=0) && (strcmp0(argv[i],"PS1")!=0)
     && (strcmp0(argv[i],"PS2")!=0) && (strcmp0(argv[i],"IFS")!=0)) {
-      if (!delval(nshell,argv[i])) return ERR;
+      delval(nshell,argv[i]);
    } else {
       sherror3(argv[0],ERRUNSET,argv[i]);
       return ERR;
