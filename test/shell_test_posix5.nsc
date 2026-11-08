@@ -1,0 +1,139 @@
+#!/bin/sh
+
+total=0
+failed=0
+
+result() {
+    index=$(printf '% 2s' "$1")
+    if [ "$2" = "$3" ]
+    then
+	total=$((total + 1))
+    else
+	failed=$((failed + 1))
+        echo "$index: NG expected='$3' actual='$2'"
+    fi
+}
+
+no=1
+cmd=$(false && echo A && echo B)
+result "$((no++))" "$cmd" ""
+
+cmd=$(true || echo A || echo B)
+result "$((no++))" "$cmd" ""
+
+cmd=$(true && echo A || echo B)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(false && echo A || echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(false && echo A || echo -n B && echo C)
+result "$((no++))" "$cmd" "BC"
+
+cmd=$(true || echo A && echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(false && echo A || echo B || echo C)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(true || echo A && echo B || echo C)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(false && echo A && echo B || echo C)
+result "$((no++))" "$cmd" "C"
+
+cmd=$(true || echo A || echo B && echo C)
+result "$((no++))" "$cmd" "C"
+
+cmd=$(false || echo -n A && echo B)
+result "$((no++))" "$cmd" "AB"
+
+cmd=$(true && echo -n A && echo -n B || echo C)
+result "$((no++))" "$cmd" "AB"
+
+cmd=$(false && echo A || echo -n B && echo C || echo D)
+result "$((no++))" "$cmd" "BC"
+
+cmd=$(true || echo A && echo -n B || echo C && echo D)
+result "$((no++))" "$cmd" "BD"
+
+cmd=$(false || false || echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(true && true && echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(false && echo A ; echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(true || echo A ; echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(true && false && echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(true && false || echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(false || false || echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(true || false && echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(false || true; echo OK)
+result "$((no++))" "$cmd" "OK"
+
+cmd=$(true && false; echo NG)
+result "$((no++))" "$cmd" "NG"
+
+cmd=$(false && echo A | cat)
+result "$((no++))" "$cmd" ""
+
+cmd=$(false && echo A | cat ; echo END)
+result "$((no++))" "$cmd" "END"
+
+cmd=$(false && echo A | cat || echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(false && echo A | cat | cat || echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(false && echo A | cat && echo B)
+result "$((no++))" "$cmd" ""
+
+cmd=$(false && echo A | cat || echo -n B && echo C)
+result "$((no++))" "$cmd" "BC"
+
+cmd=$(true || echo A | cat && echo B)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(true && echo A | cat || echo B)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(echo -n A && for i in 1 2 3 ; do echo -n $i ;done)
+result "$((no++))" "$cmd" "A123"
+
+cmd=$(if true; then echo -n OK ; fi && echo A)
+result "$((no++))" "$cmd" "OKA"
+
+cmd=$(if false; then echo NG; fi || echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(case x in (x) echo -n OK ;; esac && echo A)
+result "$((no++))" "$cmd" "OKA"
+
+cmd=$(while false; do echo NG; done || echo A)
+result "$((no++))" "$cmd" ""
+
+items=""
+cmd=$(for i in $items ; do echo a ;done && echo -n A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(for i in $items ; do echo a ;done || echo -n A)
+result "$((no++))" "$cmd" ""
+
+echo "total: $total (failed: $failed)"
+
+PASS=$((PASS + total - failed))
+FAIL=$((FAIL + failed))
