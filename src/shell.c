@@ -3271,6 +3271,17 @@ syntax_check_transition(struct cmdlist *cmdcur, int *needcmd, struct cmdstack **
 }
 
 static int
+syntax_no(struct cmdlist *cmdcur, struct cmdstack **sx)
+{
+  struct prmlist *prm = cmdcur->prm;
+  if (cmdcur->and_or && prm && (prm->prmno == PPANDAND || prm->prmno == PPOROR)) {
+    sherror2(ERRUEXPTOK, prm->str ? prm->str : "");
+    return -1;
+  }
+  return 0;
+}
+
+static int
 syntax_check(struct cmdlist *cmdcur, struct cmdstack **sx, int cmd)
 {
   int ret;
@@ -3346,6 +3357,10 @@ syntax_check(struct cmdlist *cmdcur, struct cmdstack **sx, int cmd)
     break;
   case CPBO:
     ret = syntax_bo(cmdcur, sx);
+    if (ret) return ret;
+    break;
+  case CPNO:
+    ret = syntax_no(cmdcur, sx);
     if (ret) return ret;
     break;
   default:
