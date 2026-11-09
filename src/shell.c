@@ -2560,8 +2560,8 @@ checkcmd_determine_cmdno(struct cmdlist *cmdcur)
   if ((prmcur->str[0]!='\0')
       && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
 
-  if (prmcur->str[0]=='|' && prmcur->str[1]=='|') cmd=CPNO;
-  if (prmcur->str[0]=='&' && prmcur->str[1]=='&') cmd=CPNO;
+  if (strcmp0("||", prmcur->str) == 0) cmd = CPNO;
+  if (strcmp0("&&", prmcur->str) == 0) cmd = CPNO;
 
   i = check_cpcmd(prmcur->str);
   if (i >= 0) {
