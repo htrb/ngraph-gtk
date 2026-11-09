@@ -3885,6 +3885,10 @@ cmdrun_loop_common(const struct cmdexec_pipe *pipe, struct cmdstack **stroot, st
       sherror2(ERRNUMERIC,arg);
       return -1;
     }
+    if (*level <= 0) {
+      sherror2(ERRILNUM, arg);
+      return -1;
+    }
   } else *level=1;
   looplevel=0;
   stcur=*stroot;
