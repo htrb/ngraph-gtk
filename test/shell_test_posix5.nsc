@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set +e
+
 total=0
 failed=0
 
@@ -131,6 +133,30 @@ cmd=$(for i in $items ; do echo a ;done && echo -n A)
 result "$((no++))" "$cmd" "A"
 
 cmd=$(for i in $items ; do echo a ;done || echo -n A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(for i in 1 ; do false ;done && echo -n A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(for i in 1 ; do false ;done || echo -n A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(for i in 1 ; do true ;done && echo -n A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(for i in 1 ; do true ;done || echo -n A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(while true; do false; break; done || echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(while true; do false; break; done && echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(for i in 1 ; do false; continue; done && echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(for i in 1 ; do false; continue; done || echo A)
 result "$((no++))" "$cmd" ""
 
 echo "total: $total (failed: $failed)"
