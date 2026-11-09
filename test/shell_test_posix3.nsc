@@ -160,8 +160,8 @@ var_control=$(printf "A\nB\tC")
 assert_eq "Containing newline and tab (A\\nB\\tC)" "5" "${#var_control}"
 
 # 6. String containing a null character (\0)
-var_null=$(printf "A\0B")
-assert_eq "Containing a null character (A\\0B)" "2" "${#var_null}"
+var_null=$(printf "A\0\0\0\0BCD\0E")
+assert_eq "Containing a null character (A\\0\\0\\0BCD\\0E)" "5" "${#var_null}"
 
 # 7. UTF-8 multi-byte characters (Japanese)
 var_ja="こんにちは"
