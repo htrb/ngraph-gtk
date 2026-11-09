@@ -183,6 +183,7 @@ static char *cmderrorlist[] = {
   "syntax error.",
   "security check.",
   "cannot allocate enough memory.",
+  "Illegal number.",
   "unknown error.",
 };
 
