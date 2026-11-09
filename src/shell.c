@@ -374,7 +374,7 @@ remove_duplicate_history(char *str)
 
   for(pos = history_length; pos >= 0; pos--) {
     pos = history_search_pos(str, -1, pos);
-    if(pos >= 0 && strcmp(history_get(pos + history_base)->line, str) == 0) {
+    if(pos >= 0 && strcmp0(history_get(pos + history_base)->line, str) == 0) {
       entry = remove_history(pos);
       if (entry) {
 	free_history_entry(entry);
