@@ -3936,6 +3936,7 @@ cmdrun_continue(struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, struc
   if (looplevel < 0) return -1;
   if (looplevel == 0) return 0;
 
+  a = (a > looplevel) ? looplevel : a;
   while (a>0) {
     if ((stcur=cmdstackgetpo(*stroot))==NULL) break;
     if ((stcur->cmdno==CPFOR) || (stcur->cmdno==CPWHILE)
