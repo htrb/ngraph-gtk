@@ -1417,7 +1417,7 @@ struct quote {
   int quote, bquote, escape;
 };
 
-#if 1
+#if 0
 /* for debug */
 static void
 show_prm(struct prmlist *prmcur, int i)
@@ -2577,7 +2577,8 @@ checkcmd_determine_cmdno(struct cmdlist *cmdcur)
   }
   cmdcur->cmdno=cmd;
   if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO)
-      && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)) {
+      && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)
+      && (strcmp0(";", prmcur->next->str) || ((cmd!=CPESAC) && (cmd!=CPFI) && (cmd!=CPDONE)))) {
     struct cmdlist *cmdnew;
     cmdnew = checkcmd_create_cmdnew(cmdcur, cmdcur->prm);
     if (cmdnew == NULL) return -1;
