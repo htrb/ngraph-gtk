@@ -2825,9 +2825,7 @@ checkcmd_pipe(struct cmdlist *cmdcur, struct prmlist *prmcur)
 
   cmdcur->cmdend=PPPIPE;
   prmcur->prmno=PPPIPE;
-  if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
-      || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
-    sherror2(ERRUEXPTOK,prmcur->str);
+  if (checkcmd_next_command(prmcur) < 0) {
     return 2;
   }
   cmdnew = checkcmd_create_cmdnew(cmdcur, prmcur);
