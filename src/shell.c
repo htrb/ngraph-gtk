@@ -2779,11 +2779,20 @@ checkcmd_read_heredoc(struct nshell *nshell, struct prmlist *prmcur)
 }
 
 static int
-checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+checkcmd_next_command(struct prmlist *prmcur)
 {
   if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
       || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
-    sherror2(ERRUEXPTOK,prmprev ? prmprev->str : "");
+    sherror2(ERRUEXPTOK,prmcur->str);
+    return -1;
+  }
+  return 0;
+}
+
+static int
+checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+{
+  if (checkcmd_next_command(prmcur) < 0) {
     return 2;
   }
   if (prmcur->str[0]==prmcur->str[1]) {
