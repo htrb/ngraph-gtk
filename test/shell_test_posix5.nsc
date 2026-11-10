@@ -122,8 +122,70 @@ result "$((no++))" "$cmd" "OKA"
 cmd=$(if false; then echo NG; fi || echo A)
 result "$((no++))" "$cmd" ""
 
+cmd=$(if false; then echo NG; else echo -n OK; fi || echo A)
+result "$((no++))" "$cmd" "OK"
+
+cmd=$(if false; then echo NG; else echo -n OK; fi && echo A)
+result "$((no++))" "$cmd" "OKA"
+
+cmd=$(if false; then echo -n A; elif false; then echo -n B; else echo -n C; fi || echo D)
+result "$((no++))" "$cmd" "C"
+
+cmd=$(if false; then echo -n A; elif false; then echo -n B; else echo -n C; fi && echo D)
+result "$((no++))" "$cmd" "CD"
+
+cmd=$(if false; then echo -n A; elif true; then echo -n B; else echo -n C; fi || echo D)
+result "$((no++))" "$cmd" "B"
+
+cmd=$(if false; then echo -n A; elif true; then echo -n B; else echo -n C; fi && echo D)
+result "$((no++))" "$cmd" "BD"
+
+cmd=$(if false; then echo NG; else echo -n OK; fi || echo A)
+result "$((no++))" "$cmd" "OK"
+
+cmd=$(if false; then if false; then echo A; else echo -n B; fi fi && echo D)
+result "$((no++))" "$cmd" "D"
+
+cmd=$(if false; then if false; then echo A; fi fi && echo D)
+result "$((no++))" "$cmd" "D"
+
+cmd=$(if false; then if false; then echo A; else echo -n B; fi; fi && echo D)
+result "$((no++))" "$cmd" "D"
+
+cmd=$(if false; then if false; then echo A; fi; fi && echo D)
+result "$((no++))" "$cmd" "D"
+
+false
 cmd=$(case x in (x) echo -n OK ;; esac && echo A)
 result "$((no++))" "$cmd" "OKA"
+
+false
+cmd=$(case x in (x) echo -n OK ;; esac || echo A)
+result "$((no++))" "$cmd" "OK"
+
+false
+cmd=$(case a in (x) echo -n OK; false ;; esac && echo A)
+result "$((no++))" "$cmd" "A"
+
+false
+cmd=$(case a in (x) echo -n OK; false ;; esac || echo A)
+result "$((no++))" "$cmd" ""
+
+false
+cmd=$(case x in (x) echo -n OK; false ;; esac && echo A)
+result "$((no++))" "$cmd" "OK"
+
+false
+cmd=$(case x in (x) echo -n OK; false ;; esac || echo A)
+result "$((no++))" "$cmd" "OKA"
+
+false
+cmd=$(case x in (x) echo -n OK; true ;; esac && echo A)
+result "$((no++))" "$cmd" "OKA"
+
+false
+cmd=$(case x in (x) echo -n OK; true ;; esac || echo A)
+result "$((no++))" "$cmd" "OK"
 
 cmd=$(while false; do echo NG; done || echo A)
 result "$((no++))" "$cmd" ""
@@ -158,6 +220,15 @@ result "$((no++))" "$cmd" "A"
 
 cmd=$(for i in 1 ; do false; continue; done || echo A)
 result "$((no++))" "$cmd" ""
+
+cmd=$(if false; then :; fi; echo OK)
+result "$((no++))" "$cmd" "OK"
+
+cmd=$(case x in (y) :;; esac; echo OK)
+result "$((no++))" "$cmd" "OK"
+
+cmd=$(while false; do :; done; echo OK)
+result "$((no++))" "$cmd" "OK"
 
 echo "total: $total (failed: $failed)"
 
