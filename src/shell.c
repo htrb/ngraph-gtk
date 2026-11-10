@@ -2840,6 +2840,9 @@ checkcmd_and_or(struct cmdlist *cmdcur, struct prmlist *prmcur, int type)
   struct cmdlist *cmdnew;
   cmdcur->cmdend = (type == '|')  ? PPOROR : PPANDAND;
   prmcur->prmno = (type == '|')  ? PPOROR : PPANDAND;
+  if (checkcmd_next_command(prmcur) < 0) {
+    return 2;
+  }
   cmdnew = checkcmd_create_cmdnew(cmdcur, prmcur);
   if (cmdnew == NULL) return -1;
 
