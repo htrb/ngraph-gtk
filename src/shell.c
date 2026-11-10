@@ -3602,20 +3602,10 @@ cmdparse_redirect(struct cmdexec_pipe *pipe, struct cmdexec_fd *cmdfd)
   pipe->pnum=0;
   while (prmcur!=NULL) {
     if (prmcur->str==NULL) {
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
+      cmdparse_redirect_common(cmdfd, prmprev, &prmcur);
     } else if ((prmcur->prmno==PPSI1) || (prmcur->prmno==PPSI2)
 	       || (prmcur->prmno==PPSO1) || (prmcur->prmno==PPSO2)) {
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
+      cmdparse_redirect_common(cmdfd, prmprev, &prmcur);
       switch (prmcur->prmno) {
       case PPSI1:
 	g_free(cmdfd->fstdin);
@@ -3646,33 +3636,11 @@ cmdparse_redirect(struct cmdexec_pipe *pipe, struct cmdexec_fd *cmdfd)
       g_free(prm);
     } else if (prmcur->prmno==PPPIPE) {
       pipe->pipef=TRUE;
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
-    } else if (prmcur->prmno==PPOROR) {
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
-    } else if (prmcur->prmno==PPANDAND) {
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
-    } else if (prmcur->prmno==PPEND) {
-      if (prmprev==NULL) cmdfd->prmnewroot=prmcur->next;
-      else prmprev->next=prmcur->next;
-      prm=prmcur;
-      prmcur=prmcur->next;
-      g_free(prm->str);
-      g_free(prm);
+      cmdparse_redirect_common(cmdfd, prmprev, &prmcur);
+    } else if (prmcur->prmno==PPOROR ||
+	       prmcur->prmno==PPANDAND ||
+	       prmcur->prmno==PPEND) {
+      cmdparse_redirect_common(cmdfd, prmprev, &prmcur);
     } else if ((prmcur->prmno!=PPSETV) && (prmcur->prmno!=PPSETO)) {
       pipe->pnum++;
       prmprev=prmcur;
