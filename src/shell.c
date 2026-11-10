@@ -4640,6 +4640,7 @@ cmdexec_handle_case(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmds
     break;
   case CPESAC:
     if (cmdexec_handle_case_pop(*stroot, &st, &casetrue, &pat) < 0) return -1;
+    if (! casetrue) nshell->status = 0;
     g_free(pat);
     cmdstackrmlast(stroot);
     cmdfd->cmdcur=cmdfd->cmdcur->next;
