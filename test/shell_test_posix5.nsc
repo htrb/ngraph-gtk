@@ -122,11 +122,29 @@ result "$((no++))" "$cmd" "OKA"
 cmd=$(if false; then echo NG; fi || echo A)
 result "$((no++))" "$cmd" ""
 
-cmd=$(if false; then echo NG; else echo -n OK; fi || echo A)
-result "$((no++))" "$cmd" "OK"
+cmd=$(if false; then false; else false; fi || echo A)
+result "$((no++))" "$cmd" "A"
 
-cmd=$(if false; then echo NG; else echo -n OK; fi && echo A)
-result "$((no++))" "$cmd" "OKA"
+cmd=$(if false; then false; else false; fi && echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(if false; then false; else true; fi || echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(if false; then false; else true; fi && echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(if true; then false; else false; fi || echo A)
+result "$((no++))" "$cmd" "A"
+
+cmd=$(if true; then false; else false; fi && echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(if true; then true; else true; fi || echo A)
+result "$((no++))" "$cmd" ""
+
+cmd=$(if true; then true; else true; fi && echo A)
+result "$((no++))" "$cmd" "A"
 
 cmd=$(if false; then echo -n A; elif false; then echo -n B; else echo -n C; fi || echo D)
 result "$((no++))" "$cmd" "C"
