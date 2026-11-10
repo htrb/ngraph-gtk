@@ -4491,16 +4491,17 @@ cmdexec_print_options(struct nshell *nshell, struct cmdlist *cmdroot)
 static int
 cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdstack **stroot)
 {
-  int iftrue, cmdno;
+  int iftrue, cmdno, executed;
   struct cmdstack *st;
   cmdno = cmdfd->cmdcur->cmdno;
   if ((st=cmdstackgetpo(*stroot))==NULL) return -1;
   iftrue=st->iftrue;
+  executed=st->executed;
   switch (cmdno) {
   case CPTHEN:
     if (iftrue || nshell->status) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else {
-      st->executed = TRUE;
+      executed = TRUE;
       iftrue=TRUE;
       cmdfd->cmdcur=cmdfd->cmdcur->next;
     }
