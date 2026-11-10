@@ -4513,7 +4513,7 @@ cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct
   case CPELSE:
     if (iftrue) cmdfd->cmdcur=cmdfd->cmdcur->done;
     else cmdfd->cmdcur=cmdfd->cmdcur->next;
-    if (cmdno == CPELSE && ! iftrue) st->executed = TRUE;
+    if (cmdno == CPELSE && ! iftrue) executed = TRUE;
     break;
   }
   cmdstackrmlast(stroot);
