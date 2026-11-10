@@ -3575,6 +3575,21 @@ struct cmdexec_pipe {
   int istdout, istdin, pipef, pnum;
 };
 
+static void
+cmdparse_redirect_common(struct cmdexec_fd *cmdfd, struct prmlist *prmprev, struct prmlist **prmcur)
+{
+  struct prmlist *prm;
+  if (prmprev == NULL) {
+    cmdfd->prmnewroot = (*prmcur)->next;
+  } else {
+    prmprev->next = (*prmcur)->next;
+  }
+  prm = *prmcur;
+  *prmcur = (*prmcur)->next;
+  g_free(prm->str);
+  g_free(prm);
+}
+
 static int
 cmdparse_redirect(struct cmdexec_pipe *pipe, struct cmdexec_fd *cmdfd)
 {
