@@ -330,11 +330,64 @@ print_func(struct nhash *h, void *data)
   return 0;
 }
 
+static char *ShellOpt[] = {
+  "eerrexit",
+  "fnoglob",
+  "vverbose",
+  "xxtrace",
+  NULL
+};
+
+static void
+show_shell_opt(struct nshell *nshell)
+{
+  int i;
+  for (i = 0; ShellOpt[i]; i++) {
+    int opt = getshelloption(nshell, ShellOpt[i][0]);
+    printfstdout("%-8s %s\n", ShellOpt[i] + 1, opt ? "on" : "off");
+  }
+}
+
+static void
+show_shell_opt_set(struct nshell *nshell)
+{
+  int i;
+  for (i = 0; ShellOpt[i]; i++) {
+    int opt = getshelloption(nshell, ShellOpt[i][0]);
+    printfstdout("set %co %s\n", opt ? '-' : '+', ShellOpt[i] + 1);
+  }
+}
+
+static int
+execute_o(struct nshell *nshell, char *pname, char *opt, char *o_opt)
+{
+  int i;
+  char option[] = "-e";
+  if (o_opt) {
+    for (i = 0; ShellOpt[i]; i++) {
+      if (strcmp0(ShellOpt[i] + 1, o_opt) == 0) {
+	option[0] = opt[0];
+	option[1] = ShellOpt[i][0];
+	setshelloption(nshell, option);
+	return 0;
+      }
+    }
+    sherror3(pname, ERRILOPS, o_opt);
+    return -1;
+  }
+  if (opt[0] == '-') {
+    show_shell_opt(nshell);
+  } else {
+    show_shell_opt_set(nshell);
+  }
+  return 0;
+}
+
 int
 cmset(struct nshell *nshell,int argc,char **argv)
 {
   char *s;
-  int j, r, ops;
+  int j, r;
 
   if (argc < 2) {
     nhash_each(nshell->valroot, print_val, NULL);
@@ -359,9 +412,14 @@ cmset(struct nshell *nshell,int argc,char **argv)
       j++;
       break;
     } else if (s[0] == '-' || s[0] == '+') {
-      if (s[1] == '\0' || strchr("efvx", s[1]) == NULL) {
+      if (s[1] == '\0' || strchr("efovx", s[1]) == NULL) {
 	sherror3(argv[0], ERRILOPS, s);
 	return ERRILOPS;
+      }
+      if (s[1] == 'o' && j != argc) {
+	if (argv[j + 1] && argv[j + 1][0] != '-' && argv[j + 1][0] != '+') {
+	  j++;
+	}
       }
     } else {
       break;
@@ -373,29 +431,20 @@ cmset(struct nshell *nshell,int argc,char **argv)
       return ERR;
     }
   }
-  for (j = 1 ; j < argc; j++) {
+  for (j = 1; j < argc; j++) {
     s = argv[j];
-    if (s[0] == '-') {
-      ops=TRUE;
-    } else if (s[0]=='+') {
-      ops=FALSE;
-    } else {
+    if (s[0] != '-' && s[0] != '+') {
       break;
     }
-    switch (s[1]) {
-    case 'e':
-      nshell->optione = ops;
-      nshell->optione_changed = TRUE;
-      break;
-    case 'f':
-      nshell->optionf = ops;
-      break;
-    case 'v':
-      nshell->optionv = ops;
-      break;
-    case 'x':
-      nshell->optionx = ops;
-      break;
+    if (s[1] == 'o') {
+      char *o_opt = NULL;
+      if (argv[j + 1] && argv[j + 1][0] != '-' && argv[j + 1][0] != '+') {
+	j++;
+	o_opt = argv[j];
+      }
+      if (execute_o(nshell, argv[0], s, o_opt) < 0) return ERRILOPS;
+    } else {
+      setshelloption(nshell, s);
     }
   }
   return 0;
