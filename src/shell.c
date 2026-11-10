@@ -4518,6 +4518,7 @@ cmdexec_replace_stack_if(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct
   cmdstackrmlast(stroot);
   if ((st=cmdstackcat(stroot, cmdno))==NULL) return -1;
   st->iftrue=iftrue;
+  st->executed=executed;
   return 0;
 }
 
