@@ -472,21 +472,26 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
   long long condition = eval_logical_or(ctx, var_name);
   skip_whitespace(ctx);
   if (ctx->src[0] == '?') {
+    int old_skip = ctx->skip;
+
     ctx->src++;
     clear_var_name(var_name);
     if (condition) {
-      long long true_val = eval_assign(ctx);
-      skip_whitespace(ctx);
+      long long true_val = eval_comma(ctx);
       if (ctx->src[0] != ':') {
 	printfstderr("syntax error\n");
 	ctx->err = TRUE;
 	return 0;
       }
       ctx->src++;
-      skip_expr(ctx);
+      ctx->skip = TRUE;
+      eval_assign(ctx);
+      ctx->skip = old_skip;
       return true_val;
     } else {
-      skip_expr(ctx);
+      ctx->skip = TRUE;
+      eval_comma(ctx);
+      ctx->skip = old_skip;
       skip_whitespace(ctx);
       if (ctx->src[0] != ':') {
 	printfstderr("syntax error\n");
@@ -494,7 +499,7 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
 	return 0;
       }
       ctx->src++;
-      return eval_assign(ctx);
+      return eval_conditional(ctx, NULL);
     }
   }
   return condition;
