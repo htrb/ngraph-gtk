@@ -218,8 +218,6 @@ echo "==================================================="
 FAIL=$(($FAIL + $FAILED))
 if [ "$FAILED" = "0" ]; then
   echo "RESULT: SUCCESS"
-  exit 0
 else
   echo "RESULT: FAIL"
-  exit 1
 fi

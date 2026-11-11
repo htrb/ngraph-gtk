@@ -5,9 +5,7 @@ success_count=0
 failure_count=0
 
 assert_result() {
-  eq="'$2' == '$3'"
-  result=$(iexpr "$eq")
-  if [ "$result" = "1" ]; then
+  if [ "'$2'" = "'$3'" ]; then
     echo "PASS: $1"
     success_count=$((success_count + 1))
   else
@@ -49,7 +47,7 @@ res3_3=$(echo ${A:-(})
 assert_result "3-3. Opening parenthesis within braces: \${A:-(}" "$res3_3" "val"
 
 # ---------------------------------------------------------
-# Test 4: 空の出力・スペースのトリミングテスト
+# Test 4: 空の出力・スペースのトリミングテスト (改行がスペースに変換されるのは Ngraph の独自仕様)
 res4_1="[$(printf "abc\n\ndef")]"
 expected_res4_1="[abc  def]"
 assert_result "4-1. Trimming newlines (removing only trailing ones)" "$res4_1" "$expected_res4_1"
@@ -91,9 +89,4 @@ echo "  [FAIL]: $failure_count"
 echo "========================================"
 
 PASS=$(($PASS + $success_count))
-FAILED=$(($FAILED + $failure_count))
-
-if [ "$failure_count" -ne 0 ]; then
-  exit 1
-fi
-exit 0
+FAIL=$(($FAIL + $failure_count))

@@ -159,8 +159,6 @@ FAIL=$((FAIL + FAILED))
 
 if [ $SUCCESS_COUNT -eq $TEST_COUNT ]; then
     printf "All POSIX-compatible tests passed!\n"
-    exit 0
 else
     printf "Some tests have failed. Please check the logs.\n"
-    exit 1
 fi

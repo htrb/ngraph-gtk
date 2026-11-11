@@ -4,6 +4,13 @@
 passed=0
 failed=0
 
+DASH=0
+if [ -z "$NGRAPH" ]; then
+    if [ -z "$BASH_VERSION" ]; then
+	DASH=1
+    fi
+fi
+
 # Helper function to run and verify tests
 # Usage: assert_eval "expression" "expected_output" "test_description"
 assert_eval() {
@@ -33,7 +40,9 @@ echo "========================================"
 # 1. Primary & Basic Constants
 assert_eval "123" "123" "Decimal constant"
 assert_eval "0" "0" "Zero constant"
+if [ $DASH -eq 0 ]; then
 assert_eval "(1, 2)" "2" "comma"
+fi
 
 # 2. Basic Arithmetic (Precedence: * / % over + -)
 assert_eval "1 + 2 * 3" "7" "Multiply precedence"
@@ -96,6 +105,7 @@ assert_eval "x >>= 1" "12" "Subtraction assignment (x is now 12)"
 
 # 10. Postfix / Prefix Increment & Decrement (Side-effects)
 # Resetting variables inside evaluation via assignment
+if [ $DASH -eq 0 ]; then
 assert_eval "x = 5, ++x" "6" "Comma and Prefix increment"
 assert_eval "x = 5, x++" "5" "Comma and Postfix increment (returns old val)"
 assert_eval "x" "6" "Verify postfix side-effect"
@@ -115,6 +125,7 @@ assert_eval "x" "10" "Verify x was not incremented"
 
 assert_eval "x = 10, 1 ? 99 : ++x" "99" "Ternary true skips false-branch increment"
 assert_eval "x" "10" "Verify x was not incremented"
+fi
 
 
 echo "========================================"
@@ -124,12 +135,10 @@ echo "TOTAL PASSED: $passed"
 echo "TOTAL FAILED: $failed"
 
 true $((PASS += passed))
-true $((FAILED += failed))
+true $((FAIL += failed))
 
 if [ "$failed" -eq 0 ]; then
     echo "Result: ALL TESTS PASSED SUCCESSFULLY!"
-    exit 0
 else
     echo "Result: SOME TESTS FAILED. PLEASE CHECK LOGS."
-    exit 1
 fi
