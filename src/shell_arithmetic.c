@@ -116,7 +116,7 @@ eval_primary(ShellArithmeticContext *ctx, char **pvar_name)
     printfstderr("sh: syntax error: expecting primary %s\n", ctx->src);
     ctx->err = TRUE;
   } else {
-    fprintf(stderr, "sh: syntax error: operand expected\n");
+    printfstderr("sh: syntax error: operand expected\n");
     ctx->err = TRUE;
   }  return 0;
 }
