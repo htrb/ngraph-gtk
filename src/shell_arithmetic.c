@@ -145,15 +145,13 @@ eval_postfix(ShellArithmeticContext *ctx, char ** var_name)
     ctx->src += 2;
     long long old_val = val;
     update_shell_var(ctx, *var_name, val + 1);
-    g_free(*var_name);
-    *var_name = NULL;
+    clear_var_name(var_name);
     return old_val;
   } else if (strncmp(ctx->src, "--", 2) == 0 && var_name && *var_name) {
     ctx->src += 2;
     long long old_val = val;
     update_shell_var(ctx, *var_name, val - 1);
-    g_free(*var_name);
-    *var_name = NULL;
+    clear_var_name(var_name);
     return old_val;
   }
   return val;
