@@ -33,12 +33,13 @@ skip_whitespace(ShellArithmeticContext *ctx)
 }
 
 static void
-skip_expr(ShellArithmeticContext *ctx)
+skip_expr(ShellArithmeticContext *ctx, long long (*skip_func)(ShellArithmeticContext *ctx, char **var_name), char **var_name)
 {
   int old_skip = ctx->skip;
   ctx->skip = TRUE;
-  eval_comma(ctx);
+  skip_func(ctx, var_name);
   ctx->skip = old_skip;
+  clear_var_name(var_name);
 }
 
 static void
@@ -452,7 +453,7 @@ eval_logical_and(ShellArithmeticContext *ctx, char **var_name)
       clear_var_name(var_name);
 
       if (val == 0) {
-        skip_expr(ctx);
+        skip_expr(ctx, eval_bit_or, var_name);
         val = 0;
       } else {
         long long rhs_val = eval_bit_or(ctx, NULL);
@@ -476,7 +477,7 @@ eval_logical_or(ShellArithmeticContext *ctx, char **var_name)
       clear_var_name(var_name);
 
       if (val) {
-        skip_expr(ctx);
+        skip_expr(ctx, eval_logical_and, var_name);
         val = 1;
       } else {
         long long rhs_val = eval_logical_and(ctx, NULL);
