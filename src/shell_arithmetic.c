@@ -11,15 +11,14 @@
 #include "object.h"
 
 static long long eval_comma(ShellArithmeticContext *ctx);
-static long long eval_assign(ShellArithmeticContext *ctx);
 
 #define STR(x) #x
 
 static void
 clear_var_name(char **var_name)
 {
-  if (var_name && *var_name) {
-    g_free(*var_name);
+  if (var_name) {
+    if (*var_name) g_free(*var_name);
     *var_name = NULL;
   }
 }
@@ -162,11 +161,12 @@ eval_postfix(ShellArithmeticContext *ctx, char ** var_name)
 static long long
 eval_unary(ShellArithmeticContext *ctx, char ** var_name)
 {
+  long long val;
   skip_whitespace(ctx);
 
   if (check_operator(ctx, "++")) {
     char *local_var = NULL;
-    long long val = eval_unary(ctx, &local_var);
+    val = eval_unary(ctx, &local_var);
 
     if (!local_var) {
       printfstderr("sh: lvalue required...\n");
@@ -177,15 +177,14 @@ eval_unary(ShellArithmeticContext *ctx, char ** var_name)
     val++;
     update_shell_var(ctx, local_var, val);
     g_free(local_var);
-
-    if (var_name) *var_name = NULL;
+    clear_var_name(var_name);
 
     return val;
   }
 
   if (check_operator(ctx, "--")) {
     char *local_var = NULL;
-    long long val = eval_unary(ctx, &local_var);
+    val = eval_unary(ctx, &local_var);
 
     if (!local_var) {
       printfstderr("sh: lvalue required...\n");
@@ -195,32 +194,35 @@ eval_unary(ShellArithmeticContext *ctx, char ** var_name)
 
     val--;
     update_shell_var(ctx, local_var, val);
-
     g_free(local_var);
-    if (var_name) *var_name = NULL;
+    clear_var_name(var_name);
 
     return val;
   }
 
   if (ctx->src[0] == '-') {
     ctx->src++;
+    val = -eval_unary(ctx, var_name);
     clear_var_name(var_name);
-    return -eval_unary(ctx, NULL);
+    return val;
   }
   if (ctx->src[0] == '~') {
     ctx->src++;
+    val = ~eval_unary(ctx, var_name);
     clear_var_name(var_name);
-    return ~eval_unary(ctx, NULL);
+    return val;
   }
   if (ctx->src[0] == '!') {
     ctx->src++;
+    val = !eval_unary(ctx, var_name);
     clear_var_name(var_name);
-    return !eval_unary(ctx, NULL);
+    return val;
   }
   if (ctx->src[0] == '+') {
     ctx->src++;
+    val = eval_unary(ctx, var_name);
     clear_var_name(var_name);
-    return eval_unary(ctx, NULL);
+    return val;
   }
 
   return eval_postfix(ctx, var_name);
@@ -305,12 +307,12 @@ eval_add(ShellArithmeticContext *ctx, char ** var_name)
 
     if (ctx->src[0] == '+' && ctx->src[1] != '=') {
       ctx->src++;
+      val += eval_mul(ctx, var_name);
       clear_var_name(var_name);
-      val += eval_mul(ctx, NULL);
     } else if (ctx->src[0] == '-' && ctx->src[1] != '=') {
       ctx->src++;
+      val -= eval_mul(ctx, var_name);
       clear_var_name(var_name);
-      val -= eval_mul(ctx, NULL);
     } else {
       break;
     }
@@ -327,12 +329,12 @@ eval_shift(ShellArithmeticContext *ctx, char ** var_name)
     skip_whitespace(ctx);
     if (strncmp(ctx->src, "<<" , 2) == 0 && ctx->src[2] != '=') {
       ctx->src += 2;
+      val = (val << eval_add(ctx, var_name));
       clear_var_name(var_name);
-      val = (val << eval_add(ctx, NULL));
     } else if (strncmp(ctx->src, ">>", 2) == 0 && ctx->src[2] != '=') {
       ctx->src += 2;
+      val = (val >> eval_add(ctx, var_name));
       clear_var_name(var_name);
-      val = (val >> eval_add(ctx, NULL));
     } else {
       break;
     }
@@ -348,19 +350,19 @@ eval_relational(ShellArithmeticContext *ctx, char ** var_name)
   while (1) {
     skip_whitespace(ctx);
     if (check_operator(ctx, "<=")) {
+      val = (val <= eval_shift(ctx, var_name));
       clear_var_name(var_name);
-      val = (val <= eval_shift(ctx, NULL));
     } else if (check_operator(ctx, ">=")) {
+      val = (val >= eval_shift(ctx, var_name));
       clear_var_name(var_name);
-      val = (val >= eval_shift(ctx, NULL));
     } else if (ctx->src[0] == '<' && ctx->src[1] != '<') {
       ctx->src++;
+      val = (val < eval_shift(ctx, var_name));
       clear_var_name(var_name);
-      val = (val < eval_shift(ctx, NULL));
     } else if (ctx->src[0] == '>' && ctx->src[1] != '>') {
       ctx->src++;
+      val = (val > eval_shift(ctx, var_name));
       clear_var_name(var_name);
-      val = (val > eval_shift(ctx, NULL));
     } else {
       break;
     }
@@ -376,11 +378,11 @@ eval_equality(ShellArithmeticContext *ctx, char **var_name)
   while (1) {
     skip_whitespace(ctx);
     if (check_operator(ctx, "==")) {
+      val = (val == eval_relational(ctx, var_name));
       clear_var_name(var_name);
-      val = (val == eval_relational(ctx, NULL));
     } else if (check_operator(ctx, "!=")) {
+      val = (val != eval_relational(ctx, var_name));
       clear_var_name(var_name);
-      val = (val != eval_relational(ctx, NULL));
     } else {
       break;
     }
@@ -397,8 +399,8 @@ eval_bit_and(ShellArithmeticContext *ctx, char **var_name)
     skip_whitespace(ctx);
     if (ctx->src[0] == '&' && ctx->src[1] != '&' && ctx->src[1] != '=') {
       ctx->src++;
+      val = val & eval_equality(ctx, var_name);
       clear_var_name(var_name);
-      val = val & eval_equality(ctx, NULL);
     } else {
       break;
     }
@@ -415,8 +417,8 @@ eval_bit_xor(ShellArithmeticContext *ctx, char **var_name)
     skip_whitespace(ctx);
     if (ctx->src[0] == '^' && ctx->src[1] != '=') {
       ctx->src++;
+      val = val ^ eval_bit_and(ctx, var_name);
       clear_var_name(var_name);
-      val = val ^ eval_bit_and(ctx, NULL);
     } else {
       break;
     }
@@ -433,8 +435,8 @@ eval_bit_or(ShellArithmeticContext *ctx, char **var_name)
     skip_whitespace(ctx);
     if (ctx->src[0] == '|' && ctx->src[1] != '|' && ctx->src[1] != '=') {
       ctx->src++;
+      val = val | eval_bit_xor(ctx, var_name);
       clear_var_name(var_name);
-      val = val | eval_bit_xor(ctx, NULL);
     } else {
       break;
     }
@@ -450,13 +452,12 @@ eval_logical_and(ShellArithmeticContext *ctx, char **var_name)
   while (1) {
     skip_whitespace(ctx);
     if (check_operator(ctx, "&&")) {
-      clear_var_name(var_name);
-
       if (val == 0) {
         skip_expr(ctx, eval_bit_or, var_name);
         val = 0;
       } else {
-        long long rhs_val = eval_bit_or(ctx, NULL);
+        long long rhs_val = eval_bit_or(ctx, var_name);
+        clear_var_name(var_name);
         val = (rhs_val != 0) ? 1 : 0;
       }
     } else {
@@ -470,17 +471,17 @@ eval_logical_and(ShellArithmeticContext *ctx, char **var_name)
 static long long
 eval_logical_or(ShellArithmeticContext *ctx, char **var_name)
 {
+  int old_skip = ctx->skip;
   long long val = eval_logical_and(ctx, var_name);
   while (1) {
     skip_whitespace(ctx);
     if (check_operator(ctx, "||")) {
-      clear_var_name(var_name);
-
       if (val) {
         skip_expr(ctx, eval_logical_and, var_name);
         val = 1;
       } else {
-        long long rhs_val = eval_logical_and(ctx, NULL);
+        long long rhs_val = eval_logical_and(ctx, var_name);
+        clear_var_name(var_name);
         val = (rhs_val != 0) ? 1 : 0;
       }
     } else {
@@ -510,10 +511,7 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
 	return 0;
       }
       ctx->src++;
-      ctx->skip = TRUE;
-      eval_conditional(ctx, var_name);
-      ctx->skip = old_skip;
-      clear_var_name(var_name);
+      skip_expr(ctx, eval_conditional, var_name);
       return true_val;
     } else {
       long long false_val;
@@ -541,18 +539,18 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
     if (strncmp(ctx->src, STR(ope) "=", sizeof(STR(ope))) == 0) {	\
       ctx->src += sizeof(STR(ope));					\
       if (!var_name) {							\
-        printfstderr("sh: lvalue required...\n");			\
+        printfstderr("sh: lvalue required... %s\n", ctx->src - sizeof(STR(ope))); \
         ctx->err = TRUE;						\
         return 0;							\
-      }									\
+      }								\
       long long rhs_val = eval_assign(ctx);				\
-      if (check_zero && rhs_val == 0) {					\
+      if (check_zero && rhs_val == 0) {				\
         if (!ctx->skip) {						\
           printfstderr("sh: arithmetic exception: division by zero\n"); \
           ctx->err = TRUE;						\
         }								\
         return 0;							\
-      }									\
+      }								\
       long long new_val = lhs_val ope rhs_val;				\
       update_shell_var(ctx, var_name, new_val);			\
       clear_var_name(&var_name);					\
@@ -570,7 +568,7 @@ eval_assign(ShellArithmeticContext *ctx)
   if (ctx->src[0] == '=' && ctx->src[1] != '=') {
     ctx->src++;
     if (!var_name) {
-      printfstderr("sh: lvalue required...\n");
+      printfstderr("sh: lvalue required... %s\n", ctx->src - 1);
       ctx->err = TRUE;
       return 0;
     }
