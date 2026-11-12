@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <math.h>
 
 #include "shell_arithmetic.h"
 #include "shell.h"
@@ -225,23 +226,47 @@ eval_unary(ShellArithmeticContext *ctx, char ** var_name)
   return eval_postfix(ctx, var_name);
 }
 
+//   **
+static long long
+eval_pow(ShellArithmeticContext *ctx, char ** var_name)
+{
+  long long val = eval_unary(ctx, var_name);
+  skip_whitespace(ctx);
+
+  if (ctx->src[0] == '*' && ctx->src[1] == '*') {
+    long long rv;
+    ctx->src += 2;
+    rv = eval_pow(ctx, var_name);
+    clear_var_name(var_name);
+    if (rv < 0) {
+      if (!ctx->skip) {
+        printfstderr("sh: arithmetic exception: exponent less than 0 (%ld)\n", rv);
+        ctx->err = TRUE;
+      }
+      return 0;
+    }
+    val = pow(val, rv);
+  }
+  return val;
+}
+
 //   *. /, %
 static long long
 eval_mul(ShellArithmeticContext *ctx, char ** var_name)
 {
-  long long val = eval_unary(ctx, var_name);
+  long long val = eval_pow(ctx, var_name);
   while (1) {
     if (ctx->err) break;
     skip_whitespace(ctx);
 
-    if (ctx->src[0] == '*' && ctx->src[1] != '=') {
+    if (ctx->src[0] == '*' && ctx->src[1] != '=' && ctx->src[1] != '*') {
       ctx->src++;
+      val *= eval_pow(ctx, var_name);
       clear_var_name(var_name);
-      val *= eval_unary(ctx, NULL);
     } else if (ctx->src[0] == '/' && ctx->src[1] != '=') {
       ctx->src++;
+      long long denom = eval_pow(ctx, var_name);
       clear_var_name(var_name);
-      long long denom = eval_unary(ctx, NULL);
       if (denom == 0) {
         if (!ctx->skip) {
           printfstderr("sh: arithmetic exception: division by zero\n");
@@ -252,8 +277,8 @@ eval_mul(ShellArithmeticContext *ctx, char ** var_name)
       val /= denom;
     } else if (ctx->src[0] == '%' && ctx->src[1] != '=') {
       ctx->src++;
+      long long denom = eval_pow(ctx, var_name);
       clear_var_name(var_name);
-      long long denom = eval_unary(ctx, NULL);
       if (denom == 0) {
         if (!ctx->skip) {
           printfstderr("sh: arithmetic exception: division by zero\n");
