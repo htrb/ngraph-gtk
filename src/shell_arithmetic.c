@@ -74,6 +74,7 @@ check_var_name(ShellArithmeticContext *ctx, char **pvar_name)
   long long val = val = get_shell_var(ctx, var_name);
 
   if (pvar_name) {
+    clear_var_name(pvar_name);
     *pvar_name = var_name;
   } else {
     g_free (var_name);
