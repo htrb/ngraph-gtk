@@ -553,8 +553,8 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
         return 0;							\
       }									\
       long long new_val = lhs_val ope rhs_val;				\
-      update_shell_var(ctx, var_name, new_val);				\
-      g_free(var_name);							\
+      update_shell_var(ctx, var_name, new_val);			\
+      clear_var_name(&var_name);					\
       return new_val;							\
     }									\
   } while(0)
@@ -575,7 +575,7 @@ eval_assign(ShellArithmeticContext *ctx)
     }
     long long rhs_val = eval_assign(ctx);
     update_shell_var(ctx, var_name, rhs_val);
-    g_free(var_name);
+    clear_var_name(&var_name);
     return rhs_val;
   }
   EVAL_ASSIN_OPERATOR(ctx, +, var_name, lhs_val, FALSE);
@@ -589,7 +589,7 @@ eval_assign(ShellArithmeticContext *ctx)
   EVAL_ASSIN_OPERATOR(ctx, <<, var_name, lhs_val, FALSE);
   EVAL_ASSIN_OPERATOR(ctx, >>, var_name, lhs_val, FALSE);
 
-  if (var_name) g_free(var_name);
+  clear_var_name(&var_name);
   return lhs_val;
 }
 
