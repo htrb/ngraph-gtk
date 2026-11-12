@@ -465,7 +465,8 @@ eval_logical_or(ShellArithmeticContext *ctx, char **var_name)
   return val;
 }
 
-// conditional = logical_or [ "?" assign ":" conditional ]
+// conditional = logical_or [ "?" comma ":" conditional ]
+// true operand is parsed as comma-expression (bash compatible)
 static long long
 eval_conditional(ShellArithmeticContext *ctx, char **var_name)
 {
@@ -477,18 +478,20 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
     ctx->src++;
     if (condition) {
       long long true_val = eval_comma(ctx);
-      clear_var_name(var_name);
       if (ctx->src[0] != ':') {
 	printfstderr("syntax error\n");
 	ctx->err = TRUE;
+	clear_var_name(var_name);
 	return 0;
       }
       ctx->src++;
       ctx->skip = TRUE;
-      eval_assign(ctx);
+      eval_conditional(ctx, var_name);
       ctx->skip = old_skip;
+      clear_var_name(var_name);
       return true_val;
     } else {
+      long long false_val;
       ctx->skip = TRUE;
       eval_comma(ctx);
       ctx->skip = old_skip;
@@ -500,7 +503,9 @@ eval_conditional(ShellArithmeticContext *ctx, char **var_name)
 	return 0;
       }
       ctx->src++;
-      return eval_conditional(ctx, var_name);
+      false_val = eval_conditional(ctx, var_name);
+      clear_var_name(var_name);
+      return false_val;
     }
   }
   return condition;
