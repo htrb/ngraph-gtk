@@ -7,7 +7,9 @@ failed=0
 DASH=0
 if [ -z "$NGRAPH" ]; then
     if [ -z "$BASH_VERSION" ]; then
-	DASH=1
+	if [ -z "$ZSH_VERSION" ]; then
+	    DASH=1
+	fi
     fi
 fi
 
@@ -112,6 +114,34 @@ assert_eval "x" "6" "Verify postfix side-effect"
 assert_eval "x = 5, --x" "4" "Comma and Prefix decrement"
 assert_eval "x = 5, x--" "5" "Comma and Postfix decrement (returns old val)"
 assert_eval "x" "4" "Verify postfix side-effect"
+assert_eval "x = 5, x+++++x" "12" "Prefix and Postfix increment"
+assert_eval "x = 5, x--+--x" "8" "Prefix and Postfix decrement"
+assert_eval "x = 5, x+++--x" "10" "Prefix and Postfix increment and decrement"
+assert_eval "x = 5, x--+++x" "10" "Prefix and Postfix decrement and decrement"
+assert_eval "a=3, 2 * a++" "6" "Post-increment on exponent evaluates before multiply (2*(a++) = 2*3)"
+assert_eval "a=3, 2 / a++" "0" "Post-increment on exponent evaluates before multiply (2/(a++) = 2/3)"
+assert_eval "a=3, 2 % a++" "2" "Post-increment on exponent evaluates before multiply (2%(a++) = 2%3)"
+assert_eval "a=3, 2 + a++" "5" "Post-increment on exponent evaluates before multiply (2+(a++) = 2+3)"
+assert_eval "a=3, 2 - a++" "-1" "Post-increment on exponent evaluates before multiply (2-(a++) = 2-3)"
+assert_eval "a=3, 2 << a++" "16" "Post-increment on exponent evaluates before multiply (2<<(a++) = 2<<3)"
+assert_eval "a=3, 63 >> a++" "7" "Post-increment on exponent evaluates before multiply (63>>(a++) = 63>>3)"
+assert_eval "a=3, 2 <= a++" "1" "Post-increment on exponent evaluates before multiply (2<=(a++) = 2<=3)"
+assert_eval "a=3, 2 >= a++" "0" "Post-increment on exponent evaluates before multiply (2>=(a++) = 2>=3)"
+assert_eval "a=3, 2 > a++" "0" "Post-increment on exponent evaluates before multiply (2>(a++) = 2>3)"
+assert_eval "a=3, 2 < a++" "1" "Post-increment on exponent evaluates before multiply (2<(a++) = 2<3)"
+assert_eval "a=3, 2 == a++" "0" "Post-increment on exponent evaluates before multiply (2==(a++) = 2==3)"
+assert_eval "a=3, 2 != a++" "1" "Post-increment on exponent evaluates before multiply (2!=(a++) = 2!=3)"
+assert_eval "a=3, 2 & a++" "2" "Post-increment on exponent evaluates before multiply (2&(a++) = 2&3)"
+assert_eval "a=3, 2 ^ a++" "1" "Post-increment on exponent evaluates before multiply (2^(a++) = 2^3)"
+assert_eval "a=3, 2 | a++" "3" "Post-increment on exponent evaluates before multiply (2|(a++) = 2|3)"
+assert_eval "a=3, 2 && a++" "1" "Post-increment on exponent evaluates before multiply (2&&(a++) = 2&&3)"
+assert_eval "a=3, 2 || a++" "1" "Post-increment on exponent evaluates before multiply (2||(a++) = 2||3)"
+assert_eval "a=3, 0 && a++" "0" "Post-increment on exponent evaluates before multiply (0&&(a++) = 0&&3)"
+assert_eval "a=3, 0 || a++" "1" "Post-increment on exponent evaluates before multiply (0||(a++) = 0||3)"
+assert_eval "a=3, 0 + -a++" "-3" "Post-increment on exponent evaluates before multiply (0+-(a++) = 0+-3)"
+assert_eval "a=3, 0 + ~a++" "-4" "Post-increment on exponent evaluates before multiply (0+~(a++) = 0+~3)"
+assert_eval "a=3, 0 + !a++" "0" "Post-increment on exponent evaluates before multiply (0+~(a++) = 0+~3)"
+assert_eval "a=3, 0 + +a++" "3" "Post-increment on exponent evaluates before multiply (0+ +(a++) = 0+ +3)"
 
 # 11. Complex Short-Circuit Validation (Side-effects skip)
 assert_eval "x = 10, 0 && ++x" "0" "Logical AND short-circuit skips prefix increment"
@@ -120,19 +150,122 @@ assert_eval "x" "10" "Verify x was not incremented"
 assert_eval "x = 10, 1 || ++x" "1" "Logical OR short-circuit skips prefix increment"
 assert_eval "x" "10" "Verify x was not incremented"
 
+assert_eval "0 && x ? 2 : 3" "3" "Logical AND and ternary operator"
+assert_eval "1 && x ? 2 : 3" "2" "Logical AND and ternary operator"
+assert_eval "0 || x ? 2 : 3" "2" "Logical OR and ternary operator"
+assert_eval "1 || x ? 2 : 3" "2" "Logical OR and ternary operator"
+
 assert_eval "x = 10, 0 ? ++x : 99" "99" "Ternary false skips true-branch increment"
 assert_eval "x" "10" "Verify x was not incremented"
 
 assert_eval "x = 10, 1 ? 99 : ++x" "99" "Ternary true skips false-branch increment"
 assert_eval "x" "10" "Verify x was not incremented"
+
+# 12. Power
+assert_eval "2**3**2" "512" "Right-associativity of exponentiation (2**(3**2))"
+assert_eval "2**3*2" "16" "Higher precedence of exponentiation over multiplication ((2**3)*2)"
+assert_eval "2**3**2**0" "8" "Right-associativity with zero exponent (2**(3**(2**0)))"
+assert_eval "2**3**2*0" "0" "Precedence of exponentiation over multiplication by zero ((2**(3**2))*0)"
+assert_eval "2**3**2*3" "1536" "Combined right-associativity and multiplication precedence ((2**(3**2))*3)"
+assert_eval "2**3**2/2" "256" "Precedence of exponentiation over division ((2**(3**2))/2)"
+assert_eval "a=3,a**3**2/2" "9841" "Variable assignment with comma operator, exponentiation, and integer division"
+assert_eval "0**0" "1" "Zero to the power of zero evaluates to 1"
+assert_eval "0**5" "0" "Zero to a positive power evaluates to 0"
+assert_eval "5**0" "1" "Positive number to the power of zero evaluates to 1"
+assert_eval "0**0**0" "0" "Chained zero exponentiation (0**(0**0) = 0**1 = 0)"
+assert_eval "(-5)**0" "1" "Negative base to the power of zero evaluates to 1"
+assert_eval "-2**2" "4" "Unary minus has higher precedence than exponentiation ((-2)**2)"
+assert_eval "-2**3" "-8" "Unary minus with odd exponent ((-2)**3)"
+assert_eval "-(2**2)" "-4" "Parentheses override unary minus precedence"
+assert_eval "2**-0" "1" "Negative zero exponent evaluates to 1"
+assert_eval "!0**2" "1" "Logical NOT has higher precedence than exponentiation ((!0)**2)"
+assert_eval "~0**2" "1" "Bitwise NOT has higher precedence than exponentiation ((~0)**2)"
+assert_eval "2+3**2" "11" "Exponentiation has higher precedence than addition (2+(3**2))"
+assert_eval "10-2**3" "2" "Exponentiation has higher precedence than subtraction (10-(2**3))"
+assert_eval "10%3**2" "1" "Exponentiation has higher precedence than modulo (10%(3**2))"
+assert_eval "1<<2**3" "256" "Exponentiation has higher precedence than bitwise left shift (1<<(2**3))"
+assert_eval "2**3==8" "1" "Exponentiation has higher precedence than equality comparison ((2**3)==8)"
+assert_eval "2**3&7" "0" "Exponentiation has higher precedence than bitwise AND ((2**3)&7)"
+assert_eval "a=2,a*=3**2" "18" "Exponentiation has higher precedence than compound assignment (a*=(3**2))"
+assert_eval "a=2,b=3,a=b**2" "9" "Exponentiation has higher precedence than simple assignment (a=(b**2))"
+
+# 基本：前置・後置インクリメントと ** の優先順位
+assert_eval "a=2, a++ ** 3" "8" "Post-increment has higher precedence than exponentiation ((a++)**3 = 2**3)"
+assert_eval "a=2, ++a ** 3" "27" "Pre-increment has higher precedence than exponentiation ((++a)**3 = 3**3)"
+assert_eval "a=3, 2 ** a++" "8" "Post-increment on exponent evaluates before exponentiation (2**(a++) = 2**3)"
+assert_eval "a=3, 2 ** ++a" "16" "Pre-increment on exponent evaluates before exponentiation (2**(++a) = 2**4)"
+
+# 副作用の検証（計算後の変数 a の最終的な値を確認）
+assert_eval "a=2, a++ ** 3, a" "3" "Side effect of post-increment persists after exponentiation"
+assert_eval "a=2, ++a ** 3, a" "3" "Side effect of pre-increment persists after exponentiation"
+
+# 複合：右結合と評価順序（左から右へオペランドが評価されるかの検証）
+assert_eval "a=2, a++ ** a++" "8" "Left-to-right operand evaluation with post-increment (2**3)"
+assert_eval "a=2, ++a ** ++a" "81" "Left-to-right operand evaluation with pre-increment (3**4)"
+assert_eval "a=2, a ** a++ ** 2" "16" "Right-associative exponentiation with post-increment (2**(2**2))"
+assert_eval "a=2, a ** ++a ** 2" "512" "Right-associative exponentiation with pre-increment (2**(3**2))"
+
+# デクリメント（--）と負の指数の境界テスト
+assert_eval "a=1, 2 ** a--" "2" "Post-decrement on exponent evaluates before hitting negative (2**1)"
+assert_eval "a=1, 2 ** --a" "1" "Pre-decrement on exponent to zero evaluates to 1 (2**0)"
+
+# 優先順位：条件式や分岐先における ** の評価
+assert_eval "2**3==8 ? 2**4 : 2**5" "16" "Exponentiation has higher precedence than ternary operator (true branch)"
+assert_eval "2**3==9 ? 2**4 : 2**5" "32" "Exponentiation has higher precedence than ternary operator (false branch)"
+assert_eval "2 ** (1 ? 3 : 4)" "8" "Ternary operator inside parentheses as exponent"
+
+# 短絡評価と副作用：選択されなかった分岐のインクリメントがスキップされるか
+assert_eval "a=2, 1 ? a++ ** 3 : a++ ** 4, a" "3" "Ternary short-circuit skips side effect in false branch"
+assert_eval "a=2, 0 ? a++ ** 3 : a++ ** 4, a" "3" "Ternary short-circuit skips side effect in true branch"
+
+# 短絡評価とエラー回避：選択されなかった分岐の負の指数エラーが発生しないか
+assert_eval "1 ? 2**3 : 2**-1" "8" "Ternary short-circuit prevents negative exponent error in false branch"
+assert_eval "0 ? 2**-1 : 2**3" "8" "Ternary short-circuit prevents negative exponent error in true branch"
+assert_eval "a=0, a>0 ? 2**(a-1) : 2**a" "1" "Guard against negative exponent using ternary short-circuit"
+
+# 複合：条件式での副作用と分岐先でのべき乗評価
+assert_eval "a=2, a++ == 2 ? a**3 : 0" "27" "Condition side effect updates variable before evaluating true branch (3**3)"
+assert_eval "a=2, ++a == 2 ? 0 : a**3" "27" "Condition side effect updates variable before evaluating false branch (3**3)"
+
+
+# 13. comma
+assert_eval "1 ? 2 : 4,5,6" "6" "ternary operator"
+assert_eval "0 ? 2 : 4,5,6" "6" "ternary operator"
+
+assert_eval "1 ? 2 : (4,5,6)" "2" "ternary operator"
+assert_eval "0 ? 2 : (4,5,6)" "6" "ternary operator"
+
+assert_eval "1 ? (2,3) : (4,5,6)" "3" "ternary operator"
+assert_eval "0 ? (2,3) : (4,5,6)" "6" "ternary operator"
+assert_eval "1 ? 2 : 3 ? 4 : 5 ? 6 : 7" "2" "ternary operator"
+assert_eval "0 ? 2 : 3 ? 4 : 5 ? 6 : 7" "4" "ternary operator"
+
+assert_eval "A=3, B=4, 0 ? (A=1,B=2) : (A=3,B=4)" "4" "ternary operator"
+assert_eval "0?2:3,4,5" "5" "ternary operator"
+
+if [ -z "$ZSH_VERSION" ]; then
+assert_eval "1?2,3:4,3,5" "5" "ternary operator"
 fi
 
+assert_eval "0?1:2?3:4" "3" "ternary operator"
+assert_eval "1?2:3?4:5" "2" "ternary operator"
 
-echo "========================================"
-echo "Test Summary"
-echo "========================================"
-echo "TOTAL PASSED: $passed"
-echo "TOTAL FAILED: $failed"
+if [ -z "$ZSH_VERSION" ]; then
+assert_eval "0?1:2?3,4:5" "4" "ternary operator"
+assert_eval "1?1:2?3,4:5" "1" "ternary operator"
+fi
+assert_eval "0?(1,2):(3,4)" "4" "ternary operator"
+
+assert_eval "1 ? 1 : 1/0" "1" "ternary operator"
+assert_eval "0 ? 1/0 : 1" "1" "ternary operator"
+
+assert_eval "A=0,B=0,1 ? (A=1,B=2) : (A=3,B=4)" "2" "ternary operator"
+assert_eval "A" "1" "ternary operator"
+assert_eval "B" "2" "ternary operator"
+assert_eval "A=0,B=0, 0 ? (A=1,B=2) : (A=3,B=4)" "4" "ternary operator"
+assert_eval "A" "3" "ternary operator"
+assert_eval "B" "4" "ternary operator"
+fi				# dash
 
 true $((PASS += passed))
 true $((FAIL += failed))
