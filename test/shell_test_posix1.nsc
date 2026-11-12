@@ -10,8 +10,8 @@ assert_result() {
     success_count=$((success_count + 1))
   else
     echo "FAIL: $1"
-    echo "  [実際の出力]: '$2'"
-    echo "  [期待の出力]: '$3'"
+    echo "  [Actual output]: '$2'"
+    echo "  [Expected output]: '$3'"
     failure_count=$((failure_count + 1))
   fi
 }
@@ -79,14 +79,6 @@ res7="$(
   echo hello
 )"
 assert_result "7. Multiple lines and comments" "$res7" "hello"
-
-# ---------------------------------------------------------
-# 結果の集計表示
-echo "========================================"
-echo "Test Finished"
-echo "  [PASS]: $success_count"
-echo "  [FAIL]: $failure_count"
-echo "========================================"
 
 PASS=$(($PASS + $success_count))
 FAIL=$(($FAIL + $failure_count))

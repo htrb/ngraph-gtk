@@ -25,11 +25,17 @@ for t in shell_test_*.nsc
 do
     echo
     echo $t
+    PASS_SAVE=$PASS
+    FAIL_SAVE=$FAIL
     . ./$t
+    echo "  [PASS]: $((PASS - PASS_SAVE))"
+    echo "  [FAIL]: $((FAIL - FAIL_SAVE))"
 done
 
-echo
+echo "========================================"
+echo "Test Finished"
 echo "PASS=$PASS"
 echo "FAIL=$FAIL"
+echo "========================================"
 
 exit $FAIL

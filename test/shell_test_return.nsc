@@ -145,9 +145,6 @@ check 88 $? "return inside until-loop"
 
 
 echo "---"
-echo "Test Summary:"
-echo "Total:   $tests_total"
-echo "Failed:  $tests_failed"
 
 FAIL=$(($FAIL + $tests_failed))
 PASS=$(($PASS + $tests_total - $tests_failed))

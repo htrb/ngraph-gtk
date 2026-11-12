@@ -148,14 +148,10 @@ assert_nomatch "any_string" "\$ESC_WILD  (after expansion)" "$res"
 case '*' in $ESC_WILD) res="MATCH" ;; *) res="NOMATCH" ;; esac
 assert_match '*' "\$ESC_WILD after expansion (literal *)" "$res"
 
-# ----------------------------------------------------
-# 結果発表
-# ----------------------------------------------------
-printf "=== Tests completed ===\n"
-printf "Result: %d / %d Passed\n" "$SUCCESS_COUNT" "$TEST_COUNT"
+echo "=== Tests completed ==="
 
-PASS=$((PASS + TOTAL - FAILED))
-FAIL=$((FAIL + FAILED))
+PASS=$((PASS + SUCCESS_COUNT))
+FAIL=$((FAIL + TEST_COUNT - SUCCESS_COUNT))
 
 if [ $SUCCESS_COUNT -eq $TEST_COUNT ]; then
     printf "All POSIX-compatible tests passed!\n"

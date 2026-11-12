@@ -167,13 +167,6 @@ assert_eq "Containing a null character (A\\0\\0\\0BCD\\0E)" "5" "${#var_null}"
 var_ja="こんにちは"
 assert_eq "日本語 (こんにちは)" "5" "${#var_ja}"
 
-
-echo ""
-echo "=================================================================="
-echo "Results: end"
-echo "  Total tests: $TOTAL"
-echo "  Failures:    $FAILED"
-
 PASS=$((PASS + TOTAL - FAILED))
 FAIL=$((FAIL + FAILED))
 
