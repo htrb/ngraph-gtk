@@ -2217,11 +2217,10 @@ expand_special(struct nshell *nshell, struct expand_context *cx, const char *po,
 }
 
 static int
-expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
+expand_all_args_main(struct nshell *nshell, struct expand_context *cx, int type)
 {
   char ch;
   int j;
-  const int i = *index;
   cx->val=getval(nshell,"IFS");
   if (cx->val==NULL) ch='\0';
   else ch=cx->val[0];
@@ -2233,7 +2232,7 @@ expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po
     g_free(c1);
     if (cx->s==NULL) return -1;
     if (j!=(nshell->argc-1)) {
-      if ((*cx->quote=='"') && (po[i+1]=='*')) {
+      if ((*cx->quote=='"') && (type=='*')) {
 	if (ch!='\0') {
 	  if (is_dq_special(ch)) {
 	    if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
@@ -2245,6 +2244,14 @@ expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po
       }
     }
   }
+  return 1;
+}
+
+static int
+expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
+{
+  const int i = *index;
+  if (expand_all_args_main(nshell, cx, po[i + 1]) < 0) return -1;
   *index = i + 1;
   return 1;
 }
