@@ -2797,7 +2797,7 @@ checkcmd_next_command(struct prmlist *prmcur)
 }
 
 static int
-checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur, struct prmlist *prmprev)
+checkcmd_handle_heredoc(struct nshell *nshell, struct prmlist *prmcur)
 {
   if (checkcmd_next_command(prmcur) < 0) {
     return 2;
@@ -2873,19 +2873,18 @@ checkcmd_end(struct cmdlist *cmdcur, struct prmlist *prmcur)
 static int
 checkcmd_parse_redirects_and_pipes(struct nshell *nshell, struct cmdlist *cmdcur)
 {
-  struct prmlist *prmcur, *prmprev;
+  struct prmlist *prmcur;
 
   cmdcur->cmdend=PPEND;
   cmdcur->pipefile=NULL;
   prmcur=cmdcur->prm;
-  prmprev=NULL;
   while (prmcur) {
     if (prmcur->str) {
       int ret;
       switch (prmcur->str[0]) {
       case '>':
       case '<':
-	ret = checkcmd_handle_heredoc(nshell, prmcur, prmprev);
+	ret = checkcmd_handle_heredoc(nshell, prmcur);
 	if (ret) return ret;
 	prmcur=prmcur->next;
 	break;
@@ -2916,7 +2915,6 @@ checkcmd_parse_redirects_and_pipes(struct nshell *nshell, struct cmdlist *cmdcur
     } else {
       prmcur->prmno=PPNULL;
     }
-    prmprev=prmcur;
     prmcur=prmcur->next;
   }
   return 0;
