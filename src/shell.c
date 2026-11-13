@@ -2164,6 +2164,20 @@ expand_parameter_modifier(struct nshell *nshell, struct expand_context *cx)
 }
 
 static int
+expand_positional_main(struct nshell *nshell, struct expand_context *cx, int num)
+{
+  if (num<nshell->argc) {
+    char *c1;
+    if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
+      return -1;
+    cx->s=nstrcat(cx->s,c1);
+    g_free(c1);
+    if (cx->s==NULL) return -1;
+  }
+  return 1;
+}
+
+static int
 expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
 {
   int num, j;
@@ -2174,14 +2188,7 @@ expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, in
   strncpy(cx->name,po+i+1,j-i-1);
   cx->name[j-i-1]='\0';
   num=atoi(cx->name);
-  if (num<nshell->argc) {
-    char *c1;
-    if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
-      return -1;
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
-    if (cx->s==NULL) return -1;
-  }
+  if (expand_positional_main(nshell, cx, num) < 0) return -1;
   *index=j-1;
   return 1;
 }
