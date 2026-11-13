@@ -3289,7 +3289,7 @@ syntax_check_transition(struct cmdlist *cmdcur, int *needcmd, struct cmdstack **
 }
 
 static int
-syntax_no(struct cmdlist *cmdcur, struct cmdstack **sx)
+syntax_no(struct cmdlist *cmdcur)
 {
   struct prmlist *prm = cmdcur->prm;
   if (cmdcur->and_or && prm && (prm->prmno == PPANDAND || prm->prmno == PPOROR)) {
@@ -3378,7 +3378,7 @@ syntax_check(struct cmdlist *cmdcur, struct cmdstack **sx, int cmd)
     if (ret) return ret;
     break;
   case CPNO:
-    ret = syntax_no(cmdcur, sx);
+    ret = syntax_no(cmdcur);
     if (ret) return ret;
     break;
   default:
