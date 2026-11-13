@@ -54,7 +54,7 @@ static long long
 get_shell_var(ShellArithmeticContext *ctx, char *var_name)
 {
   if (ctx->skip) return 0;
-  char *var_str = getval(ctx->nshell, var_name);
+  const char *var_str = getval(ctx->nshell, var_name);
   return var_str ? strtoll(var_str, NULL, 0) : 0;
 }
 
@@ -71,7 +71,7 @@ check_var_name(ShellArithmeticContext *ctx, char **pvar_name)
   memcpy(var_name, start, len);
   var_name[len] = '\0';
 
-  long long val = val = get_shell_var(ctx, var_name);
+  long long val = get_shell_var(ctx, var_name);
 
   if (pvar_name) {
     clear_var_name(pvar_name);
@@ -471,7 +471,6 @@ eval_logical_and(ShellArithmeticContext *ctx, char **var_name)
 static long long
 eval_logical_or(ShellArithmeticContext *ctx, char **var_name)
 {
-  int old_skip = ctx->skip;
   long long val = eval_logical_and(ctx, var_name);
   while (1) {
     skip_whitespace(ctx);
