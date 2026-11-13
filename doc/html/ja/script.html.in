@@ -66,7 +66,13 @@ name() { list; }
 
 <h3>コマンド置換</h3>
 <p>
-`command`
+  $(command)<br>
+  `command`
+</p>
+
+<h3>算術式展開</h3>
+<p>
+  $((expression))
 </p>
 
 <h3>変数定義</h3>
@@ -76,8 +82,10 @@ name=value [ name=value ] ...
 
 <h3>変数置換</h3>
 <p>
-$# $? $num $* $@<br>
+$# $? $$ $num $* $@<br>
+${#?} ${#$} ${#num} ${#*} ${#@}<br>
 ${name}<br>
+${#name}<br>
 ${name:-word}<br>
 ${name:=word}<br>
 ${name:?word}<br>
@@ -104,7 +112,7 @@ command | command<br>
 break [n]<br>
 continue [n]<br>
 cd<br>
-echo [-q]<br>
+echo [-n]<br>
 eval [arg]<br>
 exit [n]<br>
 export [name]<br>
