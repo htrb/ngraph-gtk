@@ -2260,25 +2260,88 @@ expand_all_args(struct nshell *nshell, struct expand_context *cx, const char *po
   return 1;
 }
 
+static long
+n_strlen(const char *str)
+{
+  long len;
+  if (g_utf8_validate(str, -1, NULL)) {
+    len = g_utf8_strlen (str, -1);
+  } else {
+    len = strlen (str);
+  }
+  return len;
+}
+
+static int
+expand_braced_special(struct nshell *nshell, struct expand_context *cx, int vlen)
+{
+  char *c1, *name, buf[32], *endptr;
+  int num, len;
+
+  name = cx->name;
+  switch (name[0]) {
+  case '@': case '*':
+    if (! vlen) {
+      return expand_all_args_main(nshell, cx, name[0]);
+    }
+    len = nshell->argc - 1;
+    break;
+  case '?':
+    len = nshell->status;
+    if (vlen) len = snprintf(buf, sizeof(buf), "%d", len);
+    break;
+  case '$':
+    len = getpid();
+    if (vlen) len = snprintf(buf, sizeof(buf), "%d", len);
+    break;
+  case '0': case '1': case '2': case '3': case '4':
+  case '5': case '6': case '7': case '8': case '9':
+    num = strtol(name, &endptr, 10);
+    if (endptr[0]!='\0') {
+      sherror2(ERRNUMERIC, name);
+      return -1;
+    }
+    if (! vlen) return expand_positional_main(nshell, cx, num);
+    if (num >= nshell->argc) {
+      len = 0;
+    } else {
+      len = n_strlen(nshell->argv[num]);
+    }
+    break;
+  default:
+    return 0;
+  }
+
+  c1 = g_strdup_printf ("%d", len);
+  if (c1 == NULL) return -1;
+  cx->s = nstrcat(cx->s, c1);
+  if (cx->s == NULL) return -1;
+
+  return 1;
+}
+
 static int
 expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const char *po, int j, int *index, int vlen)
 {
   const int i = *index;
   int ofst = vlen ? 3 : 2;
+  int ret;
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
   strncpy(cx->name, po + i + ofst, j - i - ofst);
   cx->name[j-i-ofst]='\0';
+  ret = expand_braced_special(nshell, cx, vlen);
+  if (ret < 0) return -1;
+  if (ret) {
+    *index = j;
+    return 1;
+  }
+
   cx->val=getval(nshell,cx->name);
   if (cx->val!=NULL) {
     char *c1;
     if (vlen) {
-      long len;
-      if (g_utf8_validate(cx->val, -1, NULL)) {
-	len = g_utf8_strlen (cx->val, -1);
-      } else {
-	len = strlen (cx->val);
-      }
+      long len = n_strlen(cx->val);
       c1 = g_strdup_printf ("%ld", len);
     } else {
       c1=quotation(nshell,cx->val,*cx->quote);
@@ -2363,10 +2426,15 @@ find_varname_end(const char *po, int start)
 static int
 expand_braced(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
-  int j, vlen;
+  int j, ofst, vlen;
   const int i = *index;
-  vlen = (po[i + 2] == '#');
-  j = find_varname_end(po, i + (vlen ? 3 : 2));
+  vlen = (po[i + 2] == '#') ? 1 : 0;
+  ofst = i + (vlen ? 3 : 2);
+  if (strchr("*@?$", po[ofst]) && po[ofst + 1] == '}') {
+    j = ofst + 1;
+  } else {
+    j = find_varname_end(po, ofst);
+  }
   if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
       || (po[j - (vlen ? 2 : 1)]=='{')) {
     sherror(ERRBADSUB);
