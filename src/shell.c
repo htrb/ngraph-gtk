@@ -2207,6 +2207,10 @@ expand_special(struct nshell *nshell, struct expand_context *cx, const char *po,
     if ((cx->name=g_malloc(12))==NULL) return -1;
     sprintf(cx->name,"%d",nshell->status);
     break;
+  case '$': g_free(cx->name);
+    if ((cx->name=g_malloc(12))==NULL) return -1;
+    sprintf(cx->name,"%d",getpid());
+    break;
   }
   if ((c1=quotation(nshell,cx->name,*cx->quote))==NULL) return -1;
   cx->s=nstrcat(cx->s,c1);
@@ -2409,7 +2413,7 @@ expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int 
     if (isdigit(po[i+1])) {
       return expand_positional(nshell, cx, po, index);
     }
-    if (strchr("#?",po[i+1])!=NULL) {
+    if (strchr("#?$",po[i+1])!=NULL) {
       return expand_special(nshell, cx, po, index);
     }
     if (strchr("*@",po[i+1])!=NULL) {
