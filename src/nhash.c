@@ -523,6 +523,9 @@ int
 nhash_num(NHASH hash)
 {
   int i, n = 0;
+  if (hash == NULL)
+    return 0;
+
   for (i = 0; i < HASH_SIZE; i++) {
     if (hash[i]) {
       count_hash(hash[i], &n);
