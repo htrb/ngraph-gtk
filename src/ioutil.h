@@ -58,7 +58,7 @@ char *getfilename(const char *dir, const char *sep, const char *file);
 int findfilename(const char *dir, const char *sep, const char *file);
 char *ngetcwd(void);
 char *nsearchpath(char *path,char *name,int shellscript);
-int nglob(char *path,char ***namelist);
+int nglob(const char *path,char ***namelist);
 int fgetline(FILE *fp,char **buf);
 int fgetnline(FILE *fp,char *buf,int len);
 int nfgetc(FILE *fp);

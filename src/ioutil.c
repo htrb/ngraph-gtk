@@ -647,7 +647,7 @@ nglob2(const char *path,int po,int *num,char ***list)
 }
 
 int
-nglob(char *path,char ***namelist)
+nglob(const char *path,char ***namelist)
 {
   int num;
 
