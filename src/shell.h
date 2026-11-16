@@ -105,7 +105,7 @@ int init_cmd_tbl(void);
 
 void nsleep(double a);
 int eval_script(const char *script, int security);
-char *addval(struct nshell *nshell,char *name,char *val);
+char *addval(struct nshell *nshell,char *name,const char *val);
 char *addexp(struct nshell *nshell,char *name);
 int delval(struct nshell *nshell,char *name);
 char *getval(struct nshell *nshell,char *name);

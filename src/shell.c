@@ -201,7 +201,7 @@ static int Interrupted = FALSE;
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 static int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc);
-static char *expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp);
+static char *expand(struct nshell *nshell,const char *str,int *quote,int *bquote, int ifsexp);
 
 typedef struct {
   int sleep;
@@ -818,7 +818,7 @@ cmdstackrmlast(struct cmdstack **stroot)
 }
 
 static struct vallist *
-create_vallist(char *name, char *val)
+create_vallist(char *name, const char *val)
 {
   struct vallist *valnew;
 
@@ -861,7 +861,7 @@ free_vallist(struct vallist *val)
 }
 
 char *
-addval(struct nshell *nshell,char *name,char *val)
+addval(struct nshell *nshell,char *name,const char *val)
 /* addval() returns NULL on error */
 {
   struct vallist *valnew, *valcur;
@@ -1355,16 +1355,16 @@ getcmdline_show_prompt(struct nshell *nshell, struct cmdlist *cmdroot, struct cm
 static char *
 getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, struct cmdlist *cmd, int *err)
 {
-  char *tok = NULL;
+  GString *tok = NULL;
   int ch, eofcount = 0;
-  if ((tok=nstrnew())==NULL) return NULL;
+  if ((tok = g_string_new(NULL))==NULL) return NULL;
   if (nisatty(nshell->fd)) {
     getcmdline_show_prompt(nshell, cmdroot, cmd);
   }
   do {
     ch=shget(nshell);
     if (ch==EOF) {
-      if (tok[0]) {
+      if (tok->len) {
 	if (!nisatty(nshell->fd)) break;
 	else printfconsole("%c",(char )0x07);
       } else {
@@ -1383,10 +1383,10 @@ getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, stru
     } else {
       eofcount=0;
       if (ch=='\n') ch='\0';
-      if ((tok=nstrccat(tok,ch))==NULL) return NULL;
+      g_string_append_c(tok, ch);
     }
   } while (ch!='\0');
-  return tok;
+  return g_string_free(tok, FALSE);
 }
 
 static char *
@@ -1553,7 +1553,7 @@ errexit:
  * @return char* A newly allocated string with quotes and escapes applied, or NULL on failure.
  */
 static char *
-quotation(struct nshell *nshell,char *s,int quote)
+quotation(struct nshell *nshell,const char *s,int quote)
 {
   int i,j,num;
   char *snew,*ifs;
@@ -1633,66 +1633,62 @@ fnexpand(struct nshell *nshell,char *str)
 {
   int escape,str_expand,str_noexpand,quote,i,j,len,num;
   char *po;
-  char *s,*s2;
+  GString *s,*s2;
   char **namelist;
 
   po=str;
   escape=str_expand=str_noexpand=FALSE;
   quote='\0';
-  if ((s=nstrnew())==NULL) return NULL;
-  if ((s2=nstrnew())==NULL) return NULL;
+  s = g_string_new(NULL);
+  s2 = g_string_new(NULL);
   len=strlen(po);
   for (i=0;i<=len;i++) {
     if (escape && (po[i]!='\0')) {
       escape=FALSE;
-      if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+      g_string_append_c(s,po[i]);
       if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\\') {
       if (check_quote(quote, po[i+1])) escape=TRUE;
-      else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+      else g_string_append_c(s,po[i]);
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if ((po[i]==(char )0x01) || (po[i]=='\0')) {
-      if (s[0]) {
+      if (s->len) {
         if (!nshell->optionf && str_expand && !str_noexpand) {
-          if ((num=nglob(s,&namelist))==-1) goto errexit;
+          if ((num=nglob(s->str,&namelist))==-1) goto errexit;
           for (j=0;j<num;j++) {
-            if (((s2=nstrcat(s2,(char *)(namelist[j])))==NULL)
-            || ((s2=nstrccat(s2,(char )0x01))==NULL)) {
-              arg_del(namelist);
-              goto errexit;
-            }
+            g_string_append(s2, (char *)(namelist[j]));
+            g_string_append_c(s2, (char )0x01);
           }
           arg_del(namelist);
         } else {
-          if ((s2=nstrcat(s2,s))==NULL) goto errexit;
-          if ((s2=nstrccat(s2,(char )0x01))==NULL) goto errexit;
+          g_string_append(s2, s->str);
+          g_string_append_c(s2, (char )0x01);
         }
       }
       str_expand=FALSE;
       if (po[i]==(char )0x01) for (;po[i+1]==(char )0x01;i++);
-      g_free(s);
-      if ((s=nstrnew())==NULL) goto errexit;
+      g_string_truncate(s, 0);
     } else if ((quote=='"') || (quote=='\'')) {
       if (po[i]==quote) quote='\0';
-      else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+      else g_string_append_c(s,po[i]);
       if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\'' || po[i]=='"') quote=po[i];
     else {
-      if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+      g_string_append_c(s,po[i]);
       if (strchr("*?[",po[i])!=NULL) str_expand=TRUE;
     }
   }
 
-  g_free(s);
+  g_string_free(s, TRUE);
   g_free(po);
-  len=strlen(s2);
-  if ((len!=0) && (s2[len-1]==(char )0x01)) s2[len-1]='\0';
-  return s2;
+  len = s2->len;
+  if ((len != 0) && (s2->str[len-1] == (char )0x01)) g_string_truncate(s2, len-1);
+  return g_string_free(s2, FALSE);
 
 errexit:
-  g_free(s);
+  g_string_free(s, TRUE);
   g_free(po);
-  g_free(s2);
+  g_string_free(s2, TRUE);
   return NULL;
 }
 
@@ -1702,19 +1698,19 @@ wordsplit(struct prmlist *prmcur)
   int i,num;
   char *po;
   struct prmlist *prmnew;
-  char *s;
+  GString*s;
 
   num=0;
   po=prmcur->str;
   if (po==NULL) return 1;
-  if ((s=nstrnew())==NULL) return -1;
+  if ((s=g_string_new(NULL))==NULL) return -1;
   for (i=0;po[i]!='\0';i++) {
     if (po[i]==(char )0x02) {
       i++;
-      if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+      g_string_append_c(s, po[i]);
     } else if (po[i]==(char )0x01) {
-      prmcur->str=s;
-      if ((s=nstrnew())==NULL) goto errexit;
+      prmcur->str = g_string_free(s, FALSE);
+      if ((s=g_string_new(NULL))==NULL) goto errexit;
       if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
       prmnew->str=NULL;
       prmnew->next=prmcur->next;
@@ -1722,15 +1718,15 @@ wordsplit(struct prmlist *prmcur)
       prmcur->next=prmnew;
       prmcur=prmnew;
       num++;
-    } else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
+    } else g_string_append_c(s, po[i]);
   }
-  prmcur->str=s;
+  prmcur->str=g_string_free(s, FALSE);
   num++;
   g_free(po);
   return num;
 
 errexit:
-  g_free(s);
+  g_string_free(s, TRUE);
   g_free(po);
   return -1;
 }
@@ -1754,24 +1750,38 @@ struct expand_context {
   int *quote, quote2;
   int *bquote, bquote2;
   int escape;
-  char *cmd_buf;			/* command substitution */
-  char *param_buf;			/* parameter expansion */
-  char *name, *s, *val, valf, valf2;
+  GString *cmd_buf;			/* command substitution */
+  GString *param_buf;			/* parameter expansion */
+  char *name, *val, valf, valf2;
+  GString *s;
 };
 
 static int
-expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
+append_quoted(struct nshell *nshell, const char *str, int quote, GString *gstr)
+{
+  char *c1;
+  c1 = quotation(nshell, str, quote);
+  if (c1 == NULL) return -1;
+
+  g_string_append(gstr, c1);
+  g_free(c1);
+  return 0;
+}
+
+static int
+expand_command(struct nshell *nshell, struct expand_context *cx, const char *cmd)
 {
   /* command substitution */
   int sout, sout2, rcode, byte, n, j, ret = -1;
-  char *tmpfil, *c1, *buf = NULL;
+  char *tmpfil;
+  GString *buf = NULL;
   // if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
   sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
   if (sout < 0) return -1;
   sout2=nredirect(1,sout);
   rcode=cmdexecute(nshell,cmd);
   if ((rcode!=0) && (rcode!=1)) goto errexit;
-  if ((buf=nstrnew())==NULL) goto errexit;
+  if ((buf=g_string_new(NULL))==NULL) goto errexit;
 
   nlseek(stdoutfd(),0L,SEEK_SET);
   while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
@@ -1786,29 +1796,27 @@ expand_command(struct nshell *nshell, struct expand_context *cx, char *cmd)
 	writebuf[byte]='\0';
       }
     }
-    if ((buf=nstrcat(buf,writebuf))==NULL) goto errexit;
+    g_string_append(buf, writebuf);
   }
   nredirect2(1,sout2);
   sout2 = -1;
   if (byte==-1) goto errexit;
-  n = strlen(buf);
+  n = buf->len;
   for (int u = 0; u < n; u++) {
-    if (buf[u] == '\n') {
-      buf[u] = ' ';
+    if (buf->str[u] == '\n') {
+      buf->str[u] = ' ';
     }
   }
-  for (j=n-1;(j>=0) && (buf[j]==' ');j--);
-  buf[j+1]='\0';
-  if ((c1=quotation(nshell,buf,*cx->quote))==NULL) goto errexit;
-  cx->s=nstrcat(cx->s,c1);
-  g_free(c1);
-  if (cx->s) ret = 0;
+  for (j=n-1;(j>=0) && (buf->str[j]==' ');j--);
+  g_string_truncate(buf, j+1);
+  if (append_quoted(nshell, buf->str, *cx->quote, cx->s) < 0) goto errexit;
+  ret = 0;
 
  errexit:
   if (sout2 >= 0) nredirect2(1,sout2);
   g_unlink(tmpfil);
   g_free(tmpfil);
-  g_free(buf);
+  if (buf) g_string_free(buf, TRUE);
   return ret;
 }
 
@@ -1843,13 +1851,9 @@ expand_arithmetic (struct nshell *nshell, struct expand_context *cx, char *str, 
     return -1;
   }
 
-  char *result = g_strdup_printf ("%lld", val);
-  cx->s = nstrcat(cx->s, result);
-  g_free(result);
-  if (cx->s == NULL) {
-    sherror(ERRMEMORY);
-    return -1;
-  }
+  char result[INT_BUF_SIZE(val)];
+  snprintf(result, sizeof(result), "%lld", val);
+  if (append_quoted(nshell, result, *cx->quote, cx->s) < 0) return -1 ;
 
   return 1;
 }
@@ -1885,6 +1889,13 @@ expand_dollar_paren (struct nshell *nshell, struct expand_context *cx, const cha
   return 1;
 }
 
+static char *
+g_string_get_string(GString *s)
+{
+  if (s == NULL) return NULL;
+  return s->str;
+}
+
 static int
 expand_bquote (struct nshell *nshell, struct expand_context *cx, int ch)
 {
@@ -1892,23 +1903,23 @@ expand_bquote (struct nshell *nshell, struct expand_context *cx, int ch)
     if (ch=='`') {
       *cx->bquote='\0';
       if (cx->param_buf==NULL) {
-	int ret = expand_command(nshell, cx, cx->cmd_buf);
-	g_free(cx->cmd_buf);
+	int ret = expand_command(nshell, cx, g_string_get_string(cx->cmd_buf));
+	if (cx->cmd_buf) g_string_free(cx->cmd_buf, TRUE);
 	cx->cmd_buf = NULL;
 	if (ret < 0) return -1;
       }
     } else if (cx->param_buf==NULL) {
       if (cx->cmd_buf!=NULL) {
-	if ((cx->cmd_buf=nstrccat(cx->cmd_buf,ch))==NULL) return -1;
+	g_string_append_c(cx->cmd_buf, ch);
       } else {
-	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	g_string_append_c(cx->s, ch);
       }
     }
     return 1;
   } else if ((ch=='`') && (*cx->quote!='\'')) {
     *cx->bquote='`';
     if (cx->param_buf==NULL) {
-      if ((cx->cmd_buf=nstrnew())==NULL) return -1;
+      if ((cx->cmd_buf = g_string_new(NULL))==NULL) return -1;
     }
     return 1;
   }
@@ -1921,9 +1932,9 @@ expand_escape(struct expand_context *cx, int ch, int chn)
   if (cx->escape) {
     if (cx->param_buf==NULL) {
       if (cx->cmd_buf!=NULL) {
-	if ((cx->cmd_buf=nstrccat(cx->cmd_buf,ch))==NULL) return -1;
+	g_string_append_c(cx->cmd_buf, ch);
       } else {
-	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	g_string_append_c(cx->s, ch);
       }
     }
     cx->escape=FALSE;
@@ -1934,13 +1945,13 @@ expand_escape(struct expand_context *cx, int ch, int chn)
     if (check_quote_bquote(*cx->quote, *cx->bquote, chn)) {
       cx->escape=TRUE;
       if ((cx->param_buf==NULL) && (cx->cmd_buf==NULL)) {
-	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	g_string_append_c(cx->s, ch);
       }
     } else if (cx->param_buf==NULL) {
       if (cx->cmd_buf!=NULL) {
-	if ((cx->cmd_buf=nstrccat(cx->cmd_buf,ch))==NULL) return -1;
+	g_string_append_c(cx->cmd_buf, ch);
       } else {
-	if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	g_string_append_c(cx->s, ch);
       }
     }
     return 1;
@@ -1949,7 +1960,7 @@ expand_escape(struct expand_context *cx, int ch, int chn)
   if (ch==(char )0x02) {
     cx->escape=TRUE;
     if ((cx->param_buf==NULL) && (cx->cmd_buf==NULL)) {
-      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      g_string_append_c(cx->s, ch);
     }
     return 1;
   }
@@ -1964,8 +1975,8 @@ expand_object_replacement (struct nshell *nshell, struct expand_context *cx)
   struct narray *sarray;
   char **sdata;
   int snum, dummy;
-  if ((tmp=unquotation(cx->param_buf,&dummy))==NULL) return -1;
-  g_free(cx->param_buf);
+  if ((tmp=unquotation(g_string_get_string(cx->param_buf),&dummy))==NULL) return -1;
+  if (cx->param_buf) g_string_free(cx->param_buf, TRUE);
   cx->param_buf=NULL;
   tmp2 = g_strdup_printf("%s:%s", cx->name, tmp);
   g_free(tmp);
@@ -1976,14 +1987,7 @@ expand_object_replacement (struct nshell *nshell, struct expand_context *cx)
   sdata=arraydata(sarray);
   snum=arraynum(sarray);
   for (int j=0;j<snum;j++) {
-    char *c1;
-    if ((c1=quotation(nshell,sdata[j],*cx->quote))==NULL) {
-      arrayfree2(sarray);
-      return -1;
-    }
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
-    if (cx->s==NULL) {
+    if (append_quoted(nshell, sdata[j], *cx->quote, cx->s) < 0) {
       arrayfree2(sarray);
       return -1;
     }
@@ -1996,7 +2000,7 @@ static int
 expand_modifier_default(struct nshell *nshell, struct expand_context *cx, char **str)
 {
   int dummy;
-  char *c1 = NULL;
+  char *c1 = NULL, *c2;
   if ((cx->val!=NULL) && ((cx->valf2!=':') || (cx->val[0]!='\0'))) {
     switch (cx->valf) {
     case '-':
@@ -2005,7 +2009,7 @@ expand_modifier_default(struct nshell *nshell, struct expand_context *cx, char *
       c1 = quotation(nshell,cx->val,cx->quote2);
       break;
     case '+':
-      c1 = expand(nshell,cx->param_buf,&cx->quote2,&cx->bquote2,TRUE);
+      c1 = expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE);
       break;
     }
     *str = c1;
@@ -2017,19 +2021,22 @@ expand_modifier_default(struct nshell *nshell, struct expand_context *cx, char *
     return 0;
   }
 
-  c1 = expand(nshell,cx->param_buf,&cx->quote2,&cx->bquote2,TRUE);
+  c1 = expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE);
   if (c1 == NULL) {
     return -1;
   }
 
   switch (cx->valf) {
   case '=':
-    g_free(cx->param_buf);
-    if ((cx->param_buf=unquotation(c1,&dummy))==NULL) {
+    if (cx->param_buf) g_string_free(cx->param_buf, TRUE);
+    cx->param_buf = NULL;
+    c2 = unquotation(c1,&dummy);
+    if (c2 == NULL) {
       g_free (c1);
       return -1;
     }
-    if (addval(nshell,cx->name,cx->param_buf)==NULL) {
+    cx->param_buf = g_string_new_take(c2);
+    if (addval(nshell,cx->name, c2)==NULL) {
       g_free (c1);
       return -1;
     }
@@ -2051,9 +2058,8 @@ expand_modifier_prefix (struct nshell *nshell, struct expand_context *cx)
   char *c2;
   int k;
   char ch;
-  if ((c2=nstrnew())==NULL) return NULL;
-  if ((c2=nstrcat(c2,cx->val))==NULL) return NULL;
-  if ((c1=expand(nshell,cx->param_buf,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
+  if ((c2=g_strdup(cx->val))==NULL) return NULL;
+  if ((c1=expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE))==NULL) {
     g_free(c2);
     return NULL;
   }
@@ -2095,9 +2101,8 @@ expand_modifier_suffix (struct nshell *nshell, struct expand_context *cx)
   char *c1 = NULL;
   char *c2;
   int k;
-  if ((c2=nstrnew())==NULL) return NULL;
-  if ((c2=nstrcat(c2,cx->val))==NULL) return NULL;
-  if ((c1=expand(nshell,cx->param_buf,&cx->quote2,&cx->bquote2,TRUE))==NULL) {
+  if ((c2=g_strdup(cx->val))==NULL) return NULL;
+  if ((c1=expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE))==NULL) {
     g_free(c2);
     return NULL;
   }
@@ -2152,13 +2157,12 @@ expand_parameter_modifier(struct nshell *nshell, struct expand_context *cx)
     break;
   }
   if (c1!=NULL) {
-    cx->s=nstrcat(cx->s,c1);
+    g_string_append(cx->s, c1);
     g_free(c1);
-    if (cx->s==NULL) return -1;
   }
   *cx->quote=cx->quote2;
   *cx->bquote=cx->bquote2;
-  g_free(cx->param_buf);
+  if (cx->param_buf) g_string_free(cx->param_buf, TRUE);
   cx->param_buf=NULL;
   return 1;
 }
@@ -2167,18 +2171,13 @@ static int
 expand_positional_main(struct nshell *nshell, struct expand_context *cx, int num)
 {
   if (num<nshell->argc) {
-    char *c1;
-    if ((c1=quotation(nshell,(nshell->argv)[num],*cx->quote))==NULL)
-      return -1;
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
-    if (cx->s==NULL) return -1;
+    if (append_quoted(nshell, (nshell->argv)[num], *cx->quote, cx->s) < 0) return -1;
   }
   return 1;
 }
 
 static int
-expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
+expand_positional(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   int num, j;
   const int i = *index;
@@ -2196,26 +2195,22 @@ expand_positional(struct nshell *nshell, struct expand_context *cx, char *po, in
 static int
 expand_special(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
-  char *c1;
   const int i = *index;
   switch (po[i+1]) {
-  case '#': g_free(cx->name);
-    if ((cx->name=g_malloc(12))==NULL) return -1;
-    sprintf(cx->name,"%d",nshell->argc-1);
+  case '#':
+    g_free(cx->name);
+    cx->name = g_strdup_printf("%d",nshell->argc-1);
     break;
-  case '?': g_free(cx->name);
-    if ((cx->name=g_malloc(12))==NULL) return -1;
-    sprintf(cx->name,"%d",nshell->status);
+  case '?':
+    g_free(cx->name);
+    cx->name = g_strdup_printf("%d",nshell->status);
     break;
-  case '$': g_free(cx->name);
-    if ((cx->name=g_malloc(12))==NULL) return -1;
-    sprintf(cx->name,"%d",getpid());
+  case '$':
+    g_free(cx->name);
+    cx->name = g_strdup_printf("%d",getpid());
     break;
   }
-  if ((c1=quotation(nshell,cx->name,*cx->quote))==NULL) return -1;
-  cx->s=nstrcat(cx->s,c1);
-  g_free(c1);
-  if (cx->s==NULL) return -1;
+  if (append_quoted(nshell, cx->name, *cx->quote, cx->s) < 0) return -1;
   *index = i + 1;
   return 1;
 }
@@ -2229,22 +2224,17 @@ expand_all_args_main(struct nshell *nshell, struct expand_context *cx, int type)
   if (cx->val==NULL) ch='\0';
   else ch=cx->val[0];
   for (j=1;j<nshell->argc;j++) {
-    char *c1;
-    if ((c1=quotation(nshell,(nshell->argv)[j],*cx->quote))==NULL)
-      return -1;
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
-    if (cx->s==NULL) return -1;
+    if (append_quoted(nshell, (nshell->argv)[j], *cx->quote, cx->s) < 0) return -1;
     if (j!=(nshell->argc-1)) {
       if ((*cx->quote=='"') && (type=='*')) {
 	if (ch!='\0') {
 	  if (is_dq_special(ch)) {
-	    if ((cx->s=nstrccat(cx->s,'\\'))==NULL) return -1;
+	    g_string_append_c(cx->s, '\\');
 	  }
-	  if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+	  g_string_append_c(cx->s, ch);
 	}
       } else {
-	if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
+	g_string_append_c(cx->s, (char )0x01);
       }
     }
   }
@@ -2275,7 +2265,7 @@ n_strlen(const char *str)
 static int
 expand_braced_special(struct nshell *nshell, struct expand_context *cx, int vlen)
 {
-  char *c1, *name, buf[32], *endptr;
+  char *name, buf[32], *endptr;
   int num, len;
 
   name = cx->name;
@@ -2298,7 +2288,7 @@ expand_braced_special(struct nshell *nshell, struct expand_context *cx, int vlen
   case '5': case '6': case '7': case '8': case '9':
     num = strtol(name, &endptr, 10);
     if (endptr[0]!='\0') {
-      sherror2(ERRNUMERIC, name);
+      sherror2(ERRBADSUB, name);
       return -1;
     }
     if (! vlen) return expand_positional_main(nshell, cx, num);
@@ -2312,10 +2302,9 @@ expand_braced_special(struct nshell *nshell, struct expand_context *cx, int vlen
     return 0;
   }
 
-  c1 = g_strdup_printf ("%d", len);
-  if (c1 == NULL) return -1;
-  cx->s = nstrcat(cx->s, c1);
-  if (cx->s == NULL) return -1;
+  char result[INT_BUF_SIZE(len)];
+  snprintf (result, sizeof(result), "%d", len);
+  if (append_quoted(nshell, result, *cx->quote, cx->s) < 0) return -1;
 
   return 1;
 }
@@ -2326,6 +2315,7 @@ expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const cha
   const int i = *index;
   int ofst = vlen ? 3 : 2;
   int ret;
+  char *c1 = NULL;
   g_free(cx->name);
   if ((cx->name=g_malloc(j-i-1))==NULL) return -1;
   strncpy(cx->name, po + i + ofst, j - i - ofst);
@@ -2339,20 +2329,23 @@ expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const cha
 
   cx->val=getval(nshell,cx->name);
   if (cx->val!=NULL) {
-    char *c1;
     if (vlen) {
       long len = n_strlen(cx->val);
-      c1 = g_strdup_printf ("%ld", len);
+      char result[INT_BUF_SIZE(len)];
+      snprintf(result, sizeof(result), "%ld", len);
+      c1 = quotation(nshell, result, *cx->quote);
     } else {
       c1=quotation(nshell,cx->val,*cx->quote);
     }
     if (c1 == NULL) return -1;
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
   } else if (vlen) {
-    cx->s=nstrcat(cx->s, "0");
+    c1 = quotation(nshell, "0", *cx->quote);
+    if (c1 == NULL) return -1;
   }
-  if (cx->s == NULL) return -1;
+  if (c1) {
+    g_string_append(cx->s, c1);
+    g_free(c1);
+  }
   *index=j;
   return 1;
 }
@@ -2360,6 +2353,7 @@ expand_braced_simple(struct nshell *nshell, struct expand_context *cx, const cha
 static int
 expand_braced_expression(struct nshell *nshell, struct expand_context *cx, const char *po, int j)
 {
+  char *c1;
   int last = find_matching_brace(po + j);
   if (last < 0) {
     sherror(ERRBADSUB);
@@ -2368,10 +2362,13 @@ expand_braced_expression(struct nshell *nshell, struct expand_context *cx, const
 
   char *str = g_strndup(po + j, last);
   if (str == NULL) return -1;
-  cx->param_buf = expand(nshell, str, &cx->quote2, &cx->bquote2, TRUE);
+  c1 = expand(nshell, str, &cx->quote2, &cx->bquote2, TRUE);
   g_free(str);
+  if (c1 == NULL) return -1;
 
-  if (cx->param_buf == NULL) return -1;
+  if (cx->param_buf) g_string_free(cx->param_buf, TRUE);
+  cx->param_buf = g_string_new_take(c1);
+
   if (expand_parameter_modifier(nshell, cx) < 0) return -1;
 
   return last;
@@ -2462,18 +2459,14 @@ expand_simple(struct nshell *nshell, struct expand_context *cx, const char *po, 
   if (cx->name[0]=='\0') cx->val="$";
   else cx->val=getval(nshell,cx->name);
   if (cx->val!=NULL) {
-    char *c1;
-    if ((c1=quotation(nshell,cx->val,*cx->quote))==NULL) return -1;
-    cx->s=nstrcat(cx->s,c1);
-    g_free(c1);
-    if (cx->s==NULL) return -1;
+    if (append_quoted(nshell, cx->val, *cx->quote, cx->s) < 0) return -1;
   }
   *index=j-1;
   return 1;
 }
 
 static int
-expand_variable(struct nshell *nshell, struct expand_context *cx, char *po, int *index)
+expand_variable(struct nshell *nshell, struct expand_context *cx, const char *po, int *index)
 {
   const int i = *index;
   if ((po[i]=='$') && (po[i+1]!='\0')
@@ -2505,13 +2498,13 @@ expand_quotation(struct expand_context *cx, int ch)
   if ((*cx->quote=='"') || (*cx->quote=='\'')) {
     if (ch==*cx->quote) *cx->quote='\0';
     if (cx->param_buf==NULL) {
-      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      g_string_append_c(cx->s, ch);
     }
     return 1;
   } else if (ch=='\'' || ch=='"') {
     *cx->quote=ch;
     if (cx->param_buf==NULL) {
-      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      g_string_append_c(cx->s, ch);
     }
     return 1;
   }
@@ -2523,9 +2516,9 @@ expand_ifs (struct expand_context *cx, int ch, char *ifs, int ifsexp)
 {
   if (cx->param_buf==NULL) {
     if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0') && (strchr(ifs,ch)!=NULL)) {
-      if ((cx->s=nstrccat(cx->s,(char )0x01))==NULL) return -1;
+      g_string_append_c(cx->s, (char )0x01);
     } else {
-      if ((cx->s=nstrccat(cx->s,ch))==NULL) return -1;
+      g_string_append_c(cx->s, ch);
     }
     return 1;
   }
@@ -2533,14 +2526,14 @@ expand_ifs (struct expand_context *cx, int ch, char *ifs, int ifsexp)
 }
 
 static char *
-expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
+expand(struct nshell *nshell,const char *str,int *quote,int *bquote, int ifsexp)
 {
-  char *po;
+  const char *po;
   int i;
   struct expand_context cx;
 
   if ((po=str)==NULL) return NULL;
-  if ((cx.s=nstrnew())==NULL) return NULL;
+  if ((cx.s = g_string_new(NULL))==NULL) return NULL;
 
   cx.quote = quote;
   cx.bquote = bquote;
@@ -2554,12 +2547,12 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     int res;
     res = expand_escape(&cx, po[i], po[i + 1]);
     if (res < 0) goto errexit;
-    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+    if (res > 0) goto common_se; // 処理済みなら se蓄積へ
 
     /* check back quote */
     res = expand_bquote (nshell, &cx, po[i]);
     if (res < 0) goto errexit;
-    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+    if (res > 0) goto common_se; // 処理済みなら se蓄積へ
 
     /* check $() */
     res = expand_dollar_paren(nshell, &cx, po, &i);
@@ -2569,12 +2562,12 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     /* check constant variable */
     res = expand_variable(nshell, &cx, po, &i);
     if (res < 0) goto errexit;
-    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+    if (res > 0) goto common_se; // 処理済みなら se蓄積へ
 
     /* check quotation */
     res = expand_quotation(&cx, po[i]);
     if (res < 0) goto errexit;
-    if (res > 0) goto common_se; // 特殊文字として処理済みなら se蓄積へ
+    if (res > 0) goto common_se; // 処理済みなら se蓄積へ
 
     res = expand_ifs (&cx, po[i], ifs, ifsexp);
     if (res < 0) goto errexit;
@@ -2582,7 +2575,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
 
   common_se:
     if (cx.param_buf!=NULL) {
-      if ((cx.param_buf=nstrccat(cx.param_buf,po[i]))==NULL) goto errexit;
+      g_string_append_c(cx.param_buf, po[i]);
     }
   }
 
@@ -2592,15 +2585,15 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
   }
 
   g_free(cx.name);
-  g_free(cx.cmd_buf);
-  g_free(cx.param_buf);
-  return cx.s;
+  if (cx.cmd_buf) g_string_free(cx.cmd_buf, TRUE);
+  if (cx.param_buf) g_string_free(cx.param_buf, TRUE);
+  return g_string_free(cx.s, FALSE);
 
 errexit:
   g_free(cx.name);
-  g_free(cx.cmd_buf);
-  g_free(cx.param_buf);
-  g_free(cx.s);
+  if (cx.cmd_buf) g_string_free(cx.cmd_buf, TRUE);
+  if (cx.param_buf) g_string_free(cx.param_buf, TRUE);
+  g_string_free(cx.s, TRUE);
   return NULL;
 }
 
@@ -2775,13 +2768,13 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
 {
   int ch;
   int remove_tab;
+  GString *s;
   remove_tab = ignore_indent;
+  s = g_string_new(NULL);
   do {
-    char *s, *prompt;
+    char *prompt;
     remove_tab = ignore_indent;
-    if ((s=nstrnew())==NULL) {
-      return -1;
-    }
+    g_string_truncate(s, 0);
     if (nisatty(nshell->fd)) {
       prompt = getval(nshell,"PS2");
 #ifdef HAVE_READLINE_READLINE_H
@@ -2794,7 +2787,7 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
     do {
       ch=shget(nshell);
       if (ch==EOF) {
-	if (s[0]) {
+	if (s->len) {
 	  if (!nisatty(nshell->fd)) break;
 	  else printfconsole("%c",(char )0x07);
 	} else break;
@@ -2802,21 +2795,19 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
 	if (ch=='\n') ch='\0';
 	if (remove_tab && ch == '\t') continue;
 	remove_tab = FALSE;
-	if ((s=nstrccat(s,ch))==NULL) {
-	  return -1;
-	}
+	g_string_append_c(s, ch);
       }
     } while (ch!='\0');
-    if (strcmp0(eof,s)!=0) {
-      int len = strlen(s);
-      s[len]='\n';
-      nwrite(sout,s,len+1);
-      g_free(s);
+    if (strcmp0(eof,s->str)!=0) {
+      int len = s->len;
+      s->str[len]='\n';
+      nwrite(sout,s->str,len+1);
+      s->str[len]='\0';
     } else {
-      g_free(s);
       break;
     }
   } while (ch!=EOF);
+  g_string_free(s, TRUE);
   return 0;
 }
 
@@ -3768,8 +3759,7 @@ cmdexpand(struct nshell *nshell, struct cmdexec_fd *cmdfd)
       }
       prmcur->quoted=FALSE;
     } else {
-      if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) return -1;
-      strcpy(str,prmcur->str);
+      if ((str = g_strdup(prmcur->str))==NULL) return -1;
     }
     if ((prmcur->prmno!=PPNO) || (str[0]!='\0')) {
       if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) return -1;
@@ -4211,24 +4201,29 @@ cmdrun_command(struct nshell *nshell, struct cmdexec_fd *cmdfd, struct cmdexec_p
 static int
 cmdrun_prepare_pipe(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struct cmdexec_pipe *pipe, int quoted)
 {
-  if (pipe->istdin==PPSI1) cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
-  else if (pipe->istdin==PPSI2) {
+  char ch, *s;
+  GString *gs;
+
+  if (pipe->istdin==PPSI1) {
     cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
-    if (!quoted) {
-      char ch, *s;
+    return 0;
+  }
+
+  if (pipe->istdin!=PPSI2) return 0;
+
+    cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
+
+    if (quoted) return 0;
+
       int fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &cmdfd->tmpfil2);
       if (fd < 0) {
 	nclose(cmdfd->sin);
 	return -1;
       }
+
+      gs = g_string_new(NULL);
       do {
-	char *str;
-	s = nstrnew();
-	if (s == NULL) {
-	  nclose(cmdfd->sin);
-	  nclose(fd);
-	  return -1;
-	}
+	g_string_truncate(gs, 0);
 	do {
 	  char buf[2];
 	  if (nread(cmdfd->sin,buf,1)>0) ch=buf[0];
@@ -4236,21 +4231,17 @@ cmdrun_prepare_pipe(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struc
 	  if (ch==EOF) break;
 	  else {
 	    if (ch=='\n') ch='\0';
-	    if ((s=nstrccat(s,ch))==NULL) {
-	      nclose(cmdfd->sin);
-	      nclose(fd);
-	      return -1;
-	    }
+	    g_string_append_c(gs, ch);
 	  }
 	} while (ch!='\0');
 	int quote, bquote;
 	quote=bquote='\0';
-	str=s;
-	s=expand(nshell,str,&quote,&bquote,FALSE);
-	g_free(str);
+	s=expand(nshell,gs->str,&quote,&bquote,FALSE);
+	g_string_truncate(gs, 0);
 	if (s==NULL) {
 	  nclose(cmdfd->sin);
 	  nclose(fd);
+	  g_string_free(gs, TRUE);
 	  return -1;
 	}
 	wordunsplit(s);
@@ -4265,8 +4256,8 @@ cmdrun_prepare_pipe(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struc
       nclose(cmdfd->sin);
       nclose(fd);
       cmdfd->sin=nopen(cmdfd->tmpfil2,O_RDONLY,NFMODE);
-    }
-  }
+      g_string_free(gs, TRUE);
+
   return 0;
 }
 
