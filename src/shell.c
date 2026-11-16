@@ -189,6 +189,8 @@ static char *cmderrorlist[] = {
 
 #define ERRNUM (sizeof(cmderrorlist) / sizeof(*cmderrorlist))
 
+#define INT_BUF_SIZE(type) ((sizeof(type) * CHAR_BIT * 3 / 10) + 3)
+
 static char **MainEnviron;
 static int Security=FALSE;
 
@@ -1371,13 +1373,18 @@ getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, stru
 	if ((cmd!=NULL) || (cmdroot!=NULL)) {
 	  sherror(ERRUEXPEOF);
 	  *err=-2;
+	  g_string_free(tok, TRUE);
 	  return NULL;
 	}
 	if (!nisatty(nshell->fd)) {
 	  *err=1;
+	  g_string_free(tok, TRUE);
 	  return NULL;
 	} else {
-	  if (getcmdline_fetch_from_tty(nshell, &eofcount, &ch, err) < 0) return NULL;
+	  if (getcmdline_fetch_from_tty(nshell, &eofcount, &ch, err) < 0) {
+	    g_string_free(tok, TRUE);
+	    return NULL;
+	  }
 	}
       }
     } else {
