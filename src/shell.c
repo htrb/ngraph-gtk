@@ -5286,7 +5286,7 @@ ngraphenvironment(struct nshell *nshell)
   addin = g_strdup_printf("%s/addin", data);
   if (addin) {
     char *pathset;
-    pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
+    pathset = g_strdup_printf("PATH='%s" PATHSEP "%s" PATHSEP "%s" PATHSEP "." PATHSEP "'$PATH", home, addin, lib);
     if (pathset) {
 #if WINDOWS
       path_to_win(pathset);
