@@ -4409,11 +4409,9 @@ cmdexec_cpno(struct nshell *nshell, int namedfunc, struct cmdexec_fd *cmdfd, str
   quoted = cmdparse_redirect(&pipe, cmdfd);
 
   /* set variable */
-  cmdsetvar(nshell,cmdfd, &pipe);
+  if (cmdsetvar(nshell,cmdfd, &pipe) < 0) return -1;
 
-  if (cmdrun (nshell, namedfunc, cmdfd, &pipe, quoted, stroot, err)) {
-    return -1;
-  }
+  if (cmdrun(nshell, namedfunc, cmdfd, &pipe, quoted, stroot, err) < 0) return -1;
 
   prmfree(cmdfd->prmnewroot);
   cmdfd->prmnewroot=NULL;
