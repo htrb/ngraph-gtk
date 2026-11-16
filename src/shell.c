@@ -4211,52 +4211,52 @@ cmdrun_prepare_pipe(struct nshell *nshell, struct cmdexec_fd *cmdfd, const struc
 
   if (pipe->istdin!=PPSI2) return 0;
 
-    cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
+  cmdfd->sin=nopen(cmdfd->fstdin,O_RDONLY,NFMODE);
 
-    if (quoted) return 0;
+  if (quoted) return 0;
 
-      int fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &cmdfd->tmpfil2);
-      if (fd < 0) {
-	nclose(cmdfd->sin);
-	return -1;
+  int fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &cmdfd->tmpfil2);
+  if (fd < 0) {
+    nclose(cmdfd->sin);
+    return -1;
+  }
+
+  gs = g_string_new(NULL);
+  do {
+    g_string_truncate(gs, 0);
+    do {
+      char buf[2];
+      if (nread(cmdfd->sin,buf,1)>0) ch=buf[0];
+      else ch=EOF;
+      if (ch==EOF) break;
+      else {
+	if (ch=='\n') ch='\0';
+	g_string_append_c(gs, ch);
       }
-
-      gs = g_string_new(NULL);
-      do {
-	g_string_truncate(gs, 0);
-	do {
-	  char buf[2];
-	  if (nread(cmdfd->sin,buf,1)>0) ch=buf[0];
-	  else ch=EOF;
-	  if (ch==EOF) break;
-	  else {
-	    if (ch=='\n') ch='\0';
-	    g_string_append_c(gs, ch);
-	  }
-	} while (ch!='\0');
-	int quote, bquote;
-	quote=bquote='\0';
-	s=expand(nshell,gs->str,&quote,&bquote,FALSE);
-	g_string_truncate(gs, 0);
-	if (s==NULL) {
-	  nclose(cmdfd->sin);
-	  nclose(fd);
-	  g_string_free(gs, TRUE);
-	  return -1;
-	}
-	wordunsplit(s);
-	int len=strlen(s);
-	if (ch!=EOF) {
-	  s[len]='\n';
-	  len++;
-	}
-	nwrite(fd,s,len);
-	g_free(s);
-      } while (ch!=EOF);
+    } while (ch!='\0');
+    int quote, bquote;
+    quote=bquote='\0';
+    s=expand(nshell,gs->str,&quote,&bquote,FALSE);
+    g_string_truncate(gs, 0);
+    if (s==NULL) {
       nclose(cmdfd->sin);
       nclose(fd);
-      cmdfd->sin=nopen(cmdfd->tmpfil2,O_RDONLY,NFMODE);
       g_string_free(gs, TRUE);
+      return -1;
+    }
+    wordunsplit(s);
+    int len=strlen(s);
+    if (ch!=EOF) {
+      s[len]='\n';
+      len++;
+    }
+    nwrite(fd,s,len);
+    g_free(s);
+  } while (ch!=EOF);
+  nclose(cmdfd->sin);
+  nclose(fd);
+  cmdfd->sin=nopen(cmdfd->tmpfil2,O_RDONLY,NFMODE);
+  g_string_free(gs, TRUE);
 
   return 0;
 }
