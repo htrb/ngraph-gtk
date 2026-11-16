@@ -72,7 +72,8 @@ name() { list; }
 
 <h3>算術式展開</h3>
 <p>
-  $((expression))
+  $((expression))<br>
+  使用できる演算子とその優先順位は Bash と同等。
 </p>
 
 <h3>変数定義</h3>
