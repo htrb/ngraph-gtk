@@ -672,8 +672,9 @@ fgetline(FILE *fp, char **buf)
         -1 fatal error
          1 EOF
 */
-  char *s;
-  int ch, i;
+  static gsize len = STRLEN;
+  GString *s;
+  int ch;
 
   /* modified */
 
@@ -685,13 +686,12 @@ fgetline(FILE *fp, char **buf)
     return 1;
   }
 
-  s = nstrnew();
+  s = g_string_sized_new(len);
   if (s == NULL) {
     *buf = NULL;
     return -1;
   }
 
-  i = 0;
   while (TRUE) {
 #if EOF == -1
     if (is_line_sep(ch)) {
@@ -705,17 +705,12 @@ fgetline(FILE *fp, char **buf)
       case '\0':
       case '\n':
       case EOF:
-	s[i] = '\0'; /* nstraddchar() is not terminate string */
-	*buf = s;
+	len = (s->len > len) ? s->len : len;
+	*buf = g_string_free(s, FALSE);
 	return 0;
       }
     } else {
-      s = nstraddchar(s, i, ch);
-      i++;
-      if (s == NULL) {
-	*buf = NULL;
-	return -1;
-      }
+      g_string_append_c(s, ch);
     }
 #else
     switch (ch) {
@@ -728,16 +723,11 @@ fgetline(FILE *fp, char **buf)
     case '\0':
     case '\n':
     case EOF:
-      s[i] = '\0'; /* nstraddchar() is not terminate string */
-      *buf = s;
+      len = (s->len > len) ? s->len : len;
+      *buf = g_string_free(s, FALSE);
       return 0;
     default:
-      s = nstraddchar(s, i, ch);
-      i++;
-      if (s == NULL) {
-	*buf = NULL;
-	return -1;
-      }
+      g_string_append_c(s, ch);
     }
 #endif
     ch = fgetc(fp);
