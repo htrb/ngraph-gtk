@@ -38,11 +38,6 @@ enum DECIMALSIGN_TYPE {
   DECIMALSIGN_TYPE_COMMA,
 };
 
-char *nstrnew(void);
-char *nstrccat(char *po,char ch);
-char *nstrcat(char *po, const char *s);
-char *nstraddchar(char *po, int len, char ch);
-
 int strcmp0(const char *s1, const char *s2);
 int strcmp2(const char *s1, const char *s2);
 #define WILD_PATHNAME 2

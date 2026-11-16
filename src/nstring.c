@@ -101,6 +101,7 @@ set_decimalsign(enum DECIMALSIGN_TYPE decimalsign)
   return Decimalsign;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 char *
 nstrnew(void)
 {
@@ -172,7 +173,6 @@ nstrcat(char *po, const char *s)
   return po;
 }
 
-#ifdef COMPILE_UNUSED_FUNCTIONS
 char *
 nstrncat(char *po,char *s,size_t n)
 {
