@@ -3547,31 +3547,33 @@ msleep(int ms)
 #if WINDOWS
 static int WaitProc;
 
-static void *
-proc_in_thread(void *ptr)
+static int
+windows_proc(const char *ptr, const char *cmdname)
 {
-  char *cmd;
+  gunichar2 *wcmd, *wapp;
   PROCESS_INFORMATION pi;
-  STARTUPINFO si;
+  STARTUPINFOW si;
   DWORD exit_code;
   int r;
 
-  if (ptr == NULL) {
-    return NULL;
+  wcmd = g_utf8_to_utf16(ptr, -1, NULL, NULL, NULL);
+  wapp = g_utf8_to_utf16(cmdname, -1, NULL, NULL, NULL);
+  if (wcmd == NULL || wapp == NULL) {
+    g_free(wcmd);
+    g_free(wapp);
+    sherror(ERRMEMORY);
+    return -1;
   }
 
-  while (! WaitProc) {
-    msleep(1);
-  }
-
-  cmd = (char *) ptr;
   ZeroMemory(&si, sizeof(si));
   si.cb = sizeof(si);
-  r = CreateProcess(NULL, cmd, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+  r = CreateProcessW(wapp, wcmd, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+  g_free(wcmd);
+  g_free(wapp);
+
   if (r == 0) {
     show_system_error();
-    WaitProc = 0;
-    return NULL;
+    return 126;
   }
 
   CloseHandle(pi.hThread);
@@ -3579,9 +3581,7 @@ proc_in_thread(void *ptr)
   GetExitCodeProcess(pi.hProcess, &exit_code);
   CloseHandle(pi.hProcess);
 
-  WaitProc = 0;
-
-  return GINT_TO_POINTER(exit_code);
+  return exit_code;
 }
 
 static char *
@@ -4134,8 +4134,8 @@ cmdrun_external(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct pr
   }
 #if WINDOWS
   {
-    GThread *thread;
-    char *ptr, *win_cmd;
+    int exit_code;
+    char *ptr;
 
     ptr = quote_args(argv);
     if (ptr == NULL) {
@@ -4145,22 +4145,14 @@ cmdrun_external(struct nshell *nshell, const struct cmdexec_fd *cmdfd, struct pr
       return -1;
     }
 
-    win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
+    exit_code = windows_proc(ptr, cmdname);
     g_free(ptr);
-    if (win_cmd == NULL) {
+    if (exit_code < 0) {
       g_free(cmdname);
       arg_del(argv);
-      sherror(ERRMEMORY);
       return -1;
     }
-
-    *errlevel = 0;
-    thread= g_thread_new("process", proc_in_thread, win_cmd);
-    if (thread) {
-      WaitProc = 1;
-      *errlevel = GPOINTER_TO_INT(g_thread_join(thread));
-    }
-    g_free(win_cmd);
+    *errlevel = exit_code;
   }
 #else	/* WINDOWS */
   unset_childhandler();
