@@ -227,7 +227,7 @@ check_range(unsigned char sch, const char **p_patpo)
   int invert = FALSE;
   int escape = FALSE;
   patpo = *p_patpo;
-  if (patpo[1] == '!') {
+  if (patpo[1] == '!' || patpo[1] == '^') {
     patpo++;
     invert = TRUE;
   }
