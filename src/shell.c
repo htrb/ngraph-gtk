@@ -4090,6 +4090,10 @@ cmdrun_object(struct nshell *nshell, const struct prmlist *prmcur, struct cmdsta
   int errlevel;
   int len=0;
   prm=prmcur;
+  if (check_ppseto(prm)) {
+    if (sputobj(prm->str)==-1) return -1;
+    return 0;
+  }
   while (prm!=NULL) {
     len+=strlen(prm->str)+1;
     prm=prm->next;
