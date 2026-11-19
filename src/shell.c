@@ -3017,7 +3017,7 @@ checkcmd_variable_setting(struct cmdlist *cmdcur)
     if (prmcur->prmno == PPNO) {
       char *po;
       po=prmcur->str;
-      if (isobject(&po) && (po[0]=='=')) {
+      if (check_ppseto(prmcur)) {
 	prmcur->prmno=PPSETO;
       } else {
 	po=prmcur->str;
