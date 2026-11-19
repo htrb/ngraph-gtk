@@ -11,7 +11,7 @@ dist_ngraphinit_DATA = $(init_scripts)
 dist_ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp $(ACCEL_FILE)
 nodist_ngraphconf_DATA = Ngraph.ini
 
-EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win save_ui_file.nsc
+EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win save_ui_file.nsc Ngraph.ini.osx
 
 if OS_WIN32
 Ngraph.ini: $(srcdir)/Ngraph.ini.win
