@@ -2997,6 +2997,17 @@ checkcmd_parse_redirects_and_pipes(struct nshell *nshell, struct cmdlist *cmdcur
   return 0;
 }
 
+static int
+check_ppseto(const struct prmlist *prmcur)
+{
+  char *po;
+  po=prmcur->str;
+  if (isobject(&po) && (po[0]=='=')) {
+    return 1;
+  }
+  return 0;
+}
+
 static void
 checkcmd_variable_setting(struct cmdlist *cmdcur)
 {
