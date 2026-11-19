@@ -142,6 +142,19 @@ which [-q]<br>
 <p>
 object:instance_list:field=value
 </p>
+<h4>instance_list の書式</h4>
+<dl>
+  <dt>数字</dt>
+  <dd>ID (0からの通し番号) </dd>
+  <dt>@</dt>
+  <dd>カレントインスタンス</dd>
+  <dt>!</dt>
+  <dd>最後のインスタンス</dd>
+  <dt>-</dt>
+  <dd>範囲 (0-! ですべてのインスタンス) </dd>
+  <dt>^数字</dt>
+  <dd>OID (プログラム実行時、オブジェクトごとに一意に決まる番号) </dd>
+</dl>
 <h3>オブジェクト置換</h3>
 <p> (objectのinstance_listのfieldの値)</p>
 <p>
