@@ -1217,7 +1217,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   spo=po+i;
   if (!*quote && !*bquote) {
     /* check speecial character */
-    if (strchr(";&|^<>()",po[i])!=NULL) {
+    if (strchr(";&|<>()",po[i])!=NULL) {
       if ((po[i]=='&') && (po[i+1]=='&')) {
 	i++;
       } else if ((po[i]=='|') && (po[i+1]=='|')) {
@@ -1238,7 +1238,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   }
 
   for (;(po[i]!='\0') &&
-       (*quote || *bquote || *escape || (strchr(";&|^<> \t()",po[i])==NULL));
+       (*quote || *bquote || *escape || (strchr(";&|<> \t()",po[i])==NULL));
         i++) {
     int modifier_end;
     /* check escapse */
