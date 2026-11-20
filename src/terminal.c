@@ -82,7 +82,6 @@ main(int argc,char **argv)
   }
 
   close(fdo);
-  close(fdi);
 
   my_signal(SIGTERM, sig_handler);
 
