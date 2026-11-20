@@ -894,6 +894,26 @@ is_main_thread(void)
   return MainThread == g_thread_self();
 }
 
+#if OSX
+static void
+osx_open_file(GApplication *app, GFile **files, gint n_files, const gchar *hint, gpointer user_data)
+{
+  char *dir;
+  char *path = g_file_get_path(files[0]);
+  if (path == NULL) {
+    return;
+  }
+  dir = getdirname(path);
+  if (dir) {
+    nchdir(dir);
+    g_free(dir);
+  }
+  LoadNgpFile(path, FALSE, "-f", NULL);
+  g_free(path);
+  return;
+}
+#endif
+
 int
 n_initialize(int *argc, char ***argv)
 {
@@ -934,7 +954,12 @@ n_initialize(int *argc, char ***argv)
   MainLoop = g_main_loop_new (NULL, FALSE);
   OpenDisplay = gtk_init_check();
   if (OpenDisplay) {
+#if OSX
+    GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE | G_APPLICATION_HANDLES_OPEN);
+    g_signal_connect(GtkApp, "open", G_CALLBACK(osx_open_file), NULL);
+#else
     GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
+#endif
     g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
     setup_actions(GtkApp);
   }
