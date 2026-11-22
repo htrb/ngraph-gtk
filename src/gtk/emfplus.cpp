@@ -372,9 +372,11 @@ emfplus_draw_string_utf8(
     ? GetFontAscentPx(primaryFamily, fontStyle, fontSize)
     : GetFontAscentPx(*Gdiplus::FontFamily::GenericSansSerif(), fontStyle, fontSize);
 
+  // （※前段の clusters 分割・runs 生成・StringFormat 準備までは同じ）
+
   Gdiplus::REAL currentX = startPoint.X;
 
-  // 6. ランごとにベースラインを揃えながら描画
+  // ランごとに「startPoint.Y がベースラインになる位置」で描画
   for (const auto& run : runs) {
     Gdiplus::FontFamily family(run.fontName.c_str());
     Gdiplus::Font font(&family, fontSize, fontStyle, Gdiplus::UnitPixel);
@@ -388,11 +390,11 @@ emfplus_draw_string_utf8(
       activeFamily = Gdiplus::FontFamily::GenericSansSerif();
     }
 
+    // 各フォント自身のアセント分だけ Y を上にずらすことで、startPoint.Y (0.0f) が厳密なベースラインになる
     Gdiplus::REAL runAscent = GetFontAscentPx(*activeFamily, fontStyle, fontSize);
-    Gdiplus::REAL adjustedY = startPoint.Y + (baseAscent - runAscent);
+    Gdiplus::REAL adjustedY = startPoint.Y - runAscent;
 
     if (charSpacingPx == 0.0f) {
-      // 【標準モード】ラン内のクラスターを結合して一括描画（高速・合字やカーニングも維持）
       std::wstring combinedText;
       for (const auto& item : run.items) {
 	combinedText += item.utf16;
@@ -404,7 +406,6 @@ emfplus_draw_string_utf8(
       gdi->graphics->MeasureString(combinedText.c_str(), -1, activeFont, pos, &format, &boundRect);
       currentX += boundRect.Width;
     } else {
-      // 【文字間隔調整モード】すでに書記素クラスター単位に分かれているのでそのまま1要素ずつ描画
       for (const auto& item : run.items) {
 	Gdiplus::PointF pos(currentX, adjustedY);
 	gdi->graphics->DrawString(item.utf16.c_str(), -1, activeFont, pos, &format, gdi->brush);
@@ -421,23 +422,10 @@ void
 emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const char *text)
 {
   PointF pointF (0, 0);
-  std::wstring wfont = Utf8ToUtf16(fontinfo->font);
-  FontFamily fontfamily (wfont.c_str());
-  std::wstring wtext = Utf8ToUtf16(text);
   REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
-  Font font (&fontfamily, fontSize, fontinfo->style, UnitPixel);
-  RectF boundingBox;
   Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
   double x, y, w, h, a;
   double space =  UNIT_CONV (fontinfo->space / 72.0 * 25.4);
-
-  format.SetFormatFlags(format.GetFormatFlags() | Gdiplus::StringFormatFlagsNoClip);
-  gdi->graphics->MeasureString (wtext.c_str(), -1, &font, pointF, &format, &boundingBox);
-  w = boundingBox.GetRight () - boundingBox.GetLeft ();
-  h = boundingBox.GetTop () - boundingBox.GetBottom ();
-
-  int descent = fontfamily.GetCellDescent (fontinfo->style);
-  int ascent = fontfamily.GetCellAscent (fontinfo->style);
 
   x = UNIT_CONV (*px);
   y = UNIT_CONV (*py);
@@ -445,7 +433,6 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   GraphicsState state = gdi->graphics->Save();
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
-  pointF.Y = (REAL)(h * ascent / (ascent + descent));
   emfplus_draw_string_utf8(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
   gdi->graphics->Restore(state);
 
