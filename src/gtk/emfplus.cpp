@@ -15,6 +15,7 @@
 #include "emfplus.h"
 
 using namespace Gdiplus;
+using Microsoft::WRL::ComPtr;
 
 #define DPI 360.0
 #define UNIT_FACTOR (2540.0 / DPI)
