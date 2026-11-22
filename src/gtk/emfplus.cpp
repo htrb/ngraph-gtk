@@ -422,7 +422,8 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
 {
   PointF pointF (0, 0);
   std::wstring wfont = Utf8ToUtf16(fontinfo->font);
-  FontFamily fontfamily (wfont);
+  FontFamily fontfamily (wfont.c_str());
+  std::wstring wtext = Utf8ToUtf16(text);
   REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
   Font font (&fontfamily, fontSize, fontinfo->style, UnitPixel);
   RectF boundingBox;
@@ -431,7 +432,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   double space =  UNIT_CONV (fontinfo->space / 72.0 * 25.4);
 
   format.SetFormatFlags(format.GetFormatFlags() | Gdiplus::StringFormatFlagsNoClip);
-  gdi->graphics->MeasureString (text, -1, &font, pointF, &format, &boundingBox);
+  gdi->graphics->MeasureString (wtext, -1, wfont.c_str(), pointF, &format, &boundingBox);
   w = boundingBox.GetRight () - boundingBox.GetLeft ();
   h = boundingBox.GetTop () - boundingBox.GetBottom ();
 
