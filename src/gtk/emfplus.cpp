@@ -8,11 +8,9 @@
 #include <wrl/client.h> // Microsoft::WRL::ComPtr
 #include <string>
 #include <vector>
-
-#pragma comment(lib, "gdiplus.lib")
-#pragma comment(lib, "dwrite.lib")
-
-using Microsoft::WRL::ComPtr;
+#include <pango/pango.h>
+#include <glib.h>
+#include <cstring>
 
 #include "emfplus.h"
 
@@ -173,119 +171,89 @@ emfplus_line (struct gdiobj *gdi, int ix1, int iy1, int ix2, int iy2)
   gdi->graphics->DrawLine(gdi->pen, x1, y1, x2, y2);
 }
 
-using Microsoft::WRL::ComPtr;
 
-struct TextRun {
-  std::wstring text;
-  std::wstring fontName;
+// 1つの表示単位（書記素クラスター）
+struct GraphemeCluster {
+  std::wstring utf16;   // GDI+描画用のUTF-16文字列（例: L"ที่", L"👨‍👩‍👧‍👦"）
+  UINT32 primaryCp;     // DirectWriteフォント判定用の代表コードポイント
 };
 
-// 文字列全体の各 wchar_t に対して「直前のベース文字に結合すべきか」のフラグ配列を作成する
-static std::vector<bool>
-BuildAttachFlags(const std::wstring& textUtf16) {
-  size_t len = textUtf16.length();
-  std::vector<bool> attachFlags(len, false);
-  if (len == 0) return attachFlags;
+// 同じフォントが連続する描画単位（ラン）
+struct TextRun {
+  std::wstring fontName;               // 適用するフォント名(UTF-16)
+  std::vector<GraphemeCluster> items;  // このフォントで描画するクラスター群
+};
 
-  // 1. Win32 API で全言語の CTYPE3 属性を一括取得
-  std::vector<WORD> charTypes(len, 0);
-  GetStringTypeW(CT_CTYPE3, textUtf16.c_str(), static_cast<int>(len), charTypes.data());
-
-  for (size_t i = 0; i < len; ++i) {
-    wchar_t ch = textUtf16[i];
-    WORD c3 = charTypes[i];
-
-    // サロゲートペアの処理 (UTF-16 2要素で1文字)
-    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < len) {
-      wchar_t low = textUtf16[i + 1];
-      if (low >= 0xDC00 && low <= 0xDFFF) {
-	UINT32 cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
-
-	// BMP外の結合系コードポイント（GetStringTypeW では取れない領域を補完）
-	bool isSupplementaryModifier =
-	  (cp >= 0xE0100 && cp <= 0xE01EF) || // 漢字異体字セレクタ (IVS)
-	  (cp >= 0x1F3FB && cp <= 0x1F3FF) || // 絵文字の肌色修飾子
-	  (cp >= 0xE0020 && cp <= 0xE007F);   // タグ文字（国旗・地域旗絵文字用）
-
-	attachFlags[i] = isSupplementaryModifier;
-	attachFlags[i + 1] = true; // 下位サロゲートは必ず上位サロゲートに結合
-	++i;
-	continue;
-      }
-    }
-
-    // 2. BMP内の結合文字判定 (GetStringTypeW の結果を利用)
-    // C3_NONSPACING: タイ語・アラビア語・ヘブライ語・ヒンディー語等の結合母音/声調/発音記号
-    // C3_VOWELMARK : インド系文字やタイ語などの結合母音記号
-    bool isCombining = (c3 & (C3_NONSPACING | C3_VOWELMARK)) != 0;
-
-    // 3. GetStringTypeW で C3_NONSPACING にならない特殊な結合制御文字を補完
-    bool isSpecialJoiner =
-      (ch >= 0xFE00 && ch <= 0xFE0F) || // 異体字セレクタ (VS1〜VS16)
-      (ch == 0x200D) ||                 // ゼロ幅接合子 (ZWJ: 家族絵文字等の結合)
-      (ch == 0x200C);                   // ゼロ幅非接合子 (ZWNJ)
-
-    attachFlags[i] = (isCombining || isSpecialJoiner);
-  }
-
-  // ZWJ (U+200D) の直後に続く文字（例: 👨‍👩‍👧‍👦 の 👩 や 👧）も前の絵文字クラスターに結合させる
-  for (size_t i = 1; i < len; ++i) {
-    if (textUtf16[i - 1] == 0x200D) {
-      attachFlags[i] = true;
-      // 直後がサロゲートペアだった場合、下位サロゲートも true にする
-      if (textUtf16[i] >= 0xD800 && textUtf16[i] <= 0xDBFF && (i + 1) < len) {
-	attachFlags[i + 1] = true;
-      }
-    }
-  }
-
-  return attachFlags;
+// ヘルパー: UTF-8 文字列を UTF-16 (std::wstring) に変換
+static std::wstring
+Utf8ToUtf16(const char* utf8Str, gssize len = -1) {
+  if (!utf8Str || (len == 0) || (len == -1 && *utf8Str == '\0')) return L"";
+  glong u16Len = 0;
+  gunichar2* u16 = g_utf8_to_utf16(utf8Str, len, nullptr, &u16Len, nullptr);
+  if (!u16) return L"";
+  std::wstring result(reinterpret_cast<wchar_t*>(u16), u16Len);
+  g_free(u16);
+  return result;
 }
 
-// 直前のベース文字に結合して1つの表示単位（クラスター）を形成すべき文字か判定
-static bool
-ShouldAttachToPrevious(UINT32 cp) {
-  // 1. 異体字セレクタ (VS) & 漢字異体字セレクタ (IVS) & ゼロ幅接合子 (ZWJ)
-  if ((cp >= 0xFE00 && cp <= 0xFE0F) ||
-      (cp >= 0xE0100 && cp <= 0xE01EF) ||
-      (cp == 0x200D)) {
-    return true;
+// 1. UTF-8 文字列を Pango を使って書記素クラスター単位に分解する
+static std::vector<GraphemeCluster>
+SplitUtf8IntoGraphemes(const char* textUtf8) {
+  std::vector<GraphemeCluster> clusters;
+  if (!textUtf8 || *textUtf8 == '\0') return clusters;
+
+  glong byteLen = static_cast<glong>(std::strlen(textUtf8));
+  glong numChars = g_utf8_strlen(textUtf8, byteLen);
+  if (numChars <= 0) return clusters;
+
+  // Pango で文字列全体の論理属性 (PangoLogAttr) を一括取得
+  std::vector<PangoLogAttr> attrs(numChars + 1);
+  pango_get_log_attrs(textUtf8, static_cast<int>(byteLen), -1, nullptr, attrs.data(), static_cast<int>(attrs.size()));
+
+  const gchar* p = textUtf8;
+  const gchar* clusterStart = textUtf8;
+  gunichar currentPrimaryCp = 0;
+
+  for (glong i = 0; i < numChars; ++i) {
+    const gchar* next = g_utf8_next_char(p);
+    gunichar cp = g_utf8_get_char(p);
+
+    // 新しい書記素クラスターの開始位置（is_cursor_position == TRUE）で区切る
+    if (i > 0 && attrs[i].is_cursor_position) {
+      clusters.push_back({
+	  Utf8ToUtf16(clusterStart, p - clusterStart),
+	  static_cast<UINT32>(currentPrimaryCp)
+	});
+      clusterStart = p;
+      currentPrimaryCp = 0;
+    }
+
+    if (currentPrimaryCp == 0) {
+      currentPrimaryCp = cp;
+    }
+    p = next;
   }
 
-  // 2. Unicode 一般的な結合発音区別符号 (Combining Diacritical Marks)
-  if ((cp >= 0x0300 && cp <= 0x036F) ||
-      (cp >= 0x1AB0 && cp <= 0x1AFF) ||
-      (cp >= 0x1DC0 && cp <= 0x1DFF) ||
-      (cp >= 0x20D0 && cp <= 0x20FF) ||
-      (cp >= 0xFE20 && cp <= 0xFE2F)) {
-    return true;
+  // 最後のクラスターを追加
+  if (clusterStart < p) {
+    clusters.push_back({
+	Utf8ToUtf16(clusterStart, p - clusterStart),
+	static_cast<UINT32>(currentPrimaryCp)
+      });
   }
 
-  // 3. タイ語の結合母音・声調記号・黙字記号 (Thai Combining Marks)
-  // U+0E31 (マイハンアーカート), U+0E34..U+0E3A (上下の母音・ピントゥ), U+0E47..U+0E4E (声調記号など)
-  if (cp == 0x0E31 ||
-      (cp >= 0x0E34 && cp <= 0x0E3A) ||
-      (cp >= 0x0E47 && cp <= 0x0E4E)) {
-    return true;
-  }
-
-  // 4. 絵文字の肌色修飾子 (Emoji Skin Tone Modifiers: U+1F3FB..U+1F3FF)
-  if (cp >= 0x1F3FB && cp <= 0x1F3FF) {
-    return true;
-  }
-
-  return false;
+  return clusters;
 }
 
-// 1つのコードポイントに対して最適なフォント名を解決
+// 2. 1つの代表コードポイントに対して最適なフォント名を解決する
 static std::wstring
 ResolveFontForCodePoint(
-			IDWriteFontCollection* fontCollection,
-			const std::wstring& primaryFontName,
-			const std::vector<std::wstring>& fallbackFonts,
-			DWRITE_FONT_WEIGHT weight,
-			DWRITE_FONT_STYLE style,
-			UINT32 cp)
+				     IDWriteFontCollection* fontCollection,
+				     const std::wstring& primaryFontName,
+				     const std::vector<std::wstring>& fallbackFonts,
+				     DWRITE_FONT_WEIGHT weight,
+				     DWRITE_FONT_STYLE style,
+				     UINT32 cp)
 {
   if (cp <= 0x20 || !fontCollection) {
     return primaryFontName;
@@ -318,90 +286,6 @@ ResolveFontForCodePoint(
   return primaryFontName;
 }
 
-// 1. フォントラン分割での利用
-static std::vector<TextRun>
-SplitTextIntoFontRuns(
-		      IDWriteFontCollection* fontCollection,
-		      const std::wstring& textUtf16,
-		      const std::wstring& primaryFontName,
-		      const char* const* fallbackFontsUtf8,
-		      Gdiplus::FontStyle fontStyle)
-{
-  std::vector<TextRun> runs;
-  if (textUtf16.empty()) return runs;
-
-  // 結合フラグを事前計算
-  std::vector<bool> attachFlags = BuildAttachFlags(textUtf16);
-
-  // （※ fallbackFonts の UTF-16 変換処理は前回と同じ）
-  std::vector<std::wstring> fallbackFonts;
-  if (fallbackFontsUtf8) {
-    for (size_t i = 0; fallbackFontsUtf8[i] != nullptr; ++i) {
-      int len = MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, nullptr, 0);
-      if (len > 1) {
-	std::wstring wstr(len - 1, L'\0');
-	MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, &wstr[0], len);
-	fallbackFonts.push_back(std::move(wstr));
-      }
-    }
-  }
-
-  DWRITE_FONT_WEIGHT dwWeight = (fontStyle & Gdiplus::FontStyleBold) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
-  DWRITE_FONT_STYLE dwStyle = (fontStyle & Gdiplus::FontStyleItalic) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
-
-  for (size_t i = 0; i < textUtf16.length(); ++i) {
-    wchar_t ch = textUtf16[i];
-    UINT32 cp = static_cast<UINT32>(ch);
-    size_t charLen = 1;
-
-    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < textUtf16.length()) {
-      wchar_t low = textUtf16[i + 1];
-      if (low >= 0xDC00 && low <= 0xDFFF) {
-	cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
-	charLen = 2;
-      }
-    }
-
-    std::wstring utf16Char = textUtf16.substr(i, charLen);
-    std::wstring targetFont;
-
-    // 直前の文字に結合すべき文字（タイ語の母音・声調記号、結合アクセント、ZWJ等）なら同じフォントを維持
-    if (!runs.empty() && attachFlags[i]) {
-      targetFont = runs.back().fontName;
-    } else {
-      targetFont = ResolveFontForCodePoint(fontCollection, primaryFontName, fallbackFonts, dwWeight, dwStyle, cp);
-    }
-
-    if (!runs.empty() && runs.back().fontName == targetFont) {
-      runs.back().text += utf16Char;
-    } else {
-      runs.push_back({ utf16Char, targetFont });
-    }
-
-    if (charLen == 2) ++i;
-  }
-
-  return runs;
-}
-
-// 2. 1クラスター（表示単位）分解での利用
-static std::vector<std::wstring>
-SplitIntoGlyphClusters(const std::wstring& runText) {
-  std::vector<std::wstring> clusters;
-  if (runText.empty()) return clusters;
-
-  std::vector<bool> attachFlags = BuildAttachFlags(runText);
-
-  for (size_t i = 0; i < runText.length(); ++i) {
-    if (!clusters.empty() && attachFlags[i]) {
-      clusters.back() += runText[i];
-    } else {
-      clusters.push_back(std::wstring(1, runText[i]));
-    }
-  }
-  return clusters;
-}
-
 // フォントのアセント(px)を計算
 static Gdiplus::REAL
 GetFontAscentPx(const Gdiplus::FontFamily& family, Gdiplus::FontStyle style, Gdiplus::REAL fontSize) {
@@ -412,31 +296,68 @@ GetFontAscentPx(const Gdiplus::FontFamily& family, Gdiplus::FontStyle style, Gdi
 }
 
 /**
- * フォント自動切り替え・ベースライン揃え・文字間隔調整付き GDI+ 文字列描画関数
- *
- * @param charSpacingPx 文字と文字の間の追加スペース(px)。0.0f で標準間隔、プラスで広く、マイナスで狭くなる。
+ * UTF-8文字列を直接受け取り、書記素クラスター単位のフォント解決・ベースライン揃え・文字間隔調整を行う描画関数
+ * 
+ * @param gdi               初期化済みの gdiobj 構造体
+ * @param textUtf8          描画する UTF-8 文字列 (NULL終端)
+ * @param primaryFontUtf8   第1候補フォント名 (UTF-8, NULL終端)
+ * @param fallbackFontsUtf8 NULL終端された代替フォント名(UTF-8)の配列
+ * @param fontSize          フォントサイズ (px)
+ * @param fontStyle         GDI+ フォントスタイル
+ * @param startPoint        描画開始座標 (左上)
+ * @param charSpacingPx     文字間隔の追加スペース (px)。0.0f で標準間隔
  */
 static void
-emfplus_draw_string_runs(
+emfplus_draw_string_utf8(
 			 struct gdiobj* gdi,
-			 const std::wstring& textUtf16,
-			 const std::wstring& primaryFontName,
+			 const char* textUtf8,
+			 const char* primaryFontUtf8,
 			 const char* const* fallbackFontsUtf8,
 			 Gdiplus::REAL fontSize,
 			 Gdiplus::FontStyle fontStyle,
 			 const Gdiplus::PointF& startPoint,
 			 Gdiplus::REAL charSpacingPx = 0.0f)
 {
-  if (!gdi || !gdi->graphics || !gdi->brush || textUtf16.empty()) return;
+  if (!gdi || !gdi->graphics || !gdi->brush || !textUtf8 || *textUtf8 == '\0') return;
 
-  std::vector<TextRun> runs = SplitTextIntoFontRuns(
-						    gdi->dwriteReady ? gdi->sysFontCollection.Get() : nullptr,
-						    textUtf16,
-						    primaryFontName,
-						    fallbackFontsUtf8,
-						    fontStyle
-						    );
+  // 1. Pango で UTF-8 文字列を書記素クラスターに分解
+  std::vector<GraphemeCluster> clusters = SplitUtf8IntoGraphemes(textUtf8);
+  if (clusters.empty()) return;
 
+  // 2. フォント名を UTF-16 に変換
+  std::wstring primaryFontName = Utf8ToUtf16(primaryFontUtf8);
+  std::vector<std::wstring> fallbackFonts;
+  if (fallbackFontsUtf8) {
+    for (size_t i = 0; fallbackFontsUtf8[i] != nullptr; ++i) {
+      std::wstring fb = Utf8ToUtf16(fallbackFontsUtf8[i]);
+      if (!fb.empty()) {
+	fallbackFonts.push_back(std::move(fb));
+      }
+    }
+  }
+
+  DWRITE_FONT_WEIGHT dwWeight = (fontStyle & Gdiplus::FontStyleBold) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
+  DWRITE_FONT_STYLE dwStyle = (fontStyle & Gdiplus::FontStyleItalic) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
+
+  // 3. クラスターごとにフォントを解決し、同じフォントが連続するランにまとめる
+  std::vector<TextRun> runs;
+  IDWriteFontCollection* fontCollection = gdi->dwriteReady ? gdi->sysFontCollection.Get() : nullptr;
+
+  for (auto& cl : clusters) {
+    std::wstring targetFont = ResolveFontForCodePoint(
+						      fontCollection, primaryFontName, fallbackFonts, dwWeight, dwStyle, cl.primaryCp
+						      );
+    if (!runs.empty() && runs.back().fontName == targetFont) {
+      runs.back().items.push_back(std::move(cl));
+    } else {
+      TextRun newRun;
+      newRun.fontName = std::move(targetFont);
+      newRun.items.push_back(std::move(cl));
+      runs.push_back(std::move(newRun));
+    }
+  }
+
+  // 4. 計測・描画用の StringFormat を準備
   Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
   INT flags = format.GetFormatFlags();
   flags |= Gdiplus::StringFormatFlagsMeasureTrailingSpaces;
@@ -444,7 +365,7 @@ emfplus_draw_string_runs(
   flags &= ~Gdiplus::StringFormatFlagsLineLimit;
   format.SetFormatFlags(flags);
 
-  // 基準となる第1候補フォントのアセントを算出
+  // 5. 基準となる第1候補フォントのアセントを算出
   Gdiplus::FontFamily primaryFamily(primaryFontName.c_str());
   Gdiplus::REAL baseAscent = (primaryFamily.GetLastStatus() == Gdiplus::Ok)
     ? GetFontAscentPx(primaryFamily, fontStyle, fontSize)
@@ -452,6 +373,7 @@ emfplus_draw_string_runs(
 
   Gdiplus::REAL currentX = startPoint.X;
 
+  // 6. ランごとにベースラインを揃えながら描画
   for (const auto& run : runs) {
     Gdiplus::FontFamily family(run.fontName.c_str());
     Gdiplus::Font font(&family, fontSize, fontStyle, Gdiplus::UnitPixel);
@@ -465,28 +387,29 @@ emfplus_draw_string_runs(
       activeFamily = Gdiplus::FontFamily::GenericSansSerif();
     }
 
-    // ベースライン揃え用の Y 座標オフセットを計算
     Gdiplus::REAL runAscent = GetFontAscentPx(*activeFamily, fontStyle, fontSize);
     Gdiplus::REAL adjustedY = startPoint.Y + (baseAscent - runAscent);
 
     if (charSpacingPx == 0.0f) {
-      // 【標準モード】文字間隔の調整が不要な場合は、ラン単位で一括描画（高速）
+      // 【標準モード】ラン内のクラスターを結合して一括描画（高速・合字やカーニングも維持）
+      std::wstring combinedText;
+      for (const auto& item : run.items) {
+	combinedText += item.utf16;
+      }
       Gdiplus::PointF pos(currentX, adjustedY);
-      gdi->graphics->DrawString(run.text.c_str(), -1, activeFont, pos, &format, gdi->brush);
+      gdi->graphics->DrawString(combinedText.c_str(), -1, activeFont, pos, &format, gdi->brush);
 
       Gdiplus::RectF boundRect;
-      gdi->graphics->MeasureString(run.text.c_str(), -1, activeFont, pos, &format, &boundRect);
+      gdi->graphics->MeasureString(combinedText.c_str(), -1, activeFont, pos, &format, &boundRect);
       currentX += boundRect.Width;
     } else {
-      // 【文字間隔調整モード】サロゲートペアや異体字セレクタを壊さない1グリフ単位で分解して描画
-      std::vector<std::wstring> clusters = SplitIntoGlyphClusters(run.text);
-      for (const auto& chStr : clusters) {
+      // 【文字間隔調整モード】すでに書記素クラスター単位に分かれているのでそのまま1要素ずつ描画
+      for (const auto& item : run.items) {
 	Gdiplus::PointF pos(currentX, adjustedY);
-	gdi->graphics->DrawString(chStr.c_str(), -1, activeFont, pos, &format, gdi->brush);
+	gdi->graphics->DrawString(item.utf16.c_str(), -1, activeFont, pos, &format, gdi->brush);
 
 	Gdiplus::RectF boundRect;
-	gdi->graphics->MeasureString(chStr.c_str(), -1, activeFont, pos, &format, &boundRect);
-	// 文字幅 ＋ 指定された文字間隔分だけ X 座標を進める
+	gdi->graphics->MeasureString(item.utf16.c_str(), -1, activeFont, pos, &format, &boundRect);
 	currentX += boundRect.Width + charSpacingPx;
       }
     }
@@ -521,6 +444,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = (REAL)(h * ascent / (ascent + descent));
   emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
+  emfplus_draw_string_utf8(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
   gdi->graphics->Restore(state);
 
   w = pointF.X;

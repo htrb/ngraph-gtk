@@ -145,7 +145,7 @@ set_font(struct gra2emfplus_local *local, const char *fontname)
     local->symbol = info->symbol;
   }
   font_map = gra2cairo_get_fontmap(alias);
-  local->font.font = g_utf8_to_utf16 (font_map->fontname, -1, NULL, NULL, NULL);
+  local->font.font = g_strdup(font_map->fontname);
   if (font_map->alternative) {
     local->font.alternative = g_strsplit(font_map->alternative, ",", -1);
   }
@@ -170,13 +170,10 @@ draw_lines(struct gra2emfplus_local *local)
 static void
 draw_text (struct gra2emfplus_local *local, const char *cstr)
 {
-  char *tmp;
-  gunichar2 *utext;
-  tmp = gra2cairo_get_utf8_str(cstr, local->symbol);
-  utext = g_utf8_to_utf16 (tmp, -1, NULL, NULL, NULL);
-  emfplus_text (local->gdi, &local->x, &local->y, &local->font, utext);
-  g_free (utext);
-  g_free (tmp);
+  char *text;
+  text = gra2cairo_get_utf8_str(cstr, local->symbol);
+  emfplus_text (local->gdi, &local->x, &local->y, &local->font, text);
+  g_free (text);
 }
 
 static void
