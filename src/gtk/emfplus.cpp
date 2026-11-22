@@ -180,12 +180,39 @@ struct TextRun {
   std::wstring fontName;
 };
 
-// 異体字セレクタ (VS) や結合文字 (ZWJ) かどうかを判定
+// 直前のベース文字に結合して1つの表示単位（クラスター）を形成すべき文字か判定
 static bool
-IsVariationSelectorOrJoiner(UINT32 cp) {
-  return (cp >= 0xFE00 && cp <= 0xFE0F) ||     // 異体字セレクタ
-    (cp >= 0xE0100 && cp <= 0xE01EF) ||   // 漢字異体字セレクタ (IVS)
-    (cp == 0x200D);                       // ゼロ幅接合子 (ZWJ)
+ShouldAttachToPrevious(UINT32 cp) {
+  // 1. 異体字セレクタ (VS) & 漢字異体字セレクタ (IVS) & ゼロ幅接合子 (ZWJ)
+  if ((cp >= 0xFE00 && cp <= 0xFE0F) ||
+      (cp >= 0xE0100 && cp <= 0xE01EF) ||
+      (cp == 0x200D)) {
+    return true;
+  }
+
+  // 2. Unicode 一般的な結合発音区別符号 (Combining Diacritical Marks)
+  if ((cp >= 0x0300 && cp <= 0x036F) ||
+      (cp >= 0x1AB0 && cp <= 0x1AFF) ||
+      (cp >= 0x1DC0 && cp <= 0x1DFF) ||
+      (cp >= 0x20D0 && cp <= 0x20FF) ||
+      (cp >= 0xFE20 && cp <= 0xFE2F)) {
+    return true;
+  }
+
+  // 3. タイ語の結合母音・声調記号・黙字記号 (Thai Combining Marks)
+  // U+0E31 (マイハンアーカート), U+0E34..U+0E3A (上下の母音・ピントゥ), U+0E47..U+0E4E (声調記号など)
+  if (cp == 0x0E31 ||
+      (cp >= 0x0E34 && cp <= 0x0E3A) ||
+      (cp >= 0x0E47 && cp <= 0x0E4E)) {
+    return true;
+  }
+
+  // 4. 絵文字の肌色修飾子 (Emoji Skin Tone Modifiers: U+1F3FB..U+1F3FF)
+  if (cp >= 0x1F3FB && cp <= 0x1F3FF) {
+    return true;
+  }
+
+  return false;
 }
 
 // 1つのコードポイントに対して最適なフォント名を解決
@@ -247,7 +274,7 @@ SplitTextIntoFontRuns(
       int len = MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, nullptr, 0);
       if (len > 1) {
 	std::wstring wstr(len - 1, L'\0');
-	MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, &wstr, len);
+	MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, &wstr[0], len);
 	fallbackFonts.push_back(std::move(wstr));
       }
     }
@@ -272,7 +299,7 @@ SplitTextIntoFontRuns(
     std::wstring utf16Char = textUtf16.substr(i, charLen);
     std::wstring targetFont;
 
-    if (!runs.empty() && IsVariationSelectorOrJoiner(cp)) {
+    if (!runs.empty() && ShouldAttachToPrevious(cp)) {
       targetFont = runs.back().fontName;
     } else {
       targetFont = ResolveFontForCodePoint(fontCollection, primaryFontName, fallbackFonts, dwWeight, dwStyle, cp);
@@ -308,8 +335,8 @@ SplitIntoGlyphClusters(const std::wstring& runText) {
     }
 
     std::wstring unit = runText.substr(i, charLen);
-    if (!clusters.empty() && IsVariationSelectorOrJoiner(cp)) {
-      clusters.back() += unit; // 異体字セレクタ等は前の文字にくっつける
+    if (!clusters.empty() && ShouldAttachToPrevious(cp)) {
+      clusters.back() += unit; // ベースの子音文字と同じクラスターに連結
     } else {
       clusters.push_back(std::move(unit));
     }
