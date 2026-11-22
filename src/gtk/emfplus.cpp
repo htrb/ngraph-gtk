@@ -262,7 +262,8 @@ void ConvertGdiPlusStyleToDWrite(Gdiplus::FontStyle gdiStyle, DWRITE_FONT_WEIGHT
  * @param layoutRect        描画領域
  * @param stringFormat      文字列フォーマット (省略可)
  */
-void DrawStringWithFallback(
+static void
+DrawStringWithFallback(
 			    struct gdiobj *gdi,
 			    Gdiplus::Graphics& graphics,
 			    const std::wstring& textUtf16,
@@ -313,7 +314,23 @@ void DrawStringWithFallback(
   }
 }
 
-// DrawStringWithFallback 側で 1文字ずつの計測・フォールバック・描画・X座標更新を行う想定の呼び出し例
+static void
+draw_test (struct gdiobj *gdi, struct font_info *fontinfo. PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
+{
+  double space;
+
+  space =  UNIT_CONV (ispace / 72.0 * 25.4);
+  for (int i = 0; text[i]; i++) {
+    RectF boundingBox;
+    gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
+    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fontinfo->size / 100.0 / 72.0 * DPI, fontinfo->style, gdi->brush, &boundingBox);
+    pointF.X = boundingBox.GetRight();
+    if (text[i + 1]) {
+      pointF.X += space;
+    }
+  }
+}
+
 void
 emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const wchar_t *text)
 {
@@ -339,28 +356,12 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = (REAL)(h * ascent / (ascent + descent));
-
-  // 文字間隔を計算（space が 0 なら 0.0f）
-  REAL space = fontinfo->space ? (REAL)UNIT_CONV (fontinfo->space / 72.0 * 25.4) : 0.0f;
-
-  // 1文字ずつフォールバック判定＋描画＋pointF.Xの更新を行う
-  DrawStringWithFallback(
-      gdi,
-      gdi->graphics,
-      text,
-      fontinfo->font,
-      fontinfo->alternative,
-      fontSize,
-      fontinfo->style, // ここに Gdiplus::FontStyleRegular などの int/FontStyle が入る
-      gdi->brush,
-      &pointF,         // 描画後の終端 X 座標が更新されて返る想定
-      pStringFormat,
-      space
-  );
-
-  // 文字間隔あり、またはフォールバック発生時の正確な幅を反映
-  w = pointF.X;
-
+  if (fontinfo->space) {
+    draw_test (gdi, fontinfo, pointF, &font, pStringFormat, fontinfo->space, text);
+    w = pointF.X;
+  } else {
+    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fonsize, fontinfo->style, gdi->brush, &boundingBox);
+  }
   gdi->graphics->Restore(state);
 
   a = M_PI * fontinfo->dir / 18000.0;
