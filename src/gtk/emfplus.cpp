@@ -173,22 +173,23 @@ emfplus_line (struct gdiobj *gdi, int ix1, int iy1, int ix2, int iy2)
   gdi->graphics->DrawLine(gdi->pen, x1, y1, x2, y2);
 }
 
-// 分割された文字列の塊（ラン）
+using Microsoft::WRL::ComPtr;
+
 struct TextRun {
-  std::wstring text;     // この区間のUTF-16文字列
-  std::wstring fontName; // この区間に適用するフォント名
+  std::wstring text;
+  std::wstring fontName;
 };
 
-// 異体字セレクタ (Variation Selector) や結合文字など、前の文字のフォントに追従すべきコードポイントか判定
-bool
+// 異体字セレクタ (VS) や結合文字 (ZWJ) かどうかを判定
+static bool
 IsVariationSelectorOrJoiner(UINT32 cp) {
-  return (cp >= 0xFE00 && cp <= 0xFE0F) ||     // 異体字セレクタ (絵文字スタイル等)
+  return (cp >= 0xFE00 && cp <= 0xFE0F) ||     // 異体字セレクタ
     (cp >= 0xE0100 && cp <= 0xE01EF) ||   // 漢字異体字セレクタ (IVS)
-    (cp == 0x200D);                       // ゼロ幅接合子 (ZWJ: 結合絵文字用)
+    (cp == 0x200D);                       // ゼロ幅接合子 (ZWJ)
 }
 
-// 1つのコードポイントに対して最適なフォント名を解決する
-std::wstring
+// 1つのコードポイントに対して最適なフォント名を解決
+static std::wstring
 ResolveFontForCodePoint(
 			IDWriteFontCollection* fontCollection,
 			const std::wstring& primaryFontName,
@@ -197,7 +198,6 @@ ResolveFontForCodePoint(
 			DWRITE_FONT_STYLE style,
 			UINT32 cp)
 {
-  // 制御文字（スペースや改行等）は第1候補フォントをそのまま使う
   if (cp <= 0x20 || !fontCollection) {
     return primaryFontName;
   }
@@ -220,41 +220,34 @@ ResolveFontForCodePoint(
     return SUCCEEDED(font->HasCharacter(cp, &hasChar)) && hasChar;
   };
 
-  // 1. 第1候補フォントで描画可能か
-  if (hasGlyph(primaryFontName)) {
-    return primaryFontName;
-  }
+  if (hasGlyph(primaryFontName)) return primaryFontName;
 
-  // 2. 代替フォントリストを先頭から順にチェック
   for (const auto& fbFont : fallbackFonts) {
-    if (hasGlyph(fbFont)) {
-      return fbFont;
-    }
+    if (hasGlyph(fbFont)) return fbFont;
   }
 
-  // 3. すべて不可なら第1候補を返し、OSのフォールバックに任せる
   return primaryFontName;
 }
 
-// UTF-16文字列を解析し、最適なフォントごとのラン(TextRun)に分割する
-std::vector<TextRun> SplitTextIntoFontRuns(
-					   IDWriteFontCollection* fontCollection,
-					   const std::wstring& textUtf16,
-					   const std::wstring& primaryFontName,
-					   const char* const* fallbackFontsUtf8,
-					   Gdiplus::FontStyle fontStyle)
+// UTF-16文字列をフォントごとのラン(TextRun)に分割
+static std::vector<TextRun>
+SplitTextIntoFontRuns(
+		      IDWriteFontCollection* fontCollection,
+		      const std::wstring& textUtf16,
+		      const std::wstring& primaryFontName,
+		      const char* const* fallbackFontsUtf8,
+		      Gdiplus::FontStyle fontStyle)
 {
   std::vector<TextRun> runs;
   if (textUtf16.empty()) return runs;
 
-  // 代替フォントリストをUTF-16に変換してキャッシュ
   std::vector<std::wstring> fallbackFonts;
   if (fallbackFontsUtf8) {
     for (size_t i = 0; fallbackFontsUtf8[i] != nullptr; ++i) {
       int len = MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, nullptr, 0);
       if (len > 1) {
 	std::wstring wstr(len - 1, L'\0');
-	MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, &wstr[0], len);
+	MultiByteToWideChar(CP_UTF8, 0, fallbackFontsUtf8[i], -1, &wstr, len);
 	fallbackFonts.push_back(std::move(wstr));
       }
     }
@@ -268,7 +261,6 @@ std::vector<TextRun> SplitTextIntoFontRuns(
     UINT32 cp = static_cast<UINT32>(ch);
     size_t charLen = 1;
 
-    // サロゲートペアの検出と合成
     if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < textUtf16.length()) {
       wchar_t low = textUtf16[i + 1];
       if (low >= 0xDC00 && low <= 0xDFFF) {
@@ -280,30 +272,55 @@ std::vector<TextRun> SplitTextIntoFontRuns(
     std::wstring utf16Char = textUtf16.substr(i, charLen);
     std::wstring targetFont;
 
-    // 異体字セレクタやZWJは直前の文字と同じランに結合する
     if (!runs.empty() && IsVariationSelectorOrJoiner(cp)) {
       targetFont = runs.back().fontName;
     } else {
       targetFont = ResolveFontForCodePoint(fontCollection, primaryFontName, fallbackFonts, dwWeight, dwStyle, cp);
     }
 
-    // 直前のランと同じフォントなら文字列を連結、異なるフォントなら新しいランを作成
     if (!runs.empty() && runs.back().fontName == targetFont) {
       runs.back().text += utf16Char;
     } else {
       runs.push_back({ utf16Char, targetFont });
     }
 
-    if (charLen == 2) {
-      ++i; // サロゲートペアの2要素目をスキップ
-    }
+    if (charLen == 2) ++i;
   }
 
   return runs;
 }
 
-// 指定された FontFamily とスタイルにおけるアセント（上端からベースラインまでのピクセル数）を計算
-Gdiplus::REAL
+// ランの文字列を、1文字（サロゲートペアや異体字セレクタを含む1表示単位）ごとの配列に分解
+static std::vector<std::wstring>
+SplitIntoGlyphClusters(const std::wstring& runText) {
+  std::vector<std::wstring> clusters;
+  for (size_t i = 0; i < runText.length(); ++i) {
+    wchar_t ch = runText[i];
+    UINT32 cp = static_cast<UINT32>(ch);
+    size_t charLen = 1;
+
+    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < runText.length()) {
+      wchar_t low = runText[i + 1];
+      if (low >= 0xDC00 && low <= 0xDFFF) {
+	cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
+	charLen = 2;
+      }
+    }
+
+    std::wstring unit = runText.substr(i, charLen);
+    if (!clusters.empty() && IsVariationSelectorOrJoiner(cp)) {
+      clusters.back() += unit; // 異体字セレクタ等は前の文字にくっつける
+    } else {
+      clusters.push_back(std::move(unit));
+    }
+
+    if (charLen == 2) ++i;
+  }
+  return clusters;
+}
+
+// フォントのアセント(px)を計算
+static Gdiplus::REAL
 GetFontAscentPx(const Gdiplus::FontFamily& family, Gdiplus::FontStyle style, Gdiplus::REAL fontSize) {
   UINT16 emHeight = family.GetEmHeight(style);
   if (emHeight == 0) return 0.0f;
@@ -312,9 +329,11 @@ GetFontAscentPx(const Gdiplus::FontFamily& family, Gdiplus::FontStyle style, Gdi
 }
 
 /**
- * 分割されたフォントランごとに、ベースラインを揃えながら描画する関数
+ * フォント自動切り替え・ベースライン揃え・文字間隔調整付き GDI+ 文字列描画関数
+ *
+ * @param charSpacingPx 文字と文字の間の追加スペース(px)。0.0f で標準間隔、プラスで広く、マイナスで狭くなる。
  */
-void
+static void
 emfplus_draw_string_runs(
 			 struct gdiobj* gdi,
 			 const std::wstring& textUtf16,
@@ -322,12 +341,11 @@ emfplus_draw_string_runs(
 			 const char* const* fallbackFontsUtf8,
 			 Gdiplus::REAL fontSize,
 			 Gdiplus::FontStyle fontStyle,
-			 double space,
-			 const Gdiplus::PointF& startPoint)
+			 const Gdiplus::PointF& startPoint,
+			 Gdiplus::REAL charSpacingPx = 0.0f)
 {
   if (!gdi || !gdi->graphics || !gdi->brush || textUtf16.empty()) return;
 
-  // 1. 文字列をフォントごとの区間(Run)に分割
   std::vector<TextRun> runs = SplitTextIntoFontRuns(
 						    gdi->dwriteReady ? gdi->sysFontCollection.Get() : nullptr,
 						    textUtf16,
@@ -336,7 +354,6 @@ emfplus_draw_string_runs(
 						    fontStyle
 						    );
 
-  // 2. 計測・描画用の StringFormat を準備
   Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
   INT flags = format.GetFormatFlags();
   flags |= Gdiplus::StringFormatFlagsMeasureTrailingSpaces;
@@ -344,18 +361,14 @@ emfplus_draw_string_runs(
   flags &= ~Gdiplus::StringFormatFlagsLineLimit;
   format.SetFormatFlags(flags);
 
-  // 3. 基準となる「第1候補フォント」のアセント(px)を算出
+  // 基準となる第1候補フォントのアセントを算出
   Gdiplus::FontFamily primaryFamily(primaryFontName.c_str());
-  Gdiplus::REAL baseAscent = 0.0f;
-  if (primaryFamily.GetLastStatus() == Gdiplus::Ok) {
-    baseAscent = GetFontAscentPx(primaryFamily, fontStyle, fontSize);
-  } else {
-    baseAscent = GetFontAscentPx(*Gdiplus::FontFamily::GenericSansSerif(), fontStyle, fontSize);
-  }
+  Gdiplus::REAL baseAscent = (primaryFamily.GetLastStatus() == Gdiplus::Ok)
+    ? GetFontAscentPx(primaryFamily, fontStyle, fontSize)
+    : GetFontAscentPx(*Gdiplus::FontFamily::GenericSansSerif(), fontStyle, fontSize);
 
   Gdiplus::REAL currentX = startPoint.X;
 
-  // 4. 分割されたランごとにベースラインを合わせて順番に描画
   for (const auto& run : runs) {
     Gdiplus::FontFamily family(run.fontName.c_str());
     Gdiplus::Font font(&family, fontSize, fontStyle, Gdiplus::UnitPixel);
@@ -369,19 +382,31 @@ emfplus_draw_string_runs(
       activeFamily = Gdiplus::FontFamily::GenericSansSerif();
     }
 
-    // このランのフォントのアセントを算出し、基準アセントとの差分で Y 座標を補正
+    // ベースライン揃え用の Y 座標オフセットを計算
     Gdiplus::REAL runAscent = GetFontAscentPx(*activeFamily, fontStyle, fontSize);
     Gdiplus::REAL adjustedY = startPoint.Y + (baseAscent - runAscent);
 
-    Gdiplus::PointF pos(currentX, adjustedY);
+    if (charSpacingPx == 0.0f) {
+      // 【標準モード】文字間隔の調整が不要な場合は、ラン単位で一括描画（高速）
+      Gdiplus::PointF pos(currentX, adjustedY);
+      gdi->graphics->DrawString(run.text.c_str(), -1, activeFont, pos, &format, gdi->brush);
 
-    // 描画実行
-    gdi->graphics->DrawString(run.text.c_str(), -1, activeFont, pos, &format, gdi->brush);
+      Gdiplus::RectF boundRect;
+      gdi->graphics->MeasureString(run.text.c_str(), -1, activeFont, pos, &format, &boundRect);
+      currentX += boundRect.Width;
+    } else {
+      // 【文字間隔調整モード】サロゲートペアや異体字セレクタを壊さない1グリフ単位で分解して描画
+      std::vector<std::wstring> clusters = SplitIntoGlyphClusters(run.text);
+      for (const auto& chStr : clusters) {
+	Gdiplus::PointF pos(currentX, adjustedY);
+	gdi->graphics->DrawString(chStr.c_str(), -1, activeFont, pos, &format, gdi->brush);
 
-    // 次のランの開始 X 座標を進める
-    Gdiplus::RectF boundRect;
-    gdi->graphics->MeasureString(run.text.c_str(), -1, activeFont, pos, &format, &boundRect);
-    currentX += boundRect.Width + space;
+	Gdiplus::RectF boundRect;
+	gdi->graphics->MeasureString(chStr.c_str(), -1, activeFont, pos, &format, &boundRect);
+	// 文字幅 ＋ 指定された文字間隔分だけ X 座標を進める
+	currentX += boundRect.Width + charSpacingPx;
+      }
+    }
   }
 }
 
@@ -412,7 +437,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = (REAL)(h * ascent / (ascent + descent));
-  emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, space, pointF);
+  emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
   gdi->graphics->Restore(state);
 
   w = pointF.X;
