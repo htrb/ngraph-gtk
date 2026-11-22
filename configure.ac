@@ -191,7 +191,7 @@ AC_SEARCH_LIBS(iconv,iconv,,
 AC_SEARCH_LIBS(locale_charset,charset,,
 	AC_SEARCH_LIBS(nl_langinfo,c,,AC_MSG_ERROR(['libcharset' is required but it doesn't seem to be installed on this system.]),))
 
-PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.3])
+PKG_CHECK_MODULES([MINIZIP], [minizip >= 1.0.0])
 
 PKG_CHECK_MODULES([EXPAT], [expat >= 2.0.0])
 
