@@ -432,7 +432,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   double space =  UNIT_CONV (fontinfo->space / 72.0 * 25.4);
 
   format.SetFormatFlags(format.GetFormatFlags() | Gdiplus::StringFormatFlagsNoClip);
-  gdi->graphics->MeasureString (wtext, -1, wfont.c_str(), pointF, &format, &boundingBox);
+  gdi->graphics->MeasureString (wtext.c_str(), -1, &font, pointF, &format, &boundingBox);
   w = boundingBox.GetRight () - boundingBox.GetLeft ();
   h = boundingBox.GetTop () - boundingBox.GetBottom ();
 
@@ -446,7 +446,6 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
   pointF.Y = (REAL)(h * ascent / (ascent + descent));
-  emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
   emfplus_draw_string_utf8(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, pointF, space);
   gdi->graphics->Restore(state);
 
