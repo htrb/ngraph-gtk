@@ -421,9 +421,8 @@ void
 emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const char *text)
 {
   PointF pointF (0, 0);
-  wchar_t *wfont = g_utf8_to_utf16(fontinfo->font, -1, NULL, NULL, NULL);
+  std::wstring wfont = Utf8ToUtf16(fontinfo->font);
   FontFamily fontfamily (wfont);
-  g_free(wfont);
   REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
   Font font (&fontfamily, fontSize, fontinfo->style, UnitPixel);
   RectF boundingBox;
