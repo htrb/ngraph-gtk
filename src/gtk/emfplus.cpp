@@ -180,6 +180,68 @@ struct TextRun {
   std::wstring fontName;
 };
 
+// 文字列全体の各 wchar_t に対して「直前のベース文字に結合すべきか」のフラグ配列を作成する
+static std::vector<bool>
+BuildAttachFlags(const std::wstring& textUtf16) {
+  size_t len = textUtf16.length();
+  std::vector<bool> attachFlags(len, false);
+  if (len == 0) return attachFlags;
+
+  // 1. Win32 API で全言語の CTYPE3 属性を一括取得
+  std::vector<WORD> charTypes(len, 0);
+  GetStringTypeW(CT_CTYPE3, textUtf16.c_str(), static_cast<int>(len), charTypes.data());
+
+  for (size_t i = 0; i < len; ++i) {
+    wchar_t ch = textUtf16[i];
+    WORD c3 = charTypes[i];
+
+    // サロゲートペアの処理 (UTF-16 2要素で1文字)
+    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < len) {
+      wchar_t low = textUtf16[i + 1];
+      if (low >= 0xDC00 && low <= 0xDFFF) {
+	UINT32 cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
+
+	// BMP外の結合系コードポイント（GetStringTypeW では取れない領域を補完）
+	bool isSupplementaryModifier =
+	  (cp >= 0xE0100 && cp <= 0xE01EF) || // 漢字異体字セレクタ (IVS)
+	  (cp >= 0x1F3FB && cp <= 0x1F3FF) || // 絵文字の肌色修飾子
+	  (cp >= 0xE0020 && cp <= 0xE007F);   // タグ文字（国旗・地域旗絵文字用）
+
+	attachFlags[i] = isSupplementaryModifier;
+	attachFlags[i + 1] = true; // 下位サロゲートは必ず上位サロゲートに結合
+	++i;
+	continue;
+      }
+    }
+
+    // 2. BMP内の結合文字判定 (GetStringTypeW の結果を利用)
+    // C3_NONSPACING: タイ語・アラビア語・ヘブライ語・ヒンディー語等の結合母音/声調/発音記号
+    // C3_VOWELMARK : インド系文字やタイ語などの結合母音記号
+    bool isCombining = (c3 & (C3_NONSPACING | C3_VOWELMARK)) != 0;
+
+    // 3. GetStringTypeW で C3_NONSPACING にならない特殊な結合制御文字を補完
+    bool isSpecialJoiner =
+      (ch >= 0xFE00 && ch <= 0xFE0F) || // 異体字セレクタ (VS1〜VS16)
+      (ch == 0x200D) ||                 // ゼロ幅接合子 (ZWJ: 家族絵文字等の結合)
+      (ch == 0x200C);                   // ゼロ幅非接合子 (ZWNJ)
+
+    attachFlags[i] = (isCombining || isSpecialJoiner);
+  }
+
+  // ZWJ (U+200D) の直後に続く文字（例: 👨‍👩‍👧‍👦 の 👩 や 👧）も前の絵文字クラスターに結合させる
+  for (size_t i = 1; i < len; ++i) {
+    if (textUtf16[i - 1] == 0x200D) {
+      attachFlags[i] = true;
+      // 直後がサロゲートペアだった場合、下位サロゲートも true にする
+      if (textUtf16[i] >= 0xD800 && textUtf16[i] <= 0xDBFF && (i + 1) < len) {
+	attachFlags[i + 1] = true;
+      }
+    }
+  }
+
+  return attachFlags;
+}
+
 // 直前のベース文字に結合して1つの表示単位（クラスター）を形成すべき文字か判定
 static bool
 ShouldAttachToPrevious(UINT32 cp) {
@@ -256,7 +318,7 @@ ResolveFontForCodePoint(
   return primaryFontName;
 }
 
-// UTF-16文字列をフォントごとのラン(TextRun)に分割
+// 1. フォントラン分割での利用
 static std::vector<TextRun>
 SplitTextIntoFontRuns(
 		      IDWriteFontCollection* fontCollection,
@@ -268,6 +330,10 @@ SplitTextIntoFontRuns(
   std::vector<TextRun> runs;
   if (textUtf16.empty()) return runs;
 
+  // 結合フラグを事前計算
+  std::vector<bool> attachFlags = BuildAttachFlags(textUtf16);
+
+  // （※ fallbackFonts の UTF-16 変換処理は前回と同じ）
   std::vector<std::wstring> fallbackFonts;
   if (fallbackFontsUtf8) {
     for (size_t i = 0; fallbackFontsUtf8[i] != nullptr; ++i) {
@@ -299,7 +365,8 @@ SplitTextIntoFontRuns(
     std::wstring utf16Char = textUtf16.substr(i, charLen);
     std::wstring targetFont;
 
-    if (!runs.empty() && ShouldAttachToPrevious(cp)) {
+    // 直前の文字に結合すべき文字（タイ語の母音・声調記号、結合アクセント、ZWJ等）なら同じフォントを維持
+    if (!runs.empty() && attachFlags[i]) {
       targetFont = runs.back().fontName;
     } else {
       targetFont = ResolveFontForCodePoint(fontCollection, primaryFontName, fallbackFonts, dwWeight, dwStyle, cp);
@@ -317,31 +384,20 @@ SplitTextIntoFontRuns(
   return runs;
 }
 
-// ランの文字列を、1文字（サロゲートペアや異体字セレクタを含む1表示単位）ごとの配列に分解
+// 2. 1クラスター（表示単位）分解での利用
 static std::vector<std::wstring>
 SplitIntoGlyphClusters(const std::wstring& runText) {
   std::vector<std::wstring> clusters;
+  if (runText.empty()) return clusters;
+
+  std::vector<bool> attachFlags = BuildAttachFlags(runText);
+
   for (size_t i = 0; i < runText.length(); ++i) {
-    wchar_t ch = runText[i];
-    UINT32 cp = static_cast<UINT32>(ch);
-    size_t charLen = 1;
-
-    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < runText.length()) {
-      wchar_t low = runText[i + 1];
-      if (low >= 0xDC00 && low <= 0xDFFF) {
-	cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
-	charLen = 2;
-      }
-    }
-
-    std::wstring unit = runText.substr(i, charLen);
-    if (!clusters.empty() && ShouldAttachToPrevious(cp)) {
-      clusters.back() += unit; // ベースの子音文字と同じクラスターに連結
+    if (!clusters.empty() && attachFlags[i]) {
+      clusters.back() += runText[i];
     } else {
-      clusters.push_back(std::move(unit));
+      clusters.push_back(std::wstring(1, runText[i]));
     }
-
-    if (charLen == 2) ++i;
   }
   return clusters;
 }
