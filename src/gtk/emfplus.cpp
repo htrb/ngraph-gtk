@@ -322,6 +322,7 @@ emfplus_draw_string_runs(
 			 const char* const* fallbackFontsUtf8,
 			 Gdiplus::REAL fontSize,
 			 Gdiplus::FontStyle fontStyle,
+			 double space,
 			 const Gdiplus::PointF& startPoint)
 {
   if (!gdi || !gdi->graphics || !gdi->brush || textUtf16.empty()) return;
@@ -380,24 +381,7 @@ emfplus_draw_string_runs(
     // 次のランの開始 X 座標を進める
     Gdiplus::RectF boundRect;
     gdi->graphics->MeasureString(run.text.c_str(), -1, activeFont, pos, &format, &boundRect);
-    currentX += boundRect.Width;
-  }
-}
-
-static void
-draw_test (struct gdiobj *gdi, struct font_info *fontinfo, PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
-{
-  double space;
-
-  space =  UNIT_CONV (ispace / 72.0 * 25.4);
-  for (int i = 0; text[i]; i++) {
-    RectF boundingBox;
-    gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
-    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fontinfo->size / 100.0 / 72.0 * DPI, (Gdiplus::FontStyle)fontinfo->style, gdi->brush, boundingBox, pStringFormat);
-    pointF.X = boundingBox.GetRight();
-    if (text[i + 1]) {
-      pointF.X += space;
-    }
+    currentX += boundRect.Width + space;
   }
 }
 
@@ -411,6 +395,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   RectF boundingBox;
   Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
   double x, y, w, h, a;
+  double space =  UNIT_CONV (fontinfo->space / 72.0 * 25.4);
 
   format.SetFormatFlags(format.GetFormatFlags() | Gdiplus::StringFormatFlagsNoClip);
   gdi->graphics->MeasureString (text, -1, &font, pointF, &format, &boundingBox);
@@ -426,11 +411,11 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   GraphicsState state = gdi->graphics->Save();
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
-  pointF.X = boundingBox.GetRight();
-  pointF.Y = x;
-  emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, gdi->brush, boundingBox, pointF);
+  pointF.Y = (REAL)(h * ascent / (ascent + descent));
+  emfplus_draw_string_runs(gdi, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, space, pointF);
   gdi->graphics->Restore(state);
 
+  w = pointF.X;
   a = M_PI * fontinfo->dir / 18000.0;
   x += w * cos (a);
   y -= w * sin (a);
