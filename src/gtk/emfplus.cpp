@@ -4,6 +4,16 @@
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
+#include <dwrite.h>
+#include <wrl/client.h> // Microsoft::WRL::ComPtr
+#include <string>
+#include <vector>
+
+#pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "dwrite.lib")
+
+using Microsoft::WRL::ComPtr;
+
 #include "emfplus.h"
 
 using namespace Gdiplus;
@@ -16,12 +26,14 @@ using namespace Gdiplus;
 struct gdiobj {
   Bitmap *bitmap;
   Graphics *bitmap_graphics, *graphics;
-  HDC hdc;
   Metafile *metafile;
   Pen *pen;
   SolidBrush *brush;
   ULONG_PTR gdiplusToken;
   WCHAR *tmp_file;
+  ComPtr<IDWriteFactory> dwriteFactory;
+  ComPtr<IDWriteFontCollection> sysFontCollection;
+  bool dwriteReady;
 };
 
 static WCHAR *
@@ -69,6 +81,7 @@ emfplus_init (const wchar_t *filename)
   if (filename == NULL) {
     tmp_file = get_temp_filename ();
     if (tmp_file == NULL) {
+      g->ReleaseHDC(hDC);
       delete g;
       delete bitmap;
       GdiplusShutdown(gdiplusToken);
@@ -79,6 +92,7 @@ emfplus_init (const wchar_t *filename)
     tmp_file = NULL;
     metafile = new Metafile(filename, hDC, EmfTypeEmfPlusOnly, NULL);
   }
+  g->ReleaseHDC(hDC);
   Graphics *graphics = new Graphics(metafile);
   Pen *pen = new Pen(Color(255, 0, 0, 0));
   SolidBrush *brush = new SolidBrush(Color(255, 0, 0, 0));
@@ -95,9 +109,13 @@ emfplus_init (const wchar_t *filename)
   gdi->pen = pen;
   gdi->brush = brush;
   gdi->graphics = graphics;
-  gdi->hdc = hDC;
   gdi->gdiplusToken = gdiplusToken;
   gdi->tmp_file = tmp_file;
+
+  gdi->dwriteReady = SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(gdi->dwriteFactory.GetAddressOf())));
+  if (gdi->dwriteReady) {
+    gdi->dwriteReady = SUCCEEDED(gdi->dwriteFactory->GetSystemFontCollection(&gdi->sysFontCollection));
+  }
 
   return gdi;
 }
@@ -139,8 +157,9 @@ emfplus_finalize (struct gdiobj *gdi)
     DeleteFileW (gdi->tmp_file);
     delete[] gdi->tmp_file;
   }
-  GdiplusShutdown(gdi->gdiplusToken);
+  ULONG_PTR gdiplusToken = gdi->gdiplusToken;
   delete gdi;
+  GdiplusShutdown(gdiplusToken);
 }
 
 void
@@ -154,31 +173,154 @@ emfplus_line (struct gdiobj *gdi, int ix1, int iy1, int ix2, int iy2)
   gdi->graphics->DrawLine(gdi->pen, x1, y1, x2, y2);
 }
 
-// Surrogate pairs, combined strings and ligatures are not considered.
-static void
-draw_test (struct gdiobj *gdi, PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
-{
-  double space;
+// ヘルパー: UTF-8 を UTF-16 (std::wstring) に変換
+std::wstring Utf8ToUtf16(const char* utf8Str) {
+  if (!utf8Str || *utf8Str == '\0') return L"";
+  int len = MultiByteToWideChar(CP_UTF8, 0, utf8Str, -1, nullptr, 0);
+  if (len <= 0) return L"";
+  std::wstring wstr(len - 1, L'\0');
+  MultiByteToWideChar(CP_UTF8, 0, utf8Str, -1, &wstr[0], len);
+  return wstr;
+}
 
-  space =  UNIT_CONV (ispace / 72.0 * 25.4);
-  for (int i = 0; text[i]; i++) {
-    RectF boundingBox;
-    gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
-    gdi->graphics->DrawString (text + i, 1, font, pointF, pStringFormat, gdi->brush);
-    pointF.X = boundingBox.GetRight();
-    if (text[i + 1]) {
-      pointF.X += space;
+// ヘルパー: UTF-16 文字列からサロゲートペアを考慮して Unicode コードポイント(UTF-32)配列を抽出
+std::vector<UINT32> ExtractCodePoints(const std::wstring& utf16Text) {
+  std::vector<UINT32> codePoints;
+  codePoints.reserve(utf16Text.length());
+
+  for (size_t i = 0; i < utf16Text.length(); ++i) {
+    wchar_t ch = utf16Text[i];
+    // 上位サロゲート (0xD800 - 0xDBFF) のチェック
+    if (ch >= 0xD800 && ch <= 0xDBFF && (i + 1) < utf16Text.length()) {
+      wchar_t low = utf16Text[i + 1];
+      // 下位サロゲート (0xDC00 - 0xDFFF) との合成
+      if (low >= 0xDC00 && low <= 0xDFFF) {
+	UINT32 cp = 0x10000 + (((static_cast<UINT32>(ch) - 0xD800) << 10) | (static_cast<UINT32>(low) - 0xDC00));
+	codePoints.push_back(cp);
+	++i; // 2要素消費したので進める
+	continue;
+      }
     }
+    codePoints.push_back(static_cast<UINT32>(ch));
+  }
+  return codePoints;
+}
+
+// DirectWrite を用いて指定フォントがすべてのコードポイントを収録しているか判定
+bool CanFontRenderAllCodePoints(
+				IDWriteFontCollection* fontCollection,
+				const std::wstring& fontFamilyName,
+				DWRITE_FONT_WEIGHT weight,
+				DWRITE_FONT_STYLE style,
+				const std::vector<UINT32>& codePoints)
+{
+  if (!fontCollection || fontFamilyName.empty()) return false;
+
+  UINT32 index = 0;
+  BOOL exists = FALSE;
+  if (FAILED(fontCollection->FindFamilyName(fontFamilyName.c_str(), &index, &exists)) || !exists) {
+    return false; // フォント自体がシステムに存在しない
+  }
+
+  ComPtr<IDWriteFontFamily> family;
+  if (FAILED(fontCollection->GetFontFamily(index, &family))) return false;
+
+  ComPtr<IDWriteFont> font;
+  if (FAILED(family->GetFirstMatchingFont(weight, DWRITE_FONT_STRETCH_NORMAL, style, &font))) {
+    return false;
+  }
+
+  // 1文字ずつグリフが存在するかチェック
+  for (UINT32 cp : codePoints) {
+    // 制御文字（改行やタブ等）はグリフチェックから除外
+    if (cp < 0x20) continue;
+
+    BOOL hasCharacter = FALSE;
+    if (FAILED(font->HasCharacter(cp, &hasCharacter)) || !hasCharacter) {
+      return false; // 1文字でも未収録があれば false
+    }
+  }
+  return true;
+}
+
+// GDI+ の FontStyle を DirectWrite の Weight / Style に変換
+void ConvertGdiPlusStyleToDWrite(Gdiplus::FontStyle gdiStyle, DWRITE_FONT_WEIGHT& weight, DWRITE_FONT_STYLE& style) {
+  weight = (gdiStyle & Gdiplus::FontStyleBold) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
+  style = (gdiStyle & Gdiplus::FontStyleItalic) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
+}
+
+/**
+ * 文字列描画関数
+ * 
+ * @param graphics          GDI+ Graphics オブジェクト
+ * @param textUtf16         描画する UTF-16 文字列
+ * @param primaryFontName   第1候補フォント名 (UTF-16)
+ * @param fallbackFontsUtf8 NULL終端された代替フォント名(UTF-8)の配列 (例: {"Segoe UI Emoji", "Yu Gothic UI", nullptr})
+ * @param fontSize          フォントサイズ
+ * @param fontStyle         GDI+ フォントスタイル (FontStyleRegular 等)
+ * @param brush             描画ブラシ
+ * @param layoutRect        描画領域
+ * @param stringFormat      文字列フォーマット (省略可)
+ */
+void DrawStringWithFallback(
+			    struct gdiobj *gdi,
+			    Gdiplus::Graphics& graphics,
+			    const std::wstring& textUtf16,
+			    const std::wstring& primaryFontName,
+			    const char* const* fallbackFontsUtf8,
+			    Gdiplus::REAL fontSize,
+			    Gdiplus::FontStyle fontStyle,
+			    const Gdiplus::Brush* brush,
+			    const Gdiplus::RectF& layoutRect,
+			    const Gdiplus::StringFormat* stringFormat = nullptr)
+{
+  if (textUtf16.empty() || !brush) return;
+
+  std::wstring selectedFontName = primaryFontName;
+
+  if (gdi->dwriteReady && gdi->sysFontCollection) {
+    std::vector<UINT32> codePoints = ExtractCodePoints(textUtf16);
+    DWRITE_FONT_WEIGHT dwWeight;
+    DWRITE_FONT_STYLE dwStyle;
+    ConvertGdiPlusStyleToDWrite(fontStyle, dwWeight, dwStyle);
+
+    // 2. 第1候補フォントで全文字描画可能かチェック
+    if (!CanFontRenderAllCodePoints(gdi->sysFontCollection.Get(), primaryFontName, dwWeight, dwStyle, codePoints)) {
+      // 3. 不可の場合、代替フォントリスト(UTF-8, NULL終端配列)を順にチェック
+      if (fallbackFontsUtf8) {
+	for (size_t i = 0; fallbackFontsUtf8[i] != nullptr; ++i) {
+	  std::wstring candidate = Utf8ToUtf16(fallbackFontsUtf8[i]);
+	  if (CanFontRenderAllCodePoints(gdi->sysFontCollection.Get(), candidate, dwWeight, dwStyle, codePoints)) {
+	    selectedFontName = candidate;
+	    break; // 描画可能なフォントが見つかったら確定
+	  }
+	}
+      }
+      // 4. すべて不可だった場合は selectedFontName == primaryFontName のまま進み、OSのフォールバックに任せる
+    }
+  }
+
+  // 5. 決定したフォントで GDI+ 描画を実行
+  Gdiplus::FontFamily family(selectedFontName.c_str());
+  Gdiplus::Font font(&family, fontSize, fontStyle, Gdiplus::UnitPixel);
+
+  // 万が一 primaryFontName すらシステムに存在しない場合は、GenericSansSerif でOSに任せる
+  if (font.GetLastStatus() != Gdiplus::Ok) {
+    Gdiplus::Font fallbackGdiFont(Gdiplus::FontFamily::GenericSansSerif(), fontSize, fontStyle, Gdiplus::UnitPixel);
+    graphics.DrawString(textUtf16.c_str(), -1, &fallbackGdiFont, layoutRect, stringFormat, brush);
+  } else {
+    graphics.DrawString(textUtf16.c_str(), -1, &font, layoutRect, stringFormat, brush);
   }
 }
 
+// DrawStringWithFallback 側で 1文字ずつの計測・フォールバック・描画・X座標更新を行う想定の呼び出し例
 void
 emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const wchar_t *text)
 {
-  LOGFONTW id_font;
   PointF pointF (0, 0);
   FontFamily fontfamily (fontinfo->font);
-  Font font (&fontfamily, fontinfo->size / 100.0 / 72.0 * DPI, fontinfo->style, UnitPixel);
+  REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
+  Font font (&fontfamily, fontSize, fontinfo->style, UnitPixel);
   RectF boundingBox;
   const StringFormat* pStringFormat = StringFormat::GenericTypographic();
   double x, y, w, h, a;
@@ -186,23 +328,40 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   gdi->graphics->MeasureString (text, -1, &font, pointF, pStringFormat, &boundingBox);
   w = boundingBox.GetRight () - boundingBox.GetLeft ();
   h = boundingBox.GetTop () - boundingBox.GetBottom ();
-  int descent, ascent;
-  descent = fontfamily.GetCellDescent (fontinfo->style);
-  ascent = fontfamily.GetCellAscent (fontinfo->style);
+
+  int descent = fontfamily.GetCellDescent (fontinfo->style);
+  int ascent = fontfamily.GetCellAscent (fontinfo->style);
+
   x = UNIT_CONV (*px);
   y = UNIT_CONV (*py);
 
   GraphicsState state = gdi->graphics->Save();
   gdi->graphics->TranslateTransform (x, y);
   gdi->graphics->RotateTransform (-fontinfo->dir / 100.0);
-  pointF.Y = h * ascent / (ascent + descent);
-  if (fontinfo->space) {
-    draw_test (gdi, pointF, &font, pStringFormat, fontinfo->space, text);
-    w = pointF.X;
-  } else {
-    gdi->graphics->DrawString (text, -1, &font, pointF, pStringFormat, gdi->brush);
-  }
+  pointF.Y = (REAL)(h * ascent / (ascent + descent));
+
+  // 文字間隔を計算（space が 0 なら 0.0f）
+  REAL space = fontinfo->space ? (REAL)UNIT_CONV (fontinfo->space / 72.0 * 25.4) : 0.0f;
+
+  // 1文字ずつフォールバック判定＋描画＋pointF.Xの更新を行う
+  DrawStringWithFallback(
+      gdi->graphics,
+      text,
+      fontinfo->font,
+      fontinfo->alternative,
+      fontSize,
+      fontinfo->style, // ここに Gdiplus::FontStyleRegular などの int/FontStyle が入る
+      gdi->brush,
+      &pointF,         // 描画後の終端 X 座標が更新されて返る想定
+      pStringFormat,
+      space
+  );
+
+  // 文字間隔あり、またはフォールバック発生時の正確な幅を反映
+  w = pointF.X;
+
   gdi->graphics->Restore(state);
+
   a = M_PI * fontinfo->dir / 18000.0;
   x += w * cos (a);
   y -= w * sin (a);

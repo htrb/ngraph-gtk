@@ -66,6 +66,7 @@ gra2emfplus_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 
   local->gdi = NULL;
   local->font.font = NULL;
+  local->font.alternative = NULL;
 
   if (_putobj(obj, "_local", inst, local)) {
     goto errexit;
@@ -101,6 +102,9 @@ gra2emfplus_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   if (local->font.font) {
     g_free (local->font.font);
   }
+  if (local->font.alternative) {
+    g_strfreev (local->font.alternative);
+  }
 
   arraydel(&local->line);
 
@@ -130,6 +134,7 @@ set_font(struct gra2emfplus_local *local, const char *fontname)
   const char *alias;
 
   g_clear_pointer (&local->font.font, g_free);
+  g_clear_pointer (&local->font.alternative, g_strfreev);
   info = gra2cairo_get_compatible_font_info(fontname);
   if (info == NULL) {
     alias = fontname;
@@ -141,6 +146,9 @@ set_font(struct gra2emfplus_local *local, const char *fontname)
   }
   font_map = gra2cairo_get_fontmap(alias);
   local->font.font = g_utf8_to_utf16 (font_map->fontname, -1, NULL, NULL, NULL);
+  if (font_map->alternative) {
+    local->alternative = g_strsplit(font_map->alternative, ",", -1);
+  }
 }
 
 static void

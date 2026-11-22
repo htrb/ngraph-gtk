@@ -14,6 +14,7 @@ extern "C" {
     double size, dir, space;
     int style;
     wchar_t *font;
+    char **alternative;
   };
 
   struct gdiobj;
