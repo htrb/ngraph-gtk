@@ -345,6 +345,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
 
   // 1文字ずつフォールバック判定＋描画＋pointF.Xの更新を行う
   DrawStringWithFallback(
+      gdi,
       gdi->graphics,
       text,
       fontinfo->font,
