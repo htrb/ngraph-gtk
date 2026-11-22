@@ -191,7 +191,7 @@ libngraph_cflags =
 if OS_WIN32
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common-win.ui.in
-libngraphui_la_LIBADD = "-ldwrite"
+libngraphui_la_LIBADD = -ldwrite
 else
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
