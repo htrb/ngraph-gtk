@@ -298,7 +298,7 @@ GetFontAscentPx(const Gdiplus::FontFamily& family, Gdiplus::FontStyle style, Gdi
 
 /**
  * UTF-8文字列を直接受け取り、書記素クラスター単位のフォント解決・ベースライン揃え・文字間隔調整を行う描画関数
- * 
+ *
  * @param gdi               初期化済みの gdiobj 構造体
  * @param textUtf8          描画する UTF-8 文字列 (NULL終端)
  * @param primaryFontUtf8   第1候補フォント名 (UTF-8, NULL終端)
@@ -372,7 +372,6 @@ emfplus_draw_string_utf8(
     ? GetFontAscentPx(primaryFamily, fontStyle, fontSize)
     : GetFontAscentPx(*Gdiplus::FontFamily::GenericSansSerif(), fontStyle, fontSize);
 
-  // （※前段の clusters 分割・runs 生成・StringFormat 準備までは同じ）
 
   Gdiplus::REAL currentX = startPoint.X;
 
