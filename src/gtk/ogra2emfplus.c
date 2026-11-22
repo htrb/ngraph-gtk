@@ -147,7 +147,7 @@ set_font(struct gra2emfplus_local *local, const char *fontname)
   font_map = gra2cairo_get_fontmap(alias);
   local->font.font = g_utf8_to_utf16 (font_map->fontname, -1, NULL, NULL, NULL);
   if (font_map->alternative) {
-    local.font->alternative = g_strsplit(font_map->alternative, ",", -1);
+    local->font.alternative = g_strsplit(font_map->alternative, ",", -1);
   }
 }
 

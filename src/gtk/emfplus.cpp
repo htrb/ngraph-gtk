@@ -265,7 +265,7 @@ void ConvertGdiPlusStyleToDWrite(Gdiplus::FontStyle gdiStyle, DWRITE_FONT_WEIGHT
 static void
 DrawStringWithFallback(
 			    struct gdiobj *gdi,
-			    Gdiplus::Graphics& graphics,
+			    Gdiplus::Graphics *graphics,
 			    const std::wstring& textUtf16,
 			    const std::wstring& primaryFontName,
 			    const char* const* fallbackFontsUtf8,
@@ -308,14 +308,14 @@ DrawStringWithFallback(
   // 万が一 primaryFontName すらシステムに存在しない場合は、GenericSansSerif でOSに任せる
   if (font.GetLastStatus() != Gdiplus::Ok) {
     Gdiplus::Font fallbackGdiFont(Gdiplus::FontFamily::GenericSansSerif(), fontSize, fontStyle, Gdiplus::UnitPixel);
-    graphics.DrawString(textUtf16.c_str(), -1, &fallbackGdiFont, layoutRect, stringFormat, brush);
+    graphics->DrawString(textUtf16.c_str(), -1, &fallbackGdiFont, layoutRect, stringFormat, brush);
   } else {
-    graphics.DrawString(textUtf16.c_str(), -1, &font, layoutRect, stringFormat, brush);
+    graphics->DrawString(textUtf16.c_str(), -1, &font, layoutRect, stringFormat, brush);
   }
 }
 
 static void
-draw_test (struct gdiobj *gdi, struct font_info *fontinfo. PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
+draw_test (struct gdiobj *gdi, struct font_info *fontinfo, PointF &pointF, Font *font, const StringFormat* pStringFormat, int ispace, const wchar_t *text)
 {
   double space;
 
@@ -323,7 +323,7 @@ draw_test (struct gdiobj *gdi, struct font_info *fontinfo. PointF &pointF, Font 
   for (int i = 0; text[i]; i++) {
     RectF boundingBox;
     gdi->graphics->MeasureString (text + i, 1, font, pointF, pStringFormat, &boundingBox);
-    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fontinfo->size / 100.0 / 72.0 * DPI, fontinfo->style, gdi->brush, &boundingBox);
+    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fontinfo->size / 100.0 / 72.0 * DPI, (Gdiplus::FontStyle)fontinfo->style, gdi->brush, boundingBox);
     pointF.X = boundingBox.GetRight();
     if (text[i + 1]) {
       pointF.X += space;
@@ -360,7 +360,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
     draw_test (gdi, fontinfo, pointF, &font, pStringFormat, fontinfo->space, text);
     w = pointF.X;
   } else {
-    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fonsize, fontinfo->style, gdi->brush, &boundingBox);
+    DrawStringWithFallback(gdi, gdi->graphics, text, fontinfo->font, fontinfo->alternative, fontSize, (Gdiplus::FontStyle)fontinfo->style, gdi->brush, boundingBox);
   }
   gdi->graphics->Restore(state);
 
