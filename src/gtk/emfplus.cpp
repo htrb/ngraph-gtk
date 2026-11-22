@@ -249,12 +249,12 @@ SplitUtf8IntoGraphemes(const char* textUtf8) {
 // 2. 1つの代表コードポイントに対して最適なフォント名を解決する
 static std::wstring
 ResolveFontForCodePoint(
-				     IDWriteFontCollection* fontCollection,
-				     const std::wstring& primaryFontName,
-				     const std::vector<std::wstring>& fallbackFonts,
-				     DWRITE_FONT_WEIGHT weight,
-				     DWRITE_FONT_STYLE style,
-				     UINT32 cp)
+			IDWriteFontCollection* fontCollection,
+			const std::wstring& primaryFontName,
+			const std::vector<std::wstring>& fallbackFonts,
+			DWRITE_FONT_WEIGHT weight,
+			DWRITE_FONT_STYLE style,
+			UINT32 cp)
 {
   if (cp <= 0x20 || !fontCollection) {
     return primaryFontName;
@@ -418,10 +418,12 @@ emfplus_draw_string_utf8(
 }
 
 void
-emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const wchar_t *text)
+emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, const char *text)
 {
   PointF pointF (0, 0);
-  FontFamily fontfamily (fontinfo->font);
+  wchar_t *wfont = g_utf8_to_utf16(fontinfo->font, -1, NULL, NULL, NULL);
+  FontFamily fontfamily (wfont);
+  g_free(wfont);
   REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
   Font font (&fontfamily, fontSize, fontinfo->style, UnitPixel);
   RectF boundingBox;
