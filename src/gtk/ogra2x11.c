@@ -88,7 +88,7 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
-static int gtkclose(const GtkWidget *widget);
+static int gtkclose(struct gtklocal *local);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(struct gtklocal *gtklocal, cairo_t * e);
 static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -129,27 +129,15 @@ destroyed(struct gtklocal *local)
   if (local->quit_main_loop) {
     g_idle_add_once((GSourceOnceFunc) g_main_loop_quit, main_loop());
   }
-  local->mainwin = NULL;
 }
 
 static int
-gtkclose(const GtkWidget *widget)
+gtkclose(struct gtklocal *local)
 {
-  struct gtklocal *local;
-  int i, id;
-  struct objlist *obj;
+  int id;
+  _getobj(local->obj, "id", local->inst, &id);
+  delobj(local->obj, id);
 
-  obj = chkobject("gra2gtk");
-  for (i = 0; i <= chkobjlastinst(obj); i++) {
-    N_VALUE *inst;
-    inst = chkobjinst(obj, i);
-    _getobj(obj, "_gtklocal", inst, &local);
-    if (local->mainwin == widget) {
-      _getobj(obj, "id", inst, &id);
-      delobj(obj, id);
-      break;
-    }
-  }
   return FALSE;
 }
 
@@ -309,8 +297,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
-  g_signal_connect(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), NULL);
-  g_signal_connect_swapped(gtklocal->mainwin, "destroy", G_CALLBACK(destroyed), gtklocal);
+  g_signal_connect_swapped(gtklocal->mainwin, "destroy", G_CALLBACK(gtkclose), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
@@ -385,6 +372,8 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     Menulock = gtklocal->menulock;
   }
 #endif
+
+  destroyed(gtklocal);
   return 0;
 }
 
