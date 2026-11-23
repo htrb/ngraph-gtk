@@ -1389,8 +1389,11 @@ getcmdline_fetch_from_stdin(struct nshell *nshell, struct cmdlist *cmdroot, stru
       }
     } else {
       eofcount=0;
-      if (ch=='\n') ch='\0';
-      g_string_append_c(tok, ch);
+      if (ch=='\n') {
+	ch='\0';
+      } else {
+	g_string_append_c(tok, ch);
+      }
     }
   } while (ch!='\0');
   return g_string_free(tok, FALSE);
@@ -2802,7 +2805,7 @@ checkcmd_read_heredoc_interactive(struct nshell *nshell, int sout, const char *e
 	if (ch=='\n') ch='\0';
 	if (remove_tab && ch == '\t') continue;
 	remove_tab = FALSE;
-	g_string_append_c(s, ch);
+	if (ch) g_string_append_c(s, ch);
       }
     } while (ch!='\0');
     if (strcmp0(eof,s->str)!=0) {
