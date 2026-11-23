@@ -155,7 +155,7 @@ case ']' in []abc]) res="MATCH" ;; *) res="NOMATCH" ;; esac
 assert_match ']' " []abc]" "$res"
 
 case '-' in []-abc]) res="MATCH" ;; *) res="NOMATCH" ;; esac
-assert_match '-' "[]-abc]" "$res"
+assert_nomatch '-' "[]-abc]" "$res"
 
 case '-' in [0-abc]) res="MATCH" ;; *) res="NOMATCH" ;; esac
 assert_nomatch '-' "[0-abc]" "$res"

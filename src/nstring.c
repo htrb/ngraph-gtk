@@ -233,7 +233,6 @@ check_range(unsigned char sch, const char **p_patpo)
   }
   patpo++;
   if (*patpo == '\0') return -1;
-  if (*patpo == ']') escape = TRUE;
   while (*patpo != '\0') {
     if (*patpo == '\\') {
       escape = TRUE;
