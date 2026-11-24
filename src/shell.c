@@ -2066,39 +2066,36 @@ expand_modifier_prefix (struct nshell *nshell, struct expand_context *cx)
 {
   char *c1 = NULL;
   char *c2;
-  int k;
+  int k, len;
   char ch;
   if ((c2=g_strdup(cx->val))==NULL) return NULL;
   if ((c1=expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE))==NULL) {
     g_free(c2);
     return NULL;
   }
+  len = strlen(c2);
   if (cx->valf2=='#') {
-    for (k=strlen(c2);k>=0;k--) {
+    for (k=len;k>=0;k--) {
       ch=c2[k];
       c2[k]='\0';
-      if (wildmatch(c1,c2,WILD_PATHNAME)) {
+      if (wildmatch(c1,c2,0)) {
 	c2[k]=ch;
-       break;
+	break;
       }
       c2[k]=ch;
     }
   } else {
-    for (k = 0; k <= (int) strlen(c2); k++) {
+    for (k = 0; k <= len; k++) {
       ch=c2[k];
       c2[k]='\0';
-      if (wildmatch(c1,c2,WILD_PATHNAME)) {
+      if (wildmatch(c1,c2,0)) {
        c2[k]=ch;
        break;
       }
       c2[k]=ch;
     }
   }
-  if (k > (int) strlen(c2)) {
-    k=0;
-  } else if (k < 0) {
-    k = 0;            /* fix-me: is it proper? */
-  }
+  if (k < 0 || k > len) k = 0;
   g_free(c1);
   c1=quotation(nshell,c2+k,cx->quote2);
   g_free(c2);
