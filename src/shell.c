@@ -2107,24 +2107,23 @@ expand_modifier_suffix (struct nshell *nshell, struct expand_context *cx)
 {
   char *c1 = NULL;
   char *c2;
-  int k;
+  int k, len;
   if ((c2=g_strdup(cx->val))==NULL) return NULL;
   if ((c1=expand(nshell,g_string_get_string(cx->param_buf),&cx->quote2,&cx->bquote2,TRUE))==NULL) {
     g_free(c2);
     return NULL;
   }
+  len = strlen(c2);
   if (cx->valf2=='%') {
-    int len;
-    len = strlen(c2) - 1;
-    for (k = 0; k <= len; k++) {
+    for (k = 0; k <= len - 1; k++) {
       if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
     }
   } else {
-    for (k=strlen(c2);k>=0;k--) {
+    for (k=len;k>=0;k--) {
       if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
     }
   }
-  if (k<0) k=strlen(c2);
+  if (k < 0 || k > len) k=len;
   c2[k]='\0';
   g_free(c1);
   c1=quotation(nshell,c2,cx->quote2);
