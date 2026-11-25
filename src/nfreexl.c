@@ -97,7 +97,7 @@ datetime_to_serial (const char *datetime)
 }
 
 void
-n_freexl_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data)
+n_freexl_get_double (struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
 {
   int ret;
   FreeXL_CellValue cell;
@@ -129,29 +129,21 @@ n_freexl_get_double (struct spreadsheet *sheet, int col, int row, MathValue *dat
     data->val = cell.value.double_value;
     data->type = MATH_VALUE_NORMAL;
     break;
-  case FREEXL_CELL_DATE:
-    str = cell.value.text_value;
-    if (str) {
-      data->val = date_to_serial (str);
-      data->type = MATH_VALUE_NORMAL;
-    }
-    break;
-  case FREEXL_CELL_DATETIME:
-    str = cell.value.text_value;
-    if (str) {
-      data->val = datetime_to_serial (str);
-      data->type = MATH_VALUE_NORMAL;
-    }
-    break;
-  case FREEXL_CELL_TIME:
-    str = cell.value.text_value;
-    if (str) {
-      data->val = time_to_serial (str);
-      data->type = MATH_VALUE_NORMAL;
-    }
-    break;
   case FREEXL_CELL_NULL:
     break;
+  case FREEXL_CELL_DATE:
+  case FREEXL_CELL_DATETIME:
+    if (date) {
+      double val;
+      ret = iso_to_mjd(cell.value.text_value, &val);
+      if (! ret) {
+	data->val = cell.value.int_value;
+	data->type = MATH_VALUE_NORMAL;
+	break;
+      }
+    }
+    /* fall-through */
+  case FREEXL_CELL_TIME:
   case FREEXL_CELL_TEXT:
   case FREEXL_CELL_SST_TEXT:
     n_strtod (cell.value.text_value, data);
@@ -223,14 +215,8 @@ n_freexl_get_text (struct spreadsheet *sheet, int col, int row)
     str = g_strdup_printf ("%g", cell.value.double_value);
     break;
   case FREEXL_CELL_DATE:
-    str = g_strdup_printf ("%d", date_to_serial (cell.value.text_value));
-    break;
   case FREEXL_CELL_DATETIME:
-    str = g_strdup_printf ("%g", datetime_to_serial (cell.value.text_value));
-    break;
   case FREEXL_CELL_TIME:
-    str = g_strdup_printf ("%g", time_to_serial (cell.value.text_value));
-    break;
   case FREEXL_CELL_TEXT:
   case FREEXL_CELL_SST_TEXT:
     str = g_strdup (cell.value.text_value);

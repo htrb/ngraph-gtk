@@ -140,7 +140,7 @@ spreadsheet_close (struct spreadsheet **sheet_ptr)
 }
 
 void
-spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data)
+spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, int is_date, MathValue *data)
 {
   int n_columns, n_rows;
 
@@ -159,7 +159,7 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, MathValue *
     return;
   }
 
-  sheet->get_double (sheet, col, row, data);
+  sheet->get_double (sheet, col, row, is_date, data);
 }
 
 char *

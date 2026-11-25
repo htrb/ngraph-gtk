@@ -297,7 +297,7 @@ n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
 }
 
 void
-n_orcus_get_double (struct spreadsheet *sheet, int col, int row, MathValue *data)
+n_orcus_get_double (struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
 {
   struct n_orcus *norcus;
   if (sheet == NULL) {
