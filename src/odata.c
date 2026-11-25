@@ -3077,8 +3077,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"csv",inst,&csv);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
-  _getobj(obj,"x_type",inst,&xdate);
-  _getobj(obj,"y_type",inst,&ydate);
+  _getobj(obj,"type_x",inst,&xdate);
+  _getobj(obj,"type_y",inst,&ydate);
   _getobj(obj,"worksheet",inst,&sheet);
 
   /* for array source only */
@@ -12496,9 +12496,9 @@ static struct objtable file2d[] = {
   {"worksheet_name",NSTR,NREAD,NULL,NULL,0},
   {"save_path",NENUM,NREAD|NWRITE,NULL,pathchar,0},
   {"x",NINT,NREAD|NWRITE,f2dput,NULL,0},
-  {"x_type",NENUM,NREAD|NWRITE,f2dput,column_type,0},
   {"y",NINT,NREAD|NWRITE,f2dput,NULL,0},
-  {"y_type",NENUM,NREAD|NWRITE,f2dput,column_type,0},
+  {"type_x",NENUM,NREAD|NWRITE,f2dput,column_type,0},
+  {"type_y",NENUM,NREAD|NWRITE,f2dput,column_type,0},
 
   {"type",NENUM,NREAD|NWRITE,NULL,f2dtypechar,0},
   {"interpolation",NENUM,NREAD|NWRITE,NULL,intpchar,0},
