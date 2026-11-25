@@ -1195,8 +1195,14 @@ find_matching_parenthesis(const char *po)
   return find_matching_delimiter(po, '(', ')');
 }
 
+struct quote {
+  int quote, bquote, escape;
+};
+
+#define check_quote_or_escape(q) ((q)->quote || (q)->bquote || (q)->escape)
+
 static char *
-gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
+gettok(char **s,int *len,struct quote *quote,int *cend)
 {
   int i;
   char *po,*spo;
@@ -1204,18 +1210,18 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   *len = 0;
   if (*s==NULL) return NULL;
   *cend='\0';
-  *escape=FALSE;
+  quote->escape=FALSE;
   po=*s;
 
   /* remove branck */
-  for (i=0;(po[i]!='\0') && !*quote && (strchr(" \t",po[i])!=NULL);i++);
+  for (i=0;(po[i]!='\0') && !quote->quote && (strchr(" \t",po[i])!=NULL);i++);
   /* token ends */
-  if ((po[i]=='\0') || (!*quote && (po[i]=='#'))) {
+  if ((po[i]=='\0') || (!quote->quote && (po[i]=='#'))) {
     *len=0;
     return NULL;
   }
   spo=po+i;
-  if (!*quote && !*bquote) {
+  if (!quote->quote && !quote->bquote) {
     /* check speecial character */
     if (strchr(";&|<>()",po[i])!=NULL) {
       if ((po[i]=='&') && (po[i+1]=='&')) {
@@ -1238,29 +1244,29 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   }
 
   for (;(po[i]!='\0') &&
-       (*quote || *bquote || *escape || (strchr(";&|<> \t()",po[i])==NULL));
+       (check_quote_or_escape(quote) || (strchr(";&|<> \t()",po[i])==NULL));
         i++) {
     int modifier_end;
     /* check escapse */
-    if (*escape) *escape=FALSE;
+    if (quote->escape) quote->escape=FALSE;
     else if (po[i]=='\\') {
-      if (check_quote_bquote(*quote, *bquote, po[i + 1])) *escape=TRUE;
+      if (check_quote_bquote(quote->quote, quote->bquote, po[i + 1])) quote->escape=TRUE;
     /* check back quote */
-    } else if (*bquote) {
-      if (po[i]=='`') *bquote='\0';
-    } else if ((po[i]=='`') && (*quote!='\'')) *bquote='`';
+    } else if (quote->bquote) {
+      if (po[i]=='`') quote->bquote='\0';
+    } else if ((po[i]=='`') && (quote->quote!='\'')) quote->bquote='`';
     /* check quotation */
-    else if ((*quote=='"') || (*quote=='\'')) {
-      if (po[i]==*quote) *quote='\0';
-    } else if (po[i]=='\'' || po[i]=='"') *quote=po[i];
+    else if ((quote->quote=='"') || (quote->quote=='\'')) {
+      if (po[i]==quote->quote) quote->quote='\0';
+    } else if (po[i]=='\'' || po[i]=='"') quote->quote=po[i];
     /* check brace (when not in quotes) */
-    if (*quote != '\'' && po[i] == '$' && po[i+1] == '{') {
+    if (quote->quote != '\'' && po[i] == '$' && po[i+1] == '{') {
       modifier_end = find_matching_brace(po + i + 2);
       if (modifier_end >= 0) {
         i += modifier_end + 2;
       }
     }
-    if (*quote != '\'' && po[i] == '$' && po[i+1] == '(') {
+    if (quote->quote != '\'' && po[i] == '$' && po[i+1] == '(') {
       modifier_end = find_matching_parenthesis(po + i + 2);
       if (modifier_end >= 0) {
 	i += modifier_end + 2;
@@ -1268,7 +1274,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     }
   }
 
-  if (*escape) i--;
+  if (quote->escape) i--;
   *s+=i;
   *len=*s-spo;
   return spo;
@@ -1423,10 +1429,6 @@ getcmdline_validate_utf8(char *tok)
   return tok;
 }
 
-struct quote {
-  int quote, bquote, escape;
-};
-
 #if 0
 /* for debug */
 static void
@@ -1466,8 +1468,8 @@ getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **p
   do {
     int len;
 
-    spo=gettok(&tok2,&len,&quote->quote,&quote->bquote,cend,&quote->escape);
-    if (quote2->quote || quote2->bquote || quote2->escape) {
+    spo=gettok(&tok2,&len,quote,cend);
+    if (check_quote_or_escape(quote2)) {
       l=strlen(prmcur->str);
       if (quote2->quote || quote2->bquote) l++;
       if ((po=g_malloc(len+l+1))==NULL) return -1;
@@ -1501,7 +1503,7 @@ getcmdline_parse_tokens(char *tok2, struct cmdlist **cmdroot, struct cmdlist **p
       cmdcur->prm=NULL;
     }
     *quote2=*quote;
-  } while ((spo!=NULL) && (!quote->escape) && (!quote->quote) && (!quote->bquote));
+  } while ((spo!=NULL) && !check_quote_or_escape(quote));
   *pcmdcur = cmdcur;
   *pprmcur = prmcur;
   return 0;
