@@ -4936,7 +4936,7 @@ math_func_strftime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 int
 math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double excel, mjd;
+  double excel, mjdval;
   int is_1904;
 
   rval->val = 0;
@@ -4949,12 +4949,35 @@ math_func_excel2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   is_1904 = exp->buf[1].val.val;
 
   if (is_1904) {
-    mjd = excel + 16479;
+    mjdval = excel + 16479;
   } else {
-    mjd = excel + ((excel <= 60) ? 15019 : 15018);
+    mjdval = excel + ((excel <= 60) ? 15019 : 15018);
   }
 
   rval->type = MATH_VALUE_NORMAL;
-  rval->val = mjd;
+  rval->val = mjdval;
+  return 0;
+}
+
+int
+math_func_date2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *date;
+  double mjdval;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  date = math_expression_get_string_variable_from_argument(exp, 0);
+  if (date == NULL) {
+    return 1;
+  }
+  if (iso_to_mjd(date->str, &mjdval)) {
+    return 1;
+  }
+
+  rval->val = mjdval;
+  rval->type = MATH_VALUE_NORMAL;
+
   return 0;
 }

@@ -15,6 +15,7 @@
 #        30: MATH_FUNCTION_ARG_TYPE_PROC
 #
 excel2mjd	2	0	0	NULL
+date2mjd	1	0	0	1
 abs		1	0	0	NULL
 sign		1	0	0	NULL
 int		1	0	0	NULL
