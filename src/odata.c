@@ -2346,7 +2346,8 @@ file_sheet_cell(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   if (sheet_check_row_col (fp, &row, &col)) {
     return 0;
   }
-  spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, rval);
+  is_date = is_date_column(fp, col - 1);
+  spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, is_date, rval);
 
   return 0;
 }
@@ -2535,7 +2536,9 @@ file_sheet_values(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
     }
     if (dest_type == DATA_TYPE_VALUE) {
       MathValue cell;
-      spreadsheet_get_double (fp->spreadsheet, col, row, &cell);
+      int is_date;
+      is_date = is_date_column(fp, col);
+      spreadsheet_get_double (fp->spreadsheet, col, row, is_date, &cell);
       if (math_equation_push_array_val(eq, dest_id, &cell)) {
         return 1;
       }
@@ -5576,7 +5579,8 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
   gdata[0].val = fp->count;
   gdata[0].type = MATH_VALUE_NORMAL;
   for (i = 0; i < n; i++) {
-    spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, gdata + i + 1);
+    int is_date = is_date_column(fp, i);
+    spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, is_date, gdata + i + 1);
   }
   for (i = n; i < maxdim; i++) {
     gdata[i + 1] = nonum;
@@ -5589,7 +5593,8 @@ get_data_from_spreadsheet (struct f2ddata *fp, int maxdim, MathValue *gdata)
     set_column_array(fp->codex, fp->array_id.numeric.x, gdata, n);
     set_column_array(fp->codey, fp->array_id.numeric.y, gdata, n);
     for (i = n; i < fp->worksheet_n_columns; i++) {
-      spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, &val);
+      int is_date = is_date_column(fp, i);
+      spreadsheet_get_double (fp->spreadsheet, i, fp->line - 1, is_date, &val);
       column_array_push(fp->codex, fp->array_id.numeric.x, &val);
       column_array_push(fp->codey, fp->array_id.numeric.y, &val);
     }
@@ -10315,7 +10320,7 @@ f2dgetcellraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
-  int row, col;
+  int row, col, is_date;
   MathValue data = {0, MATH_VALUE_NAN};
 
   _getobj(obj, "_local", inst, &f2dlocal);
@@ -10332,7 +10337,8 @@ f2dgetcellraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   if (sheet_check_row_col (fp, &row, &col)) {
     return 0;
   }
-  spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, &data);
+  is_date = is_date_column(fp, col -1);
+  spreadsheet_get_double (fp->spreadsheet, col - 1, row - 1, is_date, &data);
 
   rval->d = data.val;
   return 0;
