@@ -246,6 +246,12 @@ static char *data_type[]={
   NULL
 };
 
+static char *column_type[]={
+  "numeric",
+  "date",
+  NULL
+};
+
 static char *averaging_type_char[]={
   N_("simple"),
   N_("weighted"),
@@ -391,7 +397,7 @@ struct f2ddata {
   FILE *fd;
   struct spreadsheet *spreadsheet;
   int worksheet_index, worksheet_n_rows, worksheet_n_columns;
-  int x,y;
+  int x,y,x_date,y_date;
   enum {TYPE_NORMAL, TYPE_DIAGONAL, TYPE_ERR_X, TYPE_ERR_Y} type;
 /*
   fp->type: 0 normal (dx ... dy)
@@ -2291,10 +2297,17 @@ sheet_check_row_col (struct f2ddata *fp, int *row, int *col)
 }
 
 static int
+is_date_column(struct f2ddata *fp, int dim)
+{
+  int col = dim + 1;
+  return (fp->x == col && fp->x_date) || (fp->y == col && fp->y_date);
+}
+
+static int
 file_sheet_cell(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int row, col, id;
+  int row, col, id, is_date;
   (void) exp;
 
   rval->val = 0;
@@ -3039,7 +3052,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int fid;
   char *file;
   struct rgba fg, bg;
-  int x,y,type,hskip,rstep,final,csv,src,hline;
+  int x,y,xdate,ydate,type,hskip,rstep,final,csv,src,hline;
   char *remark,*ifs, *array;
   int smoothx,smoothy,averaging_type;
   struct narray *mask, *header;
@@ -3064,6 +3077,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"csv",inst,&csv);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
+  _getobj(obj,"x_type",inst,&xdate);
+  _getobj(obj,"y_type",inst,&ydate);
   _getobj(obj,"worksheet",inst,&sheet);
 
   /* for array source only */
@@ -3262,6 +3277,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 
   fp->x=x;
   fp->y=y;
+  fp->x_date=xdate;
+  fp->y_date=ydate;
 
   switch (type) {
   case PLOT_TYPE_DIAGONAL:
@@ -4215,7 +4232,7 @@ my_strtod(char *po, char **endptr)
 }
 
 static double
-get_value_from_str(char *po, char *po2, int *type)
+get_value_from_str(char *po, char *po2, int is_date, int *type)
 {
   char *endptr;
   int st, ch;
@@ -4228,7 +4245,18 @@ get_value_from_str(char *po, char *po2, int *type)
 
   ch = *po2;
   *po2 = '\0';
-  val = my_strtod(po, &endptr);
+  if (is_date) {
+    int ret;
+    val = 0;
+    ret = iso_to_mjd(po, &val);
+    if (ret) {
+      endptr = po;
+    } else {
+      endptr = po2;
+    }
+  } else {
+    val = my_strtod(po, &endptr);
+  }
   *po2 = ch;
   if (endptr >= po2) {
     if (check_infinite(val)) {
@@ -4321,7 +4349,7 @@ n_strtod(const char *str, MathValue *val)
   l = strlen(po);
   po2 = po + l;
   val->type = MATH_VALUE_NORMAL;
-  val->val = get_value_from_str(po, po2, &type);
+  val->val = get_value_from_str(po, po2, FALSE, &type);
   g_free(po);
   val->type = type;
   return 0;
@@ -4432,6 +4460,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   }
   while (*po!='\0') {
     int hex;
+    int is_date = is_date_column(fp, dim);
     hex = FALSE;
     if (! fp->use_column_array && dim >= maxdim) {
       r = 0;
@@ -4465,7 +4494,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 	  }
 	}
 #endif
-	val = get_value_from_str(po, po2, &st);
+	val = get_value_from_str(po, po2, is_date, &st);
         for (;*po2==' ';po2++);
         if (CHECK_IFS(ifs, *po2)) po2++;
       }
@@ -4491,7 +4520,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 	}
       }
 #endif
-      val = get_value_from_str(po, po2, &st);
+      val = get_value_from_str(po, po2, is_date, &st);
     }
     po=po2;
     dim++;
@@ -12467,7 +12496,9 @@ static struct objtable file2d[] = {
   {"worksheet_name",NSTR,NREAD,NULL,NULL,0},
   {"save_path",NENUM,NREAD|NWRITE,NULL,pathchar,0},
   {"x",NINT,NREAD|NWRITE,f2dput,NULL,0},
+  {"x_type",NENUM,NREAD|NWRITE,f2dput,column_type,0},
   {"y",NINT,NREAD|NWRITE,f2dput,NULL,0},
+  {"y_type",NENUM,NREAD|NWRITE,f2dput,column_type,0},
 
   {"type",NENUM,NREAD|NWRITE,NULL,f2dtypechar,0},
   {"interpolation",NENUM,NREAD|NWRITE,NULL,intpchar,0},
