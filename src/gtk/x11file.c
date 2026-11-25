@@ -3085,7 +3085,9 @@ file_setup_item(struct FileDialog *d, int id)
 {
   if (d->source != DATA_SOURCE_RANGE) {
     SetWidgetFromObjField(d->xcol, d->Obj, id, "x");
+    SetWidgetFromObjField(d->xtype, d->Obj, id, "type_x");
     SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
+    SetWidgetFromObjField(d->ytype, d->Obj, id, "type_y");
   }
   axis_combo_box_setup(d->xaxis, d->Obj, id, "axis_x");
   axis_combo_box_setup(d->yaxis, d->Obj, id, "axis_y");
@@ -3824,12 +3826,22 @@ FileDialogSetupCommon(struct FileDialog *d)
     add_widget_to_table(table, w, _("_X column:"), FALSE, row);
     d->xcol = w;
     row++;
+    w = gtk_check_button_new_with_mnemonic(_("_Date"));
+    add_widget_to_table_sub(table, w, NULL, FALSE, 1, 1, row);
+    gtk_widget_set_tooltip_text (w, _("Parse X values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
+    d->xtype = w;
+    row++;
   }
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Y column:"), FALSE, row);
     d->ycol = w;
+    row++;
+    w = gtk_check_button_new_with_mnemonic(_("_Date"));
+    add_widget_to_table_sub(table, w, NULL, FALSE, 1, 1, row);
+    gtk_widget_set_tooltip_text (w, _("Parse Y values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
+    d->ytype = w;
     row++;
   }
 
@@ -4804,14 +4816,24 @@ FileDialogCloseCommon(struct FileDialog *d)
 {
   int r;
 
-  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
-    return TRUE;
+  if (d->source != DATA_SOURCE_RANGE) {
+    if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
+      return TRUE;
+
+    if (SetObjFieldFromWidget(d->xtype, d->Obj, d->Id, "type_x"))
+      return TRUE;
+  }
 
   if (SetObjAxisFieldFromWidget(d->xaxis, d->Obj, d->Id, "axis_x"))
     return TRUE;
 
-  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
-    return TRUE;
+  if (d->source != DATA_SOURCE_RANGE) {
+    if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
+      return TRUE;
+
+    if (SetObjFieldFromWidget(d->ytype, d->Obj, d->Id, "type_y"))
+      return TRUE;
+  }
 
   if (SetObjAxisFieldFromWidget(d->yaxis, d->Obj, d->Id, "axis_y"))
     return TRUE;
