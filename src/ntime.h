@@ -22,6 +22,7 @@
  */
 
 int date_to_mjd(int y, int m, int d);
+int iso_to_mjd(const char *iso_str, double *mjdval);
 char *ndate(const time_t *timep, int style);
 char *ntime(const time_t *timep, int style);
 int gettimeval(const char *s, time_t *time);

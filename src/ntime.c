@@ -60,6 +60,73 @@ date_to_mjd(int y, int m, int d)
   return  d1 + d2 - d3 + d4 + d + 1721088 - 2400000;
 }
 
+/*
+ * Converts an ISO-format date-time string into an MJD (Modified Julian Date).
+ * Examples of supported formats:
+ *   "2026-11-25T12:57:30"
+ *   "2026-11-25T12:57:30Z"
+ *   "2026-11-25T12:57:30.250+09:00"
+ *   "2026-11-25 12:57:30-0500"
+ */
+int
+iso_to_mjd(const char *iso_str, double *mjdval)
+{
+  if (!iso_str) return -1.0;
+
+  int y = 0, m = 0, d = 0;
+  int hh = 0, mm = 0;
+  double ss = 0.0;
+
+  /* Parse date and time (supports dates without a time component) */
+  int n = sscanf(iso_str, "%d-%d-%d", &y, &m, &d);
+  if (n != 3) {
+    return -1;
+  }
+
+  /* Check for a time component following 'T', 't', or a space */
+  const char *p = iso_str;
+  while (*p && *p != 'T' && *p != 't' && *p != ' ') {
+    p++;
+  }
+
+  if (*p != '\0') {
+    /* Skip the separator */
+    p++;
+    int t_parsed = sscanf(p, "%d:%d:%lf", &hh, &mm, &ss);
+    if (t_parsed < 2) {
+      return -1;
+    }
+    if (t_parsed == 2) {
+      ss = 0.0;
+    }
+  }
+
+  /* Time zone offset (Z, +HH:MM, -HH:MM, +HHMM, ...) to calculate the UTC offset */
+  int tz_sign = 0;
+  int tz_hh = 0, tz_mm = 0;
+  const char *tz = p;
+  while (*tz && *tz != 'Z' && *tz != 'z' && *tz != '+' && *tz != '-') {
+    tz++;
+  }
+
+  if (*tz == '+' || *tz == '-') {
+    tz_sign = (*tz == '+') ? 1 : -1;
+    if (sscanf(tz + 1, "%d:%d", &tz_hh, &tz_mm) == 1) {
+      /* Handle HHMM format (without a colon) */
+      if (tz_hh >= 100 || tz_hh <= -100) {
+	tz_mm = tz_hh % 100;
+	tz_hh = tz_hh / 100;
+      }
+    }
+  }
+
+  double seconds_in_day = hh * 3600.0 + mm * 60.0 + ss;
+  double tz_offset_sec = tz_sign * (tz_hh * 3600.0 + tz_mm * 60.0);
+  double utc_seconds = seconds_in_day - tz_offset_sec;
+  *mjdval = date_to_mjd(y, m, d) + (utc_seconds / 86400.0);
+  return 0;
+}
+
 char *
 ndate(const time_t *timep, int style)
 {
