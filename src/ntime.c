@@ -78,7 +78,7 @@ iso_to_mjd(const char *iso_str, double *mjdval)
   double ss = 0.0;
 
   /* Parse date and time (supports dates without a time component) */
-  int n = sscanf(iso_str, "%d-%d-%d", &y, &m, &d);
+  int n = sscanf(iso_str, "%d%*[-/]%d%*[-/]%d", &y, &m, &d);
   if (n != 3) {
     return -1;
   }
