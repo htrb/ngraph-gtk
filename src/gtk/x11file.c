@@ -2749,8 +2749,8 @@ math_text_widgets_create(struct FileDialog *d)
   return tab;
 }
 
-static int
-math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
+static GtkWidget *
+math_common_widgets_create(struct FileDialog *d)
 {
   GtkWidget *w, *tab, *title, *table;
   int i;
@@ -2796,8 +2796,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, title);
   g_signal_connect_swapped(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
 
-  add_widget_to_table_sub(grid, tab, NULL, TRUE, 0, 4, pos++);
-  return pos;
+  return tab;
 }
 
 static GtkWidget *
@@ -2816,7 +2815,7 @@ math_tab_create(struct FileDialog *d)
 
   w = combo_box_create();
   gtk_widget_set_hexpand(w, TRUE);
-  add_widget_to_table_sub(table, w, _("_Averaging type:"), FALSE, 2, 1, i++);
+  add_widget_to_table_with_height(table, w, _("_Averaging type:"), FALSE, 2, 1, 2, i++);
   d->math.averaging_type = w;
 
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
@@ -2824,10 +2823,13 @@ math_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Y smooth:"), FALSE, i++);
   d->math.ysmooth = w;
 
-  math_common_widgets_create(d, table, i);
+  w = math_common_widgets_create(d);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+  gtk_box_append(GTK_BOX(vbox), table);
+  gtk_box_append(GTK_BOX(vbox), w);
 
   frame = gtk_frame_new(NULL);
-  gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_frame_set_child(GTK_FRAME(frame), vbox);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
