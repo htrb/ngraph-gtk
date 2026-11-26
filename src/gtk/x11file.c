@@ -3825,9 +3825,9 @@ FileDialogSetupCommon(struct FileDialog *d)
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_X column:"), FALSE, row);
     d->xcol = w;
-    row++;
+
     w = gtk_check_button_new_with_mnemonic(_("_Date"));
-    add_widget_to_table_sub(table, w, NULL, FALSE, 1, 1, row);
+    add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, row);
     gtk_widget_set_tooltip_text (w, _("Parse X values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
     d->xtype = w;
     row++;
@@ -3837,9 +3837,9 @@ FileDialogSetupCommon(struct FileDialog *d)
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Y column:"), FALSE, row);
     d->ycol = w;
-    row++;
+
     w = gtk_check_button_new_with_mnemonic(_("_Date"));
-    add_widget_to_table_sub(table, w, NULL, FALSE, 1, 1, row);
+    add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, row);
     gtk_widget_set_tooltip_text (w, _("Parse Y values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
     d->ytype = w;
     row++;
@@ -3856,7 +3856,7 @@ FileDialogSetupCommon(struct FileDialog *d)
   row++;
 
   w = gtk_check_button_new_with_mnemonic(_("_Clip"));
-  add_widget_to_table(table, w, NULL, FALSE, row);
+  add_widget_to_table_with_height(table, w, NULL, FALSE, 2, 1, 2, row - 2);
   d->clip = w;
 
   hbox = gtk_grid_new();
