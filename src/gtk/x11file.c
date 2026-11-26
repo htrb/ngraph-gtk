@@ -3875,7 +3875,6 @@ FileDialogSetupCommon(struct FileDialog *d)
   gtk_widget_set_hexpand(frame, FALSE);
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_grid_attach(GTK_GRID(hbox), vbox2, 0, 0, 1, 1);
-  gtk_box_append(GTK_BOX(d->vbox), hbox);
 
   notebook = gtk_notebook_new();
 
@@ -3896,7 +3895,13 @@ FileDialogSetupCommon(struct FileDialog *d)
   label = gtk_label_new_with_mnemonic(_("_Load"));
   d->load.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-  gtk_box_append(GTK_BOX(d->vbox), notebook);
+  w = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_paned_set_start_child(GTK_PANED(w), hbox);
+  gtk_paned_set_shrink_start_child (GTK_PANED (w), FALSE);
+  gtk_paned_set_end_child(GTK_PANED(w), notebook);
+  gtk_paned_set_shrink_end_child (GTK_PANED (w), FALSE);
+
+  gtk_box_append(GTK_BOX(d->vbox), w);
 }
 
 static void
