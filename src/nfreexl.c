@@ -133,19 +133,18 @@ n_freexl_get_double (struct spreadsheet *sheet, int col, int row, int date, Math
     break;
   case FREEXL_CELL_DATE:
   case FREEXL_CELL_DATETIME:
+  case FREEXL_CELL_TIME:
+  case FREEXL_CELL_TEXT:
+  case FREEXL_CELL_SST_TEXT:
     if (date) {
       double val;
       ret = iso_to_mjd(cell.value.text_value, &val);
       if (! ret) {
-	data->val = cell.value.int_value;
+	data->val = val;
 	data->type = MATH_VALUE_NORMAL;
 	break;
       }
     }
-    /* fall-through */
-  case FREEXL_CELL_TIME:
-  case FREEXL_CELL_TEXT:
-  case FREEXL_CELL_SST_TEXT:
     n_strtod (cell.value.text_value, data);
     break;
   default:
