@@ -2539,6 +2539,7 @@ load_tab_create(struct FileDialog *d)
     d->load.ifs = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_CSV"));
+    gtk_widget_set_tooltip_text (w, _("If multiple delimiters (other than spaces) appear consecutively, they are treated as representing a corresponding number of columns with no data."));
     add_widget_to_table(table, w, NULL, TRUE, i++);
     d->load.csv = w;
   }
