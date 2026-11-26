@@ -71,6 +71,7 @@ GtkWidget *create_file_entry_no_default_action(struct objlist *obj);
 GtkWidget *create_file_entry_with_cb(GCallback cb, gpointer data);
 GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);
 GtkWidget *get_parent_window(GtkWidget *w);
+GtkWidget *add_widget_to_table_with_height(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int height, int n);
 GtkWidget *add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int n);
 GtkWidget *add_widget_to_table(GtkWidget *table, GtkWidget *w, const char *title, int expand, int n);
 GtkWidget *add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name);

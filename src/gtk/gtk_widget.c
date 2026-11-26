@@ -228,7 +228,7 @@ set_widget_visibility_with_label(GtkWidget *w, gboolean state)
 }
 
 GtkWidget *
-add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int n)
+add_widget_to_table_with_height(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int height, int n)
 {
   GtkWidget *label;
 
@@ -238,6 +238,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int e
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
     set_widget_margin_all(label, 4);
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
     col++;
@@ -250,11 +251,18 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int e
     } else {
       gtk_widget_set_halign(w, GTK_ALIGN_START);
     }
+    gtk_widget_set_valign(w, GTK_ALIGN_CENTER);
     set_widget_margin_all(w, 4);
-    gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
+    gtk_grid_attach(GTK_GRID(table), w, col, n, width, height);
   }
 
   return label;
+}
+
+GtkWidget *
+add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int n)
+{
+  return add_widget_to_table_with_height(table, w, title, expand, col, width, 1, n);
 }
 
 GtkWidget *
