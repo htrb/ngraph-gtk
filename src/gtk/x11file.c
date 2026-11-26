@@ -3828,9 +3828,9 @@ FileDialogSetupCommon(struct FileDialog *d)
     add_widget_to_table(table, w, _("_X column:"), FALSE, row);
     d->xcol = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Date"));
+    w = gtk_check_button_new_with_mnemonic(_("X: _Date"));
     add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, row);
-    gtk_widget_set_tooltip_text (w, _("Parse X values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
+    gtk_widget_set_tooltip_text (w, _("The string in column X is treated as a date/time in ISO 8601 format (e.g., 2026-11-25T12:30:00Z) and converted to MJD."));
     d->xtype = w;
     row++;
   }
@@ -3840,9 +3840,9 @@ FileDialogSetupCommon(struct FileDialog *d)
     add_widget_to_table(table, w, _("_Y column:"), FALSE, row);
     d->ycol = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Date"));
+    w = gtk_check_button_new_with_mnemonic(_("Y: _Date"));
     add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, row);
-    gtk_widget_set_tooltip_text (w, _("Parse Y values as ISO 8601 dates/datetimes (e.g., 2026-11-25T12:30:00Z)."));
+    gtk_widget_set_tooltip_text (w, _("The string in column Y is treated as a date/time in ISO 8601 format (e.g., 2026-11-25T12:30:00Z) and converted to MJD."));
     d->ytype = w;
     row++;
   }
