@@ -3858,6 +3858,7 @@ FileDialogSetupCommon(struct FileDialog *d)
   row++;
 
   w = gtk_check_button_new_with_mnemonic(_("_Clip"));
+  gtk_widget_set_tooltip_text (w, _("Restrict the plotting of data to the area inside the axes."));
   add_widget_to_table_with_height(table, w, NULL, FALSE, 2, 1, 2, row - 2);
   d->clip = w;
 
@@ -4547,6 +4548,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->file, "activate", G_CALLBACK(file_changed), d);
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
+    gtk_widget_set_tooltip_text (w, _("If configuration parameters are specified at the beginning of a data file, import those parameters."));
     gtk_box_append(GTK_BOX(hbox), w);
     d->load_settings = w;
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogOption), d);
@@ -4556,6 +4558,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->worksheet = w;
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
+    gtk_widget_set_tooltip_text (w, _("Launch an external program to edit the data file."));
     gtk_box_append(GTK_BOX(hbox), w);
     g_signal_connect_swapped(w, "clicked", G_CALLBACK(FileDialogEdit), d);
 
