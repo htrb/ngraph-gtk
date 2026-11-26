@@ -102,7 +102,6 @@ n_freexl_get_double (struct spreadsheet *sheet, int col, int row, int date, Math
   int ret;
   FreeXL_CellValue cell;
   const void *handle;
-  const char *str;
 
   data->val = 0;
   data->type = MATH_VALUE_NONUM;
