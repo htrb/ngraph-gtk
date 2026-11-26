@@ -240,7 +240,7 @@ add_widget_to_table_with_height(GtkWidget *table, GtkWidget *w, const char *titl
     gtk_widget_set_halign(label, GTK_ALIGN_START);
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
     set_widget_margin_all(label, 4);
-    gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
+    gtk_grid_attach(GTK_GRID(table), label, col, n, 1, height);
     col++;
   }
 
