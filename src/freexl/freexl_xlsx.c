@@ -1402,7 +1402,11 @@ styles_start_tag (void *data, const char *el, const char **attr)
 		      xlsx_format *fmt =
 			  workbook->formats + workbook->next_format;
 		      fmt->fmtId = id;
+#ifdef FREEXL_IGNORE_DATE_FORMAT
+		      fmt->is_datetime = XLSX_DATE_NONE;
+#else
 		      fmt->is_datetime = parse_xlsx_format (code);
+#endif
 		  }
 		workbook->next_format += 1;
 	    }

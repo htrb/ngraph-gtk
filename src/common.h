@@ -69,4 +69,6 @@ void displaystatus(const char *str);
 
 #define DOUBLE_STR_FORMAT "%.16g"
 
+#define FREEXL_IGNORE_DATE_FORMAT 1
+
 #endif	/* COMMON_HEADER */
