@@ -762,7 +762,8 @@ getitok3(char **s,int *len,char *ifs)
 char *
 getitok4(char **s,int *len,char *ifs)
 {
-  char *po,*s2;
+  char *po;
+  const char *s2;
 
   if ((s2=getitok3(s,len,ifs))==NULL) return NULL;
   if ((po=g_malloc(*len+1))==NULL) {

@@ -129,7 +129,7 @@ gra2emfplus_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 static void
 set_font(struct gra2emfplus_local *local, const char *fontname)
 {
-  struct compatible_font_info *info;
+  const struct compatible_font_info *info;
   struct fontmap *font_map;
   const char *alias;
 

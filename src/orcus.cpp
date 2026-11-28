@@ -148,7 +148,7 @@ n_orcus_get_dimension (struct n_orcus *norcus, int *column, int *row)
 }
 
 char *
-n_orcus_get_sheet_name (struct n_orcus *norcus)
+n_orcus_get_sheet_name (const struct n_orcus *norcus)
 {
   char *sheetname = NULL;
 
@@ -207,10 +207,10 @@ get_double_formula (const ixion::formula_result &result, MathValue *data)
 }
 
 char *
-n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row)
+n_orcus_get_text_raw (const struct spreadsheet *sheet, int col, int row)
 {
   char *text = NULL;
-  struct n_orcus *norcus;
+  const struct n_orcus *norcus;
   if (sheet == NULL) {
     return NULL;
   }
@@ -247,10 +247,10 @@ n_orcus_get_text_raw (struct spreadsheet *sheet, int col, int row)
 }
 
 char *
-n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
+n_orcus_get_text (const struct spreadsheet *sheet, int col, int row)
 {
   char *text = NULL;
-  struct n_orcus *norcus;
+  const struct n_orcus *norcus;
   if (sheet == NULL) {
     return NULL;
   }
@@ -297,9 +297,9 @@ n_orcus_get_text (struct spreadsheet *sheet, int col, int row)
 }
 
 void
-n_orcus_get_double (struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
+n_orcus_get_double (const struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
 {
-  struct n_orcus *norcus;
+  const struct n_orcus *norcus;
   if (sheet == NULL) {
     return;
   }

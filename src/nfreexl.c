@@ -46,6 +46,7 @@ n_freexl_close (const void *handle)
   freexl_close (handle);
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int
 date_to_serial (const char *date)
 {
@@ -95,9 +96,10 @@ datetime_to_serial (const char *datetime)
   serial = date_to_serial (datetime);
   return serial + t;
 }
+#endif
 
 void
-n_freexl_get_double (struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
+n_freexl_get_double (const struct spreadsheet *sheet, int col, int row, int date, MathValue *data)
 {
   int ret;
   FreeXL_CellValue cell;
@@ -152,7 +154,7 @@ n_freexl_get_double (struct spreadsheet *sheet, int col, int row, int date, Math
 }
 
 char *
-n_freexl_get_text_raw (struct spreadsheet *sheet, int col, int row)
+n_freexl_get_text_raw (const struct spreadsheet *sheet, int col, int row)
 {
   int ret;
   FreeXL_CellValue cell;
@@ -185,7 +187,7 @@ n_freexl_get_text_raw (struct spreadsheet *sheet, int col, int row)
 }
 
 char *
-n_freexl_get_text (struct spreadsheet *sheet, int col, int row)
+n_freexl_get_text (const struct spreadsheet *sheet, int col, int row)
 {
   int ret;
   FreeXL_CellValue cell;

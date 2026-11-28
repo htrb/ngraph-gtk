@@ -23,16 +23,16 @@ using Microsoft::WRL::ComPtr;
 #define UNIT_RCONV(v) ((v) * UNIT_FACTOR)
 
 struct gdiobj {
-  Bitmap *bitmap;
-  Graphics *bitmap_graphics, *graphics;
-  Metafile *metafile;
-  Pen *pen;
-  SolidBrush *brush;
+  Bitmap *bitmap = NULL;
+  Graphics *bitmap_graphics = NULL, *graphics = NULL;
+  Metafile *metafile = NULL;
+  Pen *pen = NULL;
+  SolidBrush *brush = NULL;
   ULONG_PTR gdiplusToken;
-  WCHAR *tmp_file;
+  WCHAR *tmp_file = NULL;
   ComPtr<IDWriteFactory> dwriteFactory;
   ComPtr<IDWriteFontCollection> sysFontCollection;
-  bool dwriteReady;
+  bool dwriteReady = NULL;
 };
 
 static WCHAR *
@@ -423,7 +423,7 @@ emfplus_text (struct gdiobj *gdi, int *px, int *py, struct font_info *fontinfo, 
   PointF pointF (0, 0);
   REAL fontSize = (REAL)(fontinfo->size / 100.0 / 72.0 * DPI);
   Gdiplus::StringFormat format(Gdiplus::StringFormat::GenericTypographic());
-  double x, y, w, h, a;
+  double x, y, w, a;
   double space =  UNIT_CONV (fontinfo->space / 72.0 * 25.4);
 
   x = UNIT_CONV (*px);

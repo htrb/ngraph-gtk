@@ -321,6 +321,7 @@ static void
 childhandler(int sig)
 {
   pid_t child_pid;
+  (void) sig;
 
   do {
     child_pid = waitpid(-1, NULL, WNOHANG);
@@ -5106,6 +5107,7 @@ static int
 del_vallist(struct nhash *h, void *data)
 {
   struct vallist *val;
+  (void) data;
 
   val = (struct vallist *) h->val.p;
   free_vallist(val);

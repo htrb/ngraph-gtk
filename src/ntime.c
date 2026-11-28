@@ -355,7 +355,7 @@ get_iso_8601_week(const struct tm *t)
 }
 
 static int
-append_date_str(GString *str, const gchar *fmt, struct tm *t)
+append_date_str(GString *str, const gchar *fmt, const struct tm *t)
 {
   const char *wfname[]={"Sunday",   "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"};

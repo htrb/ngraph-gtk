@@ -40,7 +40,7 @@ spreadsheet_check (const char *file)
 }
 
 const char *
-spreadsheet_get_name (struct spreadsheet *sheet)
+spreadsheet_get_name (const struct spreadsheet *sheet)
 {
   if (sheet == NULL) {
     return NULL;
@@ -49,7 +49,7 @@ spreadsheet_get_name (struct spreadsheet *sheet)
 }
 
 int
-spreadsheet_n_columns (struct spreadsheet *sheet)
+spreadsheet_n_columns (const struct spreadsheet *sheet)
 {
   if (sheet == NULL) {
     return 0;
@@ -58,7 +58,7 @@ spreadsheet_n_columns (struct spreadsheet *sheet)
 }
 
 int
-spreadsheet_n_rows (struct spreadsheet *sheet)
+spreadsheet_n_rows (const struct spreadsheet *sheet)
 {
   if (sheet == NULL) {
     return 0;
@@ -140,7 +140,7 @@ spreadsheet_close (struct spreadsheet **sheet_ptr)
 }
 
 void
-spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, int is_date, MathValue *data)
+spreadsheet_get_double (const struct spreadsheet *sheet, int col, int row, int is_date, MathValue *data)
 {
   int n_columns, n_rows;
 
@@ -163,7 +163,7 @@ spreadsheet_get_double (struct spreadsheet *sheet, int col, int row, int is_date
 }
 
 char *
-spreadsheet_get_text_raw (struct spreadsheet *sheet, int col, int row)
+spreadsheet_get_text_raw (const struct spreadsheet *sheet, int col, int row)
 {
   int n_columns, n_rows;
   char *str;
@@ -183,7 +183,7 @@ spreadsheet_get_text_raw (struct spreadsheet *sheet, int col, int row)
 }
 
 char *
-spreadsheet_get_text (struct spreadsheet *sheet, int col, int row)
+spreadsheet_get_text (const struct spreadsheet *sheet, int col, int row)
 {
   int n_columns, n_rows;
   char *str;
@@ -230,7 +230,7 @@ n_orcus_init (struct n_orcus *handle)
 {
   struct spreadsheet *sheet;
   char *name;
-  int rows, columns, i, num, ret;
+  int rows, columns, i, num;
 
   num = n_orcus_sheet_count (handle);
   if (num < 1) {
@@ -242,6 +242,7 @@ n_orcus_init (struct n_orcus *handle)
   sheet->worksheet = g_malloc (sizeof (*sheet->worksheet) * num);
   sheet->num = num;
   for (i = 0; i < num; i++) {
+    int ret;
     sheet->worksheet[i].n_columns = 0;
     sheet->worksheet[i].n_rows = 0;
     sheet->worksheet[i].name = NULL;
@@ -275,7 +276,6 @@ n_freexl_init (const void *handle)
   const char *name;
   int rows, columns;
   int i, num;
-  int ret;
 
   num = n_freexl_sheet_count (handle);
   if (num == 0) {
@@ -288,6 +288,7 @@ n_freexl_init (const void *handle)
   sheet->worksheet = g_malloc (sizeof (*sheet->worksheet) * num);
   sheet->num = num;
   for (i = 0; i < num; i++) {
+    int ret;
     sheet->worksheet[i].n_columns = 0;
     sheet->worksheet[i].n_rows = 0;
     sheet->worksheet[i].name = NULL;
